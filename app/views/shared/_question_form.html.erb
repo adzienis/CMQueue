@@ -1,0 +1,19 @@
+<%= form_with url: questions_url,
+              model: question, class: 'ui form' do |form| %>
+  <div class="field fluid">
+    <%= form.label "Description" %><br>
+    <%= form.text_field :description %>
+  </div>
+
+  <div class="field">
+    <%= form.label "What Have You Tried?" %><br>
+    <%= form.text_field :tried %>
+  </div>
+
+  <div class="field">
+    <%= form.label "Location" %><br>
+    <%= form.text_field :location %>
+  </div>
+
+  <%= form.submit %>
+<% end %>

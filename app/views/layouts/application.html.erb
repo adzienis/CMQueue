@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Meet</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+
+  <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+  <%= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.3/css/all.css">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.3/css/v4-shims.css">
+
+</head>
+
+<body>
+<% if flash.any? %>
+  <% flash.each do |key, value| -%>
+    <section class="flash flash__<%= key %>"><%= value.html_safe %></section>
+  <% end -%>
+<% end %>
+
+<% if user_signed_in? %>
+  <div class="ui menu">
+    <%= link_to "User", user_url, class: "item"  %>
+    <%= link_to "User Courses", user_courses_url, class: "item"  %>
+  </div>
+<% end %>
+  <%= yield %>
+  </body>
+  </html>

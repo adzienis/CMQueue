@@ -1,0 +1,11 @@
+<div class="ui container" style="display: flex;flex-direction: column; align-items: center">
+  <div class="ui segment" style="max-width: 800px; width: 100%">
+    <div style="display: flex; flex-direction: column; align-items: center">
+        <div class="ui header huge">
+          0
+        </div>
+        <span> Total Number of Questions</span>
+    </div>
+  </div>
+  <%= render partial: 'shared/question_form', locals: { question: Question.new} %>
+</div>

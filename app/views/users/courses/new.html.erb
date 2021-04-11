@@ -1,0 +1,18 @@
+<div class="ui container">
+  <div class="ui segment">
+    <h1>
+      Courses
+    </h1>
+
+      <%= form_with url: user_courses_url,
+                    model: @course,
+                    local: true, class: 'ui form' do |form| %>
+        <div class="field">
+          <%= form.label :name %><br>
+          <%= form.text_field :name %>
+        </div>
+
+        <%= form.submit %>
+      <% end %>
+  </div>
+</div>

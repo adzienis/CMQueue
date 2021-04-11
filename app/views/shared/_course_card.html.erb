@@ -1,0 +1,19 @@
+<%= link_to course_path(course), class: "ui card" do %>
+  <div class="content"
+
+  >
+    <div class="header" style="display: flex; justify-content: space-between; flex-direction: row">
+      <div style="flex: 1">
+        <%= course.name %>
+      </div>
+      <div
+        data-controller="courseCard"
+        data-action="click->courseCard#click"
+        id=<%= "#{course.id}" %>
+          data-courseCard-target="card"
+      >
+        X
+      </div>
+    </div>
+  </div>
+<% end %>

@@ -1,0 +1,27 @@
+<div class="ui container">
+  <div class="ui header">Add Course</div>
+
+  <div class="ui segment" >
+    <%= turbo_frame_tag 'course' do %>
+      <div class="ui search fluid" data-controller="course-search">
+        <label>Search</label>
+        <input
+          data-action="input->course-search#search"
+          data-controller="stimulus-reflex"
+          style="width: 100%"
+          class="prompt fluid"
+          type="text"
+          placeholder="Course name"/>
+        <div class="results">
+          <% @searched_courses.each do |course| %>
+            <div class="result">
+              <div class="content">
+                <%= course.name %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
