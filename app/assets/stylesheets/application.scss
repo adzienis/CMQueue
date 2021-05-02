@@ -14,12 +14,54 @@
  *= require_self
  */
 
-//noinspection CssUnknownTarget
-@import 'semantic-ui-sass/semantic-ui';
 @import "font-awesome";
+@import "bootstrap/scss/bootstrap";
 
+//noinspection CssUnknownTarget
 .centered-modal {
   display: flex !important;
   align-items: center;
   justify-content: center
+}
+
+.ui.search > .ui.input {
+  width: 100% !important;
+}
+
+.flex-1 {
+  flex: 1 !important;
+}
+
+.queue-button {
+  font-size: 30px;
+  height: 70px;
+}
+
+html, body {
+  height: 100%;
+}
+
+.hover-container {
+  color: inherit;
+  transition: .1s;
+  width: 100%;
+  height: 100%;
+}
+
+.hover-container:hover{
+  width: calc(100% + 8px);
+  height: calc(100% + 8px);
+  transform: translateY(-4px) translateX(-4px);
+}
+
+.elipsis {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+
+}
+
+.active-link {
+  font-weight: bold;
 }

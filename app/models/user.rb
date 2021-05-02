@@ -1,8 +1,15 @@
 class User < ApplicationRecord
+  rolify
   devise :omniauthable, omniauth_providers: %i[google_oauth2]
 
-  has_many :enrollments
-  has_many :courses, through: :enrollments
+  has_and_belongs_to_many :courses
+
+  #has_many :enrollments, dependent: :destroy
+  #has_many :courses, through: :enrollments
+  has_many :questions, dependent: :destroy
+
+
+  has_one :question_state, -> { order('id DESC')}
 
   def self.from_omniauth(auth)
     where(provider: auth.provider, uid: auth.uid).first_or_create do |user|

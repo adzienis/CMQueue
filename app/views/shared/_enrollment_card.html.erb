@@ -1,0 +1,24 @@
+<%= link_to course_path(enrollment.course), class: "ui card", id: dom_id(enrollment), style: "height: 80px" do %>
+  <div class="content">
+    <div class="header"
+    style ="display: flex;
+    justify-content: space-between;
+    flex-direction: row">
+      <div style="flex: 1">
+        <%= enrollment.course.name %>
+      </div>
+      <div
+        data-controller="courseCard"
+
+        data-reflex-root=<%= "##{dom_id(enrollment)}" %>
+          data-action="click->courseCard#click"
+        id=<%= "#{enrollment.id}" %>
+        data-courseCard-target="card"
+        >
+        <i class="fas fa-times fa-lg"></i>
+      </div>
+      </div>
+
+  </div>
+<% end %>
+

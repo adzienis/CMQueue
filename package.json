@@ -11,19 +11,21 @@
     "@types/react": "^17.0.3",
     "@types/semantic-ui": "^2.2.7",
     "babel-plugin-transform-react-remove-prop-types": "^0.4.24",
+    "bootstrap": "^4.6.0",
+    "cable_ready": "^4.5.0",
     "jquery": "^3.6.0",
     "popper.js": "^1.16.1",
     "prop-types": "^15.7.2",
     "react": "^17.0.2",
+    "react-bootstrap": "^1.5.2",
     "react-dom": "^17.0.2",
+    "react-on-rails": "12.2.0",
     "react-query": "^3.13.6",
-    "semantic-ui-react": "^2.0.3",
     "stimulus": "^2.0.0",
     "stimulus_reflex": "3.4.1"
   },
   "version": "0.1.0",
   "devDependencies": {
-    "semantic-ui-sass": "^2.4.2",
     "webpack-dev-server": "^3.11.2"
   }
 }

@@ -1,0 +1,19 @@
+<% if @user_question %>
+  <%= content_tag :div, id: 'question-dimmer', class: ("ui dimmer " + (@user_question ? "active" : "")) do %>
+    <%= content_tag :div, id: 'question-modal', class: ("ui modal " + (@user_question ? "active" : "")) do %>
+      <div class="content">
+        <div class="description">
+          <%= @user_question.id %>
+        </div>
+
+        <%= link_to "Delete Question", "#",
+                    data: { action: "click->question-waiting-modal#delete",
+                            controller: "question-waiting-modal", "question-waiting-modal-question-id-value": @user_question.id }
+
+        %>
+
+      </div>
+    <% end %>
+
+  <% end %>
+<% end %>

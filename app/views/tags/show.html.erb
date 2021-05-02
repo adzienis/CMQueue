@@ -1,0 +1,18 @@
+<div class="container mt-4">
+
+  <%= button_to "Back", settings_queues_course_path(@tag.course), method: :get, class: "ui button" %>
+
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <div class="card-title">
+        <h2>
+          <%= @tag.name %>
+        </h2>
+      </div>
+      <div class="card-text">
+        <%= @tag.description %>
+      </div>
+    </div>
+  </div>
+
+</div>

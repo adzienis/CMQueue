@@ -24,11 +24,23 @@ export default class extends ApplicationController {
     // add your code here, if applicable
   }
 
-  click(e) {
+  open(e) {
     e.preventDefault()
-    $('.ui.modal')
-        .modal('show')
-    ;
+    document.querySelector('.ui.modal').classList.add('visible', 'active')
+
+    document.querySelector('.ui.dimmer').classList.add('visible', 'active', 'centered-modal')
+    document.querySelector('.prompt').focus()
+
+  }
+
+  blurt(e) {
+    console.log('blurring')
+    document.querySelector('.ui.modal').classList.remove('visible', 'active')
+
+    document.querySelector('.ui.dimmer').classList.remove('visible', 'active', 'centered-modal')
+    document.querySelector('.prompt').value = "";
+    $('.ui.search')
+        .search('hide results')
   }
 
   addClick(e) {

@@ -35,9 +35,9 @@ class CourseCardReflex < ApplicationReflex
 
   def click(courseId)
 
-    enrollment = User.find(session[:user_id]).enrollments.find_by(course_id: courseId)
-    enrollment.delete
-    @courses = User.find(session[:user_id]).courses
+    enrollment = User.find(session[:user_id]).enrollments.find(courseId)
+    enrollment.destroy
+    @enrollments = User.find(session[:user_id]).enrollments
   end
 
   def addShowCourse

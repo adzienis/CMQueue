@@ -1,4 +1,4 @@
-<%= link_to course_path(course), class: "ui card" do %>
+<%= link_to course_path(course), class: "card", id: dom_id(course) do %>
   <div class="content"
 
   >
@@ -7,7 +7,7 @@
         <%= course.name %>
       </div>
       <div
-        data-controller="courseCard"
+
         data-action="click->courseCard#click"
         id=<%= "#{course.id}" %>
           data-courseCard-target="card"

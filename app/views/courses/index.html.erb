@@ -1,2 +1,16 @@
-<h1>Courses#index</h1>
-<p>Find me in app/views/courses/index.html.erb</p>
+<div class="container mt-4">
+
+  <h2>
+    Courses
+  </h2>
+
+  <%= button_to "Add New Course", new_course_path, method: :get, class: 'btn btn-primary' %>
+
+  <% @courses.each do |course| %>
+    <div class="card mt-2">
+      <div class="card-body">
+        <%= course.name %>
+      </div>
+    </div>
+  <% end %>
+</div>

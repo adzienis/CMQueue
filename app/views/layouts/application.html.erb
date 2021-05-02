@@ -3,6 +3,7 @@
 <head>
   <title>Meet</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="turbo-cache-control" content="no-cache">
   <%= csrf_meta_tags %>
   <%= csp_meta_tag %>
 
@@ -10,22 +11,14 @@
   <%= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.3/css/all.css">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.3/css/v4-shims.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap.native/3.0.14/bootstrap-native.min.js" integrity="sha512-JXWtfJs898fPgQeqGxEvyJbV6s8/aDvRLDTx8kVS9mwN73ok9islxxa27vhcmjZ2SafkhgsZSAeV1YsQlEgukA==" crossorigin="anonymous"></script>
 
 </head>
 
-<body>
-<% if flash.any? %>
-  <% flash.each do |key, value| -%>
-    <section class="flash flash__<%= key %>"><%= value.html_safe %></section>
-  <% end -%>
-<% end %>
+<body style="background-color: #f0f0f0">
+<style><%= yield :stylesheets %></style>
+<%= render partial: "shared/site_navbar" %>
 
-<% if user_signed_in? %>
-  <div class="ui menu">
-    <%= link_to "User", user_url, class: "item"  %>
-    <%= link_to "User Courses", user_courses_url, class: "item"  %>
-  </div>
-<% end %>
-  <%= yield %>
-  </body>
-  </html>
+<%= content_for?(:content) ? yield(:content) : yield %>
+</body>
+</html>

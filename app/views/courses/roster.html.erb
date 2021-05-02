@@ -1,0 +1,40 @@
+<div class="mb-3">
+  <h2>
+    Students
+  </h2>
+  <div class="list-group">
+
+    <% @students.each do |student| %>
+      <div class="list-group-item">
+        <div class="d-flex align-items-center justify-content-center">
+            <p class="flex-1 mb-0">
+              <%= student.given_name %>
+            </p>
+          <div>
+            <%= button_to "To Student", user_path(student), method: :get, class: 'btn btn-primary' %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<div>
+  <h2>
+    TA's
+  </h2>
+  <div class="list-group">
+    <% @tas.each do |ta| %>
+      <div class="list-group-item">
+        <div class="d-flex align-items-center justify-content-center">
+          <p class="flex-1 mb-0">
+            <%= ta.given_name %>
+          </p>
+          <div>
+            <%= button_to "To TA", user_path(ta), method: :get, class: 'btn btn-primary' %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

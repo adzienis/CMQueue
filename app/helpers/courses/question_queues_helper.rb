@@ -1,0 +1,2 @@
+module Courses::QuestionQueuesHelper
+end

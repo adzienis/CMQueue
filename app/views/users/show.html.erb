@@ -1,3 +1,62 @@
-<p>show;</p>
+<div class="container mt-4">
+  <div class="mt-4 mb-4">
+    <nav class="
+        navbar
+        navbar-expand-lg
+        navbar-light
+        shadow-sm
+        bg-light
+"
+    >
+      <div class="container-fluid justify-content-md-center">
+        <ul class="navbar-nav">
 
-<%= link_to "Sign out", destroy_user_session_path %>
+          <%= content_tag :li,
+                          class: "nav-item " do %>
+            <%= link_to "Back",
+                        :back,
+                        class: "nav-link",
+                        onclick: "event.preventDefault(); window.history.back()"
+            %>
+          <% end %>
+        </ul>
+      </div>
+    </nav>
+  </div>
+
+
+  <div class="card mb-3">
+    <div class="card-body">
+      <h2>
+        <%= @user.given_name %>
+      </h2>
+    </div>
+  </div>
+
+  <div>
+    <h2>
+      All Questions
+    </h2>
+    <% if @questions.count == 0 %>
+      <div class="alert alert-warning">
+        No Questions
+      </div>
+    <% end %>
+    <div class="list-group text-break">
+      <% @questions.each do |question| %>
+        <%= link_to question, class: "text-decoration-none", style: "color: inherit" do %>
+          <div class="list-group-item">
+            <div>
+              <p>
+                Resolved at <b><%= question.question_state.updated_at %></b>
+              </p>
+              <div>
+                <%= question.description %>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+</div>

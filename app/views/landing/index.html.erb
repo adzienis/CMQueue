@@ -2,9 +2,13 @@
   <div class="ui segment basic" style="display: flex; justify-content: center; height: 100%">
     <div style="display: flex;flex-direction: column; height: 100%; align-items: center; justify-content: center">
       <%= image_tag 'logo.png', height: '300px', width: '300px' %>
-      <%= button_to user_google_oauth2_omniauth_authorize_path, method: :post, data: { 'turbo': "false"}  do %>
+      <%= button_to user_google_oauth2_omniauth_authorize_path,
+                    method: :post,
+                    data: { 'turbo': "false"},
+                    style: "padding: 0px; border: 0px",
+                    class: "mt-4" do %>
 
-        <%= image_tag 'google/web/2x/btn_google_signin_dark_normal_web@2x.png', width: '280px' %>
+        <%= image_tag 'google/web/2x/btn_google_signin_dark_normal_web@2x.png', width: '300px' %>
       <% end%>
     </div>
   </div>

@@ -10,7 +10,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_04_07_224826) do
+ActiveRecord::Schema.define(version: 2021_04_29_180440) do
+
+  create_table "announcements", force: :cascade do |t|
+    t.string "title", default: ""
+    t.text "description", default: ""
+    t.boolean "visible", default: true
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
 
   create_table "courses", force: :cascade do |t|
     t.string "name"
@@ -18,33 +26,98 @@ ActiveRecord::Schema.define(version: 2021_04_07_224826) do
     t.string "student_code"
     t.string "ta_code"
     t.string "instructor_code"
+    t.boolean "open"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "enrollments", force: :cascade do |t|
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+  create_table "courses_questions", id: false, force: :cascade do |t|
+    t.integer "course_id"
+    t.integer "question_id"
+    t.index ["course_id"], name: "index_courses_questions_on_course_id"
+    t.index ["question_id"], name: "index_courses_questions_on_question_id"
+  end
+
+  create_table "courses_users", force: :cascade do |t|
     t.integer "course_id"
     t.integer "user_id"
-    t.integer "role"
-    t.index ["course_id", "user_id"], name: "index_enrollments_on_course_id_and_user_id", unique: true
-    t.index ["course_id"], name: "index_enrollments_on_course_id"
-    t.index ["user_id"], name: "index_enrollments_on_user_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["course_id"], name: "index_courses_users_on_course_id"
+    t.index ["user_id"], name: "index_courses_users_on_user_id"
+  end
+
+  create_table "messages", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "question_state_id"
+    t.text "description", default: ""
+    t.boolean "seen", default: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["question_state_id"], name: "index_messages_on_question_state_id"
+    t.index ["user_id"], name: "index_messages_on_user_id"
   end
 
   create_table "question_queues", force: :cascade do |t|
     t.integer "course_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.boolean "archived", default: true
     t.index ["course_id"], name: "index_question_queues_on_course_id"
   end
 
-  create_table "questions", force: :cascade do |t|
-    t.integer "question_queue_id"
+  create_table "question_states", force: :cascade do |t|
+    t.integer "question_id"
+    t.integer "user_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["question_queue_id"], name: "index_questions_on_question_queue_id"
+    t.integer "state", null: false
+    t.index ["question_id"], name: "index_question_states_on_question_id"
+    t.index ["user_id"], name: "index_question_states_on_user_id"
+  end
+
+  create_table "questions", force: :cascade do |t|
+    t.integer "course_id"
+    t.integer "user_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.text "title"
+    t.text "tried"
+    t.text "description"
+    t.text "notes"
+    t.text "location"
+    t.index ["course_id"], name: "index_questions_on_course_id"
+    t.index ["user_id"], name: "index_questions_on_user_id"
+  end
+
+  create_table "questions_tags", id: false, force: :cascade do |t|
+    t.integer "tag_id"
+    t.integer "question_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["question_id"], name: "index_questions_tags_on_question_id"
+    t.index ["tag_id"], name: "index_questions_tags_on_tag_id"
+  end
+
+  create_table "roles", force: :cascade do |t|
+    t.string "name"
+    t.string "resource_type"
+    t.integer "resource_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["name", "resource_type", "resource_id"], name: "index_roles_on_name_and_resource_type_and_resource_id"
+    t.index ["name"], name: "index_roles_on_name"
+    t.index ["resource_type", "resource_id"], name: "index_roles_on_resource"
+  end
+
+  create_table "tags", force: :cascade do |t|
+    t.integer "course_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.boolean "archived", default: true
+    t.text "name", default: ""
+    t.text "description", default: ""
+    t.index ["course_id"], name: "index_tags_on_course_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -53,10 +126,26 @@ ActiveRecord::Schema.define(version: 2021_04_07_224826) do
     t.text "email"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "question_state_id"
     t.string "provider"
     t.string "uid"
+    t.index ["question_state_id"], name: "index_users_on_question_state_id"
   end
 
-  add_foreign_key "enrollments", "courses"
-  add_foreign_key "enrollments", "users"
+  create_table "users_roles", id: false, force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "role_id"
+    t.index ["role_id"], name: "index_users_roles_on_role_id"
+    t.index ["user_id", "role_id"], name: "index_users_roles_on_user_id_and_role_id"
+    t.index ["user_id"], name: "index_users_roles_on_user_id"
+  end
+
+  add_foreign_key "messages", "question_states"
+  add_foreign_key "messages", "users"
+  add_foreign_key "question_states", "questions"
+  add_foreign_key "question_states", "users"
+  add_foreign_key "questions", "courses"
+  add_foreign_key "questions", "users"
+  add_foreign_key "questions_tags", "questions"
+  add_foreign_key "questions_tags", "tags"
 end

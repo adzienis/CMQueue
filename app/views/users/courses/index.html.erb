@@ -1,74 +1,47 @@
-<h1>
-  Courses
-</h1>
-
-<%= javascript_pack_tag 'search_modal'%>
-
-<%= content_tag :div,
-                id: "hello-react",
-                data: {
-                  message: 'Hello!',
-                  name: 'David',
-                }.to_json do %>
-<% end %>
-
-
-<div style="display: grid; grid-template-columns: 1fr 1fr; justify-items: center; align-items: center">
-  <div>
+<div class="ui container">
+  <div class="ui segment">
     <h1>
-      Student Courses
+      Courses
     </h1>
 
-    <div class="ui modal">
-      <div class="content">
-        <div class="ui search fluid" data-controller="course-search" data-reflex-permanent>
-          <label>Search</label>
-          <input
-            data-action="input->course-search#search"
-            data-controller="stimulus-reflex"
-            style="width: 100%"
-            class="prompt fluid"
-            type="text"
-            placeholder="Course name"/>
-          <div class="results">
+    <div style="display: grid; grid-template-columns: 1fr 1fr; justify-items: center; align-items: center; max-width: 800px">
+      <div>
+        <h1>
+          Student Courses
+        </h1>
+
+
+        <div id='student-courses'>
+          <%= content_tag :div,
+                          id: "hello-react",
+                          data: {
+                            message: 'Hello!',
+                            name: 'David',
+                          }.to_json do %>
+          <% end %>
+          <div id='student-courses-cards'>
+            <%= render partial: 'shared/course_card', collection: @courses, as: :course %>
           </div>
         </div>
       </div>
-    </div>
-
-    <a
-      href=""
-      class="ui card"
-      data-action="click->course-search-button#click"
-      data-controller="course-search-button"
-    >
-      <div class="content">
-        <div class="header" style="display: flex; justify-content: center;">
-          <i class="fas fa-plus fa-2x"></i>
+      <div>
+        <h1>
+          Instructor Courses
+        </h1>
+        <a href=""
+           class="ui card"
+           data-controller="course-search-button"
+           data-action="click->course-search-button#click">
+          <div class="content">
+            <div class="header" style="display: flex; justify-content: center;">
+              <i class="fas fa-plus fa-2x"></i>
+            </div>
+          </div>
+        </a>
+        <div>
+          <%= render partial: 'shared/course_card', collection: @courses, as: :course %>
         </div>
       </div>
-    </a>
-
-      <div id='student-courses'>
-        <%= render partial: 'shared/course_card', collection: @courses, as: :course %>
-      </div>
-  </div>
-  <div>
-    <h1>
-      Instructor Courses
-    </h1>
-    <a href=""
-       class="ui card"
-       data-controller="course-search-button"
-       data-action="click->course-search-button#click">
-      <div class="content">
-        <div class="header" style="display: flex; justify-content: center;">
-          <i class="fas fa-plus fa-2x"></i>
-        </div>
-      </div>
-    </a>
-    <div>
-      <%= render partial: 'shared/course_card', collection: @courses, as: :course %>
     </div>
   </div>
 </div>

@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby '2.7.2'
+ruby '3.0.1'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails', branch: 'main'
 gem 'rails', '~> 6.1.3', '>= 6.1.3.1'
@@ -64,8 +64,16 @@ gem "stimulus_reflex", "~> 3.4"
 
 gem "font-awesome-rails", "~> 4.7"
 
-gem "turbo-rails", "~> 0.5.9"
 
 gem "rack-cors", "~> 1.1"
 
 gem "react_on_rails", "~> 12.2"
+gem 'mini_racer', platforms: :ruby
+
+gem "cable_ready", "~> 4.5"
+
+gem "cancancan", "~> 3.2"
+
+gem "rolify", "~> 6.0"
+
+gem "turbo-rails", "~> 0.5.9"

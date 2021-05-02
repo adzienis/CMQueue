@@ -2,54 +2,119 @@
 // like app/views/layouts/application.html.erb. All it does is render <div>Hello React</div> at the bottom
 // of the page.
 
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import ReactDOM from 'react-dom'
-import {Button, Modal, Search} from 'semantic-ui-react'
-import {QueryClient, QueryClientProvider, useQuery} from "react-query";
-import queryClient from "./queryClientFile";
+import {QueryClientProvider, useQuery} from "react-query";
+import useWrappedMutation from "./useWrappedMutation";
+import queryClient from './queryClientFile'
+import CourseCard from "./CourseCard";
+import {Form, Modal} from "react-bootstrap";
 
 
 const Hello = props => {
-
     const [open, setOpen] = useState(false);
     const [search, setSearch] = useState(null);
+    const {
+        data,
+        isLoading,
+        isFetching
+    } = useQuery(['courses', 'search', '?', `name=${search}`], {
+        select: data => data.map(v => ({title: v.name, id: v.id}))
+    })
 
-    const {data, isLoading, isFetching} = useQuery(['courseSearch', search], () => fetch(`/courses/search?name=${search}`, {
-        headers: {
-            'Accept': 'application/json'
-        }
-    }).then(resp => resp.json()).then(json => json.map(v => ({title: v.name, id: v.id}))))
+    const {data: courses} = useQuery(['user', 'enrollments', '?', 'role=student'])
 
-    console.log(data, isLoading)
+    const {mutate, errors, setErrors} = useWrappedMutation((course_id) => ({
+            enrollment: {
+                course_id
+            }
+        }), '/user/enrollments', {}
+    )
+
+    useEffect(() => {
+        if (!open) setErrors({})
+    }, [open])
 
 
-    return (<Modal
-        id='fooo'
-        onClose={() => setOpen(false)}
-        onOpen={() => setOpen(true)}
-        open={open}
-        trigger={<Button> Show Modal</Button>}
-    >
-        <Modal.Header>
-            Course Search
-        </Modal.Header>
-        <Modal.Content>
-            <Search
-                loading={isLoading || isFetching}
-                results={data}
-                onSearchChange={(e, data) => setSearch(data.value)}
-            />
-        </Modal.Content>
-    </Modal>)
+    return (
+        <>
+            <Modal
+                onHide={e => setOpen(false)}
+                show={open}
+            >
+                <Modal.Title>
+                    Course Search
+                </Modal.Title>
+                <Modal.Body>
+                    <Form>
+                        <Form.Group>
+                            <label>Courses</label>
+                            <Form.Control type='text' onChange={e => {
+                                setSearch(e.target.value)
+                            }}/>
+                            {(typeof data?.length !== "undefined" && data?.length !== 0) ?
+                                <Form.Control as='select' multiple='multiple' htmlSize={data?.length}>
+                                    {data?.map(v => <option
+                                        value={v.id}
+                                        onClick={e => {
+                                            mutate(e.target.value)
+                                        }}
+                                    >
+                                        {v.title}
+                                    </option>)}
+                                </Form.Control> : null}
+                        </Form.Group>
+                    </Form>
+                </Modal.Body>
+            </Modal>
+            <div style={{display: 'grid', gridTemplateColumns: '1fr', rowGap: '1rem'}}>
+                <a
+                    href=""
+                    className="card shadow-sm hover-container"
+                    onClick={(e) => {
+                        e.preventDefault();
+                        setOpen(true)
+                    }
+                    }
+                >
+                    <div className="card-body" style={{display: 'flex', justifyContent: 'center'}}>
+                        <i className="fas fa-plus fa-2x"/>
+                    </div>
+                </a>
+                {courses?.map(v => <CourseCard course={v}/>)}
+            </div>
+        </>)
 }
 
-document.addEventListener(
-    'DOMContentLoaded',
-    () => {
-        const node = document.getElementById('hello-react')
-        const data = JSON.parse(node.getAttribute('data'))
-        const children = node.children;
-            console.log('qweqwew')
-            ReactDOM.render(<QueryClientProvider client={queryClient}><Hello /></QueryClientProvider>, node)
+
+// Render component with data
+document.addEventListener('turbo:load', (e) => {
+    const node = document.querySelectorAll('#hello-react')
+    if (node.length > 0) {
+
+        node.forEach((v) => {
+            const data = JSON.parse(v.getAttribute('data'))
+
+            ReactDOM.render(<QueryClientProvider client={queryClient} contextSharing><Hello/></QueryClientProvider>, v)
+        })
     }
-);
+})
+
+/*
+
+    useEffect(async () => {
+        if (search != null) {
+            const data = await queryClient.fetchQuery(['courseSearch', search], () => fetch(`/courses/search?name=${search}`, {
+                headers: {
+                    'Accept': 'application/json'
+                }
+            }).then(resp => resp.json()).then(json => json.map(v => ({title: v.name, id: v.id}))))
+
+            setData(data)
+        }
+    }, [search])
+
+
+    console.log('heeeeeeeeeeeeeeeeeeeeeer')
+
+ */

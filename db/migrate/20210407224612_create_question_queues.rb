@@ -3,6 +3,7 @@ class CreateQuestionQueues < ActiveRecord::Migration[6.1]
     create_table :question_queues do |t|
       t.belongs_to :course
       t.timestamps
+      t.boolean :archived, default: true
     end
   end
 end

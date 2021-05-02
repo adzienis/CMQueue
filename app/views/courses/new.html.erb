@@ -1,0 +1,18 @@
+<div class="container mt-4">
+
+  <h2>
+    Add a New Course
+  </h2>
+
+  <div class="card">
+    <div class="card-body">
+      <%= form_with url: courses_url, scope: :course do |form| %>
+        <div class="form-group">
+          <%= form.label :name, "Name" %>
+          <%= form.text_field :name, class: 'form-control' %>
+        </div>
+        <%= form.submit "Submit" %>
+      <% end %>
+    </div>
+  </div>
+</div>

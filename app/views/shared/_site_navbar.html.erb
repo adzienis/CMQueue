@@ -1,0 +1,44 @@
+<% if user_signed_in? %>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">CMQueue</a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        href="#navbarSupportedContent"
+        data-toggle="collapse"
+        data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0 d-flex flex-grow-1">
+          <li class="nav-item">
+
+            <%= link_to "Enrollments", user_enrollments_url, class: "nav-link #{request.path == user_enrollments_path ? 'active' : ''}" %>
+          </li>
+          <% if current_user.has_role? :admin %>
+            <li class="nav-item">
+              <%= link_to "Admin Settings", admin_settings_path, class: "nav-link" %>
+            </li>
+          <% end %>
+          <li class="nav-item flex-grow-1">
+            <%= link_to "Sign out", destroy_user_session_path, class: "nav-link" %>
+          </li>
+
+
+          <li class="nav-item">
+            <a class="nav-link">
+              <b>
+                <%= current_user.email %>
+              </b>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+<% end %>

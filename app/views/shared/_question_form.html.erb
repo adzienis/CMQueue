@@ -1,5 +1,10 @@
 <%= form_with url: questions_url,
-              model: question, class: 'ui form' do |form| %>
+              model: question, class: 'ui form', local: false do |form| %>
+  <%= hidden_field :question, :user_id, value: current_user.id %>
+  <div class="field fluid">
+    <%= form.label "Queue" %><br>
+    <%= form.select :question_queue_id, @course.question_queues.ids %>
+  </div>
   <div class="field fluid">
     <%= form.label "Description" %><br>
     <%= form.text_field :description %>
@@ -15,5 +20,5 @@
     <%= form.text_field :location %>
   </div>
 
-  <%= form.submit %>
+  <%= form.submit "submit" %>
 <% end %>

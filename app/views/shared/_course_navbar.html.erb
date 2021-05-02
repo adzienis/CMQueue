@@ -1,0 +1,83 @@
+<% if current_user.has_role? :ta, @course %>
+  <div class="mt-4 mb-4">
+    <nav class="
+        navbar
+        navbar-expand-lg
+        navbar-light
+        shadow-sm
+        bg-light
+"
+    >
+      <div class="container-fluid justify-content-md-center">
+        <ul class="navbar-nav">
+
+          <%= content_tag :li,
+                          class: "nav-item #{(request.path == course_path(@course) || request.path == answer_course_path(@course)) ?
+                                               'active' : ''}" do %>
+            <%= link_to "Queue",
+                        course_path(@course),
+                        class: "nav-link"
+            %>
+          <% end %>
+
+
+          <%= content_tag :li, class: "nav-item #{request.path == courseInfo_course_path(@course) ? 'active' : ''}" do %>
+            <%= link_to "Course Info",
+                        courseInfo_course_path(@course),
+                        class: "nav-link"
+            %>
+          <% end %>
+
+
+          <li class="nav-item dropdown">
+
+            <%= content_tag :a,
+                            class: "nav-link dropdown-toggle #{request.path == settings_course_course_path(@course) ? 'active' : ''}",
+                            id: "settings-dropdown",
+                            href: "#",
+                            data: { toggle: "dropdown"} do %>
+            Settings
+            <% end %>
+            <div class="dropdown-menu" aria-labelledby="settings-dropdown">
+              <%= link_to "Course",
+                          settings_course_course_path(@course),
+                          class: "dropdown-item"
+              %>
+              <%= link_to "Queues",
+                          settings_queues_course_path(@course),
+                          class: "dropdown-item"
+              %>
+            </div>
+          </li>
+
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="settings-dropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Analytics
+            </a>
+            <div class="dropdown-menu" aria-labelledby="settings-dropdown">
+              <%= link_to "Overall",
+                          analytics_course_path(@course),
+                          class: "dropdown-item" %>
+              <%= link_to "TA's",
+                          analytics_course_path(@course),
+                          class: "dropdown-item"
+              %>
+              <%= link_to "Student's",
+                          analytics_course_path(@course),
+                          class: "dropdown-item"
+              %>
+            </div>
+          </li>
+
+          <%= content_tag :li, class: "nav-item #{request.path == activeTAs_course_path(@course) ? 'active' : ''}" do %>
+            <%= link_to "TA Log",
+                        activeTAs_course_path(@course),
+                        class: "nav-link" %>
+          <% end %>
+
+
+        </ul>
+      </div>
+    </nav>
+  </div>
+<% end %>

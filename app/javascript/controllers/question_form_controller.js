@@ -1,6 +1,6 @@
 import ApplicationController from './application_controller'
 
-/* This is the custom StimulusReflex controller for the CourseSearch Reflex.
+/* This is the custom StimulusReflex controller for the QuestionForm Reflex.
  * Learn more at: https://docs.stimulusreflex.com
  */
 export default class extends ApplicationController {
@@ -15,22 +15,13 @@ export default class extends ApplicationController {
    * By default, StimulusReflex overrides the -connect- method so make sure you
    * call super if you intend to do anything else when this controller connects.
   */
-  static values = { courseId: Number }
 
   connect () {
     super.connect()
-    $('.ui.modal')
-        .modal()
-    ;
-
     // add your code here, if applicable
   }
 
-  click(e) {
-    e.preventDefault()
-    $('.ui.modal')
-        .modal('show')
-    ;
+  submit() {
   }
 
   /* Reflex specific lifecycle methods.
@@ -40,26 +31,26 @@ export default class extends ApplicationController {
    * need them.
    *
    * Important:
-   * Make sure to add data-controller="course-search" to your markup alongside
-   * data-reflex="CourseSearch#dance" for the lifecycle methods to fire properly.
+   * Make sure to add data-controller="question-form" to your markup alongside
+   * data-reflex="QuestionForm#dance" for the lifecycle methods to fire properly.
    *
    * Example:
    *
-   *   <a href="#" data-reflex="click->CourseSearch#dance" data-controller="course-search">Dance!</a>
+   *   <a href="#" data-reflex="click->QuestionForm#dance" data-controller="question-form">Dance!</a>
    *
    * Arguments:
    *
    *   element - the element that triggered the reflex
    *             may be different than the Stimulus controller's this.element
    *
-   *   reflex - the name of the reflex e.g. "CourseSearch#dance"
+   *   reflex - the name of the reflex e.g. "QuestionForm#dance"
    *
    *   error/noop - the error message (for reflexError), otherwise null
    *
    *   reflexId - a UUID4 or developer-provided unique identifier for each Reflex
    */
 
-  // Assuming you create a "CourseSearch#dance" action in your Reflex class
+  // Assuming you create a "QuestionForm#dance" action in your Reflex class
   // you'll be able to use the following lifecycle methods:
 
   // beforeDance(element, reflex, noop, reflexId) {

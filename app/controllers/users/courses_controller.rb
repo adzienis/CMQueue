@@ -6,9 +6,6 @@ class Users::CoursesController < ApplicationController
     @peep ||= false
     @courses ||= current_user.courses
     @searched_courses ||= []
-
-    puts "CURRENT COURSES ================================="
-    puts @courses
   end
 
   def new

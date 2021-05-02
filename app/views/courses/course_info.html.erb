@@ -1,0 +1,30 @@
+<div class="card shadow-sm">
+  <div class="card-body">
+    <div>
+      <h4>
+        Course Name
+      </h4>
+      <p>
+        <%= @course.name %>
+      </p>
+    </div>
+    <div>
+      <h4>
+        TA Code
+      </h4>
+      <p>
+        <%= @course.ta_code %>
+      </p>
+    </div>
+    <% if current_user.has_role? :instructor, @course %>
+      <div>
+        <h4>
+          Instructor Code
+        </h4>
+        <p>
+          <%= @course.instructor_code %>
+        </p>
+      </div>
+    <% end %>
+  </div>
+</div>

@@ -1,0 +1,31 @@
+<div style="display: flex; justify-content: center" class="container mt-4">
+  <div style="display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-column-gap: 5%;
+    justify-items: center;"
+       class="w-100"
+  >
+    <div class="w-100">
+      <h1>
+        Student Courses
+      </h1>
+
+      <div id='enrollment-cards'
+           data-controller="courseCard">
+        <%= content_tag :div,
+                        id: "hello-react" do %>
+        <% end %>
+      </div>
+    </div>
+    <div class="w-100">
+      <h1>
+        Instructor Courses
+      </h1>
+      <%= content_tag :div,
+                      id: "add-course-by-code", data: {
+          userId: current_user.id
+        }.to_json do %>
+      <% end %>
+    </div>
+  </div>
+</div>

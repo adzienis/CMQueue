@@ -1,2 +1,92 @@
-<h1>Questions#show</h1>
-<p>Find me in app/views/questions/show.html.erb</p>
+<div class="container mt-4">
+  <div class="mt-4 mb-4">
+    <nav class="
+        navbar
+        navbar-expand-lg
+        navbar-light
+        shadow-sm
+        bg-light
+"
+    >
+      <div class="container-fluid justify-content-md-center">
+        <ul class="navbar-nav">
+
+          <%= content_tag :li,
+                          class: "nav-item" do %>
+            <%= link_to "Back",
+                        "",
+                        class: "nav-link",
+                        onclick: "event.preventDefault(); window.history.back()"
+            %>
+          <% end %>
+        </ul>
+      </div>
+    </nav>
+  </div>
+
+  <div class="card shadow">
+    <div class="card-body">
+      <div class="card-title">
+        <h2>
+          <%= @question.user.given_name %>
+        </h2>
+        <h5>
+          <%= "#{@question.question_state.state} at #{@question.question_state.created_at}" %>
+        </h5>
+        <h5>
+          <%= "Created at #{@question.created_at}" %>
+        </h5>
+      </div>
+      <div class="card-text">
+        <h4>
+          Description
+        </h4>
+        <p>
+          <%= @question.description %>
+        </p>
+        <h4>
+          What Have They Tried?
+        </h4>
+        <p>
+          <%= @question.tried %>
+        </p>
+        <h4>
+          Location
+        </h4>
+        <p>
+          <%= @question.location %>
+        </p>
+        <h4>
+          Queues
+        </h4>
+        <p>
+          <% @question.tags.each do |t| %>
+            <%= t.name %>
+          <% end %>
+        </p>
+        <h4>
+          Previous Questions
+        </h4>
+        <% if @previous_questions.count == 0 %>
+          <div class="alert alert-warning">
+            No Questions
+          </div>
+        <% end %>
+        <div class="list-group">
+          <% @previous_questions.each do |question| %>
+            <%= link_to question_path(question), class: "text-decoration-none", style: 'color: inherit' do %>
+              <div class="list-group-item">
+                <div>
+                  <%= question.question_state.created_at %>
+                </div>
+                <div>
+                  <%= question.description %>
+                </div>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

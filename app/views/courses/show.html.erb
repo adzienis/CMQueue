@@ -1,11 +1,35 @@
-<div class="ui container" style="display: flex;flex-direction: column; align-items: center">
-  <div class="ui segment" style="max-width: 800px; width: 100%">
-    <div style="display: flex; flex-direction: column; align-items: center">
-        <div class="ui header huge">
-          0
-        </div>
-        <span> Total Number of Questions</span>
-    </div>
-  </div>
-  <%= render partial: 'shared/question_form', locals: { question: Question.new} %>
+<div
+  style="display: flex; flex-direction: column; align-items: center">
+
+  <%= content_tag :div, id: "queue-info-panel", class: 'w-100', data: {
+    courseId: @course.id, userId: current_user.id,
+  }.to_json do %>
+  <% end %>
+
+
+  <% if current_user.has_role? :student, @course %>
+
+
+    <%= content_tag :div, id: "student-queue-view", data: {
+      courseId: @course.id, userId: current_user.id
+    }.to_json, class: 'w-100'  do %>
+    <% end %>
+
+
+  <% elsif current_user.has_role? :ta, @course %>
+
+    <%= content_tag :div, id: "ta-queue-view", data: {
+      courseId: @course.id, userId: current_user.id
+    }.to_json, class: 'w-100' do %>
+    <% end %>
+
+  <% elsif current_user.has_role? :instructor, @course %>
+
+    <%= content_tag :div, id: "ta-queue-view", data: {
+      courseId: @course.id, userId: current_user.id
+    }.to_json, class: 'w-100'  do %>
+    <% end %>
+
+  <% end %>
+
 </div>

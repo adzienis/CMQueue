@@ -1,0 +1,33 @@
+<div class="container mt-4">
+  <%= button_to "Back", settings_queues_course_path(@tag.course), method: :get, class: "ui button" %>
+
+
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <div class="card-title">
+        <h4>
+          <%= @tag.name %>
+        </h4>
+      </div>
+      <%= form_with model: @tag, method: :patch do |form| %>
+        <div class="form-group">
+          <div class="ui toggle checkbox">
+            <%= form.label :archived, "Archived" %>
+            <%= form.check_box :archived, class: 'form-check'
+            %>
+          </div>
+        </div>
+        <div class="form-group">
+          <%= form.label :name, "Name" %>
+          <%= form.text_field :name, placeholder: tag.name, class: 'form-control' %>
+        </div>
+        <div class="form-group">
+          <%= form.label :description, "Description" %>
+          <%= form.text_area :description, placeholder: tag.description, class: 'form-control' %>
+        </div>
+
+        <%= form.submit "Submit" %>
+      <% end %>
+    </div>
+  </div>
+</div>
