@@ -141,7 +141,7 @@ export default function QuestionWaitingModal(props) {
                         </div>
                     </div>)}
                     <Form>
-                        <Form.Group>
+                        <div className="mb-2">
                             <Form.Label> Description </Form.Label>
                             <Form.Control as='textarea'
                                           rows={3}
@@ -149,8 +149,8 @@ export default function QuestionWaitingModal(props) {
                                           onChange={e => setDescription(e.target.value)}
                             />
 
-                        </Form.Group>
-                        <Form.Group>
+                        </div>
+                        <div className="mb-2">
                             <Form.Label>Queue</Form.Label>
                             <Form.Control as='select' multiple
                                           placeholder="Select a Queue"
@@ -165,8 +165,8 @@ export default function QuestionWaitingModal(props) {
                                     {v.name}
                                 </option>))}
                             </Form.Control>
-                        </Form.Group>
-                        <Form.Group>
+                        </div>
+                        <div className="mb-2">
                             <Form.Label> What Have You Tried?</Form.Label>
                             <Form.Control
                                 as='textarea'
@@ -174,8 +174,8 @@ export default function QuestionWaitingModal(props) {
                                 value={tried}
                                 onChange={e => setTried(e.target.value)}
                             />
-                        </Form.Group>
-                        <Form.Group>
+                        </div>
+                        <div className="mb-2">
                             <Form.Label> Zoom </Form.Label>
                             <Form.Control
                                 as='textarea'
@@ -183,7 +183,7 @@ export default function QuestionWaitingModal(props) {
                                 value={location}
                                 onChange={e => setLocation(e.target.value)}
                             />
-                        </Form.Group>
+                        </div>
                     </Form>
                     <div style={{
                         display: 'grid',

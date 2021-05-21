@@ -1,4 +1,4 @@
-<div class="container mt-4">
+<div class="container mt-4 mb-5">
   <div class="mt-4 mb-4">
     <nav class="
         navbar
@@ -28,42 +28,56 @@
     <div class="card-body">
       <div class="card-title">
         <h2>
-          <%= @question.user.given_name %>
+          <b>
+            <%= link_to @question.user.given_name,
+                        course_user_path(@question.course, @question.user),
+                        style: "text-decoration: none; color: inherit"%>
+          </b>
         </h2>
         <h5>
-          <%= "#{@question.question_state.state} at #{@question.question_state.created_at}" %>
+          <%= @question.question_state.state.capitalize %> at <b><%= @question.question_state.created_at.strftime('%B %-d, %Y %l:%M %P') %></b>
         </h5>
         <h5>
-          <%= "Created at #{@question.created_at}" %>
+          Created at <b><%= @question.created_at.strftime('%B %-d, %Y %l:%M %P') %> </b>
         </h5>
       </div>
+      <hr />
       <div class="card-text">
         <h4>
-          Description
+          <b>
+            Description
+          </b>
         </h4>
         <p>
-          <%= @question.description %>
+            <%= @question.description %>
         </p>
         <h4>
-          What Have They Tried?
+          <b>
+            What Have They Tried?
+          </b>
         </h4>
         <p>
           <%= @question.tried %>
         </p>
         <h4>
-          Location
+          <b>
+            Location
+          </b>
         </h4>
         <p>
           <%= @question.location %>
         </p>
         <h4>
-          Queues
+          <b>
+            Queues
+          </b>
         </h4>
         <p>
           <% @question.tags.each do |t| %>
-            <%= t.name %>
+            <%= link_to t.name, course_tag_path(t.course, t), class: "text-decoration-none" %>
           <% end %>
         </p>
+        <hr/>
         <h4>
           Previous Questions
         </h4>
@@ -74,10 +88,12 @@
         <% end %>
         <div class="list-group">
           <% @previous_questions.each do |question| %>
-            <%= link_to question_path(question), class: "text-decoration-none", style: 'color: inherit' do %>
-              <div class="list-group-item">
+            <%= link_to course_question_path(question.course, question), class: "text-decoration-none", style: 'color: inherit' do %>
+              <div class="list-group-item mb-1">
                 <div>
-                  <%= question.question_state.created_at %>
+                  <b>
+                    <%= question.question_state.created_at.strftime('%B %-d, %Y %l:%M %P') %>
+                  </b>
                 </div>
                 <div>
                   <%= question.description %>

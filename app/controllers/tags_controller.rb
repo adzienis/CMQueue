@@ -25,16 +25,17 @@ class TagsController < ApplicationController
     @tag = Tag.find(params[:id])
     @tag.update(update_params)
 
-    redirect_to edit_tag_path(@tag)
+    redirect_to settings_queues_course_path(@tag.course)
   end
 
   def edit
     @tag = Tag.find(params[:id])
+    @course = @tag.course
   end
 
   def show
-
     @tag = Tag.find(params[:id])
+    @course = @tag.course
   end
 
   private

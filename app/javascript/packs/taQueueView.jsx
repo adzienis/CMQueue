@@ -19,14 +19,13 @@ const Component = props => {
 
     const {data, fetchNextPage, hasNextPage} =
         useInfiniteQuery(['courses', parseInt(courseId, 10), 'paginatedQuestions'],
-            ({pageParam = 0}) => {
+            ({pageParam = -1}) => {
                 return fetch(`/courses/${courseId}/questions?cursor=${pageParam}&` +
                     `state=["frozen", "unresolved"]&course_id=${courseId}`, {
                     headers: {
                         'Accept': 'application/json'
                     }
                 }).then(resp => resp.json()).then(json => {
-                    console.log(json)
                     return {
                         cursor: json.cursor?.id,
                         data: json.data
@@ -45,7 +44,7 @@ const Component = props => {
 
     const {data: pastQuestions, fetchNextPage: fetchNextPastPage, hasNextPage: hasNextPastPage} =
         useInfiniteQuery(['courses', parseInt(courseId, 10), 'paginatedPastQuestions'],
-            ({pageParam = 0}) => {
+            ({pageParam = -1}) => {
                 return fetch(`/courses/${courseId}/questions?cursor=${pageParam}&` +
                     `state=["kicked", "resolved"]&course_id=${courseId}`, {
                     headers: {
@@ -64,12 +63,15 @@ const Component = props => {
                 }
             })
 
-
     return (
         <>
             <div className='mb-4'>
                 <div className='d-flex'>
-                    <div className='btn-group w-100'>
+                    <div className='w-100' style={{
+                        display: 'grid',
+                        gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+                        gridGap: '10px'
+                    }}>
                         <QuestionAnswerer userId={userId} courseId={courseId}/>
                         <QueueOpener userId={userId} courseId={courseId}/>
                     </div>
@@ -81,7 +83,8 @@ const Component = props => {
                         Questions
                     </h1>
                     {flattenedQuestions?.length > 0 ? flattenedQuestions?.map(v => (
-                        <a href={`/questions/${v.id}`} className='text-decoration-none' style={{color: 'inherit'}}>
+                        <a href={`/courses/${courseId}/questions/${v.id}`} className='text-decoration-none'
+                           style={{color: 'inherit'}}>
                             <QuestionCard key={v.id}
                                           question={v}
                                           userId={userId}
@@ -106,14 +109,15 @@ const Component = props => {
 
                 <hr/>
 
-                <a className="mt-3 text-secondary" data-toggle="collapse" href="#past-questions" role="button"
+                <a className="mt-3 text-secondary" data-bs-toggle="collapse" href="#past-questions" role="button"
                    aria-expanded="false" aria-controls="collapseExample">
                     Past Questions
                 </a>
                 <div className="collapse mt-3" id="past-questions">
-                    {pastQuestions?.pages.map(v => v.data).flat()?.map(v => <a href={`/questions/${v.id}`}
-                                                                               className='text-decoration-none'
-                                                                               style={{color: 'inherit'}}><QuestionCard
+                    {pastQuestions?.pages.map(v => v.data).flat()?.map(v => <a
+                        href={`/courses/${courseId}/questions/${v.id}`}
+                        className='text-decoration-none'
+                        style={{color: 'inherit'}}><QuestionCard
                         key={v.id} question={v}/></a>)}
                     <Button onClick={async () => {
                         await fetchNextPastPage()

@@ -10,16 +10,32 @@ Rails.application.routes.draw do
 
   get 'courses/search', to: "courses#search"
 
+  resources :questions, shallow: true do
+    resources :messages
+    member do
+      get 'paginatedPreviousQuestions', to: "questions#paginated_previous_questions"
+      get 'previousQuestions', to: "questions#previous_questions"
+    end
+  end
+
   resources :courses do
+    resources :questions
+    resources :tags
+    resources :users
+
     member do
       get 'roster', to: "courses#roster"
       get 'courseInfo', to: "courses#course_info"
       get 'settings/queues', to: "courses#queues"
       get 'activeTAs', to: "courses#active_tas"
       get 'analytics', to: "courses/analytics#index"
+      get 'analytics/today', to: "courses/analytics#today"
+      get 'analytics/tas', to: "courses/analytics#tas"
       get 'settings/course', to: "courses/settings#index"
       post 'answer', to: "courses#answer"
       get 'answer', to: "courses#answer_page"
+      get 'answer/question', to: "courses#answer_page", as: :answer_question
+      get 'answer/previousQuestions', to: "courses#answer_page"
       post 'putBack', to: "courses#putBack"
       post 'finishAnswering', to: "courses#finishAnswering"
       post 'freeze', to: "courses#freeze"
@@ -28,18 +44,6 @@ Rails.application.routes.draw do
       get 'open', to: "courses#open_status"
       post 'open', to: "courses#open"
     end
-  end
-
-  resources :questions, shallow: true do
-    resources :messages
-    member do
-      get 'paginatedPreviousQuestions', to: "questions#paginated_previous_questions"
-    end
-  end
-
-  resources :courses, shallow: true do
-    resources :questions
-    resources :tags
   end
   resources :questions
   resources :courses

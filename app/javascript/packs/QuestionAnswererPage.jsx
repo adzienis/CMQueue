@@ -1,5 +1,5 @@
 import QuestionExplainer from "./QuestionExplainer";
-import {Button, Card, ListGroup} from "react-bootstrap";
+import {Button, Card, Nav, Navbar} from "react-bootstrap";
 import React, {useEffect, useRef, useState} from "react";
 import {QueryClientProvider, useQuery, useQueryClient} from "react-query";
 import useWrappedMutation from "./useWrappedMutation";
@@ -12,6 +12,8 @@ const Component = props => {
     const refq = useRef();
 
     const [openExplain, setOpenExplain] = useState(false);
+
+    const [selector, setSelector] = useState('question');
 
     const queryClient = useQueryClient();
 
@@ -74,6 +76,75 @@ const Component = props => {
         }
     })
 
+    let elem = null;
+
+    if (selector === 'previousQuestions') {
+        elem = (
+            <>
+                <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
+                    columnGap: '20px'
+                }}>
+                    {paginatedPreviousQuestions?.length > 0 ? (paginatedPreviousQuestions?.map(v => <a
+                        href={`/questions/${v.id}`} className='text-decoration-none mb-2'
+                        style={{color: 'inherit'}}>
+                        <QuestionCard question={v}/>
+                    </a>)) : (
+                        <div className='alert alert-warning'>
+                            No Previous Questions
+                        </div>
+                    )}
+                </div>
+            </>
+        )
+    } else if (selector === 'question') {
+        elem = (
+            <div className='p-1'>
+                <h4>
+                    <b>
+                        User
+                    </b>
+                </h4>
+                <span>
+                            {topQuestion?.user.given_name}
+                </span>
+                <h4>
+                    <b>
+                        Description
+                    </b>
+                </h4>
+                <span>
+                             {topQuestion?.description}
+                            </span>
+                <h4>
+                    <b>
+                        What Have They Tried?
+                    </b>
+                </h4>
+                <span>
+                                {topQuestion?.tried}
+                            </span>
+                <h4>
+                    <b>
+                        Zoom
+                    </b>
+                </h4>
+                <span>
+                                {topQuestion?.location}
+                            </span>
+                <h4>
+                    <b>
+                        Queues
+                    </b>
+                </h4>
+                <span>
+                                {topQuestion?.tags?.map(v => v.name).join(', ')}
+                            </span>
+            </div>
+        )
+    }
+
 
     return (
         <>
@@ -91,82 +162,24 @@ const Component = props => {
                             {topQuestion?.user.given_name}
                         </h2>
                     </Card.Title>
-                    <hr/>
-
-                    <div style={{
-                        display: 'grid',
-                        gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
-                        columnGap: '30px'
-                    }}>
-                        <div>
-                            <h4>
-                                Information
-                            </h4>
-                            <ListGroup>
-                                <ListGroup.Item>
-                                    <h4>
-                                        <b>
-                                            Description
-                                        </b>
-                                    </h4>
-                                    <span>
-                             {topQuestion?.description}
-                            </span>
-                                </ListGroup.Item>
-                                <ListGroup.Item>
-                                    <h4>
-                                        <b>
-                                            What Have They Tried?
-                                        </b>
-                                    </h4>
-                                    <span>
-                                {topQuestion?.tried}
-                            </span>
-                                </ListGroup.Item>
-                                <ListGroup.Item>
-                                    <h4>
-                                        <b>
-                                            Zoom
-                                        </b>
-                                    </h4>
-                                    <span>
-                                {topQuestion?.location}
-                            </span>
-                                </ListGroup.Item>
-                                <ListGroup.Item>
-                                    <h4>
-                                        <b>
-                                            Queues
-                                        </b>
-                                    </h4>
-                                    <span>
-                                {topQuestion?.tags?.map(v => v.name).join(', ')}
-                            </span>
-                                </ListGroup.Item>
-                            </ListGroup>
-
-                        </div>
-
-                        <div>
-                            <h4>
-                                Previous Questions
-                            </h4>
-                            <div style={{
-                                display: 'grid',
-                                gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-                                columnGap: '20px'
+                    <Navbar className='pl-0 pr-0'>
+                        <Nav className='w-100' variant='tabs'>
+                            <Nav.Link onClick={e => {
+                                setSelector('question')
                             }}>
-                                {paginatedPreviousQuestions?.length > 0 ? (paginatedPreviousQuestions?.map(v => <a
-                                    href={`/questions/${v.id}`} className='text-decoration-none'
-                                    style={{color: 'inherit'}}>
-                                    <QuestionCard question={v}/>
-                                </a>)) : (
-                                    <div className='alert alert-warning'>
-                                        No Previous Questions
-                                    </div>
-                                )}
-                            </div>
-                        </div>
+                                Question
+                            </Nav.Link>
+                            <Nav.Link onClick={e => {
+                                setSelector('previousQuestions')
+                            }}>
+                                Previous Questions
+                            </Nav.Link>
+                        </Nav>
+                    </Navbar>
+
+                    <div>
+                        {elem}
+
                     </div>
                 </Card.Body>
                 <Card.Footer>

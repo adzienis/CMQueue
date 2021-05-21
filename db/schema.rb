@@ -12,6 +12,9 @@
 
 ActiveRecord::Schema.define(version: 2021_04_29_180440) do
 
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
   create_table "announcements", force: :cascade do |t|
     t.string "title", default: ""
     t.text "description", default: ""
@@ -32,15 +35,15 @@ ActiveRecord::Schema.define(version: 2021_04_29_180440) do
   end
 
   create_table "courses_questions", id: false, force: :cascade do |t|
-    t.integer "course_id"
-    t.integer "question_id"
+    t.bigint "course_id"
+    t.bigint "question_id"
     t.index ["course_id"], name: "index_courses_questions_on_course_id"
     t.index ["question_id"], name: "index_courses_questions_on_question_id"
   end
 
   create_table "courses_users", force: :cascade do |t|
-    t.integer "course_id"
-    t.integer "user_id"
+    t.bigint "course_id"
+    t.bigint "user_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["course_id"], name: "index_courses_users_on_course_id"
@@ -48,8 +51,8 @@ ActiveRecord::Schema.define(version: 2021_04_29_180440) do
   end
 
   create_table "messages", force: :cascade do |t|
-    t.integer "user_id"
-    t.integer "question_state_id"
+    t.bigint "user_id"
+    t.bigint "question_state_id"
     t.text "description", default: ""
     t.boolean "seen", default: false
     t.datetime "created_at", precision: 6, null: false
@@ -59,7 +62,7 @@ ActiveRecord::Schema.define(version: 2021_04_29_180440) do
   end
 
   create_table "question_queues", force: :cascade do |t|
-    t.integer "course_id"
+    t.bigint "course_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.boolean "archived", default: true
@@ -67,8 +70,8 @@ ActiveRecord::Schema.define(version: 2021_04_29_180440) do
   end
 
   create_table "question_states", force: :cascade do |t|
-    t.integer "question_id"
-    t.integer "user_id"
+    t.bigint "question_id"
+    t.bigint "user_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "state", null: false
@@ -77,8 +80,8 @@ ActiveRecord::Schema.define(version: 2021_04_29_180440) do
   end
 
   create_table "questions", force: :cascade do |t|
-    t.integer "course_id"
-    t.integer "user_id"
+    t.bigint "course_id"
+    t.bigint "user_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.text "title"
@@ -91,8 +94,8 @@ ActiveRecord::Schema.define(version: 2021_04_29_180440) do
   end
 
   create_table "questions_tags", id: false, force: :cascade do |t|
-    t.integer "tag_id"
-    t.integer "question_id"
+    t.bigint "tag_id"
+    t.bigint "question_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["question_id"], name: "index_questions_tags_on_question_id"
@@ -102,7 +105,7 @@ ActiveRecord::Schema.define(version: 2021_04_29_180440) do
   create_table "roles", force: :cascade do |t|
     t.string "name"
     t.string "resource_type"
-    t.integer "resource_id"
+    t.bigint "resource_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["name", "resource_type", "resource_id"], name: "index_roles_on_name_and_resource_type_and_resource_id"
@@ -111,7 +114,7 @@ ActiveRecord::Schema.define(version: 2021_04_29_180440) do
   end
 
   create_table "tags", force: :cascade do |t|
-    t.integer "course_id"
+    t.bigint "course_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.boolean "archived", default: true
@@ -120,32 +123,32 @@ ActiveRecord::Schema.define(version: 2021_04_29_180440) do
     t.index ["course_id"], name: "index_tags_on_course_id"
   end
 
-  create_table "users", force: :cascade do |t|
+  create_table "questions", force: :cascade do |t|
     t.text "given_name"
     t.text "family_name"
     t.text "email"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.integer "question_state_id"
+    t.bigint "question_state_id"
     t.string "provider"
     t.string "uid"
     t.index ["question_state_id"], name: "index_users_on_question_state_id"
   end
 
   create_table "users_roles", id: false, force: :cascade do |t|
-    t.integer "user_id"
-    t.integer "role_id"
+    t.bigint "user_id"
+    t.bigint "role_id"
     t.index ["role_id"], name: "index_users_roles_on_role_id"
     t.index ["user_id", "role_id"], name: "index_users_roles_on_user_id_and_role_id"
     t.index ["user_id"], name: "index_users_roles_on_user_id"
   end
 
   add_foreign_key "messages", "question_states"
-  add_foreign_key "messages", "users"
+  add_foreign_key "messages", "questions"
   add_foreign_key "question_states", "questions"
-  add_foreign_key "question_states", "users"
+  add_foreign_key "question_states", "questions"
   add_foreign_key "questions", "courses"
-  add_foreign_key "questions", "users"
+  add_foreign_key "questions", "questions"
   add_foreign_key "questions_tags", "questions"
   add_foreign_key "questions_tags", "tags"
 end

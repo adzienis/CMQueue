@@ -1,3 +1,7 @@
+<h1>
+  <%= @course.name %>
+</h1>
+
 <div
   style="display: flex; flex-direction: column; align-items: center">
 
@@ -12,7 +16,7 @@
 
     <%= content_tag :div, id: "student-queue-view", data: {
       courseId: @course.id, userId: current_user.id
-    }.to_json, class: 'w-100'  do %>
+    }.to_json, class: 'w-100' do %>
     <% end %>
 
 
@@ -27,7 +31,7 @@
 
     <%= content_tag :div, id: "ta-queue-view", data: {
       courseId: @course.id, userId: current_user.id
-    }.to_json, class: 'w-100'  do %>
+    }.to_json, class: 'w-100' do %>
     <% end %>
 
   <% end %>

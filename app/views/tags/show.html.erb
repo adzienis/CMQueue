@@ -1,17 +1,36 @@
 <div class="container mt-4">
 
-  <%= button_to "Back", settings_queues_course_path(@tag.course), method: :get, class: "ui button" %>
+  <%= render partial: "shared/back_navbar" %>
 
   <div class="card shadow-sm">
     <div class="card-body">
       <div class="card-title">
         <h2>
-          <%= @tag.name %>
+          <b>
+            <%= @tag.name %>
+          </b>
         </h2>
       </div>
+      <hr>
       <div class="card-text">
-        <%= @tag.description %>
+        <div>
+          <h2>
+            Description
+          </h2>
+          <%= @tag.description %>
+        </div>
+        <div>
+          <h2>
+            Total Questions
+          </h2>
+          <%= @tag.questions.count %>
+        </div>
       </div>
+    </div>
+    <div class="card-footer d-flex flex-row">
+      <div class="flex-1"></div>
+      <%= button_to "Edit", edit_course_tag_path(@tag), class: "btn btn-warning me-2", method: :get %>
+      <%= button_to "Delete", course_tag_path(@tag), class: "btn btn-danger", method: :delete %>
     </div>
   </div>
 

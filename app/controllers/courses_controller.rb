@@ -6,7 +6,7 @@ class CoursesController < ApplicationController
     end
 
     if current_user.question_state&.state == "resolving"
-      redirect_to answer_course_path(@course, anchor: "foo") and return
+      redirect_to answer_question_course_path(@course, anchor: "foo") and return
     end
 
     @questions = @course.questions
@@ -14,7 +14,7 @@ class CoursesController < ApplicationController
 
     @question = Question.all
                         .left_joins(:question_state, :user)
-                        .where("users.id = ?", current_user.id)
+                        .where("questions.id = ?", current_user.id)
                         .where("question_states.state in (?)", [QuestionState.states["unresolved"], QuestionState.states["frozen"]]).first
     @tags = Tag.all.where(course_id: @course.id).where(archived: false)
 
@@ -38,8 +38,8 @@ class CoursesController < ApplicationController
 
   def answer_page
     @course = Course.find(params[:id])
-
-
+    question_state = current_user.question_state
+    @top_question = question_state&.question
   end
 
   def new
@@ -124,7 +124,12 @@ class CoursesController < ApplicationController
     @course = Course.find(params[:id])
 
     @students = User.with_role :student, @course
-    @tas = User.with_role :ta, @course
+    @tas = User.with_role(:ta, @course)
+
+    @filtered_students ||= @course.users.with_role :student, @course
+
+    @pagy_students, @records_students = pagy @filtered_students
+
   end
 
   private

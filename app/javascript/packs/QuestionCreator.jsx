@@ -49,7 +49,7 @@ export default props => {
                         </h1>
                         <Form>
 
-                            <Form.Group>
+                            <div className="mb-2">
                                 <label> Queue </label>
                                 <Form.Control
                                     as='select'
@@ -67,8 +67,8 @@ export default props => {
                                         {v.name}
                                     </option>))}
                                 </Form.Control>
-                            </Form.Group>
-                            <Form.Group>
+                            </div>
+                            <div className="mb-2">
                                 <label> Description </label>
                                 <Form.Control
                                     as='textarea'
@@ -79,8 +79,8 @@ export default props => {
                                     } : null}
 
                                 />
-                            </Form.Group>
-                            <Form.Group>
+                            </div>
+                            <div className="mb-2">
                                 <label> Tried </label>
                                 <Form.Control
                                     as='textarea'
@@ -90,8 +90,8 @@ export default props => {
                                         content: errors.tried?.join(' and')
                                     } : null}
                                 />
-                            </Form.Group>
-                            <Form.Group>
+                            </div>
+                            <div className="mb-2">
                                 <label> Location </label>
                                 <Form.Control
                                     as='textarea'
@@ -101,7 +101,7 @@ export default props => {
                                         content: errors.location?.join(' and')
                                     } : null}
                                 />
-                            </Form.Group>
+                            </div>
                             <Button onClick={e => {
                                 try {
                                     createQuestion();

@@ -28,7 +28,7 @@
   <div class="card mb-3">
     <div class="card-body">
       <h2>
-        <%= @user.given_name %>
+        <%= "#{@user.given_name} #{@user.family_name}" %>
       </h2>
     </div>
   </div>
@@ -44,15 +44,14 @@
     <% end %>
     <div class="list-group text-break">
       <% @questions.each do |question| %>
-        <%= link_to question, class: "text-decoration-none", style: "color: inherit" do %>
-          <div class="list-group-item">
+        <%= link_to course_question_path(@course, question.question), class: "text-decoration-none", style: "color: inherit" do %>
+          <div class="list-group-item mb-1">
+              <span>
+                <%= question.state.capitalize %>
+                <b><%= question.updated_at.to_s(:short) %></b>
+              </span>
             <div>
-              <p>
-                Resolved at <b><%= question.question_state.updated_at %></b>
-              </p>
-              <div>
-                <%= question.description %>
-              </div>
+              <%= question.question.description %>
             </div>
           </div>
         <% end %>

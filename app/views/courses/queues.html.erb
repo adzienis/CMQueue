@@ -1,24 +1,33 @@
-<div class="card">
+<h2 class="mb-3">
+  <b>
+    Queue Settings
+  </b>
+</h2>
+
+<div class="card mb-2">
   <div class="card-body">
-    <div class="mb-5">
-      <h3>
-        Create a New Queue
-      </h3>
+    <h2>
+      Create a New Queue
+    </h2>
+    <div>
       <%= form_with url: tags_url, scope: :tag do |form| %>
         <%= form.hidden_field :course_id, value: @course.id %>
-        <div class="form-group">
+        <div class="mb-2">
           <%= form.label :name, "Name" %>
           <%= form.text_field :name, class: 'form-control' %>
         </div>
-        <div class="form-group">
+        <div class="mb-2">
           <%= form.label :description, "Description" %>
           <%= form.text_field :description, class: 'form-control' %>
         </div>
-        <%= form.submit "Submit" %>
+        <%= form.submit "Create", class: 'btn btn-primary' %>
       <% end %>
     </div>
+  </div>
+</div>
 
-    <hr/>
+<div class="card">
+  <div class="card-body">
 
     <h2 class="mb-2" id="queues">
       Queues
@@ -31,9 +40,7 @@
             <%= tag.name %>
           </h5>
           <div class="btn-group ">
-            <%= button_to "Information", tag_path(tag.id), class: "btn btn-primary mr-2", method: :get %>
-            <%= button_to "Delete", tag_path(tag.id), class: "btn btn-primary mr-2", method: :delete %>
-            <%= button_to "Edit", edit_tag_path(tag.id), class: "btn btn-primary", method: :get %>
+            <%= button_to "To Queue", course_tag_path(tag.course, tag.id), class: "btn btn-primary mr-2", method: :get %>
           </div>
         </div>
       <% end %>

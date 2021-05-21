@@ -38,7 +38,7 @@ ActiveStorage.start()
 import "controllers"
 
 document.addEventListener('turbo:load', () => {
-    BSN.initCallback();
+    //BSN.initCallback();
 
 }, false);
 

@@ -21,14 +21,14 @@ const Component = props => {
             placeholderData: []
         })
 
-    console.log('active', activeTas)
-
     return (
         <div className='mt-3 mb-4 w-100'>
-            <div className='card-deck'>
-                <div className='card bg-info text-white'>
+            <div style={{ display: 'grid',
+                gridTemplateColumns: "repeat(auto-fit, minmax(350px, 1fr))",
+            gridGap: '10px'}}>
+                <div className='card bg-primary text-white'>
                     <div className='card-body d-flex flex-row'>
-                        <div className='mr-3 d-flex justify-content-center align-items-center'>
+                        <div className='me-3 d-flex justify-content-center align-items-center'>
                             <i className="fas fa-question fa-3x"></i>
                         </div>
                         <div>
@@ -45,9 +45,9 @@ const Component = props => {
                         </div>
                     </div>
                 </div>
-                <div className='card bg-info text-white'>
+                <div className='card bg-primary text-white'>
                     <div className='card-body d-flex flex-row'>
-                        <div className='mr-3 d-flex justify-content-center align-items-center'>
+                        <div className='me-3 d-flex justify-content-center align-items-center'>
                             <i className="fas fa-users fa-3x"></i>
                         </div>
                         <div>

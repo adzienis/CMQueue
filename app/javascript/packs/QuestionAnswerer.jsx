@@ -12,7 +12,7 @@ export default props => {
     const {data: topQuestion} = useQuery(['courses', parseInt(courseId, 10), 'topQuestion', '?', `user_id=${userId}`], {
         onSuccess: d => {
             if (d) {
-                Turbo.visit(`/courses/${courseId}/answer#question-answerer`)
+                Turbo.visit(`/courses/${courseId}/answer`)
             }
         }
     })

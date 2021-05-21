@@ -2,22 +2,47 @@
   <h2>
     Students
   </h2>
-  <div class="list-group">
-
-    <% @students.each do |student| %>
-      <div class="list-group-item">
-        <div class="d-flex align-items-center justify-content-center">
-            <p class="flex-1 mb-0">
-              <%= student.given_name %>
-            </p>
-          <div>
-            <%= button_to "To Student", user_path(student), method: :get, class: 'btn btn-primary' %>
-          </div>
-        </div>
+  <div class="mb-1">
+    <%= form_with data: { controller: "UserSearch" } do |form| %>
+      <div class="mb-1">
+        <%= form.select :city, options_for_select([["Given Name", "given_name"]], session.dig(:filter, :search)),
+                        {},
+                        class: "form-control",
+                        data: { reflex: "input->UserSearch#option" }
+        %>
+      </div>
+      <div class="mb-1">
+        <%= form.text_field :search, class: "form-control", data: { reflex: "input->UserSearch#search", course_id: @course.id} %>
       </div>
     <% end %>
   </div>
+
+
+
+
+  <div class="list-group">
+    <ul class="list-group">
+
+      <% @records_students&.each do |student| %>
+        <div class="list-group-item">
+          <div class="d-flex align-items-center justify-content-center">
+            <p class="flex-1 mb-0">
+              <%= student.given_name %>
+            </p>
+            <div>
+              <%= button_to "To Student", course_user_path(@course, student), method: :get, class: 'btn btn-primary' %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+  </div>
 </div>
+
+
+<div class="w-100 d-flex justify-content-center">
+  <%== render partial: "pagy/nav.html.erb", locals: { pagy: @pagy_students} %>
+</div>
+
 
 <div>
   <h2>
@@ -31,7 +56,7 @@
             <%= ta.given_name %>
           </p>
           <div>
-            <%= button_to "To TA", user_path(ta), method: :get, class: 'btn btn-primary' %>
+            <%= button_to "To TA", course_user_path(@course, ta), method: :get, class: 'btn btn-primary' %>
           </div>
         </div>
       </div>

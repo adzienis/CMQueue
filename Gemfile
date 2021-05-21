@@ -77,3 +77,13 @@ gem "cancancan", "~> 3.2"
 gem "rolify", "~> 6.0"
 
 gem "turbo-rails", "~> 0.5.9"
+
+gem "pg", "~> 1.2"
+
+gem "bootstrap", "= 5.0.1"
+
+gem "kaminari", "~> 1.2"
+
+gem "pagy"
+
+gem "ransack", "~> 2.4"

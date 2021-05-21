@@ -1,0 +1,24 @@
+<div class="mb-4">
+  <nav class="
+        navbar
+        navbar-expand-lg
+        navbar-light
+        shadow-sm
+        bg-light
+"
+  >
+    <div class="container-fluid justify-content-md-center">
+      <ul class="navbar-nav">
+
+        <%= content_tag :li,
+                        class: "nav-item " do %>
+          <%= link_to "Back",
+                      :back,
+                      class: "nav-link",
+                      onclick: "event.preventDefault(); window.history.back()"
+          %>
+        <% end %>
+      </ul>
+    </div>
+  </nav>
+</div>

@@ -1,4 +1,6 @@
 require_relative "boot"
+require 'devise'
+
 
 require "rails/all"
 
@@ -10,6 +12,9 @@ module Meet
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 6.1
+    config.assets.paths << Rails.root.join("app", "assets", "fonts")
+    config.autoload_paths << "#{Rails.root}/lib"
+
 
     # Configuration for the application, engines, and railties goes here.
     #

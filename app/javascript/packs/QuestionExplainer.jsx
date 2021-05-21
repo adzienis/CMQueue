@@ -26,10 +26,10 @@ export default props => {
     })
 
     return (
-        <Modal show={open} centered>
+        <Modal show={open} centered onHide={e => setOpen(false)} size='lg'>
             <Modal.Body>
                 <Form>
-                    <Form.Group>
+                    <Form.Group className='mb-3'>
                         <label> Description </label>
                         <Form.Control as='textarea' onChange={e => setDescription(e.target.value)}/>
                     </Form.Group>

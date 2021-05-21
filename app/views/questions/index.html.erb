@@ -1,2 +1,110 @@
-<h1>Questions#index</h1>
-<p>Find me in app/views/questions/index.html.erb</p>
+<h2>
+  Questions
+</h2>
+
+<%= search_form_for @q, :url => course_questions_path(@course) do |f| %>
+
+  <div class="row">
+    <div class="col mb-2">
+      <label class="form-label"> Start</label>
+      <%= f.date_field :created_at_gt,
+                          value: params.dig(:q, :created_at_gt),
+                          class: "form-control"
+      %>
+    </div>
+    <div class="col mb-2">
+      <label class="form-label"> End</label>
+      <%= f.date_field :created_at_lt,
+                          value: params.dig(:q, :created_at_lt),
+                          class: "form-control"
+
+      %>
+    </div>
+  </div>
+  <div class="mb-4">
+    <%= f.label :description_cont, class: "form-label" %>
+    <%= f.search_field :description_cont, class: "form-control" %>
+  </div>
+  <%= f.submit %>
+<% end %>
+
+<%= form_with data: { controller: "QuestionSearch", id: "filter", "reflex-root": "#results" } do |form| %>
+  <div class="row">
+    <div class="col mb-2">
+      <label class="form-label">
+        Selector
+      </label>
+      <%= form.select :option, options_for_select([["Given Name", "given_name"], ["Description", "description"]]),
+                      {},
+                      class: "form-select",
+                      data: { reflex: "input->QuestionSearch#option", "reflex-dataset": "combined", "elem-id": "option-select" }
+      %>
+    </div>
+    <div class="col mb-2">
+      <label class="form-label"> Start</label>
+      <%= form.date_field :date_start,
+                          value: Date.today.strftime,
+                          class: "form-control",
+                          data: { reflex: "input->QuestionSearch#option", "reflex-dataset": "combined", "elem-id": "date-start" }
+      %>
+    </div>
+    <div class="col mb-2">
+      <label class="form-label"> End</label>
+      <%= form.date_field :date_end,
+                          id: "date-end",
+                          value: Date.today.strftime,
+                          class: "form-control",
+                          data: { reflex: "input->QuestionSearch#option", "reflex-dataset": "combined", "elem-id": "date-end" }
+
+      %>
+    </div>
+  </div>
+  <div class="mb-4">
+    <label class="form-label">
+      Search
+    </label>
+    <%= form.text_field :search, class: "form-control", data: {
+      reflex: "input->QuestionSearch#search",
+      "reflex-dataset": "combined",
+      "elem-id": "search"
+    }%>
+  </div>
+<% end %>
+
+<h4>
+  Results
+</h4>
+<div class="mb-3" id="results">
+  <ul class="list-group">
+    <% @q.result&.each do |question| %>
+      <%= link_to course_question_path(@course, question), class: "list-group-item mb-1" do %>
+        <h4>
+          <b>
+            <%= question.user.given_name %>
+          </b>
+          <small class="text-secondary">
+            <%= question.created_at.strftime('%B %-d, %Y %l:%M %P')  %>
+          </small>
+        </h4>
+        <span>
+
+        <%= question.description %>
+        </span>
+      <% end %>
+    <% end %>
+  </ul>
+
+  <% if @records&.empty? %>
+    <div class="alert alert-warning shadow-sm border">
+      Empty
+    </div>
+  <% end %>
+</div>
+
+
+
+
+<div class="w-100 d-flex justify-content-center">
+  <%== render partial: "pagy/nav.html.erb", locals: { pagy: @pagy } %>
+</div>
+
