@@ -1,104 +1,82 @@
-<h2>
-  Questions
+<h2 class="mb-3">
+  <b>
+    Questions
+  </b>
 </h2>
 
-<%= search_form_for @q, :url => course_questions_path(@course) do |f| %>
+<div class="card mb-3 shadow-sm">
+  <div class="card-body">
+    <%= search_form_for @questions_ransack, :url => questions_path do |f| %>
 
-  <div class="row">
-    <div class="col mb-2">
-      <label class="form-label"> Start</label>
-      <%= f.date_field :created_at_gt,
-                          value: params.dig(:q, :created_at_gt),
-                          class: "form-control"
-      %>
-    </div>
-    <div class="col mb-2">
-      <label class="form-label"> End</label>
-      <%= f.date_field :created_at_lt,
-                          value: params.dig(:q, :created_at_lt),
-                          class: "form-control"
+      <div class="row">
+        <div class="col mb-2">
+          <label class="form-label"> Start</label>
+          <%= f.date_field :created_at_gt,
+                           value: params.dig(:q, :created_at_gt),
+                           class: "form-control"
+          %>
+        </div>
+        <div class="col mb-2">
+          <label class="form-label"> End</label>
+          <%= f.date_field :created_at_lt,
+                           value: params.dig(:q, :created_at_lt),
+                           class: "form-control"
 
-      %>
-    </div>
-  </div>
-  <div class="mb-4">
-    <%= f.label :description_cont, class: "form-label" %>
-    <%= f.search_field :description_cont, class: "form-control" %>
-  </div>
-  <%= f.submit %>
-<% end %>
-
-<%= form_with data: { controller: "QuestionSearch", id: "filter", "reflex-root": "#results" } do |form| %>
-  <div class="row">
-    <div class="col mb-2">
-      <label class="form-label">
-        Selector
-      </label>
-      <%= form.select :option, options_for_select([["Given Name", "given_name"], ["Description", "description"]]),
-                      {},
-                      class: "form-select",
-                      data: { reflex: "input->QuestionSearch#option", "reflex-dataset": "combined", "elem-id": "option-select" }
-      %>
-    </div>
-    <div class="col mb-2">
-      <label class="form-label"> Start</label>
-      <%= form.date_field :date_start,
-                          value: Date.today.strftime,
-                          class: "form-control",
-                          data: { reflex: "input->QuestionSearch#option", "reflex-dataset": "combined", "elem-id": "date-start" }
-      %>
-    </div>
-    <div class="col mb-2">
-      <label class="form-label"> End</label>
-      <%= form.date_field :date_end,
-                          id: "date-end",
-                          value: Date.today.strftime,
-                          class: "form-control",
-                          data: { reflex: "input->QuestionSearch#option", "reflex-dataset": "combined", "elem-id": "date-end" }
-
-      %>
-    </div>
-  </div>
-  <div class="mb-4">
-    <label class="form-label">
-      Search
-    </label>
-    <%= form.text_field :search, class: "form-control", data: {
-      reflex: "input->QuestionSearch#search",
-      "reflex-dataset": "combined",
-      "elem-id": "search"
-    }%>
-  </div>
-<% end %>
-
-<h4>
-  Results
-</h4>
-<div class="mb-3" id="results">
-  <ul class="list-group">
-    <% @q.result&.each do |question| %>
-      <%= link_to course_question_path(@course, question), class: "list-group-item mb-1" do %>
-        <h4>
-          <b>
-            <%= question.user.given_name %>
-          </b>
-          <small class="text-secondary">
-            <%= question.created_at.strftime('%B %-d, %Y %l:%M %P')  %>
-          </small>
-        </h4>
-        <span>
-
-        <%= question.description %>
-        </span>
-      <% end %>
+          %>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col mb-2">
+          <%= f.label "First Name", class: "form-label" %>
+          <%= f.search_field :user_given_name_cont, class: "form-control", value: params.dig(:q, :user_given_name_cont) %>
+        </div>
+        <div class="col mb-2">
+          <%= f.label "Last Name", class: "form-label" %>
+          <%= f.search_field :user_family_name_cont, class: "form-control", value: params.dig(:q, :user_family_name_cont) %>
+        </div>
+      </div>
+      <%= f.submit "Search", class: "btn btn-primary" %>
     <% end %>
-  </ul>
+  </div>
+</div>
 
-  <% if @records&.empty? %>
-    <div class="alert alert-warning shadow-sm border">
-      Empty
-    </div>
-  <% end %>
+
+<h3>
+  Results
+</h3>
+
+<div class="table-responsive mb-3" id="results">
+  <table class="table table-hover table-striped">
+    <thead>
+    <tr>
+      <th>
+        <%= sort_link(@questions_ransack, :user_given_name, "User") %>
+      </th>
+      <th>
+        Description
+      </th>
+      <th>
+        <%= sort_link(@questions_ransack, :created_at, "Created At") %>
+      </th>
+      <th>
+        <%= sort_link(@questions_ransack, :state, "State") %>
+      </th>
+    </tr>
+    </thead>
+    <tbody>
+    <% @records&.each do |question| %>
+      <tr onclick=<%= "window.location='#{course_question_path(question.question.course, question.question)}'" %> style="cursor: pointer
+      ">
+      <td><%= question.user.given_name %></td>
+      <td><%= question.question.description %></td>
+      <td><%= question.created_at.strftime('%B %-d, %Y %l:%M %P') %></td>
+
+      <td><%= question.question.question_state.state
+      %></td>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
 </div>
 
 

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_04_29_180440) do
+ActiveRecord::Schema.define(version: 2021_05_23_033554) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -41,13 +41,14 @@ ActiveRecord::Schema.define(version: 2021_04_29_180440) do
     t.index ["question_id"], name: "index_courses_questions_on_question_id"
   end
 
-  create_table "courses_users", force: :cascade do |t|
+  create_table "enrollments", force: :cascade do |t|
     t.bigint "course_id"
     t.bigint "user_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["course_id"], name: "index_courses_users_on_course_id"
-    t.index ["user_id"], name: "index_courses_users_on_user_id"
+    t.index ["course_id", "user_id"], name: "index_enrollments_on_course_id_and_user_id", unique: true
+    t.index ["course_id"], name: "index_enrollments_on_course_id"
+    t.index ["user_id"], name: "index_enrollments_on_user_id"
   end
 
   create_table "messages", force: :cascade do |t|
@@ -123,7 +124,7 @@ ActiveRecord::Schema.define(version: 2021_04_29_180440) do
     t.index ["course_id"], name: "index_tags_on_course_id"
   end
 
-  create_table "questions", force: :cascade do |t|
+  create_table "users", force: :cascade do |t|
     t.text "given_name"
     t.text "family_name"
     t.text "email"
@@ -138,17 +139,19 @@ ActiveRecord::Schema.define(version: 2021_04_29_180440) do
   create_table "users_roles", id: false, force: :cascade do |t|
     t.bigint "user_id"
     t.bigint "role_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
     t.index ["role_id"], name: "index_users_roles_on_role_id"
     t.index ["user_id", "role_id"], name: "index_users_roles_on_user_id_and_role_id"
     t.index ["user_id"], name: "index_users_roles_on_user_id"
   end
 
   add_foreign_key "messages", "question_states"
-  add_foreign_key "messages", "questions"
+  add_foreign_key "messages", "users"
   add_foreign_key "question_states", "questions"
-  add_foreign_key "question_states", "questions"
+  add_foreign_key "question_states", "users"
   add_foreign_key "questions", "courses"
-  add_foreign_key "questions", "questions"
+  add_foreign_key "questions", "users"
   add_foreign_key "questions_tags", "questions"
   add_foreign_key "questions_tags", "tags"
 end

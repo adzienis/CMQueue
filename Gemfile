@@ -87,3 +87,7 @@ gem "kaminari", "~> 1.2"
 gem "pagy"
 
 gem "ransack", "~> 2.4"
+
+gem "rails_admin", "~> 2.1"
+
+gem "activeadmin", "~> 2.9"

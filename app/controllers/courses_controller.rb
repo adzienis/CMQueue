@@ -1,4 +1,10 @@
 class CoursesController < ApplicationController
+  load_and_authorize_resource
+
+  def edit
+    @course = Course.find(params[:id])
+  end
+
   def show
     @course = current_user.courses.find_by(id: params[:id])
     unless @course
@@ -6,7 +12,7 @@ class CoursesController < ApplicationController
     end
 
     if current_user.question_state&.state == "resolving"
-      redirect_to answer_question_course_path(@course, anchor: "foo") and return
+      redirect_to answer_course_path(@course) and return
     end
 
     @questions = @course.questions
@@ -123,12 +129,11 @@ class CoursesController < ApplicationController
   def roster
     @course = Course.find(params[:id])
 
-    @students = User.with_role :student, @course
-    @tas = User.with_role(:ta, @course)
+    puts "-----------------------------------------------asd"
+    @users_ransack = @course.users.with_any_roles(:student, :ta).ransack(params[:q])
 
-    @filtered_students ||= @course.users.with_role :student, @course
+    @pagy, @records = pagy(@users_ransack.result)
 
-    @pagy_students, @records_students = pagy @filtered_students
 
   end
 

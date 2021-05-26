@@ -1,9 +1,12 @@
 class QuestionsController < ApplicationController
+  load_and_authorize_resource
 
   def index
     @course = Course.find(params[:course_id]) if params[:course_id]
 
-    @questions = Question.all.includes(:user, :question_state, :tags)
+
+
+    @questions = @questions.includes(:user, :question_state, :tags)
     @questions = @questions.where(course_id: params[:course_id]) if params[:course_id]
     @questions = @questions.where(user_id: params[:user_id]) if params[:user_id]
     @questions = @questions.questions_by_state(JSON.parse(params[:state])) if params[:state]
@@ -26,12 +29,15 @@ class QuestionsController < ApplicationController
       return
     end
 
-    @q ||= Question.ransack(params[:q])
-    puts "-------------------------------------------asd"
+    @questions_ransack1 = QuestionState.where(question_id: Question.all.accessible_by(current_ability).pluck(:id))
+    @questions_ransack1 = @questions_ransack1.joins(:question).where("questions.course_id": params[:course_id]) if params[:course_id]
+    @questions_ransack1 = @questions_ransack1.joins(:question).where("questions.user_id": params[:user_id]) if params[:user_id]
 
-    @filtered_questions ||= Searches::QuestionSearch.get_filtered
+    @questions_ransack1 = @questions_ransack1.left_joins(:question, :user).select("distinct on(questions.id, questions.user_id) question_states.id ")
 
-    @pagy, @records = pagy @filtered_questions
+    @questions_ransack ||= QuestionState.where("question_states.id in (#{@questions_ransack1.to_sql})").ransack(params[:q])
+
+    @pagy, @records = pagy @questions_ransack.result
 
     respond_to do |format|
       format.html

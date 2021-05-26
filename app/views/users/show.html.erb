@@ -34,28 +34,8 @@
   </div>
 
   <div>
-    <h2>
-      All Questions
-    </h2>
-    <% if @questions.count == 0 %>
-      <div class="alert alert-warning">
-        No Questions
-      </div>
-    <% end %>
-    <div class="list-group text-break">
-      <% @questions.each do |question| %>
-        <%= link_to course_question_path(@course, question.question), class: "text-decoration-none", style: "color: inherit" do %>
-          <div class="list-group-item mb-1">
-              <span>
-                <%= question.state.capitalize %>
-                <b><%= question.updated_at.to_s(:short) %></b>
-              </span>
-            <div>
-              <%= question.question.description %>
-            </div>
-          </div>
-        <% end %>
-      <% end %>
-    </div>
+    <h3>
+      <%= link_to "All Questions", user_questions_path(@user, course_id: params[:course_id]) %>
+    </h3>
   </div>
 </div>

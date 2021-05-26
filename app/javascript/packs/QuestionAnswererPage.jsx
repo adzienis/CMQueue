@@ -103,14 +103,6 @@ const Component = props => {
             <div className='p-1'>
                 <h4>
                     <b>
-                        User
-                    </b>
-                </h4>
-                <span>
-                            {topQuestion?.user.given_name}
-                </span>
-                <h4>
-                    <b>
                         Description
                     </b>
                 </h4>
@@ -148,6 +140,9 @@ const Component = props => {
 
     return (
         <>
+            <h2>
+                {`${topQuestion?.user.given_name} ${topQuestion?.user.family_name}`}
+            </h2>
             <QuestionExplainer
                 question={topQuestion}
                 userId={userId}
@@ -157,11 +152,6 @@ const Component = props => {
             />
             <Card className='shadow mb-5'>
                 <Card.Body>
-                    <Card.Title>
-                        <h2>
-                            {topQuestion?.user.given_name}
-                        </h2>
-                    </Card.Title>
                     <Navbar className='pl-0 pr-0'>
                         <Nav className='w-100' variant='tabs'>
                             <Nav.Link onClick={e => {

@@ -2,7 +2,8 @@ class User < ApplicationRecord
   rolify
   devise :omniauthable, omniauth_providers: %i[google_oauth2]
 
-  has_and_belongs_to_many :courses
+  has_many :enrollments
+  has_many :courses, through: :enrollments
 
   has_many :questions, dependent: :destroy
 
@@ -14,8 +15,6 @@ class User < ApplicationRecord
     joins(:question_states)
       .where("question_states.state": "resolved")
   }
-
-
 
   scope :active_tas_by_date, ->(states, date, course) { joins(:question_state)
                                                           .where("question_states.state in (#{states.map { |x| QuestionState.states[x] }.join(',')})")

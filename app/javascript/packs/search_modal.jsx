@@ -8,7 +8,7 @@ import {QueryClientProvider, useQuery} from "react-query";
 import useWrappedMutation from "./useWrappedMutation";
 import queryClient from './queryClientFile'
 import CourseCard from "./CourseCard";
-import {Form, Modal} from "react-bootstrap";
+import {Form} from "react-bootstrap";
 
 
 const Hello = props => {
@@ -16,8 +16,6 @@ const Hello = props => {
     const [search, setSearch] = useState(null);
     const {
         data,
-        isLoading,
-        isFetching
     } = useQuery(['courses', 'search', '?', `name=${search}`], {
         select: data => data.map(v => ({title: v.name, id: v.id}))
     })
@@ -38,44 +36,44 @@ const Hello = props => {
 
     return (
         <>
-            <Modal
-                onHide={e => setOpen(false)}
-                show={open}
-            >
-                <Modal.Title>
-                    Course Search
-                </Modal.Title>
-                <Modal.Body>
-                    <Form>
-                        <Form.Group>
-                            <label>Courses</label>
-                            <Form.Control type='text' onChange={e => {
-                                setSearch(e.target.value)
-                            }}/>
-                            {(typeof data?.length !== "undefined" && data?.length !== 0) ?
-                                <Form.Control as='select' multiple='multiple' htmlSize={data?.length}>
-                                    {data?.map(v => <option
-                                        value={v.id}
-                                        onClick={e => {
-                                            mutate(e.target.value)
-                                        }}
-                                    >
-                                        {v.title}
-                                    </option>)}
-                                </Form.Control> : null}
-                        </Form.Group>
-                    </Form>
-                </Modal.Body>
-            </Modal>
+            <div className="modal fade" id="search-modal">
+                <div className="modal-dialog modal-dialog-centered">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h5 className="modal-title">
+                                Course Search
+                            </h5>
+                        </div>
+                        <div className="modal-body">
+                            <Form>
+                                <Form.Group>
+                                    <label>Courses</label>
+                                    <Form.Control type='text' onChange={e => {
+                                        setSearch(e.target.value)
+                                    }}/>
+                                    {(typeof data?.length !== "undefined" && data?.length !== 0) ?
+                                        <Form.Control as='select' multiple='multiple' htmlSize={data?.length}>
+                                            {data?.map(v => <option
+                                                value={v.id}
+                                                onClick={e => {
+                                                    mutate(e.target.value)
+                                                }}
+                                            >
+                                                {v.title}
+                                            </option>)}
+                                        </Form.Control> : null}
+                                </Form.Group>
+                            </Form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div style={{display: 'grid', gridTemplateColumns: '1fr', rowGap: '1rem'}}>
                 <a
                     href=""
                     className="card shadow-sm hover-container"
-                    onClick={(e) => {
-                        e.preventDefault();
-                        setOpen(true)
-                    }
-                    }
+                    data-bs-toggle="modal" data-bs-target="#search-modal"
                 >
                     <div className="card-body" style={{display: 'flex', justifyContent: 'center'}}>
                         <i className="fas fa-plus fa-2x"/>

@@ -24,7 +24,7 @@ const Component = props => {
     return (
         <div className='mt-3 mb-4 w-100'>
             <div style={{ display: 'grid',
-                gridTemplateColumns: "repeat(auto-fit, minmax(350px, 1fr))",
+                gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
             gridGap: '10px'}}>
                 <div className='card bg-primary text-white'>
                     <div className='card-body d-flex flex-row'>

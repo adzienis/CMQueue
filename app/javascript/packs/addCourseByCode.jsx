@@ -9,7 +9,7 @@ import {QueryClientProvider, useQuery} from "react-query";
 import queryClient from './queryClientFile'
 import useWrappedMutation from "./useWrappedMutation";
 import CourseCard from "./CourseCard";
-import {Button, Form, Modal} from "react-bootstrap";
+import {Button, Form} from "react-bootstrap";
 
 
 const Component = props => {
@@ -28,44 +28,46 @@ const Component = props => {
     const [open, setOpen] = useState(false)
 
 
-    return <> <Modal show={open} onHide={() => setOpen(false)}>
-        <Modal.Title>
-            Add Course By Role Code
-        </Modal.Title>
-        <Modal.Body>
-            <Form>
-                <Form.Group>
-                    <label> Role Code </label>
-                    <Form.Control
-                        as='input'
-                        rows={3}
-                        value={code}
-                        onChange={e => setCode(e.target.value)}
-                    />
+    return <>
+        <div className="modal fade" id="course-code-modal">
+            <div className="modal-dialog modal-dialog-centered">
+                <div className="modal-content">
+                    <div className="modal-header">
+                        <h5 className="modal-title">
+                            Add Course By Role Code
+                        </h5>
+                    </div>
+                    <div className="modal-body">
+                        <Form>
+                            <div className="mb-2">
+                                <label> Role Code </label>
+                                <Form.Control
+                                    as='input'
+                                    rows={3}
+                                    value={code}
+                                    onChange={e => setCode(e.target.value)}
+                                />
 
-                </Form.Group>
-                <Button onClick={e => {
-                    try {
-                        createEnrollment();
-                    } catch (e) {
+                            </div>
+                            <Button onClick={e => {
+                                try {
+                                    createEnrollment();
+                                } catch (e) {
 
-                    }
-                }}>
-                    Submit
-                </Button>
-            </Form>
-        </Modal.Body>
-    </Modal>
-
+                                }
+                            }}>
+                                Submit
+                            </Button>
+                        </Form>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div style={{display: 'grid', gridTemplateColumns: '1fr', rowGap: '1rem'}}>
             <a
                 href=""
                 className="card shadow-sm hover-container"
-                onClick={(e) => {
-                    e.preventDefault();
-                    setOpen(true)
-                }
-                }
+                data-bs-toggle="modal" data-bs-target="#course-code-modal"
             >
                 <div className="card-body" style={{display: 'flex', justifyContent: 'center'}}>
                     <i className="fas fa-plus fa-2x"/>

@@ -1,6 +1,6 @@
 class Users::EnrollmentsController < ApplicationController
   def index
-    @courses = Course.with_role params[:role], current_user
+    @courses = current_user.courses.with_role params[:role], current_user
 
     respond_to do |format|
       format.html
@@ -49,7 +49,7 @@ class Users::EnrollmentsController < ApplicationController
   end
 
   def destroy
-    @enrollment = Enrollment.find(params[:id]).destroy
+    @enrollment = current_user.courses.destroy(Course.find(params[:id]))
 
     respond_to do |format|
       format.html

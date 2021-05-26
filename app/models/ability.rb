@@ -5,7 +5,46 @@ class Ability
 
   def initialize(user)
 
+    user ||= User.new
 
+    if user.present?
+
+      can :manage, Course if user.has_role? :admin
+      #can :manage, Question, :user => { id: user.id }
+      can :manage, QuestionState, :user => { id: user.id }
+      can :manage, Message, :question_state => { :question => { :user => { id: user.id } } }
+
+      can :manage, User, id: user.id
+      can [:search], Course
+
+      can [:read, :active_tas, :open_status], Course
+
+      can [:course_info, :roster, :open,
+           :update, :top_question, :answer, :answer_page], Course do |course|
+        user.has_role? :ta, course
+      end
+      can :manage, QuestionState do |state|
+        user.has_role? :ta, state.question.course
+      end
+
+      can :manage, Message do |message|
+        user.has_role? :ta, message.question_state.question.course
+      end
+
+      can :manage, Tag do |tag|
+        user.has_role? :ta, tag.course
+      end
+
+      can :manage, Question, Question
+                               .where(course_id: Course
+                                                   .where(id: Course.find_roles(:ta,  user)
+                                                                    .pluck(:resource_id))
+                                                   .pluck(:id)) do |question|
+        user.has_role? :ta, question.course
+      end
+
+      can :read, User
+    end
 
     # Define abilities for the passed in user here. For example:
     #

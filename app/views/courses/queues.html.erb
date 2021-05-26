@@ -33,17 +33,24 @@
       Queues
     </h2>
 
-    <div class="list-group list-group-flush">
+    <table class="table table-hover">
+      <thead>
+      <tr>
+        <th scope="col">First</th>
+      </tr>
+      </thead>
+      <tbody>
       <% @tags.each do |tag| %>
-        <div class="list-group-item d-flex justify-content-center align-items-center">
-          <h5 class="mb-0" style="flex: 1">
+        <tr
+          onclick=<%= "window.location='#{course_tag_url(tag.course, tag.id)}'" %>
+        style="cursor: pointer"
+        >
+          <td>
             <%= tag.name %>
-          </h5>
-          <div class="btn-group ">
-            <%= button_to "To Queue", course_tag_path(tag.course, tag.id), class: "btn btn-primary mr-2", method: :get %>
-          </div>
+          </td>
         </div>
       <% end %>
-    </div>
+      </tbody>
+    </table>
   </div>
 </div>

@@ -1,9 +1,4 @@
 Rails.application.routes.draw do
-
-
-  get 'admin/index'
-  get 'admin/show'
-  get 'admin/settings'
   resources :tags
   resources :question_states
   resources :messages
@@ -48,7 +43,9 @@ Rails.application.routes.draw do
   resources :questions
   resources :courses
 
-  resources :users
+  resources :users, shallow: true do
+    resources :questions
+  end
 
   resource :users, shallow: true do
     resources :courses, controller: 'users/courses'

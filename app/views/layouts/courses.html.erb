@@ -1,8 +1,35 @@
 <% content_for :content do %>
-  <div style="display: flex; flex-direction: row; height: max-content; overflow: clip">
+  <script>
+    function toggle() {
+        if(document.querySelector('.sidebar').classList.contains('open')) {
+            document.querySelector('.sidebar').classList.remove('open')
+        } else {
+            document.querySelector('.sidebar').classList.add('open')
+        }
+
+        if(document.querySelector('.sidebar-opener').classList.contains('open')) {
+            document.querySelector('.sidebar-opener').classList.remove('open')
+            document.querySelector('.sidebar-opener').innerHTML = ''
+            let i = document.createElement("i");
+            i.classList.add("fas", "fa-chevron-right")
+            document.querySelector('.sidebar-opener').appendChild(i)
+
+        } else {
+            document.querySelector('.sidebar-opener').classList.add('open')
+            document.querySelector('.sidebar-opener').innerHTML = ''
+            let i = document.createElement("i");
+            i.classList.add("fas", "fa-chevron-left")
+            document.querySelector('.sidebar-opener').appendChild(i)
+        }
+    }
+  </script>
+  <div style="display: flex; flex-direction: row; ">
     <% if current_user.has_role? :ta, @course %>
       <%= render partial: "shared/course_sidebar" %>
       <% end %>
+    <button  class="btn btn-outline-secondary sidebar-opener" onclick="event.preventDefault(); toggle()">
+      <i class="fas fa-chevron-right"></i>
+    </button>
     <div id='courses-container' class="container w-100 mt-4 mb-5" style="min-height: 100vh">
       <%= content_for?(:courses_content) ? yield(:courses_content) : yield %>
     </div>

@@ -20,11 +20,6 @@
 
             <%= link_to "Enrollments", user_enrollments_url, class: "nav-link #{request.path == user_enrollments_path ? 'active' : ''}" %>
           </li>
-          <% if current_user.has_role? :admin %>
-            <li class="nav-item">
-              <%= link_to "Admin Settings", admin_settings_path, class: "nav-link" %>
-            </li>
-          <% end %>
           <li class="nav-item flex-grow-1">
             <%= link_to "Sign out", destroy_user_session_path, class: "nav-link" %>
           </li>

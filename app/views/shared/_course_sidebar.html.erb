@@ -1,24 +1,23 @@
-<div class="d-flex flex-column p-3 bg-white border-right shadow-sm"
-     style="width: 200px; min-width: 200px; max-width: 200px; flex:1">
+<div class="d-flex flex-column p-3 bg-white border-right shadow-sm sidebar">
   <ul class="list-unstyled">
     <li class="mb-1">
       <%= button_to "Queue", course_path(@course),
                     class: "btn btn-toggle align-items-center text-decoration-none
                             #{request.path == course_path(@course) ||
-                                                          request.path == answer_course_path(@course) ? 'active-link' : ''}",
+                      request.path == answer_course_path(@course) ? 'active-link' : ''}",
                     method: :get %>
     </li>
     <li class="mb-1">
       <%= button_tag class: "btn btn-toggle align-items-center text-decoration-none
                             #{(request.path == courseInfo_course_path(@course) ||
-        request.path == roster_course_path(@course)||
+        request.path == roster_course_path(@course) ||
         request.path == course_questions_path(@course)) ? 'active-link' : ''}",
                      data: { "bs-toggle": "collapse", "bs-target": "#course-info-collapse" } do %>
         Information
       <% end %>
       <%= content_tag :div, id: "course-info-collapse",
                       class: "collapse #{(request.path == courseInfo_course_path(@course) ||
-                        request.path == roster_course_path(@course)||
+                        request.path == roster_course_path(@course) ||
                         request.path == course_questions_path(@course)) ? "show" : ""}" do %>
         <ul class="navbar-toggler list-unstyled pb-1 small">
           <li>

@@ -5,6 +5,13 @@
 </h2>
 <div class="card shadow-sm">
   <div class="card-body">
+    <%= form_with model: @course do |form| %>
+      <div class="mb-1">
+        <%= form.label :name, "Name" %>
+        <%= form.text_field :name, placeholder: @course.name, class: 'form-control' %>
+      </div>
+      <%= form.submit "Update", class: "btn btn-primary" %>
+    <% end %>
 
     <div>
       <h4>
@@ -32,10 +39,5 @@
         </p>
       </div>
     <% end %>
-  </div>
-  <div class="card-footer d-flex flex-row">
-    <div class="flex-1"></div>
-    <%= button_to "Edit", edit_course_path(@course), class: "btn btn-warning me-2", method: :get %>
-    <%= button_to "Delete", course_path(@course), class: "btn btn-danger", method: :delete %>
   </div>
 </div>

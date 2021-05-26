@@ -1,4 +1,6 @@
 class QuestionStatesController < ApplicationController
+  load_and_authorize_resource
+
   def index
     @question_states = QuestionState.all
     @question_states = @question_states.where(search_params) unless search_params.empty?

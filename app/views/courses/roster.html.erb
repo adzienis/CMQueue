@@ -1,65 +1,86 @@
-<div class="mb-3">
-  <h2>
-    Students
-  </h2>
-  <div class="mb-1">
-    <%= form_with data: { controller: "UserSearch" } do |form| %>
-      <div class="mb-1">
-        <%= form.select :city, options_for_select([["Given Name", "given_name"]], session.dig(:filter, :search)),
-                        {},
-                        class: "form-control",
-                        data: { reflex: "input->UserSearch#option" }
-        %>
-      </div>
-      <div class="mb-1">
-        <%= form.text_field :search, class: "form-control", data: { reflex: "input->UserSearch#search", course_id: @course.id} %>
-      </div>
-    <% end %>
-  </div>
+<h2 class="mb-3">
+  <b>
+    Enrollments
+  </b>
+</h2>
 
+<div class="card mb-3 shadow-sm">
+  <div class="card-body">
+    <%= search_form_for @users_ransack, :url => roster_course_path(@course) do |f| %>
 
-
-
-  <div class="list-group">
-    <ul class="list-group">
-
-      <% @records_students&.each do |student| %>
-        <div class="list-group-item">
-          <div class="d-flex align-items-center justify-content-center">
-            <p class="flex-1 mb-0">
-              <%= student.given_name %>
-            </p>
-            <div>
-              <%= button_to "To Student", course_user_path(@course, student), method: :get, class: 'btn btn-primary' %>
-            </div>
-          </div>
+      <div class="row">
+        <div class="col mb-2">
+          <label class="form-label"> Start</label>
+          <%= f.date_field :roles_created_at_gt,
+                           value: params.dig(:q, :created_at_gt),
+                           class: "form-control"
+          %>
         </div>
-      <% end %>
+        <div class="col mb-2">
+          <label class="form-label"> End</label>
+          <%= f.date_field :roles_created_at_lt,
+                           value: params.dig(:q, :created_at_lt),
+                           class: "form-control"
+
+          %>
+        </div>
+        <div class="col mb-2">
+          <label class="form-label"> Type </label>
+          <%= f.select :with_role_ransack, [["All", :any], ["TA", :ta], ["Student", :student]], {},
+                       class: "form-select"
+          %>
+        </div>
+      </div>
+      <div class="mb-2">
+        <%= f.label "Name", class: "form-label" %>
+        <%= f.search_field :given_name_cont, class: "form-control", value: params.dig(:q, :given_name_cont) %>
+      </div>
+      <%= f.submit "Search", class: "btn btn-primary" %>
+    <% end %>
   </div>
 </div>
 
+
+<h3>
+  Results
+</h3>
+
+<div class="mb-3">
+  <table class="table table-striped table-hover">
+    <thead>
+    <tr>
+      <th scope="col">
+        <%= sort_link(@users_ransack, :given_name, "First Name") %>
+      </th>
+      <th scope="cool">
+
+        <%= sort_link(@users_ransack, :family_name, "Last Name") %>
+      </th>
+    </tr>
+    </thead>
+    <tbody>
+    <% @records.each do |student| %>
+      <tr onclick=<%= "window.location='#{course_user_url(@course, student)}'" %> style="cursor: pointer
+      ">
+      <td>
+        <%= student.given_name %>
+      </td>
+      <td>
+        <%= student.family_name %>
+      </td>
+      </tr>
+
+    <% end %>
+    </tbody>
+  </table>
+
+  <% if @records&.empty? %>
+    <div class="alert alert-warning shadow-sm border">
+      Empty
+    </div>
+  <% end %>
+</div>
 
 <div class="w-100 d-flex justify-content-center">
-  <%== render partial: "pagy/nav.html.erb", locals: { pagy: @pagy_students} %>
-</div>
-
-
-<div>
-  <h2>
-    TA's
-  </h2>
-  <div class="list-group">
-    <% @tas.each do |ta| %>
-      <div class="list-group-item">
-        <div class="d-flex align-items-center justify-content-center">
-          <p class="flex-1 mb-0">
-            <%= ta.given_name %>
-          </p>
-          <div>
-            <%= button_to "To TA", course_user_path(@course, ta), method: :get, class: 'btn btn-primary' %>
-          </div>
-        </div>
-      </div>
-    <% end %>
-  </div>
+  <%== render partial: "pagy/nav.html.erb", locals: { pagy: @pagy } %>
 </div>
