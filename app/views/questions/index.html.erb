@@ -7,6 +7,8 @@
 <div class="card mb-3 shadow-sm">
   <div class="card-body">
     <%= search_form_for @questions_ransack, :url => questions_path do |f| %>
+      <%= hidden_field_tag :course_id, params[:course_id] if params[:course_id] %>
+      <%= hidden_field_tag :user_id, params[:user_id] if params[:user_id] %>
 
       <div class="row">
         <div class="col mb-2">
@@ -35,7 +37,7 @@
           <%= f.search_field :user_family_name_cont, class: "form-control", value: params.dig(:q, :user_family_name_cont) %>
         </div>
       </div>
-      <%= f.submit "Search", class: "btn btn-primary" %>
+      <%= f.submit "Search", class: "btn btn-primary", params: params %>
     <% end %>
   </div>
 </div>

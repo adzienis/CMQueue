@@ -9,9 +9,15 @@ class Ability
 
     if user.present?
 
-      can :manage, Course if user.has_role? :admin
-      #can :manage, Question, :user => { id: user.id }
-      can :manage, QuestionState, :user => { id: user.id }
+      if user.has_role? :admin
+        can :manage, :all
+        can :read, :dashboard
+        can :access, :rails_admin
+      end
+
+      # || question.user_id == user.id
+
+      #can :manage, QuestionState, :user => { id: user.id }
       can :manage, Message, :question_state => { :question => { :user => { id: user.id } } }
 
       can :manage, User, id: user.id
@@ -20,18 +26,18 @@ class Ability
       can [:read, :active_tas, :open_status], Course
 
       can [:course_info, :roster, :open,
-           :update, :top_question, :answer, :answer_page], Course do |course|
+           :update, :top_question, :answer, :answer_page], Course, Course.all do |course|
         user.has_role? :ta, course
       end
-      can :manage, QuestionState do |state|
+      can :manage, QuestionState, QuestionState.all do |state|
         user.has_role? :ta, state.question.course
       end
 
-      can :manage, Message do |message|
+      can :manage, Message, Message.all do |message|
         user.has_role? :ta, message.question_state.question.course
       end
 
-      can :manage, Tag do |tag|
+      can :manage, Tag, Tag.all do |tag|
         user.has_role? :ta, tag.course
       end
 
@@ -39,8 +45,8 @@ class Ability
                                .where(course_id: Course
                                                    .where(id: Course.find_roles(:ta,  user)
                                                                     .pluck(:resource_id))
-                                                   .pluck(:id)) do |question|
-        user.has_role? :ta, question.course
+                                                   .pluck(:id)).or(Question.where(user_id: user.id)) do |question|
+        user.has_role?(:ta, question.course) || question.user_id == user.id
       end
 
       can :read, User

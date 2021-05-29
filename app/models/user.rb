@@ -11,10 +11,26 @@ class User < ApplicationRecord
 
   has_one :question_state, -> { order('question_states.id DESC') }
 
+  def self.ransackable_scopes(auth_object = nil)
+    %i(with_role_ransack)
+  end
+
   scope :resolved_questions, ->() {
     joins(:question_states)
       .where("question_states.state": "resolved")
   }
+
+  scope :with_role_ransack, ->(role) do
+    if role.to_s == "any"
+      joins(:roles).distinct
+    else
+      joins(:roles).where("roles.name": role.to_s).distinct
+    end
+  end
+
+  scope :with_any_roles, ->(*names) do
+    joins(:roles).where("roles.name IN (?)", names)
+  end
 
   scope :active_tas_by_date, ->(states, date, course) { joins(:question_state)
                                                           .where("question_states.state in (#{states.map { |x| QuestionState.states[x] }.join(',')})")

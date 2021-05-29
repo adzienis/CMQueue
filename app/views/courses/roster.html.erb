@@ -52,9 +52,11 @@
       <th scope="col">
         <%= sort_link(@users_ransack, :given_name, "First Name") %>
       </th>
-      <th scope="cool">
-
+      <th scope="col">
         <%= sort_link(@users_ransack, :family_name, "Last Name") %>
+      </th>
+      <th scope="col">
+        Type
       </th>
     </tr>
     </thead>
@@ -67,6 +69,9 @@
       </td>
       <td>
         <%= student.family_name %>
+      </td>
+      <td>
+        <%= Course.find_roles(:any, @course).left_joins(:users).includes(:users).where("users.id": student.id).first.name %>
       </td>
       </tr>
 

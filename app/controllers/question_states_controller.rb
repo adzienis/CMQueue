@@ -1,5 +1,5 @@
 class QuestionStatesController < ApplicationController
-  load_and_authorize_resource
+  #load_and_authorize_resource
 
   def index
     @question_states = QuestionState.all

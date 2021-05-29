@@ -1,3 +1,0 @@
-class QuestionQueue < ApplicationRecord
-
-end

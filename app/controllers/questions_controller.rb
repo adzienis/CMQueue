@@ -4,6 +4,7 @@ class QuestionsController < ApplicationController
   def index
     @course = Course.find(params[:course_id]) if params[:course_id]
 
+    @questions ||= Question.none
 
 
     @questions = @questions.includes(:user, :question_state, :tags)

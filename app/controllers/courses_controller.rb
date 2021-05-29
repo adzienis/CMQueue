@@ -129,12 +129,9 @@ class CoursesController < ApplicationController
   def roster
     @course = Course.find(params[:id])
 
-    puts "-----------------------------------------------asd"
-    @users_ransack = @course.users.with_any_roles(:student, :ta).ransack(params[:q])
+    @users_ransack = @course.users.with_any_roles(:student, :ta).distinct.ransack(params[:q])
 
     @pagy, @records = pagy(@users_ransack.result)
-
-
   end
 
   private
