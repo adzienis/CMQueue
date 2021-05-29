@@ -5,7 +5,6 @@ class Ability
 
   def initialize(user)
 
-    user ||= User.new
 
     if user.present?
 
@@ -15,12 +14,16 @@ class Ability
         can :access, :rails_admin
       end
 
+
+      can :read, :dashboard
+      can :access, :rails_admin
+
       # || question.user_id == user.id
 
       #can :manage, QuestionState, :user => { id: user.id }
       can :manage, Message, :question_state => { :question => { :user => { id: user.id } } }
 
-      can :manage, User, id: user.id
+      #can :manage, User, id: user.id
       can [:search], Course
 
       can [:read, :active_tas, :open_status], Course
@@ -29,7 +32,13 @@ class Ability
            :update, :top_question, :answer, :answer_page], Course, Course.all do |course|
         user.has_role? :ta, course
       end
-      can :manage, QuestionState, QuestionState.all do |state|
+      can :manage, QuestionState, QuestionState.joins(:question)
+                                    .where(course_id: Course
+                                                        .where(id: Course.find_roles(:ta,  user)
+                                                                         .pluck(:resource_id))
+                                                        .pluck(:id))
+                                    .or(QuestionState.where(user_id: user.id))
+                                    .or(QuestionState.where("questions.user_id": user.id)) do |state|
         user.has_role? :ta, state.question.course
       end
 
@@ -49,7 +58,7 @@ class Ability
         user.has_role?(:ta, question.course) || question.user_id == user.id
       end
 
-      can :read, User
+      can :read, User, :given_name
     end
 
     # Define abilities for the passed in user here. For example:

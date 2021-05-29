@@ -24,6 +24,8 @@ RailsAdmin.config do |config|
   # config.show_gravatar = true
   config.current_user_method(&:current_user)
 
+  config.sidescroll = true
+
   config.actions do
     dashboard # mandatory
     index # mandatory
@@ -34,6 +36,7 @@ RailsAdmin.config do |config|
     edit
     delete
     show_in_app
+    import
 
     ## With an audit adapter, you can add:
     # history_index

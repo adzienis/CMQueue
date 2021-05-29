@@ -91,3 +91,7 @@ gem "ransack", "~> 2.4"
 gem "rails_admin", "~> 2.1"
 
 gem "activeadmin", "~> 2.9"
+
+gem "rails_admin_import", "~> 2.2"
+
+gem "formtastic", "~> 4.0"
