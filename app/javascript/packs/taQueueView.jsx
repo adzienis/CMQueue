@@ -40,28 +40,7 @@ const Component = props => {
     const flattenedQuestions = useMemo(() => {
         return data?.pages.map(v => v.data).flat()
     }, [data])
-
-
-    const {data: pastQuestions, fetchNextPage: fetchNextPastPage, hasNextPage: hasNextPastPage} =
-        useInfiniteQuery(['courses', parseInt(courseId, 10), 'paginatedPastQuestions'],
-            ({pageParam = -1}) => {
-                return fetch(`/courses/${courseId}/questions?cursor=${pageParam}&` +
-                    `state=["kicked", "resolved"]&course_id=${courseId}`, {
-                    headers: {
-                        'Accept': 'application/json'
-                    }
-                }).then(resp => resp.json()).then(json => {
-
-                    return {
-                        cursor: json.cursor?.id,
-                        data: json.data
-                    }
-                })
-            }, {
-                getNextPageParam: (lastPage, pages) => {
-                    return lastPage.cursor
-                }
-            })
+    
 
     return (
         <>
@@ -105,27 +84,6 @@ const Component = props => {
                             Load More Questions
                         </Button>
                     </div>
-                </div>
-
-                <hr/>
-
-                <a className="mt-3 text-secondary" data-bs-toggle="collapse" href="#past-questions" role="button"
-                   aria-expanded="false" aria-controls="collapseExample">
-                    Past Questions
-                </a>
-                <div className="collapse mt-3" id="past-questions">
-                    {pastQuestions?.pages.map(v => v.data).flat()?.map(v => <a
-                        href={`/courses/${courseId}/questions/${v.id}`}
-                        className='text-decoration-none'
-                        style={{color: 'inherit'}}><QuestionCard
-                        key={v.id} question={v}/></a>)}
-                    <Button onClick={async () => {
-                        await fetchNextPastPage()
-                    }}
-                            disabled={!hasNextPastPage}
-                    >
-                        Load More Questions
-                    </Button>
                 </div>
             </div>
 
