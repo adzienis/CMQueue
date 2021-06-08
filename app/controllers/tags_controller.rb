@@ -1,10 +1,20 @@
 class TagsController < ApplicationController
+  load_and_authorize_resource
+
   def index
-    @tags = Tag.all
     @tags = @tags.where(course_id: params[:course_id]) if params[:course_id]
+    @course = Course.find(params[:course_id]) if params[:course_id]
 
+    @tags_ransack = @tags.ransack(params[:q])
 
-    render json: @tags
+    @pagy, @records = pagy @tags_ransack.result
+
+    respond_to do |format|
+      format.html
+      format.json do
+        render json: @tags
+      end
+    end
   end
 
   def destroy
@@ -25,7 +35,7 @@ class TagsController < ApplicationController
     @tag = Tag.find(params[:id])
     @tag.update(update_params)
 
-    redirect_to settings_queues_course_path(@tag.course)
+    redirect_to course_tag_path(@tag.course)
   end
 
   def edit

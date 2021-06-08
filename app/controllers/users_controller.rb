@@ -2,6 +2,11 @@ class UsersController < ApplicationController
   load_and_authorize_resource
 
   def index
+    @course = Course.find(params[:course_id]) if params[:course_id]
+
+    @users_ransack = @users.ransack(params[:q])
+
+    @pagy, @records = pagy @users_ransack.result
   end
 
   def enrollments

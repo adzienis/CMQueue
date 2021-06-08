@@ -1,12 +1,12 @@
 class Courses::AnalyticsController < ApplicationController
   def index
-    @course = Course.find(params[:id])
+    @course = Course.find(params[:course_id])
 
 
   end
 
   def today
-    @course = Course.find(params[:id])
+    @course = Course.find(params[:course_id])
     @question_times = User.all.with_role(:ta, :any)
                           .map { |s| s.question_states.where(state: "resolved")
                                       .left_joins(:question)
@@ -23,6 +23,6 @@ class Courses::AnalyticsController < ApplicationController
   end
 
   def tas
-    @course = Course.find(params[:id])
+    @course = Course.find(params[:course_id])
   end
 end

@@ -7,8 +7,6 @@ import ReactDOM from 'react-dom'
 import {QueryClientProvider, useInfiniteQuery} from "react-query";
 
 import queryClient from './queryClientFile'
-import QuestionAnswerer from "./QuestionAnswerer";
-import QueueOpener from "./QueueOpener";
 import QuestionCard from "./QuestionCard";
 import {Button} from "react-bootstrap";
 
@@ -40,54 +38,38 @@ const Component = props => {
     const flattenedQuestions = useMemo(() => {
         return data?.pages.map(v => v.data).flat()
     }, [data])
-    
+
 
     return (
-        <>
-            <div className='mb-4'>
-                <div className='d-flex'>
-                    <div className='w-100' style={{
-                        display: 'grid',
-                        gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-                        gridGap: '10px'
-                    }}>
-                        <QuestionAnswerer userId={userId} courseId={courseId}/>
-                        <QueueOpener userId={userId} courseId={courseId}/>
-                    </div>
-                </div>
-            </div>
-            <div>
-                <div className='mb-4'>
-                    <h1 className='mb-3'>
-                        Questions
-                    </h1>
-                    {flattenedQuestions?.length > 0 ? flattenedQuestions?.map(v => (
-                        <a href={`/courses/${courseId}/questions/${v.id}`} className='text-decoration-none'
-                           style={{color: 'inherit'}}>
-                            <QuestionCard key={v.id}
-                                          question={v}
-                                          userId={userId}
-                                          courseId={courseId}
-                            />
-                        </a>
-                    )) : (
-                        <div className='alert alert-warning border'>
-                            No Questions
-                        </div>
-                    )}
-                    <div className='mt-4'>
-                        <Button onClick={async () => {
-                            await fetchNextPage()
-                        }}
-                                disabled={!hasNextPage}
-                        >
-                            Load More Questions
-                        </Button>
-                    </div>
-                </div>
-            </div>
 
-        </>
+        <div>
+            <div className='mb-4'>
+                <h1 className='mb-3'>
+                    Questions
+                </h1>
+                {flattenedQuestions?.length > 0 ? flattenedQuestions?.map(v => (
+
+                    <QuestionCard key={v.id}
+                                  question={v}
+                                  userId={userId}
+                                  courseId={courseId}
+                    />
+                )) : (
+                    <div className='alert alert-warning border'>
+                        No Questions
+                    </div>
+                )}
+                <div className='mt-4'>
+                    <Button onClick={async () => {
+                        await fetchNextPage()
+                    }}
+                            disabled={!hasNextPage}
+                    >
+                        Load More Questions
+                    </Button>
+                </div>
+            </div>
+        </div>
     )
 
 }

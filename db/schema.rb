@@ -29,7 +29,7 @@ ActiveRecord::Schema.define(version: 2021_05_23_033554) do
     t.string "student_code"
     t.string "ta_code"
     t.string "instructor_code"
-    t.boolean "open"
+    t.boolean "open", default: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
@@ -130,10 +130,8 @@ ActiveRecord::Schema.define(version: 2021_05_23_033554) do
     t.text "email"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.bigint "question_state_id"
     t.string "provider"
     t.string "uid"
-    t.index ["question_state_id"], name: "index_users_on_question_state_id"
   end
 
   create_table "users_roles", id: false, force: :cascade do |t|

@@ -1,2 +1,7 @@
-<h1>QuestionStates#show</h1>
-<p>Find me in app/views/question_states/show.html.erb</p>
+
+<%= render partial: "shared/back_navbar" %>
+
+<%= render partial: "shared/show_model",
+           locals: {
+             model_instance: @question_state,
+           } %>

@@ -1,41 +1,9 @@
-<h2 class="mb-3">
-  <b>
-    Course Information
-  </b>
-</h2>
-<div class="card shadow-sm">
-  <div class="card-body">
+<h1> Course </h1>
 
-    <div>
-      <h4>
-        Course Name
-      </h4>
-      <p>
-        <%= @course.name %>
-      </p>
-    </div>
-    <div>
-      <h4>
-        TA Code
-      </h4>
-      <p>
-        <%= @course.ta_code %>
-      </p>
-    </div>
-    <% if current_user.has_role? :instructor, @course %>
-      <div>
-        <h4>
-          Instructor Code
-        </h4>
-        <p>
-          <%= @course.instructor_code %>
-        </p>
-      </div>
-    <% end %>
-  </div>
-  <div class="card-footer d-flex flex-row">
-    <div class="flex-1"></div>
-    <%= button_to "Edit", edit_course_path(@course), class: "btn btn-warning me-2", method: :get %>
-    <%= button_to "Delete", course_path(@course), class: "btn btn-danger", method: :delete %>
-  </div>
-</div>
+<%= render partial: "shared/show_model",
+           locals: {
+             model_instance: @course,
+             options: {
+               except: [:course_code]
+             }
+           } %>

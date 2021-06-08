@@ -46,7 +46,13 @@ class Ability
         user.has_role? :ta, message.question_state.question.course
       end
 
-      can :manage, Tag, Tag.all do |tag|
+      can :read, Tag
+
+      can :manage, Tag, Tag
+                          .where(course_id: Course
+                                              .where(id: Course.find_roles(:ta,  user)
+                                                               .pluck(:resource_id))
+                                              .pluck(:id)) do |tag|
         user.has_role? :ta, tag.course
       end
 
@@ -58,7 +64,7 @@ class Ability
         user.has_role?(:ta, question.course) || question.user_id == user.id
       end
 
-      can :read, User, :given_name
+      can :read, User
     end
 
     # Define abilities for the passed in user here. For example:

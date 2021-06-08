@@ -10,15 +10,17 @@
     <li class="mb-1">
       <%= button_tag class: "btn btn-toggle align-items-center text-decoration-none
                             #{(request.path == courseInfo_course_path(@course) ||
-        request.path == roster_course_path(@course) ||
-        request.path == course_questions_path(@course)) ? 'active-link' : ''}",
+        request.path == course_users_path(@course) ||
+        request.path == course_questions_path(@course) ||
+        request.path == course_tags_path(@course)) ? 'active-link' : ''}",
                      data: { "bs-toggle": "collapse", "bs-target": "#course-info-collapse" } do %>
         Information
       <% end %>
       <%= content_tag :div, id: "course-info-collapse",
                       class: "collapse #{(request.path == courseInfo_course_path(@course) ||
-                        request.path == roster_course_path(@course) ||
-                        request.path == course_questions_path(@course)) ? "show" : ""}" do %>
+                        request.path == course_users_path(@course) ||
+                        request.path == course_questions_path(@course) ||
+                        request.path == course_tags_path(@course)) ? "show" : ""}" do %>
         <ul class="navbar-toggler list-unstyled pb-1 small">
           <li>
             <%= button_to "Course", courseInfo_course_path(@course),
@@ -26,37 +28,18 @@
                                                                "active-link" : ""}", method: :get %>
           </li>
           <li>
-            <%= button_to "Questions", course_questions_path(@course),
+            <%= button_to "Questions", ApplicationHelper::SearchClass.gen_course_link(@course, :questions),
                           class: "btn text-decoration-none #{(request.path == course_questions_path(@course)) ?
                                                                "active-link" : ""}", method: :get %>
           </li>
           <li>
-            <%= button_to "Roster", roster_course_path(@course),
-                          class: "btn text-decoration-none #{(request.path == roster_course_path(@course)) ?
-                                                               "active-link" : ""}", method: :get %>
-          </li>
-        </ul>
-      <% end %>
-    </li>
-
-    <li class="mb-1">
-      <%= button_tag class: "btn btn-toggle align-items-center text-decoration-none
-                            #{(request.path == settings_course_course_path(@course) ||
-        request.path == settings_queues_course_path(@course)) ? 'active-link' : ''}",
-                     data: { "bs-toggle": "collapse", "bs-target": "#settings-collapse" } do %>
-        Settings
-      <% end %>
-      <%= content_tag :div, id: "settings-collapse", class: "collapse #{(request.path == settings_course_course_path(@course) ||
-        request.path == settings_queues_course_path(@course)) ? 'show' : ''}" do %>
-        <ul class="navbar-toggler list-unstyled pb-1 small">
-          <li>
-            <%= button_to "Course", settings_course_course_path(@course),
-                          class: "btn text-decoration-none #{(request.path == settings_course_course_path(@course)) ?
+            <%= button_to "Tags", ApplicationHelper::SearchClass.gen_course_link(@course, :tags),
+                          class: "btn text-decoration-none #{(request.path == course_tags_path(@course)) ?
                                                                "active-link" : ""}", method: :get %>
           </li>
           <li>
-            <%= button_to "Queue", settings_queues_course_path(@course),
-                          class: "btn text-decoration-none #{(request.path == settings_queues_course_path(@course)) ?
+            <%= button_to "Roster", ApplicationHelper::SearchClass.gen_course_link(@course, :users),
+                          class: "btn text-decoration-none #{(request.path == course_users_path(@course)) ?
                                                                "active-link" : ""}", method: :get %>
           </li>
         </ul>

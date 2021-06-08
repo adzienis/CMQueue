@@ -1,90 +1,12 @@
-<h2 class="mb-3">
-  <b>
-    Questions
-  </b>
-</h2>
+<h1> Questions </h1>
 
-<div class="card mb-3 shadow-sm">
-  <div class="card-body">
-    <%= search_form_for @questions_ransack, :url => questions_path do |f| %>
-      <%= hidden_field_tag :course_id, params[:course_id] if params[:course_id] %>
-      <%= hidden_field_tag :user_id, params[:user_id] if params[:user_id] %>
-
-      <div class="row">
-        <div class="col mb-2">
-          <label class="form-label"> Start</label>
-          <%= f.date_field :created_at_gt,
-                           value: params.dig(:q, :created_at_gt),
-                           class: "form-control"
-          %>
-        </div>
-        <div class="col mb-2">
-          <label class="form-label"> End</label>
-          <%= f.date_field :created_at_lt,
-                           value: params.dig(:q, :created_at_lt),
-                           class: "form-control"
-
-          %>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col mb-2">
-          <%= f.label "First Name", class: "form-label" %>
-          <%= f.search_field :user_given_name_cont, class: "form-control", value: params.dig(:q, :user_given_name_cont) %>
-        </div>
-        <div class="col mb-2">
-          <%= f.label "Last Name", class: "form-label" %>
-          <%= f.search_field :user_family_name_cont, class: "form-control", value: params.dig(:q, :user_family_name_cont) %>
-        </div>
-      </div>
-      <%= f.submit "Search", class: "btn btn-primary", params: params %>
-    <% end %>
-  </div>
-</div>
-
-
-<h3>
-  Results
-</h3>
-
-<div class="table-responsive mb-3" id="results">
-  <table class="table table-hover table-striped">
-    <thead>
-    <tr>
-      <th>
-        <%= sort_link(@questions_ransack, :user_given_name, "User") %>
-      </th>
-      <th>
-        Description
-      </th>
-      <th>
-        <%= sort_link(@questions_ransack, :created_at, "Created At") %>
-      </th>
-      <th>
-        <%= sort_link(@questions_ransack, :state, "State") %>
-      </th>
-    </tr>
-    </thead>
-    <tbody>
-    <% @records&.each do |question| %>
-      <tr onclick=<%= "window.location='#{course_question_path(question.question.course, question.question)}'" %> style="cursor: pointer
-      ">
-      <td><%= question.user.given_name %></td>
-      <td><%= question.question.description %></td>
-      <td><%= question.created_at.strftime('%B %-d, %Y %l:%M %P') %></td>
-
-      <td><%= question.question.question_state.state
-      %></td>
-      </tr>
-    <% end %>
-    </tbody>
-  </table>
-</div>
-
-
-
-
-<div class="w-100 d-flex justify-content-center">
-  <%== render partial: "pagy/nav.html.erb", locals: { pagy: @pagy } %>
-</div>
-
+<%= render partial: "shared/search_form",
+           locals: {
+             records: @records,
+             ransack: @questions_ransack,
+             course: @course,
+             pagy: @pagy,
+             options: {
+               extra_columns: [{ user: :given_name}, {course: :name}]
+             }
+           } %>

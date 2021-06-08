@@ -2,11 +2,11 @@ class CoursesController < ApplicationController
   load_and_authorize_resource
 
   def edit
-    @course = Course.find(params[:id])
+    @course = Course.find(params[:course_id])
   end
 
   def show
-    @course = current_user.courses.find_by(id: params[:id])
+    @course = current_user.courses.find_by(id: params[:course_id])
     unless @course
       redirect_to user_enrollments_path and return
     end
@@ -30,7 +30,7 @@ class CoursesController < ApplicationController
   end
 
   def open
-    @course = Course.find(params[:id]).update(open: params[:open][:status])
+    @course = Course.find(params[:course_id]).update(open: params[:open][:status])
 
     respond_to do |format|
       format.html
@@ -39,11 +39,11 @@ class CoursesController < ApplicationController
   end
 
   def open_status
-    render json: Course.find(params[:id]).open
+    render json: Course.find(params[:course_id]).open
   end
 
   def answer_page
-    @course = Course.find(params[:id])
+    @course = Course.find(params[:course_id])
     question_state = current_user.question_state
     @top_question = question_state&.question
   end
@@ -63,7 +63,7 @@ class CoursesController < ApplicationController
   end
 
   def active_tas
-    @course = Course.find(params[:id])
+    @course = Course.find(params[:course_id])
     @tas = User.with_role :ta, @course
     @tas = @tas.joins(:question_state).where('question_states.created_at > ?', 15.minutes.ago).distinct
 
@@ -74,7 +74,7 @@ class CoursesController < ApplicationController
   end
 
   def answer
-    @course = Course.find(params[:id])
+    @course = Course.find(params[:course_id])
     ActiveRecord::Base.transaction do
 
       @top_question = Question.questions_by_state(["unresolved"]).first
@@ -87,7 +87,7 @@ class CoursesController < ApplicationController
   end
 
   def course_info
-    @course = Course.find(params[:id])
+    @course = Course.find(params[:course_id])
 
   end
 
@@ -113,21 +113,25 @@ class CoursesController < ApplicationController
   end
 
   def update
-
-    @course = Course.find(params[:id])
+    @course = Course.find(params[:course_id])
     @course.update(course_params)
 
-    redirect_to settings_course_course_path(@course)
+    redirect_to courseInfo_course_path(@course)
   end
 
   def queues
-    @course = Course.find(params[:id])
+    @course = Course.find(params[:course_id])
 
-    @tags = Course.find(params[:id]).tags.order('tags.created_at DESC')
+    @tags = Course.find(params[:course_id]).tags.order('tags.created_at DESC')
+
+    @tags_ransack = @tags.ransack(params[:q])
+
+    @pagy, @records = pagy @tags_ransack.result
+
   end
 
   def roster
-    @course = Course.find(params[:id])
+    @course = Course.find(params[:course_id])
 
     @users_ransack = @course.users.with_any_roles(:student, :ta).distinct.ransack(params[:q])
 
@@ -137,7 +141,7 @@ class CoursesController < ApplicationController
   private
 
   def course_params
-    params.require(:course).permit(:name, :status, :ta_code, :instructor_code)
+    params.require(:course).permit(:name, :course_id, :status, :ta_code, :instructor_code, :open)
   end
 
   def answer_params

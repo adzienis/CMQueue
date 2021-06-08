@@ -1,0 +1,66 @@
+<% options = {} if local_assigns[:options].nil? %>
+<% options[:extra_columns] ||= []%>
+<% options[:except] ||= [] %>
+
+<%= content_tag :div, id: "dropdown-filter", data: {
+  colNames: records.model.column_names, queries: params[:q]
+}.to_json do %>
+<% end %>
+
+<h3>
+  Results
+</h3>
+
+<div class="table-responsive mb-3" id="results">
+  <table class="table table-hover table-striped">
+    <thead>
+    <tr>
+      <th>
+        Actions
+      </th>
+      <% options[:extra_columns].each do |extra| %>
+        <th style="min-width: 125px">
+          <%= sort_link(ransack, extra.flatten.join('_')) do %>
+          <%= "#{extra.flatten[-2].to_s.humanize} #{extra.flatten[-1].to_s.humanize}" %>
+          <% end %>
+        </th>
+      <% end %>
+      <% records.model.column_names.reject {|c| options[:except].include? c.to_sym }.each do |k| %>
+        <th style="min-width: 125px">
+          <%= sort_link(ransack, k.to_sym) %>
+        </th>
+      <% end %>
+    </tr>
+    </thead>
+    <tbody>
+    <% records&.each do |tag| %>
+      <tr onclick=<%= "window.location='#{url_for([course, tag])}'" %> style="cursor: pointer
+      ">
+      <td>
+        <i class="fas fa-edit" onclick=<%= "event.stopPropagation();window.location='#{edit_polymorphic_url([course || tag.course, tag])}'" %>></i>
+        <i class="fas fa-info-circle" onclick=<%= "event.stopPropagation();window.location='#{url_for([course, tag])}'" %>></i>
+      </td>
+      <% options[:extra_columns].each do |extra| %>
+      <td>
+        <%= ApplicationHelper::SearchClass.fetch_attribute(tag, extra) %>
+      </td>
+      <% end %>
+      <% records.model.column_names.reject {|c| options[:except].include? c.to_sym }.each do |k| %>
+        <td>
+          <% if records.model.column_for_attribute(k).type.to_s == "datetime" %>
+            <%= tag.try(k.to_sym).localtime.to_formatted_s(:short) %>
+          <% else %>
+            <%= tag.send(k.to_sym) %>
+          <% end %>
+        </td>
+      <% end %>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+</div>
+
+
+<div class="w-100 d-flex justify-content-center">
+  <%== render partial: "pagy/nav.html.erb", locals: { pagy: pagy } %>
+</div>

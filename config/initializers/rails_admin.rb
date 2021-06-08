@@ -9,7 +9,7 @@ RailsAdmin.config do |config|
   # config.current_user_method(&:current_user)
 
   ## == CancanCan ==
-  config.authorize_with :cancancan
+  # config.authorize_with :cancancan
 
   ## == Pundit ==
   # config.authorize_with :pundit
@@ -22,13 +22,10 @@ RailsAdmin.config do |config|
   ## == Gravatar integration ==
   ## To disable Gravatar integration in Navigation Bar set to false
   # config.show_gravatar = true
-  config.current_user_method(&:current_user)
-
-  config.sidescroll = true
 
   config.actions do
-    dashboard # mandatory
-    index # mandatory
+    dashboard                     # mandatory
+    index                         # mandatory
     new
     export
     bulk_delete
@@ -36,7 +33,6 @@ RailsAdmin.config do |config|
     edit
     delete
     show_in_app
-    import
 
     ## With an audit adapter, you can add:
     # history_index

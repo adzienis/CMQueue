@@ -14,11 +14,15 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :courses do
+  resources :courses, only: [] do
     resources :questions
     resources :tags
     resources :users
-
+    resources :question_states
+    resources :messages
+  end
+  resources :questions
+  resources :courses, param: :course_id do
     member do
       get 'roster', to: "courses#roster"
       get 'courseInfo', to: "courses#course_info"
@@ -41,20 +45,11 @@ Rails.application.routes.draw do
       post 'open', to: "courses#open"
     end
   end
-  resources :questions
-  resources :courses
 
   resources :users, shallow: true do
     resources :questions
   end
-
-  resource :users, shallow: true do
-    resources :courses, controller: 'users/courses'
-    resources :enrollments, controller: 'users/enrollments'
-  end
-
   resource :user, shallow: true do
-    resources :courses, controller: 'users/courses'
     resources :enrollments, controller: 'users/enrollments'
   end
 

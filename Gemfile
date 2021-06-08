@@ -25,7 +25,7 @@ gem 'redis', '~> 4.0'
 # Use Active Storage variant
 # gem 'image_processing', '~> 1.2'
 #
-gem 'devise', github: 'heartcombo/devise', branch: 'ca-omniauth-2'
+gem 'devise'
 gem 'irb'
 gem 'omniauth-google-oauth2'
 gem 'omniauth-rails_csrf_protection'
@@ -88,10 +88,10 @@ gem "pagy"
 
 gem "ransack", "~> 2.4"
 
-gem "rails_admin", "~> 2.1"
-
 gem "activeadmin", "~> 2.9"
 
 gem "rails_admin_import", "~> 2.2"
 
-gem "formtastic", "~> 4.0"
+gem "simple_form", "~> 5.1"
+
+gem "rails_admin", "~> 2.1"

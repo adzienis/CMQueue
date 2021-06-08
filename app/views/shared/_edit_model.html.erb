@@ -1,0 +1,16 @@
+<%= simple_form_for model_instance, defaults: {
+  wrapper_html: {
+    class: "mb-2"
+  },
+  input_html: {
+    class: "mb-2" } } do |f| %>
+  <% model_instance.class.content_columns
+           .reject {|v| [:created_at, :updated_at].include? v.name.to_sym}
+           .each do |col| %>
+    <b>
+      <%= f.input col.name, html5: true %>
+    </b>
+  <% end %>
+
+  <%= f.submit :update, class: "btn btn-primary" %>
+<% end %>

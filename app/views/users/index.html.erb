@@ -1,1 +1,12 @@
-<%= link_to "Sign out", destroy_user_session_path %>
+<h1> Users </h1>
+
+<%= render partial: "shared/search_form",
+           locals: {
+             records: @records,
+             ransack: @users_ransack,
+             course: @course,
+             pagy: @pagy,
+             options: {
+               except: [:uid, :provider]
+             }
+           } %>

@@ -4,9 +4,6 @@ class QuestionsController < ApplicationController
   def index
     @course = Course.find(params[:course_id]) if params[:course_id]
 
-    @questions ||= Question.none
-
-
     @questions = @questions.includes(:user, :question_state, :tags)
     @questions = @questions.where(course_id: params[:course_id]) if params[:course_id]
     @questions = @questions.where(user_id: params[:user_id]) if params[:user_id]
@@ -36,7 +33,7 @@ class QuestionsController < ApplicationController
 
     @questions_ransack1 = @questions_ransack1.left_joins(:question, :user).select("distinct on(questions.id, questions.user_id) question_states.id ")
 
-    @questions_ransack ||= QuestionState.where("question_states.id in (#{@questions_ransack1.to_sql})").ransack(params[:q])
+    @questions_ransack ||= Question.left_joins(:question_states).where("question_states.id in (#{@questions_ransack1.to_sql})").ransack(params[:q])
 
     @pagy, @records = pagy @questions_ransack.result
 
@@ -52,10 +49,15 @@ class QuestionsController < ApplicationController
 
   end
 
+  def edit
+    @question = Question.find(params[:id])
+    @course = Course.find(params[:course_id]) if params[:course_id]
+  end
+
   def show
     @course = Course.find(params[:course_id]) if params[:course_id]
     @question = Question.find(params[:id])
-    @previous_questions = Question.previous_questions(@question)
+    @previous_questions = Question.previous_questions(@question.id)
   end
 
   def create
@@ -74,10 +76,15 @@ class QuestionsController < ApplicationController
   def update
     @question = Question.find(params[:id])
     @question.update(question_params)
-    @question.tags = (Tag.find(params[:question][:tags]))
+    @question.tags = (Tag.find(params[:tag][:tags])) if params.dig(:tag, :tags)
+
+    @question.tags = (Tag.find(params[:question][:tag_ids].reject(&:empty?))) if params.dig(:question, :tag_ids)
+
+    puts "----------------------------------------adsasd"
+    puts params[:question][:tag_ids].reject(&:empty?).inspect
 
     respond_to do |format|
-      format.html
+      format.html { redirect_to course_questions_path(@question.course) }
       format.json { render json: @question }
     end
   end
@@ -105,6 +112,6 @@ class QuestionsController < ApplicationController
   private
 
   def question_params
-    params.require(:question).permit(:course_id, :description, :tried, :location, :user_id)
+    params.require(:question).permit(:course_id, :description, :tried, :location, :user_id, :title)
   end
 end

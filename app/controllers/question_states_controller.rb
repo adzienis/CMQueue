@@ -1,5 +1,5 @@
 class QuestionStatesController < ApplicationController
-  #load_and_authorize_resource
+  load_and_authorize_resource
 
   def index
     @question_states = QuestionState.all
@@ -22,6 +22,8 @@ class QuestionStatesController < ApplicationController
   end
 
   def show
+    @course = Course.find(params[:course_id]) if params[:course_id]
+    @question_state = QuestionState.find(params[:id])
   end
   private
 

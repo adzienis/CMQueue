@@ -1,35 +1,5 @@
 <div class="container mt-4">
   <%= render partial: "shared/back_navbar" %>
 
-
-  <div class="card shadow-sm">
-    <div class="card-body">
-      <div class="card-title">
-        <h2>
-          <b>
-            <%= @tag.name %>
-          </b>
-        </h2>
-      </div>
-      <hr>
-      <%= form_with model: @tag do |form| %>
-        <div class="mb-2">
-          <%= form.label :name, "Name" %>
-          <%= form.text_field :name, placeholder: tag.name, class: 'form-control' %>
-        </div>
-        <div class="mb-2">
-          <%= form.label :description, "Description" %>
-          <%= form.text_area :description, placeholder: tag.description, class: 'form-control' %>
-        </div>
-        <div class="mb-3">
-          <div class="form-check">
-            <%= form.check_box :archived, class: 'form-check-input checkbox-1x' %>
-
-            <%= form.label :archived, "Archived", class: 'form-check-label ml-1' %>
-          </div>
-        </div>
-        <%= form.submit "Update", class: 'btn btn-primary' %>
-      <% end %>
-    </div>
-  </div>
+  <%= render partial: "shared/edit_model", locals: { model_instance: @tag } %>
 </div>

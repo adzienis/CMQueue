@@ -45,7 +45,26 @@ html body{
 #courses-container {
 }
 
+.filter-row {
+  display: flex;
+}
+
+.filter-row > div {
+  margin-right: 1rem;
+  margin-bottom: 1em;
+}
+
 @media (max-width: 768px) {
+
+  .filter-row {
+    flex-direction: column;
+  }
+
+  .filter-row > div {
+    width: 100%;
+    margin-right: 0;
+  }
+
   .sidebar-opener {
     position:fixed;
     display: block;

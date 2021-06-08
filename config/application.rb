@@ -4,6 +4,10 @@ require 'devise'
 
 require "rails/all"
 
+require 'action_view'
+require 'haml'
+
+
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
@@ -13,7 +17,8 @@ module Meet
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 6.1
     config.assets.paths << Rails.root.join("app", "assets", "fonts")
-    config.autoload_paths << "#{Rails.root}/lib"
+    config.autoload_paths << "#{Rails.root}/lib/search"
+    config.hosts << "testme.com"
 
 
     # Configuration for the application, engines, and railties goes here.

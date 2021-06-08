@@ -1,5 +1,5 @@
 import QuestionExplainer from "./QuestionExplainer";
-import {Button, Card, Nav, Navbar} from "react-bootstrap";
+import {Button, Card} from "react-bootstrap";
 import React, {useEffect, useRef, useState} from "react";
 import {QueryClientProvider, useQuery, useQueryClient} from "react-query";
 import useWrappedMutation from "./useWrappedMutation";
@@ -140,9 +140,6 @@ const Component = props => {
 
     return (
         <>
-            <h2>
-                {`${topQuestion?.user.given_name} ${topQuestion?.user.family_name}`}
-            </h2>
             <QuestionExplainer
                 question={topQuestion}
                 userId={userId}
@@ -152,24 +149,20 @@ const Component = props => {
             />
             <Card className='shadow mb-5'>
                 <Card.Body>
-                    <Navbar className='pl-0 pr-0'>
-                        <Nav className='w-100' variant='tabs'>
-                            <Nav.Link onClick={e => {
-                                setSelector('question')
-                            }}>
-                                Question
-                            </Nav.Link>
-                            <Nav.Link onClick={e => {
-                                setSelector('previousQuestions')
-                            }}>
-                                Previous Questions
-                            </Nav.Link>
-                        </Nav>
-                    </Navbar>
-
+                    <Card.Title>
+                        <div className="d-flex">
+                            <h2>
+                                {`${topQuestion?.user.given_name} ${topQuestion?.user.family_name}`}
+                            </h2>
+                            <div className="flex-1"/>
+                            <a href={`/courses/${courseId}/questions/${topQuestion?.id}`}>
+                                <i className="fas fa-info-circle fa-lg"></i>
+                            </a>
+                        </div>
+                    </Card.Title>
+                    <hr/>
                     <div>
                         {elem}
-
                     </div>
                 </Card.Body>
                 <Card.Footer>

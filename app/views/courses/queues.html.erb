@@ -1,57 +1,7 @@
-<h2 class="mb-3">
-  <b>
-    Queue Settings
-  </b>
-</h2>
-
-<div class="card mb-2">
-  <div class="card-body">
-    <h2>
-      Create a New Queue
-    </h2>
-    <div>
-      <%= form_with url: tags_url, scope: :tag do |form| %>
-        <%= form.hidden_field :course_id, value: @course.id %>
-        <div class="mb-2">
-          <%= form.label :name, "Name" %>
-          <%= form.text_field :name, class: 'form-control' %>
-        </div>
-        <div class="mb-2">
-          <%= form.label :description, "Description" %>
-          <%= form.text_field :description, class: 'form-control' %>
-        </div>
-        <%= form.submit "Create", class: 'btn btn-primary' %>
-      <% end %>
-    </div>
-  </div>
-</div>
-
-<div class="card">
-  <div class="card-body">
-
-    <h2 class="mb-2" id="queues">
-      Queues
-    </h2>
-
-    <table class="table table-hover">
-      <thead>
-      <tr>
-        <th scope="col">Name</th>
-        <th scope="col">Name</th>
-      </tr>
-      </thead>
-      <tbody>
-      <% @tags.each do |tag| %>
-        <tr
-          onclick=<%= "window.location='#{course_tag_url(tag.course, tag.id)}'" %>
-        style="cursor: pointer"
-        >
-          <td>
-            <%= tag.name %>
-          </td>
-        </div>
-      <% end %>
-      </tbody>
-    </table>
-  </div>
-</div>
+<%= render partial: "shared/search_form",
+           locals: {
+             records: @records,
+             ransack: @tags_ransack,
+             course: @course,
+             pagy: @pagy
+           } %>

@@ -1,37 +1,7 @@
-<div class="container mt-4">
 
-  <%= render partial: "shared/back_navbar" %>
+<%= render partial: "shared/back_navbar" %>
 
-  <div class="card shadow-sm">
-    <div class="card-body">
-      <div class="card-title">
-        <h2>
-          <b>
-            <%= @tag.name %>
-          </b>
-        </h2>
-      </div>
-      <hr>
-      <div class="card-text">
-        <div>
-          <h2>
-            Description
-          </h2>
-          <%= @tag.description %>
-        </div>
-        <div>
-          <h2>
-            Total Questions
-          </h2>
-          <%= @tag.questions.count %>
-        </div>
-      </div>
-    </div>
-    <div class="card-footer d-flex flex-row">
-      <div class="flex-1"></div>
-      <%= button_to "Edit", edit_course_tag_path(@tag), class: "btn btn-warning me-2", method: :get %>
-      <%= button_to "Delete", course_tag_path(@tag), class: "btn btn-danger", method: :delete %>
-    </div>
-  </div>
-
-</div>
+<%= render partial: "shared/show_model", locals: {
+  model_instance: @tag,
+  options: { actions: [:edit]}
+} %>

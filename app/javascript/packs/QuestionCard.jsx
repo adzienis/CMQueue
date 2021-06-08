@@ -37,9 +37,10 @@ export default props => {
 
 
     return (
+
         <Card
             fluid style={{border: state === "frozen" ? '2px solid #2185D0' : ''}}
-            className='mb-2 shadow-sm hover-container'
+            className='mb-2 shadow-sm'
         >
             <Card.Body>
                 <Card.Title>
@@ -70,17 +71,23 @@ export default props => {
                     {question.description}
                 </Card.Text>
             </Card.Body>
-            {state === "frozen" ? (<Card.Text extra>
-                <Button color='blue' style={{opacity: 1}} onClick={e => {
-                    e.preventDefault()
-                    e.stopPropagation()
-                    unfreeze()
-                }}
-                        loading={frozenLoading}
-                >
-                    Unfreeze
-                </Button>
-            </Card.Text>) : null}
+            <Card.Footer>
+                {state === "frozen" ? (<Card.Text extra>
+                    <Button color='blue' style={{opacity: 1}} onClick={e => {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        unfreeze()
+                    }}
+                            loading={frozenLoading}
+                    >
+                        Unfreeze
+                    </Button>
+                </Card.Text>) : null}
+                <a href={`/courses/${courseId}/questions/${question?.id}`} className='text-decoration-none'
+                   style={{color: 'inherit'}}>
+                    <i className="fas fa-info-circle fa-lg"></i>
+                </a>
+            </Card.Footer>
         </Card>
     )
 

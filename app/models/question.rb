@@ -9,6 +9,10 @@ class Question < ApplicationRecord
 
   has_and_belongs_to_many :tags, dependent: :destroy
 
+  def self.ransackable_scopes(auth_object = nil)
+    %i(previous_questions)
+  end
+
   scope :questions_by_state, ->(states) { joins(:question_state)
                                             .where('question_states.id = (SELECT MAX(question_states.id)
                                         FROM question_states where question_states.question_id = questions.id)')
@@ -16,11 +20,15 @@ class Question < ApplicationRecord
                                             .order("question_states.created_at DESC")
   }
 
-  scope :previous_questions, ->(question) {
+  scope :previous_questions, ->(question = nil) {
+    q = Question.find_by_id(question)
+    return none unless q
+
+
     joins(:question_state)
-      .where("questions.created_at < ?", question.created_at)
-      .where(user_id: question.user_id)
-      .where(course_id: question.course_id)
+      .where("questions.created_at < ?", q.created_at)
+      .where(user_id: q.user_id)
+      .where(course_id: q.course_id)
       .order("questions.created_at DESC")
       .distinct
   }
