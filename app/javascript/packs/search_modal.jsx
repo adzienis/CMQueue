@@ -38,6 +38,31 @@ const Component = props => {
         if (!open) setErrors({})
     }, [open])
 
+    let searchResults = null;
+
+    if (data?.length === 0 && search === "") {
+        searchResults = null;
+    } else if (data?.length === 0 && search !== null && search !== "") {
+        searchResults = (
+            <ul className="list-group position-relative">
+                <li className="list-group-item position-absolute w-100">
+                    No courses found by this name
+                </li>
+            </ul>
+        )
+    } else if (data?.length > 0) {
+        searchResults = data?.map(v => <li
+            className="list-group-item w-100"
+            style={{cursor: 'pointer'}}
+            value={v.id}
+            onClick={e => {
+                mutate(e.target.value)
+            }}
+        >
+            {v.title}
+        </li>)
+    }
+
 
     return (
         <>
@@ -56,22 +81,13 @@ const Component = props => {
                                     <Form.Control type='text' onChange={e => {
                                         setSearch(e.target.value)
                                     }}/>
-                                    {(typeof data?.length !== "undefined" && data?.length !== 0) ?
+                                    {
                                         <ul className="list-group position-relative">
                                             <div className="position-absolute w-100">
-                                                {data?.map(v => <li
-                                                    className="list-group-item w-100"
-                                                    style={{ cursor: 'pointer'}}
-                                                    value={v.id}
-                                                    onClick={e => {
-                                                        mutate(e.target.value)
-                                                    }}
-                                                >
-                                                    {v.title}
-                                                </li>)}
+                                                {searchResults}
                                             </div>
 
-                                        </ul> : null}
+                                        </ul>}
                                 </Form.Group>
                             </Form>
                         </div>
