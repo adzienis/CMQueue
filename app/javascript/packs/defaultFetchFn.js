@@ -1,3 +1,8 @@
+
+const logout = async () => {
+    window.location.href = '/sign_out';
+};
+
 export default async function ({queryKey}) {
     let url = ``;
     let parameters = false;
@@ -30,6 +35,15 @@ export default async function ({queryKey}) {
             'Accept': 'application/json'
         }
     });
+
+
+
+    if (resp.status === 401) {
+        logout();
+
+        throw new Error(resp.status);
+    }
+
 
     if(!resp.ok){
         throw resp.statusText;
