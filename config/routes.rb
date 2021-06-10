@@ -1,9 +1,12 @@
 Rails.application.routes.draw do
   mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
   mount PgHero::Engine, at: "pghero"
+  mount API => '/'
   resources :tags
   resources :question_states
   resources :messages
+
+  get '/swagger', to: "application#swagger"
 
   get 'courses/search', to: "courses#search"
 

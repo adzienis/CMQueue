@@ -19,7 +19,7 @@ class Course < ApplicationRecord
 
   after_update do
     QueueChannel.broadcast_to self, {
-      invalidate: ['courses', id, 'open']
+      invalidate: ['courses', id, 'open_status']
     }
   end
 

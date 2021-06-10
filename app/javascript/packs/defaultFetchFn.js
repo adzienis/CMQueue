@@ -27,8 +27,7 @@ export default async function ({queryKey}) {
         }
     });
 
-
-    const resp = await fetch(url, {
+    const resp = await fetch(`/api${url}`, {
         credentials: 'include',
         headers: {
             'Content-Type': 'application/json',

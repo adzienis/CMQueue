@@ -12,8 +12,10 @@
 
       <div id='enrollment-cards'
            data-controller="courseCard">
-        <%= content_tag :div,
-                        id: "hello-react" do %>
+
+        <%= content_tag :div, id: "hello-react", data: {
+          userId: current_user.id,
+        }.to_json do %>
         <% end %>
       </div>
     </div>
@@ -21,10 +23,10 @@
       <h1>
         Instructor Courses
       </h1>
-      <%= content_tag :div,
-                      id: "add-course-by-code", data: {
-          userId: current_user.id
-        }.to_json do %>
+
+      <%= content_tag :div, id: "add-course-by-code", data: {
+        userId: current_user.id,
+      }.to_json do %>
       <% end %>
     </div>
   </div>

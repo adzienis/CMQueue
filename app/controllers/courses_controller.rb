@@ -26,20 +26,6 @@ class CoursesController < ApplicationController
 
     @top_question = current_user.question_state&.question
 
-
-  end
-
-  def open
-    @course = Course.find(params[:course_id]).update(open: params[:open][:status])
-
-    respond_to do |format|
-      format.html
-      format.json { render json: @course }
-    end
-  end
-
-  def open_status
-    render json: Course.find(params[:course_id]).open
   end
 
   def answer_page
@@ -62,54 +48,8 @@ class CoursesController < ApplicationController
     redirect_to courses_path
   end
 
-  def active_tas
-    @course = Course.find(params[:course_id])
-    @tas = User.with_role :ta, @course
-    @tas = @tas.joins(:question_state).where('question_states.created_at > ?', 15.minutes.ago).distinct
-
-    respond_to do |format|
-      format.html
-      format.json { render json: @tas, include: :question_state }
-    end
-  end
-
-  def answer
-    @course = Course.find(params[:course_id])
-    ActiveRecord::Base.transaction do
-
-      @top_question = Question.questions_by_state(["unresolved"]).first
-
-      @top_question.question_states.create(state: answer_params[:state], user_id: answer_params[:user_id])
-
-    end
-
-    render json: @top_question
-  end
-
   def course_info
     @course = Course.find(params[:course_id])
-
-  end
-
-  def search
-    @searched_courses ||= []
-
-    respond_to do |format|
-      format.html
-      format.json { render json: Course.where("name LIKE :name", name: "%#{params[:name]}%") }
-    end
-  end
-
-  def top_question
-
-    question_state = User.find(params[:user_id]).question_state
-    @top_question = question_state&.question
-
-    if question_state&.state == "resolving"
-      render json: @top_question, include: [:question_state, :tags, :user]
-    else
-      render json: nil
-    end
   end
 
   def update

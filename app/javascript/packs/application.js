@@ -20,7 +20,8 @@ import './taActionPane'
 import queryClient from './queryClientFile'
 import ReactStudentChannel from '../channels/react_student_channel'
 import './Prefetcher'
-//import './hello_react'
+import './CourseStatus'
+import './swagger'
 
 import { Turbo } from "@hotwired/turbo-rails"
 window.Turbo = Turbo

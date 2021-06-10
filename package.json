@@ -23,7 +23,8 @@
     "react-on-rails": "12.2.0",
     "react-query": "^3.13.6",
     "stimulus": "^2.0.0",
-    "stimulus_reflex": "3.4.1"
+    "stimulus_reflex": "3.4.1",
+    "swagger-ui-react": "^3.50.0"
   },
   "version": "0.1.0",
   "devDependencies": {

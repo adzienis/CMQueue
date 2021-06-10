@@ -11,16 +11,21 @@ import CourseCard from "./CourseCard";
 import {Form} from "react-bootstrap";
 
 
-const Hello = props => {
+const Component = props => {
+    const {userId} = props;
     const [open, setOpen] = useState(false);
     const [search, setSearch] = useState(null);
     const {
         data,
     } = useQuery(['courses', 'search', '?', `name=${search}`], {
-        select: data => data.map(v => ({title: v.name, id: v.id}))
+        select: data => {
+            if (search === '') return []
+
+            return data.map(v => ({title: v.name, id: v.id}))
+        }
     })
 
-    const {data: courses} = useQuery(['user', 'enrollments', '?', 'role=student'])
+    const {data: courses} = useQuery(['users', parseInt(userId, 10), 'enrollments', '?', 'role=student'])
 
     const {mutate, errors, setErrors} = useWrappedMutation((course_id) => ({
             enrollment: {
@@ -37,7 +42,7 @@ const Hello = props => {
     return (
         <>
             <div className="modal fade" id="search-modal">
-                <div className="modal-dialog modal-dialog-centered">
+                <div className="modal-dialog modal-dialog-centered modal-lg">
                     <div className="modal-content">
                         <div className="modal-header">
                             <h5 className="modal-title">
@@ -52,16 +57,21 @@ const Hello = props => {
                                         setSearch(e.target.value)
                                     }}/>
                                     {(typeof data?.length !== "undefined" && data?.length !== 0) ?
-                                        <Form.Control as='select' multiple='multiple' htmlSize={data?.length}>
-                                            {data?.map(v => <option
-                                                value={v.id}
-                                                onClick={e => {
-                                                    mutate(e.target.value)
-                                                }}
-                                            >
-                                                {v.title}
-                                            </option>)}
-                                        </Form.Control> : null}
+                                        <ul className="list-group position-relative">
+                                            <div className="position-absolute w-100">
+                                                {data?.map(v => <li
+                                                    className="list-group-item w-100"
+                                                    style={{ cursor: 'pointer'}}
+                                                    value={v.id}
+                                                    onClick={e => {
+                                                        mutate(e.target.value)
+                                                    }}
+                                                >
+                                                    {v.title}
+                                                </li>)}
+                                            </div>
+
+                                        </ul> : null}
                                 </Form.Group>
                             </Form>
                         </div>
@@ -93,26 +103,9 @@ document.addEventListener('turbo:load', (e) => {
         node.forEach((v) => {
             const data = JSON.parse(v.getAttribute('data'))
 
-            ReactDOM.render(<QueryClientProvider client={queryClient} contextSharing><Hello/></QueryClientProvider>, v)
+
+            ReactDOM.render(<QueryClientProvider client={queryClient}
+                                                 contextSharing><Component {...data}/></QueryClientProvider>, v)
         })
     }
 })
-
-/*
-
-    useEffect(async () => {
-        if (search != null) {
-            const data = await queryClient.fetchQuery(['courseSearch', search], () => fetch(`/courses/search?name=${search}`, {
-                headers: {
-                    'Accept': 'application/json'
-                }
-            }).then(resp => resp.json()).then(json => json.map(v => ({title: v.name, id: v.id}))))
-
-            setData(data)
-        }
-    }, [search])
-
-
-    console.log('heeeeeeeeeeeeeeeeeeeeeer')
-
- */

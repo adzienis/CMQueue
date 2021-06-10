@@ -17,7 +17,7 @@ export default props => {
         placeholderData: []
     })
 
-    const {data: openStatus} = useQuery(['courses', parseInt(courseId, 10), 'open'])
+    const {data: openStatus} = useQuery(['courses', parseInt(courseId, 10), 'open_status'])
 
 
     const {mutateAsync: createQuestion, isLoading, errors} = useWrappedMutation(() => ({
@@ -42,10 +42,10 @@ export default props => {
     return <>
         {openStatus ?
             <>
-                <div className='card'>
+                <div className='card shadow-sm'>
                     <div className='card-body'>
                         <h1>
-                            Create a Question
+                            Ask a Question
                         </h1>
                         <Form>
 
@@ -91,7 +91,7 @@ export default props => {
                                     } : null}
                                 />
                             </div>
-                            <div className="mb-2">
+                            <div className="mb-3">
                                 <label> Location </label>
                                 <Form.Control
                                     as='textarea'

@@ -28,12 +28,18 @@ export default props => {
             state: 'resolving',
             user_id: userId
         }
-    }), `/courses/${courseId}/answer`)
+    }), `/api/courses/${courseId}/answer`, {
+        onSuccess: d => {
+            if (d) {
+                Turbo.visit(`/courses/${courseId}/answer`)
+
+            }
+        }
+    })
 
     return (<Button onClick={async e => {
             try {
                 await mutateAsync()
-
             } catch (e) {
             }
         }}

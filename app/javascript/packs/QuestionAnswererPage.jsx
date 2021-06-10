@@ -27,6 +27,8 @@ const Component = props => {
         }
     })
 
+    console.log('yeet', topQuestion)
+
     useEffect(async () => {
         if (topQuestion) {
         } else if (!topQuestion && !isFetching) {
@@ -101,38 +103,50 @@ const Component = props => {
     } else if (selector === 'question') {
         elem = (
             <div className='p-1'>
-                <h4>
-                    <b>
-                        Description
-                    </b>
-                </h4>
-                <span>
-                             {topQuestion?.description}
-                            </span>
-                <h4>
-                    <b>
-                        What Have They Tried?
-                    </b>
-                </h4>
-                <span>
-                                {topQuestion?.tried}
-                            </span>
-                <h4>
-                    <b>
-                        Zoom
-                    </b>
-                </h4>
-                <span>
-                                {topQuestion?.location}
-                            </span>
-                <h4>
-                    <b>
-                        Queues
-                    </b>
-                </h4>
-                <span>
-                                {topQuestion?.tags?.map(v => v.name).join(', ')}
-                            </span>
+                <div className="mb-2">
+                    <h4>
+                        <b>
+                            Description
+                        </b>
+                    </h4>
+                    <span>
+                        {topQuestion?.description}
+                    </span>
+                </div>
+                <div className="mb-2">
+                    <h4>
+                        <b>
+                            What Have They Tried?
+                        </b>
+                    </h4>
+                    <span>
+                        {topQuestion?.tried}
+                    </span>
+                </div>
+                <div className="mb-2">
+                    <h4>
+                        <b>
+                            Zoom
+                        </b>
+                    </h4>
+                    <span>
+                        {topQuestion?.location}
+                    </span>
+                </div>
+                <div className="mb-2">
+                    <h4>
+                        <b>
+                            Queues
+                        </b>
+                    </h4>
+                    <span>
+                        {topQuestion?.tags?.map(v =>
+                            <a href={`/courses/${courseId}/tags/${v.id}`}>
+                                <b>{v.name}</b>
+                            </a>
+                        )}
+                    </span>
+                </div>
             </div>
         )
     }
@@ -152,7 +166,7 @@ const Component = props => {
                     <Card.Title>
                         <div className="d-flex">
                             <h2>
-                                {`${topQuestion?.user.given_name} ${topQuestion?.user.family_name}`}
+                                {`${topQuestion?.user?.given_name} ${topQuestion?.user?.family_name}`}
                             </h2>
                             <div className="flex-1"/>
                             <a href={`/courses/${courseId}/questions/${topQuestion?.id}`}>

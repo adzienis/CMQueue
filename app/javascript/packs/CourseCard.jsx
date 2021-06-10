@@ -16,7 +16,9 @@ export default props => {
                 <Card.Title>
                     <div style={{display: 'flex'}}>
                             <span style={{flex: 1}}>
+                                Go to <b>
                                 {course?.name}
+                            </b>
                             </span>
                         <i className="fas fa-times fa-lg" onClick={e => {
                             e.preventDefault()

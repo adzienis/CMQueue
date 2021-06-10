@@ -13,16 +13,16 @@ const Component = props => {
     const {userId} = props;
     const queryClient = useQueryClient()
 
-    const {data: studentCourses} = useQuery(['user', 'enrollments', '?', 'role=student'], {
+    const {data: studentCourses} = useQuery(['users', parseInt(userId, 10), 'enrollments', '?', 'role=student'], {
         placeholderData: []
     })
-    const {data: taCourses} = useQuery(['user', 'enrollments', '?', 'role=ta'], {
+    const {data: taCourses} = useQuery(['users', parseInt(userId, 10), 'enrollments', '?', 'role=ta'], {
         placeholderData: []
     })
 
     useEffect(() => {
         studentCourses.forEach(v => {
-            queryClient.prefetchQuery(['courses', parseInt(v.id, 10), 'open']);
+            queryClient.prefetchQuery(['courses', parseInt(v.id, 10), 'open_status']);
             queryClient.prefetchQuery(['courses',
                 parseInt(v.id, 10),
                 'questions', 'count', '?', 'state=["unresolved", "frozen"]'])
@@ -34,7 +34,7 @@ const Component = props => {
     useEffect(() => {
 
         taCourses.forEach(v => {
-            queryClient.prefetchQuery(['courses', parseInt(v.id, 10), 'open']);
+            queryClient.prefetchQuery(['courses', parseInt(v.id, 10), 'open_status']);
             queryClient.prefetchQuery(['courses', parseInt(v.id, 10), 'questions', '?', `state=["unresolved"]`])
             queryClient.prefetchQuery(['courses',
                 parseInt(v.id, 10),

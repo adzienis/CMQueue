@@ -8,7 +8,7 @@ export default props => {
     const {userId, courseId} = props;
 
     const [open, setOpen] = useState(false);
-    const {data: openStatus} = useQuery(['courses', parseInt(courseId, 10), 'open'])
+    const {data: openStatus} = useQuery(['courses', parseInt(courseId, 10), 'open_status'])
 
     const {data: questions} = useQuery(
         ['courses', parseInt(courseId, 10), 'questions', '?', `state=["unresolved"]`], {
@@ -21,7 +21,7 @@ export default props => {
         open: {
             status: !openStatus
         }
-    }), `/courses/${courseId}/open`)
+    }), `/api/courses/${courseId}/open`)
 
     return (
         <Button onClick={e => {

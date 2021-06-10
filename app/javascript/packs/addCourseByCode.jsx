@@ -13,9 +13,10 @@ import {Button, Form} from "react-bootstrap";
 
 
 const Component = props => {
+    const {userId} = props;
 
 
-    const {data: courses} = useQuery(['user', 'enrollments', '?', 'role=ta'])
+    const {data: courses} = useQuery(['users', parseInt(userId, 10), 'enrollments', '?', 'role=ta'])
 
     const {mutateAsync: createEnrollment, errors} = useWrappedMutation(() => ({
         enrollment: {
@@ -30,7 +31,7 @@ const Component = props => {
 
     return <>
         <div className="modal fade" id="course-code-modal">
-            <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-dialog modal-dialog-centered modal-lg">
                 <div className="modal-content">
                     <div className="modal-header">
                         <h5 className="modal-title">

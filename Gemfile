@@ -97,3 +97,7 @@ gem "simple_form", "~> 5.1"
 gem "rails_admin", "~> 2.1"
 
 gem "pghero", "~> 2.8"
+
+gem "grape", "~> 1.5"
+
+gem "grape-swagger", "~> 1.4"

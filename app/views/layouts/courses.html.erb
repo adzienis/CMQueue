@@ -1,4 +1,10 @@
 <% content_for :content do %>
+
+  <%= tag.div id: "course-status", data: {
+    courseId: @course.id
+  }.to_json do %>
+  <% end if current_user.has_role? :ta, @course %>
+
   <script>
       function toggle() {
           if (document.querySelector('.sidebar').classList.contains('open')) {

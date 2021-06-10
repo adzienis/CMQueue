@@ -11,9 +11,9 @@
                             class: "mb-2" } } do |f| %>
       <fieldset disabled>
         <div class="mb-3">
-          <h4>
+          <h3>
             Attributes
-          </h4>
+          </h3>
           <% model_instance.class.content_columns
                            .reject { |v| options&.dig(:except)&.include? v.name.to_sym }
                            .each do |col| %>
@@ -27,9 +27,9 @@
             </div>
           <% end %>
         </div>
-        <h4>
+        <h3>
           Associations
-        </h4>
+        </h3>
         <% [:has_and_belongs_to_many]
              .collect { |s| model_instance.class.reflect_on_all_associations(s) }
              .flatten

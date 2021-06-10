@@ -1,6 +1,6 @@
 class Users::EnrollmentsController < ApplicationController
   def index
-    @courses = current_user.courses.with_role params[:role], current_user if params[:role]
+    @courses = current_user.courses.with_role params[:role], current_user if params[:role] && params[:user_id]
     @courses = current_user.courses unless params[:role]
 
     respond_to do |format|
