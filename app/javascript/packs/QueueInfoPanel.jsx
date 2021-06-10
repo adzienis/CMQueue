@@ -12,21 +12,28 @@ const Component = props => {
 
     const {courseId, userId} = props;
 
-    const {data: questions} = useQuery(
-        ['courses', parseInt(courseId, 10), 'questions', '?', `state=["unresolved"]`], {
-            placeholderData: []
-        })
+    const {data: count} = useQuery(['courses',
+        parseInt(courseId, 10),
+        'questions', 'count', '?', 'state=["unresolved", "frozen"]'], {
+        placeholderData: -1
+    })
+
+
     const {data: activeTas} = useQuery(
         ['courses', parseInt(courseId, 10), 'activeTAs'], {
             placeholderData: []
         })
 
+    console.log('count', count)
+
     return (
         <div className='mt-3 mb-4 w-100'>
-            <div style={{ display: 'grid',
+            <div style={{
+                display: 'grid',
                 gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-            gridGap: '10px'}}>
-                <div className='card bg-primary text-white'>
+                gridGap: '10px'
+            }}>
+                <div className='card bg-secondary text-white'>
                     <div className='card-body d-flex flex-row'>
                         <div className='me-3 d-flex justify-content-center align-items-center'>
                             <i className="fas fa-question fa-3x"></i>
@@ -39,13 +46,13 @@ const Component = props => {
                             </div>
                             <div className='card-text'>
                                 <p className='h4'>
-                                    {questions.length}
+                                    {count}
                                 </p>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div className='card bg-primary text-white'>
+                <div className='card bg-secondary text-white'>
                     <div className='card-body d-flex flex-row'>
                         <div className='me-3 d-flex justify-content-center align-items-center'>
                             <i className="fas fa-users fa-3x"></i>
@@ -76,7 +83,6 @@ document.addEventListener('turbo:load', (e) => {
 
         node.forEach((v) => {
             const data = JSON.parse(v.getAttribute('data'))
-
 
             ReactDOM.render(<QueryClientProvider client={queryClient}
                                                  contextSharing><Component {...data}/></QueryClientProvider>, v)

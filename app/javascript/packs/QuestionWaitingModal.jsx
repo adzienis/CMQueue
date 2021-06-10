@@ -22,8 +22,6 @@ export default function QuestionWaitingModal(props) {
             setQueue(question?.tags?.map(v => v.id))
         }
     })
-
-
     const {data: messages} = useQuery(['questions', question?.id, 'messages'], {
         enabled: !!question
     })
@@ -104,7 +102,7 @@ export default function QuestionWaitingModal(props) {
     }
 
     return (
-        <Card style={{border}}>
+        <Card style={{border}} className="shadow-sm">
             <Card.Body>
                 <div>
                     <h1>
@@ -142,7 +140,7 @@ export default function QuestionWaitingModal(props) {
                     </div>)}
                     <Form>
                         <div className="mb-2">
-                            <Form.Label> Description </Form.Label>
+                            <Form.Label> <b> Description</b> </Form.Label>
                             <Form.Control as='textarea'
                                           rows={3}
                                           value={description}
@@ -151,7 +149,7 @@ export default function QuestionWaitingModal(props) {
 
                         </div>
                         <div className="mb-2">
-                            <Form.Label>Queue</Form.Label>
+                            <Form.Label><b>Queue</b></Form.Label>
                             <Form.Control as='select' multiple
                                           placeholder="Select a Queue"
                                           value={queue}
@@ -167,7 +165,7 @@ export default function QuestionWaitingModal(props) {
                             </Form.Control>
                         </div>
                         <div className="mb-2">
-                            <Form.Label> What Have You Tried?</Form.Label>
+                            <Form.Label> <b>What Have You Tried?</b></Form.Label>
                             <Form.Control
                                 as='textarea'
                                 rows={3}
@@ -176,7 +174,7 @@ export default function QuestionWaitingModal(props) {
                             />
                         </div>
                         <div className="mb-2">
-                            <Form.Label> Zoom </Form.Label>
+                            <Form.Label> <b>Zoom</b> </Form.Label>
                             <Form.Control
                                 as='textarea'
                                 rows="1"

@@ -1,6 +1,13 @@
 
 <%= render partial: "shared/back_navbar" %>
 
+
+<h2>
+  <b>
+    <%= Question.name.humanize %>
+  </b>
+</h2>
+
 <%= render partial: "shared/show_model",
            locals: {
              model_instance: @question,

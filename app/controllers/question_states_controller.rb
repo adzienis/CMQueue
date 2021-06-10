@@ -2,11 +2,12 @@ class QuestionStatesController < ApplicationController
   load_and_authorize_resource
 
   def index
-    @question_states = QuestionState.all
-    @question_states = @question_states.where(search_params) unless search_params.empty?
-    @question_states = @question_states.left_outer_joins(:question).where("questions.")
+    @question_states = @question_states.joins(:question).where("questions.course_id": params[:course_id]) if params[:course_id]
+    @course = Course.find(params[:course_id]) if params[:course_id]
 
-    render json: @question_states
+    @question_states_ransack = @question_states.ransack(params[:q])
+
+    @pagy, @records = pagy @question_states_ransack.result
   end
 
   def edit

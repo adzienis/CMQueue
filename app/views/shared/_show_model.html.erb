@@ -1,6 +1,5 @@
 <% options = {} if local_assigns[:options].nil? %>
 <% options[:actions] ||= [] %>
-
 <div class="card mb-3">
   <div class="card-body">
     <%= simple_form_for model_instance,
@@ -11,81 +10,78 @@
                           input_html: {
                             class: "mb-2" } } do |f| %>
       <fieldset disabled>
-        <% model_instance.class.content_columns
-                         .reject { |v| options&.dig(:except)&.include? v.name.to_sym }
-                         .each do |col| %>
-          <b>
-            <%= f.input col.name, html5: true %>
-          </b>
-        <% end %>
+        <div class="mb-3">
+          <h4>
+            Attributes
+          </h4>
+          <% model_instance.class.content_columns
+                           .reject { |v| options&.dig(:except)&.include? v.name.to_sym }
+                           .each do |col| %>
+            <div class="mb-2">
+              <label class="form-label">
+                <b>
+                  <%= col.name.humanize %>
+                </b>
+              </label>
+              <input type="text" class="form-control" value=<%= "#{model_instance.send(col.name)}" %>>
+            </div>
+          <% end %>
+        </div>
+        <h4>
+          Associations
+        </h4>
         <% [:has_and_belongs_to_many]
              .collect { |s| model_instance.class.reflect_on_all_associations(s) }
              .flatten
-             .reject { |v| [:courses, :roles, :enrollments, :question_states].include? v.name.to_sym }
+             .reject { |v| [:courses, :roles, :enrollments].include? v.name.to_sym }
              .each do |ass| %>
           <div>
             <label>
-              <b>
-                <%= ass.name.to_s.humanize %>
-              </b>
-            </label>
-            <div>
-              <% model_instance.send(ass.name.to_sym).accessible_by(current_ability).limit(5).each do |e| %>
-                <%= link_to e.id,
-                            polymorphic_path(
-                              params[:course_id] ? [Course.find(params[:course_id]), e] : [e]) %>
-              <% end %>
-              <% if params[:course_id] %>
-                <%= link_to "More", polymorphic_path([Course.find(params[:course_id]), ass.name],
-                                                     { "q[#{model_instance.class.name.underscore}_id_eq]" => model_instance.id }) %>
-              <% end %>
-            </div>
+              <label class="form-label">
+                <b>
+                  <%= link_to "View #{ass.name.to_s.humanize}", polymorphic_path([Course.find(params[:course_id]), ass.name],
+                                                                                 {
+                                                                                   "q[#{ass.options.dig(:through) ? ass.options.dig(:through).to_s + '_' : ''}" +
+                                                                                     "#{model_instance.class.name.to_s.pluralize.underscore}_id_eq]" => model_instance.id })
+                  %>
+                </b>
+              </label>
           </div>
         <% end %>
         <% [:has_many]
              .collect { |s| model_instance.class.reflect_on_all_associations(s) }
              .flatten
-             .reject { |v| [:courses, :roles, :enrollments, :question_states].include? v.name.to_sym }
+             .reject { |v| [:courses, :roles, :enrollments].include? v.name.to_sym }
              .each do |ass| %>
           <div>
-            <label>
+            <label class="form-label">
               <b>
-                <%= ass.name.to_s.humanize %>
+                <%= link_to "View #{ass.name.to_s.humanize}", polymorphic_path([Course.find(params[:course_id]), ass.name],
+                                                                               {
+                                                                                 "q[#{ass.options.dig(:through) ? ass.options.dig(:through).to_s + '_' : ''}" +
+                                                                                   "#{model_instance.class.name.underscore}_id_eq]" => model_instance.id })
+                %>
               </b>
             </label>
             <div>
-              <% model_instance.send(ass.name.to_sym).accessible_by(current_ability).limit(5).each do |e| %>
-                <%= link_to e.id,
-                            polymorphic_path(
-                              params[:course_id] ? [Course.find(params[:course_id]), e] : [e]) %>,
-              <% end %>
-              <% if params[:course_id] %>
-                <%= link_to "More", polymorphic_path([Course.find(params[:course_id]), ass.name],
-                                                     {
-                                                       "q[#{ass.options.dig(:through) ? ass.options.dig(:through).to_s + '_' : ''}" +
-                                                         "#{model_instance.class.name.underscore}_id_eq]" => model_instance.id }) %>
-              <% end %>
             </div>
           </div>
         <% end %>
         <% [:has_one]
              .collect { |s| model_instance.class.reflect_on_all_associations(s) }
              .flatten
-             .reject { |v| [:courses, :roles, :enrollments, :question_states].include? v.name.to_sym }
+             .reject { |v| [:courses, :roles, :enrollments].include? v.name.to_sym }
              .each do |ass| %>
           <div>
             <label>
               <b>
-                <%= ass.name.to_s.humanize %>
+                <% Array(model_instance.send(ass.name.to_sym)).each do |e| %>
+                  <%= link_to "View #{ass.name.to_s.humanize}",
+                              polymorphic_path(
+                                params[:course_id] ? [Course.find(params[:course_id]), e] : [e]) %>
+                <% end %>
               </b>
             </label>
-            <div>
-              <% Array(model_instance.send(ass.name.to_sym)).each do |e| %>
-                <%= link_to e.id,
-                            polymorphic_path(
-                              params[:course_id] ? [Course.find(params[:course_id]), e] : [e]) %>
-              <% end %>
-            </div>
           </div>
         <% end %>
       </fieldset>
@@ -97,5 +93,5 @@
       <%= button_to "Edit", edit_polymorphic_path(model_instance), class: "btn btn-warning me-2", method: :get if options[:actions].include? :edit %>
       <%= button_to "Delete", polymorphic_path(model_instance), class: "btn btn-danger", method: :delete if options[:actions].include? :delete %>
     </div>
-  <%end %>
+  <% end %>
 </div>

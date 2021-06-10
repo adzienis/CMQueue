@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
+  mount PgHero::Engine, at: "pghero"
   resources :tags
   resources :question_states
   resources :messages
@@ -15,7 +16,11 @@ Rails.application.routes.draw do
   end
 
   resources :courses, only: [] do
-    resources :questions
+    resources :questions do
+      collection do
+        get 'count', to: 'questions#count'
+      end
+    end
     resources :tags
     resources :users
     resources :question_states

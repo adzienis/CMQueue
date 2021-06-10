@@ -28,19 +28,23 @@ class QuestionState < ApplicationRecord
     question.update(question_state: self)
     self.user.update(question_state: self)
 
-    ActionCable.server.broadcast "react-students", {
+    QueueChannel.broadcast_to course, {
       invalidate: ['courses', question.course.id, 'activeTAs']
     }
 
-    ActionCable.server.broadcast "react-students", {
+    ActionCable.server.broadcast "#{course.id}#ta", {
       invalidate: ['courses', question.course.id, 'topQuestion']
     }
 
-    ActionCable.server.broadcast "react-students", {
+    QueueChannel.broadcast_to course, {
+      invalidate: ['courses', course.id, 'questions']
+    }
+
+    ActionCable.server.broadcast "#{course.id}#ta", {
       invalidate: ['courses', question.course_id, 'paginatedQuestions']
     }
 
-    ActionCable.server.broadcast "react-students", {
+    ActionCable.server.broadcast "#{course.id}#ta", {
       invalidate: ['courses', question.course_id, 'paginatedPastQuestions']
     }
 

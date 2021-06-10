@@ -1,5 +1,5 @@
 <% if user_signed_in? %>
-  <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary" style="box-shadow: 0 0px 4px -0px #00000077; z-index: 10000">
     <div class="container-fluid">
       <a class="navbar-brand" href="#">CMQueue</a>
       <button
@@ -20,13 +20,14 @@
 
             <%= link_to "Enrollments", user_enrollments_url, class: "nav-link #{request.path == user_enrollments_path ? 'active' : ''}" %>
           </li>
-          <li class="nav-item flex-grow-1">
+          <li class="nav-item">
             <%= link_to "Sign out", destroy_user_session_path, class: "nav-link" %>
           </li>
-
+          <li class="nav-item flex-grow-1 justify-content-center d-flex">
+          </li>
 
           <li class="nav-item">
-            <a class="nav-link">
+            <a class="nav-link active">
               <b>
                 <%= current_user.email %>
               </b>

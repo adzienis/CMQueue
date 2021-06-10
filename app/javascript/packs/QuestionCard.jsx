@@ -72,21 +72,27 @@ export default props => {
                 </Card.Text>
             </Card.Body>
             <Card.Footer>
-                {state === "frozen" ? (<Card.Text extra>
-                    <Button color='blue' style={{opacity: 1}} onClick={e => {
-                        e.preventDefault()
-                        e.stopPropagation()
-                        unfreeze()
-                    }}
-                            loading={frozenLoading}
-                    >
-                        Unfreeze
-                    </Button>
-                </Card.Text>) : null}
-                <a href={`/courses/${courseId}/questions/${question?.id}`} className='text-decoration-none'
-                   style={{color: 'inherit'}}>
-                    <i className="fas fa-info-circle fa-lg"></i>
-                </a>
+                <div className="d-flex">
+                    {state === "frozen" ? (
+                        <div className="me-2">
+                            <Button  color='blue' style={{opacity: 1}} onClick={e => {
+                                e.preventDefault()
+                                e.stopPropagation()
+                                unfreeze()
+                            }}
+                                     loading={frozenLoading}
+                            >
+                                Unfreeze
+                            </Button>
+                        </div>
+                    ) : null}
+                    <div className="d-flex align-items-center">
+                        <a href={`/courses/${courseId}/questions/${question?.id}`} className='text-decoration-none'
+                           style={{color: 'inherit'}}>
+                            <i className="fas fa-info-circle fa-lg"></i>
+                        </a>
+                    </div>
+                </div>
             </Card.Footer>
         </Card>
     )

@@ -24,7 +24,6 @@ class Question < ApplicationRecord
     q = Question.find_by_id(question)
     return none unless q
 
-
     joins(:question_state)
       .where("questions.created_at < ?", q.created_at)
       .where(user_id: q.user_id)
@@ -34,40 +33,54 @@ class Question < ApplicationRecord
   }
 
   after_update do
-    ActionCable.server.broadcast "react-students", {
+
+    QueueChannel.broadcast_to user, {
       invalidate: ['courses',
                    course_id,
                    'questions']
     }
 
-    ActionCable.server.broadcast "react-students", {
+
+    ActionCable.server.broadcast "#{course.id}#ta", {
+      invalidate: ['courses',
+                   course_id,
+                   'questions']
+    }
+
+    ActionCable.server.broadcast "#{course.id}#ta", {
       invalidate: ['courses', course_id, 'topQuestion']
+    }
+
+
+    ActionCable.server.broadcast "#{course.id}#ta", {
+      invalidate: ['courses', course_id, 'paginatedQuestions']
+    }
+
+    ActionCable.server.broadcast "#{course.id}#ta", {
+      invalidate: ['courses', course_id, 'paginatedPastQuestions']
     }
 
   end
 
   after_create do
-    ActionCable.server.broadcast "react-students", {
+    ActionCable.server.broadcast "#{course.id}#ta", {
       invalidate: ['courses', course_id, 'paginatedQuestions']
     }
 
-    ActionCable.server.broadcast "react-students", {
+    ActionCable.server.broadcast "#{course.id}#ta", {
       invalidate: ['courses', course_id, 'paginatedPastQuestions']
     }
 
   end
 
   after_create_commit do
-    update(question_state: QuestionState.create(question_id: id, user_id: user_id))
+    update(question_state: QuestionState.create(question_id: id, user_id: user_id)) if self
   end
 
   after_destroy do
-    ActionCable.server.broadcast "react-students", {
+    ActionCable.server.broadcast "#{course.id}#ta", {
       invalidate:
         ['courses', course_id, 'questions']
-    }
-    ActionCable.server.broadcast "react-students", {
-      invalidate: ['courses', course.id, 'questions', '?', "user_id=#{user_id}"]
     }
   end
 

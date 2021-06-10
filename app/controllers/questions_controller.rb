@@ -43,6 +43,22 @@ class QuestionsController < ApplicationController
     end
   end
 
+  def count
+    @course = Course.find(params[:course_id]) if params[:course_id]
+
+    @questions = Question.joins(:user, :question_state, :tags)
+    @questions = @questions.where(course_id: params[:course_id]) if params[:course_id]
+    @questions = @questions.where(user_id: params[:user_id]) if params[:user_id]
+    @questions = @questions.questions_by_state(JSON.parse(params[:state])) if params[:state]
+
+    respond_to do |format|
+      format.html
+      format.json do
+        render json: @questions.count
+      end
+    end
+  end
+
   def previous_questions
     @question = Question.find(params[:id])
     @previous_questions = Question.previous_questions(@question).order("question_states.created_at DESC")
@@ -79,9 +95,6 @@ class QuestionsController < ApplicationController
     @question.tags = (Tag.find(params[:tag][:tags])) if params.dig(:tag, :tags)
 
     @question.tags = (Tag.find(params[:question][:tag_ids].reject(&:empty?))) if params.dig(:question, :tag_ids)
-
-    puts "----------------------------------------adsasd"
-    puts params[:question][:tag_ids].reject(&:empty?).inspect
 
     respond_to do |format|
       format.html { redirect_to course_questions_path(@question.course) }

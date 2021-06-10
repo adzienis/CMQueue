@@ -95,3 +95,5 @@ gem "rails_admin_import", "~> 2.2"
 gem "simple_form", "~> 5.1"
 
 gem "rails_admin", "~> 2.1"
+
+gem "pghero", "~> 2.8"

@@ -1,13 +1,13 @@
-<h1> Questions </h1>
+<h1> Question States </h1>
 
 <%= render partial: "shared/search_form",
            locals: {
              records: @records,
-             ransack: @questions_ransack,
+             ransack: @question_states_ransack,
              course: @course,
              pagy: @pagy,
              options: {
-               extra_columns: [{ user: :given_name}, {course: :name}],
-               except: [:title, :notes]
+               actions: [],
+               extra_columns: [{ user: :given_name}],
              }
            } %>

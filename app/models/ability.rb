@@ -33,13 +33,13 @@ class Ability
         user.has_role? :ta, course
       end
       can :manage, QuestionState, QuestionState.joins(:question)
-                                    .where(course_id: Course
-                                                        .where(id: Course.find_roles(:ta,  user)
+                                    .where("questions.course_id": Course
+                                                        .where("courses.id": Course.find_roles(:ta,  user)
                                                                          .pluck(:resource_id))
                                                         .pluck(:id))
-                                    .or(QuestionState.where(user_id: user.id))
+                                    .or(QuestionState.where("question_states.user_id": user.id))
                                     .or(QuestionState.where("questions.user_id": user.id)) do |state|
-        user.has_role? :ta, state.question.course
+        user.has_role?(:ta, state.question.course) || state.question.user_id == user.id
       end
 
       can :manage, Message, Message.all do |message|

@@ -39,6 +39,11 @@ const Component = props => {
     return (
         <div className="card shadow-sm mb-2">
             <div className="card-body">
+                <div className="card-title">
+                    <h4>
+                        Filters
+                    </h4>
+                </div>
                 <form>
                     {
                         Object.keys(filters).map(v => (

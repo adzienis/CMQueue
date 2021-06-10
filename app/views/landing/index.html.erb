@@ -1,13 +1,13 @@
 <div class="h-100" style="display: flex; justify-content: center;">
-  <div style="display: flex;flex-direction: column; height: 100%; align-items: center; justify-content: center">
-    <%= image_tag 'logo.png', height: '300px', width: '300px' %>
+  <div style="display: flex;flex-direction: column; height: 80%; align-items: center; justify-content: center">
+    <%= image_tag 'logo.png', height: '300px', width: '300px', class: "shadow mb-3" %>
     <%= button_to user_google_oauth2_omniauth_authorize_path,
                   method: :post,
                   data: { 'turbo': "false" },
                   style: "padding: 0px; border: 0px",
                   class: "mt-4" do %>
 
-      <%= image_tag 'google/web/2x/btn_google_signin_dark_normal_web@2x.png', width: '300px' %>
+      <%= image_tag 'google/web/2x/btn_google_signin_dark_normal_web@2x.png', width: '310px', class: "shadow-sm" %>
     <% end %>
   </div>
 </div>

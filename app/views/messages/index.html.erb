@@ -1,2 +1,9 @@
-<h1>Messages#index</h1>
-<p>Find me in app/views/messages/index.html.erb</p>
+<h1> Messages </h1>
+
+<%= render partial: "shared/search_form",
+           locals: {
+             records: @records,
+             ransack: @messages_ransack,
+             course: @course,
+             pagy: @pagy,
+           } %>

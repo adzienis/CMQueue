@@ -16,9 +16,12 @@
 
 
 $font-family-sans-serif: "Arimo";
+$primary: #24527A;
+$secondary: #5CABBC;
 @import url('https://fonts.googleapis.com/css2?family=Arimo:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&display=swap');
 @import "font-awesome";
 @import "bootstrap";
+
 
 html body{
   height: initial !important;

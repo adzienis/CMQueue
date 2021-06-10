@@ -30,7 +30,6 @@ export default props => {
         }
     }), `/courses/${courseId}/answer`)
 
-
     return (<Button onClick={async e => {
             try {
                 await mutateAsync()

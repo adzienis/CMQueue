@@ -19,6 +19,7 @@ import './filterDropdown'
 import './taActionPane'
 import queryClient from './queryClientFile'
 import ReactStudentChannel from '../channels/react_student_channel'
+import './Prefetcher'
 //import './hello_react'
 
 import { Turbo } from "@hotwired/turbo-rails"
@@ -36,13 +37,7 @@ ReactStudentChannel.received = async data => {
 Rails.start()
 ActiveStorage.start()
 
-
 import "controllers"
-
-document.addEventListener('turbo:load', () => {
-    //BSN.initCallback();
-
-}, false);
 
 document.addEventListener('turbo:before-cache', () => {
     const nodes = document.querySelectorAll('.collapse')

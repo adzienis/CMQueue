@@ -1,2 +1,13 @@
-<h1>Messages#show</h1>
-<p>Find me in app/views/messages/show.html.erb</p>
+
+<%= render partial: "shared/back_navbar" %>
+
+<h2>
+  <b>
+    <%= Message.name.humanize %>
+  </b>
+</h2>
+
+<%= render partial: "shared/show_model",
+           locals: {
+             model_instance: @message,
+           } %>

@@ -17,7 +17,12 @@
 
 </head>
 
-<body style="background-color: #f0f0f0">
+<body style="background-color: #F3F4EF">
+
+<%= content_tag :div, id: "prefetcher", data: {
+  userId: current_user.id,
+}.to_json do %>
+<% end if current_user %>
 
 <style><%= yield :stylesheets %></style>
 <%= render partial: "shared/site_navbar" %>

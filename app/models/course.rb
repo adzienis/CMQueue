@@ -18,8 +18,8 @@ class Course < ApplicationRecord
   end
 
   after_update do
-    ActionCable.server.broadcast "react-students", {
-      invalidate: ['courses', self.id, 'open']
+    QueueChannel.broadcast_to self, {
+      invalidate: ['courses', id, 'open']
     }
   end
 

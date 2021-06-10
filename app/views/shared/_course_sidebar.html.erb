@@ -1,6 +1,13 @@
-<div class="d-flex flex-column p-3 bg-white border-right shadow-sm sidebar">
+<div class="d-flex flex-column p-3 bg-white border-right sidebar" style="box-shadow: 0 0px 2px -0px #00000077;">
+  <h4 class="mb-0">
+    Navigation
+  </h4>
+  <hr>
   <ul class="list-unstyled">
-    <li class="mb-1">
+    <li class="mb-1 d-flex align-items-center">
+      <div style="width: 16px" class="d-flex justify-content-center">
+        <i class="fas fa-chalkboard-teacher"></i>
+      </div>
       <%= button_to "Queue", course_path(@course),
                     class: "btn btn-toggle align-items-center text-decoration-none
                             #{request.path == course_path(@course) ||
@@ -8,36 +15,53 @@
                     method: :get %>
     </li>
     <li class="mb-1">
-      <%= button_tag class: "btn btn-toggle align-items-center text-decoration-none
+      <div class=" d-flex align-items-center">
+        <div style="width: 16px" class="d-flex justify-content-center">
+          <i class="fas fa-info"></i>
+        </div>
+        <%= button_tag class: "btn btn-toggle align-items-center text-decoration-none
                             #{(request.path == courseInfo_course_path(@course) ||
-        request.path == course_users_path(@course) ||
-        request.path == course_questions_path(@course) ||
-        request.path == course_tags_path(@course)) ? 'active-link' : ''}",
-                     data: { "bs-toggle": "collapse", "bs-target": "#course-info-collapse" } do %>
-        Information
-      <% end %>
+          request.path == course_users_path(@course) ||
+          request.path == course_questions_path(@course) ||
+          request.path == course_tags_path(@course)) ? 'active-link' : ''}",
+                       data: { "bs-toggle": "collapse", "bs-target": "#course-info-collapse" } do %>
+          Information
+        <% end %>
+      </div>
       <%= content_tag :div, id: "course-info-collapse",
                       class: "collapse #{(request.path == courseInfo_course_path(@course) ||
                         request.path == course_users_path(@course) ||
                         request.path == course_questions_path(@course) ||
                         request.path == course_tags_path(@course)) ? "show" : ""}" do %>
         <ul class="navbar-toggler list-unstyled pb-1 small">
-          <li>
+          <li class="d-flex align-items-center">
+            <div style="width: 16px" class="d-flex justify-content-center">
+              <i class="fas fa-book"></i>
+            </div>
             <%= button_to "Course", courseInfo_course_path(@course),
                           class: "btn text-decoration-none #{(request.path == courseInfo_course_path(@course)) ?
                                                                "active-link" : ""}", method: :get %>
           </li>
-          <li>
+          <li class="d-flex align-items-center">
+            <div style="width: 16px" class="d-flex justify-content-center">
+              <i class="fas fa-question"></i>
+            </div>
             <%= button_to "Questions", ApplicationHelper::SearchClass.gen_course_link(@course, :questions),
                           class: "btn text-decoration-none #{(request.path == course_questions_path(@course)) ?
                                                                "active-link" : ""}", method: :get %>
           </li>
-          <li>
+          <li class="d-flex align-items-center">
+            <div style="width: 16px" class="d-flex justify-content-center">
+              <i class="fas fa-tags"></i>
+            </div>
             <%= button_to "Tags", ApplicationHelper::SearchClass.gen_course_link(@course, :tags),
                           class: "btn text-decoration-none #{(request.path == course_tags_path(@course)) ?
                                                                "active-link" : ""}", method: :get %>
           </li>
-          <li>
+          <li class="d-flex align-items-center">
+            <div style="width: 16px" class="d-flex justify-content-center">
+              <i class="fas fa-user"></i>
+            </div>
             <%= button_to "Roster", ApplicationHelper::SearchClass.gen_course_link(@course, :users),
                           class: "btn text-decoration-none #{(request.path == course_users_path(@course)) ?
                                                                "active-link" : ""}", method: :get %>
@@ -46,13 +70,16 @@
       <% end %>
     </li>
     <li class="mb-1">
-      <%= button_tag class: "btn btn-toggle align-items-center text-decoration-none
+      <div class="d-flex align-items-center" style="width:16px">
+        <i class="fas fa-chart-bar"></i>
+        <%= button_tag class: "btn btn-toggle align-items-center text-decoration-none
                             #{(request.path == analytics_today_course_path(@course) ||
-        request.path == analytics_tas_course_path(@course) ||
-        request.path == analytics_course_path(@course)) ? 'active-link' : ''}",
-                     data: { "bs-toggle": "collapse", "bs-target": "#analytics-collapse" } do %>
-        Analytics
-      <% end %>
+          request.path == analytics_tas_course_path(@course) ||
+          request.path == analytics_course_path(@course)) ? 'active-link' : ''}",
+                       data: { "bs-toggle": "collapse", "bs-target": "#analytics-collapse" } do %>
+          Analytics
+        <% end %>
+      </div>
       <%= content_tag :div, id: 'analytics-collapse', class: "collapse #{(request.path == analytics_today_course_path(@course) ||
         request.path == analytics_tas_course_path(@course) ||
         request.path == analytics_course_path(@course)) ? 'show' : ''}" do %>
