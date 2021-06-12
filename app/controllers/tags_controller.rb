@@ -22,13 +22,13 @@ class TagsController < ApplicationController
 
     tag.destroy if tag
 
-    redirect_to settings_queues_course_path(tag.course)
+    redirect_to course_tags_path(tag.course)
   end
 
   def create
-    @tag = Tag.create(create_tag_params)
+    @tag = Tag.create(create_params)
 
-    redirect_to settings_queues_course_path(@tag.course)
+    redirect_to course_tags_path(@tag.course)
   end
 
   def update
@@ -43,6 +43,10 @@ class TagsController < ApplicationController
     @course = @tag.course
   end
 
+  def new
+    @course = Course.find(params[:course_id]) if params[:course_id]
+  end
+
   def show
     @tag = Tag.find(params[:id])
     @course = @tag.course
@@ -54,7 +58,7 @@ class TagsController < ApplicationController
     params.require(:tag).permit(:archived, :name, :description)
   end
 
-  def create_tag_params
+  def create_params
     params.require(:tag).permit(:archived, :name, :description, :course_id)
   end
 end

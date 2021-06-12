@@ -4,7 +4,7 @@ class UsersController < ApplicationController
   def index
     @course = Course.find(params[:course_id]) if params[:course_id]
 
-    @users_ransack = @users.ransack(params[:q])
+    @users_ransack = User.ransack(params[:q])
 
     @pagy, @records = pagy @users_ransack.result
   end

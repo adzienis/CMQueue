@@ -1,12 +1,22 @@
-class Users::EnrollmentsController < ApplicationController
+class EnrollmentsController < ApplicationController
   def index
     @courses = current_user.courses.with_role params[:role], current_user if params[:role] && params[:user_id]
     @courses = current_user.courses unless params[:role]
+
+    @course = Course.find(params[:course_id]) if params[:course_id]
+
+    @enrollments_ransack = Enrollment.ransack(params[:q])
+
+    @pagy, @records = pagy @enrollments_ransack.result
 
     respond_to do |format|
       format.html
       format.json { render json: @courses }
     end
+  end
+
+  def show
+    @enrollment = Enrollment.find(params[:id])
   end
 
   def create

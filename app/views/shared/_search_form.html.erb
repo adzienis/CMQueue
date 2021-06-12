@@ -22,8 +22,12 @@
         </th>
         <% options[:extra_columns].each do |extra| %>
           <th style="min-width: 125px">
-            <%= sort_link(ransack, extra.flatten.join('_')) do %>
-              <%= "#{extra.flatten[-2].to_s.humanize} #{extra.flatten[-1].to_s.humanize}" %>
+            <% if extra.instance_of? Hash %>
+              <%= sort_link(ransack, extra.flatten.join('_')) do %>
+                <%= "#{extra.flatten[-2].to_s.humanize} #{extra.flatten[-1].to_s.humanize}" %>
+              <% end %>
+            <% else %>
+              <%= sort_link(ransack, extra.to_s) %>
             <% end %>
           </th>
         <% end %>
@@ -36,18 +40,47 @@
       </thead>
       <tbody>
       <% records&.each do |tag| %>
+
+        <div class="modal fade" id=<%= "modal-instance#{tag.id}"%> tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel"> Delete Confirmation </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                Are you sure you want to delete this?
+              </div>
+              <div class="modal-footer">
+
+                <%= link_to polymorphic_url([tag.course, tag], q: { course_id_eq: @course.id }), method: :delete, class: "btn btn-primary" do %>
+                  Delete
+                <% end if options[:actions].include? :destroy %>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <tr>
           <td>
-            <%= link_to edit_polymorphic_url([course || tag.course, tag]) do %>
-              <i class="fas fa-edit"></i>
-            <% end if options[:actions].include? :edit %>
             <%= link_to url_for([course, tag]) do %>
-              <i class="fas fa-info-circle"></i>
-            <% end%>
+              <i class="fas fa-info-circle me-1"></i>
+            <% end %>
+            <%= link_to edit_polymorphic_url([course || tag.course, tag]) do %>
+              <i class="fas fa-edit me-1"></i>
+            <% end if options[:actions].include? :edit %>
+            <%= link_to "" do %>
+
+              <i class="fas fa-times" onclick="event.preventDefault()" data-bs-toggle="modal" data-bs-target=<%= "#modal-instance#{tag.id}"%> style="cursor: pointer"></i>
+            <% end %>
           </td>
           <% options[:extra_columns].each do |extra| %>
             <td>
-              <%= ApplicationHelper::SearchClass.fetch_attribute(tag, extra) %>
+              <% if extra.instance_of? Hash %>
+                <%= ApplicationHelper::SearchClass.fetch_attribute(tag, extra) %>
+              <% else %>
+                <%= tag.send(extra) %>
+              <% end %>
             </td>
           <% end %>
           <% records.model.column_names.reject { |c| options[:except].include? c.to_sym }.each do |k| %>
@@ -70,14 +103,33 @@
     </table>
   </div>
   <div>
-    <%= "#{pagy.count} #{records.model.name.pluralize}" %>
+
+    <%= link_to new_polymorphic_path([@course, records.model]), class: "d-flex align-items-center" do %>
+      <i class="fas fa-plus fa-lg me-2"></i>
+      <span> Add a new tag </span>
+    <% end  if options[:actions].include? :new %>
+
+  </div>
+  <div>
+    <% if pagy.count == 1 %>
+      <%= "#{pagy.count} #{records.model.name}" %>
+    <% else %>
+      <%= "#{pagy.count} #{records.model.name.pluralize}" %>
+    <% end %>
   </div>
 <% else %>
+
   <div class="alert alert-warning shadow-sm">
     Empty
   </div>
+
+  <%= link_to new_polymorphic_path([@course, records.model]), class: "d-flex align-items-center" do %>
+    <i class="fas fa-plus fa-lg me-2"></i>
+    <span> Add a new tag </span>
+  <% end  if options[:actions].include? :new %>
   <%= "#{pagy.count} #{records.model.name.pluralize}" %>
 <% end %>
+
 
 
 <div class="w-100 d-flex justify-content-center">

@@ -1,9 +1,10 @@
-import React, {useMemo, useState} from 'react'
+import React, {useEffect, useMemo, useState} from 'react'
 import {useMutation, useQuery} from "react-query";
 import mutationFn from "./mutationFn";
 import useWrappedMutation from "./useWrappedMutation";
 import stateEnumMapper from "./stateEnumMapper";
 import {Button, Card, Form, Spinner} from "react-bootstrap";
+import Select from "react-select";
 
 
 export default function QuestionWaitingModal(props) {
@@ -13,15 +14,22 @@ export default function QuestionWaitingModal(props) {
     const {data: [question], isLoading, isFetching, refetch} = useQuery(['courses',
         parseInt(courseId, 10),
         'questions', '?', `user_id=${userId}`, 'state=["unresolved", "frozen", "resolving"]'], {
-        placeholderData: [], onSuccess: data => {
-            const [question] = data;
+        placeholderData: []
+    })
+
+    useEffect(() => {
+        if(question) {
 
             setDescription(question?.description)
             setTried(question?.tried)
             setLocation(question?.location)
-            setQueue(question?.tags?.map(v => v.id))
+            setQueue(question?.tags?.map(v => ({
+                value: v.id,
+                label: v.name
+            })))
         }
-    })
+    },[question])
+
     const {data: messages} = useQuery(['questions', question?.id, 'messages'], {
         enabled: !!question
     })
@@ -34,7 +42,7 @@ export default function QuestionWaitingModal(props) {
             description,
             tried,
             location,
-            tags: queue
+            tags: queue.map(v => v.value)
         }
     }), `/questions/${question?.id}`, {
         method: 'PATCH'
@@ -73,19 +81,10 @@ export default function QuestionWaitingModal(props) {
     const [description, setDescription] = useState(question?.description);
     const [tried, setTried] = useState(question?.tried);
     const [location, setLocation] = useState(question?.location);
-    const [queue, setQueue] = useState(question?.tags?.map(v => v.id))
-
-    const [header, color] = useMemo(() => {
-        if (stateEnumMapper(question?.state) === 'frozen') {
-            return ['Frozen', 'blue']
-        } else if (stateEnumMapper(question?.state) === 'resolving') {
-            return ['Resolving', 'green']
-        } else if (stateEnumMapper(question?.state) === 'kicked') {
-            return ['Kicked', 'red']
-        } else {
-            return ['Waiting', 'black']
-        }
-    }, [question])
+    const [queue, setQueue] = useState(question?.tags?.map(v => ({
+        value: v.id,
+        label: v.name
+    })))
 
     let title = '';
     let border = '';
@@ -150,19 +149,19 @@ export default function QuestionWaitingModal(props) {
                         </div>
                         <div className="mb-2">
                             <Form.Label><b>Queue</b></Form.Label>
-                            <Form.Control as='select' multiple
-                                          placeholder="Select a Queue"
-                                          value={queue}
-                                          onChange={(e, d) => {
-                                              console.log()
-                                              setQueue([...e.target.options].filter(v => v.selected).map(v => v.value))
-                                          }
-                                          }
-                            >
-                                {queues.filter(v => !v.archived).map(v => (<option key={v.id} value={v.id}>
-                                    {v.name}
-                                </option>))}
-                            </Form.Control>
+
+                            <Select
+                                isMulti
+                                options={queues.filter(v => !v.archived).map(v => ({
+                                    value: v.id, label: v.name
+                                }))}
+                                value={queue}
+
+                                onChange={v => {
+                                    setQueue(v)
+                                }}
+
+                            />
                         </div>
                         <div className="mb-2">
                             <Form.Label> <b>What Have You Tried?</b></Form.Label>
@@ -183,7 +182,9 @@ export default function QuestionWaitingModal(props) {
                             />
                         </div>
                     </Form>
-                    <div style={{
+                    <div
+                        className="mt-3"
+                        style={{
                         display: 'grid',
                         gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
                         columnGap: '10px'
@@ -192,8 +193,9 @@ export default function QuestionWaitingModal(props) {
                                 disabled={(tried === question?.tried &&
                                     description === question?.description &&
                                     location === question?.location &&
-                                    question?.tags?.map(v => v.id).every((v, i) => v === queue[i]) &&
-                                    queue.every((v, i) => v === question?.tags?.map(v => v.id)[i]))}
+                                    question?.tags.length === queue.length &&
+                                    question?.tags?.map(v => v.id).every((v, i) => v === queue[i].value) &&
+                                    queue.every((v, i) => v.value === question?.tags?.map(v => v.id)[i]))}
                                 onClick={async e => {
                                     await updateQuestion()
                                 }}

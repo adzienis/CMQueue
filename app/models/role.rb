@@ -1,5 +1,7 @@
 class Role < ApplicationRecord
   has_and_belongs_to_many :users, :join_table => :users_roles
+
+  scope :with_course, ->(course) { where(resource_id: course.id)}
   
   belongs_to :resource,
              :polymorphic => true,

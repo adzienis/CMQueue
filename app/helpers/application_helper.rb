@@ -44,6 +44,8 @@ module ApplicationHelper
     def self.fetch_attribute(instance, hash)
       if hash.nil?
         return nil
+      elsif hash.class == Symbol
+        instance.send(hash)
       end
 
       k, v = hash.first

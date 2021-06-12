@@ -14,7 +14,7 @@ import {Form} from "react-bootstrap";
 const Component = props => {
     const {userId} = props;
     const [open, setOpen] = useState(false);
-    const [search, setSearch] = useState(null);
+    const [search, setSearch] = useState('');
     const {
         data,
     } = useQuery(['courses', 'search', '?', `name=${search}`], {

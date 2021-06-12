@@ -21,7 +21,7 @@
         </div>
         <%= button_tag class: "btn btn-toggle align-items-center text-decoration-none
                             #{(request.path == courseInfo_course_path(@course) ||
-          request.path == course_users_path(@course) ||
+          request.path == course_enrollments_path(@course) ||
           request.path == course_questions_path(@course) ||
           request.path == course_tags_path(@course)) ? 'active-link' : ''}",
                        data: { "bs-toggle": "collapse", "bs-target": "#course-info-collapse" } do %>
@@ -30,7 +30,7 @@
       </div>
       <%= content_tag :div, id: "course-info-collapse",
                       class: "collapse #{(request.path == courseInfo_course_path(@course) ||
-                        request.path == course_users_path(@course) ||
+                        request.path == course_enrollments_path(@course) ||
                         request.path == course_questions_path(@course) ||
                         request.path == course_tags_path(@course)) ? "show" : ""}" do %>
         <ul class="navbar-toggler list-unstyled pb-1 small">
@@ -62,8 +62,8 @@
             <div style="width: 16px" class="d-flex justify-content-center">
               <i class="fas fa-user"></i>
             </div>
-            <%= button_to "Roster", ApplicationHelper::SearchClass.gen_course_link(@course, :users),
-                          class: "btn text-decoration-none #{(request.path == course_users_path(@course)) ?
+            <%= button_to "Roster", ApplicationHelper::SearchClass.gen_course_link(@course, :enrollments),
+                          class: "btn text-decoration-none #{(request.path == course_enrollments_path(@course)) ?
                                                                "active-link" : ""}", method: :get %>
           </li>
         </ul>
@@ -85,11 +85,6 @@
         request.path == analytics_course_path(@course)) ? 'show' : ''}" do %>
         <ul class="navbar-toggler list-unstyled pb-1 small">
           <li>
-            <%= button_to "Today", analytics_today_course_path(@course),
-                          class: "btn text-decoration-none #{(request.path == analytics_today_course_path(@course)) ?
-                                                               "active-link" : ""}", method: :get %>
-          </li>
-          <li>
             <%= button_to "Overall", analytics_course_path(@course),
                           class: "btn text-decoration-none #{(request.path == analytics_course_path(@course)) ?
                                                                "active-link" : ""}", method: :get %>
@@ -97,11 +92,6 @@
           <li>
             <%= button_to "TA", analytics_tas_course_path(@course),
                           class: "btn text-decoration-none #{(request.path == analytics_tas_course_path(@course)) ?
-                                                               "active-link" : ""}", method: :get %>
-          </li>
-          <li>
-            <%= button_to "Course", analytics_course_path(@course),
-                          class: "btn text-decoration-none #{(request.path == analytics_course_path(@course)) ?
                                                                "active-link" : ""}", method: :get %>
           </li>
         </ul>

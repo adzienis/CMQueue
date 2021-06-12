@@ -3,6 +3,8 @@ class QuestionState < ApplicationRecord
   belongs_to :user
   enum state: %i[unresolved resolving resolved frozen kicked], _default: :unresolved
 
+  scope :with_course, ->(course) { joins(:question).where("questions.course_id": course.id)}
+
   has_many :messages, dependent: :destroy
 
   delegate :course, to: :question, allow_nil: true

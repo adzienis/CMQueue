@@ -14,17 +14,17 @@ module QueueAPI
         top_question
       end
 
+      desc "Search for courses by name."
+      params do
+        requires :name, type: String
+      end
       get 'search' do
-        Course.where("name LIKE :name", name: "%#{params[:name]}%")
+        Course.where("name LIKE :name", name: "%#{params[:name]}%") if params[:name]
       end
 
-      desc 'Returns pong.'
+      desc 'Get all courses'
       get do
-        Question.accessible_by(current_ability)
-      end
-
-      get ':course_id/test' do
-        params[:course_id]
+        Course.accessible_by(current_ability)
       end
 
       get ':course_id/open_status' do

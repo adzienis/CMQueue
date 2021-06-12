@@ -47,6 +47,7 @@ class Ability
       end
 
       can :read, Tag
+      can :create, Tag
 
       can :manage, Tag, Tag
                           .where(course_id: Course

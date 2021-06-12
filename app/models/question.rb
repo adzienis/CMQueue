@@ -13,6 +13,8 @@ class Question < ApplicationRecord
     %i(previous_questions)
   end
 
+  scope :with_course, ->(course) { where(course_id: course.id)}
+
   scope :questions_by_state, ->(states) { joins(:question_state)
                                             .where('question_states.id = (SELECT MAX(question_states.id)
                                         FROM question_states where question_states.question_id = questions.id)')

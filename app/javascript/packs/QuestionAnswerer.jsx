@@ -2,12 +2,11 @@ import React from 'react';
 import useWrappedMutation from "./useWrappedMutation";
 import {useQuery, useQueryClient} from "react-query";
 import {Button, Spinner} from "react-bootstrap";
+import DelayedSpinner from "./DelayedSpinner";
 
 export default props => {
 
     const {userId, courseId} = props;
-
-    const queryClient = useQueryClient()
 
     const {data: topQuestion} = useQuery(['courses', parseInt(courseId, 10), 'topQuestion', '?', `user_id=${userId}`], {
         onSuccess: d => {
@@ -49,12 +48,9 @@ export default props => {
                     loading={answerLoading}
                     className='queue-button mr-3 w-100'
         >
-            {answerLoading ? <Spinner
-                as="span"
-                animation="border"
-                role="status"
-                aria-hidden="true"
-            /> : <>Answer a Question</>}
+            <DelayedSpinner loading={answerLoading}>
+                Answer a Question
+            </DelayedSpinner>
         </Button>
     )
 }

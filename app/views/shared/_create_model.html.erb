@@ -1,20 +1,22 @@
-<div class="card mb-3">
+<div class="card mb-3 shadow-sm">
   <div class="card-body">
-    <%= simple_form_for model_instance, defaults: {
+    <%= simple_form_for model.new, defaults: {
       wrapper_html: {
         class: "mb-2"
       },
       input_html: {
         class: "mb-2" } } do |f| %>
-      <% model_instance.class.content_columns
+      <%= f.hidden_field :course_id, value: params[:course_id] %>
+      <% model.content_columns
                        .reject { |v| [:created_at, :updated_at].include? v.name.to_sym }
                        .each do |col| %>
         <b>
+
           <%= f.input col.name, html5: true %>
         </b>
       <% end %>
 
-      <%= f.submit :Update, class: "btn btn-primary" %>
+      <%= f.submit :Create,  class: "btn btn-primary mt-3", method: :post %>
     <% end %>
   </div>
 </div>

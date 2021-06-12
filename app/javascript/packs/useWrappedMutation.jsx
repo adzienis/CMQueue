@@ -1,6 +1,5 @@
 import {useMutation} from "react-query";
-import ReactDOM from 'react-dom'
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 
 export default function useWrappedMutation(extractor, url, options={}, mutationOptions={}) {
 

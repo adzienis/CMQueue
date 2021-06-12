@@ -12,7 +12,7 @@ class CreateDuplicateQuestionTrigger < ActiveRecord::Migration[6.1]
           inner join questions on questions.id = question_states.question_id 
           where questions.user_id = NEW.user_id));
       
-      if (state in (2,4)) then
+      if state IS NULL OR (state in (2,4))  then
       return NEW;
       end if;
       

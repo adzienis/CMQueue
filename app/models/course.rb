@@ -1,4 +1,5 @@
 class Course < ApplicationRecord
+
   resourcify
 
   has_many :enrollments

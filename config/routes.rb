@@ -28,6 +28,7 @@ Rails.application.routes.draw do
     resources :users
     resources :question_states
     resources :messages
+    resources :enrollments
   end
   resources :questions
   resources :courses, param: :course_id do

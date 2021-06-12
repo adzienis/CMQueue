@@ -8,17 +8,17 @@ module QueueAPI
 
           @course = Course.find(params[:course_id]) if params[:course_id]
 
-          questions = Question.joins(:user, :question_state, :tags)
+          questions = Question
           questions = questions.where(course_id: params[:course_id]) if params[:course_id]
           questions = questions.where(user_id: params[:user_id]) if params[:user_id]
           questions = questions.questions_by_state(JSON.parse(params[:state])) if params[:state]
+
+          puts "------------------------------------------ads"
 
           questions.count
         end
 
         get do
-          course = Course.find(params[:course_id]) if params[:course_id]
-
           questions = Question.accessible_by(current_ability).includes(:user, :question_state, :tags)
           questions = questions.where(course_id: params[:course_id]) if params[:course_id]
           questions = questions.where(user_id: params[:user_id]) if params[:user_id]
@@ -29,12 +29,12 @@ module QueueAPI
             questions = questions.where('questions.id <= ?', params[:cursor]).order("questions.updated_at DESC").limit(5) unless params[:cursor] == "-1"
             offset = questions.offset(5).first
             return {
-              data: questions,
+              data: questions.as_json(include: [:question_state, :user, :tags]),
               cursor: offset
             }
           end
 
-          questions
+          questions.as_json include: [:question_state, :user, :tags]
         end
 
       end

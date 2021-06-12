@@ -7,7 +7,7 @@
              course: @course,
              pagy: @pagy,
              options: {
-               extra_columns: [{ user: :given_name}, {course: :name}],
-               except: [:title, :notes]
+               extra_columns: [{ user: :given_name},{question_state: :state}],
+               except: [:title, :notes, :user_id, :course_id, :id]
              }
            } %>

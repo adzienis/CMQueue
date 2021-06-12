@@ -1,7 +1,8 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import useWrappedMutation from "./useWrappedMutation";
 import {useQuery} from "react-query";
-import {Button} from "react-bootstrap";
+import {Button, Spinner} from "react-bootstrap";
+import DelayedSpinner from "./DelayedSpinner";
 
 export default props => {
 
@@ -14,7 +15,6 @@ export default props => {
         ['courses', parseInt(courseId, 10), 'questions', '?', `state=["unresolved"]`], {
             placeholderData: []
         })
-
 
 
     const {mutateAsync, isLoading: queueLoading} = useWrappedMutation(() => ({
@@ -33,7 +33,9 @@ export default props => {
                 variant={openStatus ? 'success' : 'danger'}
                 className='queue-button w-100'
         >
-            {openStatus? "Close Queue" : "Open Queue"}
+            <DelayedSpinner loading={queueLoading}>
+                {openStatus ? "Close Queue" : "Open Queue"}
+            </DelayedSpinner>
         </Button>
     )
 }

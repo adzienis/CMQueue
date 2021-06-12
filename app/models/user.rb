@@ -15,6 +15,10 @@ class User < ApplicationRecord
     %i(with_role_ransack)
   end
 
+  scope :with_course, ->(course) {
+    left_joins(:roles).where("roles.resource_id": course.id)
+  }
+
   scope :resolved_questions, ->() {
     joins(:question_states)
       .where("question_states.state": "resolved")

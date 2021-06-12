@@ -30,6 +30,7 @@ ActiveRecord::Schema.define(version: 2021_06_08_212307) do
     t.string "ta_code"
     t.string "instructor_code"
     t.boolean "open", default: false
+    t.string "semester"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
@@ -44,10 +45,12 @@ ActiveRecord::Schema.define(version: 2021_06_08_212307) do
   create_table "enrollments", force: :cascade do |t|
     t.bigint "course_id"
     t.bigint "user_id"
+    t.bigint "role_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["course_id", "user_id"], name: "index_enrollments_on_course_id_and_user_id", unique: true
     t.index ["course_id"], name: "index_enrollments_on_course_id"
+    t.index ["role_id"], name: "index_enrollments_on_role_id"
     t.index ["user_id"], name: "index_enrollments_on_user_id"
   end
 

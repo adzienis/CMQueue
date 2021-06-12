@@ -7,6 +7,11 @@
              course: @course,
              pagy: @pagy,
              options: {
-               actions: [:edit]
+               actions: [:edit, :new, :destroy],
+               except: [:course_id, :id],
              }
            } %>
+
+<% content_for :nav_content do %>
+  Tags
+<% end %>

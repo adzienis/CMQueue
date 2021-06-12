@@ -18,12 +18,12 @@ course = Course.create! name: "course#{0}",
                             name: SecureRandom.urlsafe_base64(10),
                             description: SecureRandom.urlsafe_base64(30))
 
-  user = User.create!(given_name: "arthur#{v}")
-  user.courses << course
-  user.questions.create!(course_id: course.id,
-                  location: SecureRandom.urlsafe_base64(6),
-                  tried: SecureRandom.urlsafe_base64(6),
-                  description: SecureRandom.urlsafe_base64(6))
+  #user = User.create!(given_name: "arthur#{v}")
+  #user.courses << course
+  #user.questions.create!(course_id: course.id,
+  #                location: SecureRandom.urlsafe_base64(6),
+  #                tried: SecureRandom.urlsafe_base64(6),
+  #                description: SecureRandom.urlsafe_base64(6))
 
 
 end

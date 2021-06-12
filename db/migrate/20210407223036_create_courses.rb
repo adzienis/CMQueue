@@ -8,6 +8,7 @@ class CreateCourses < ActiveRecord::Migration[6.1]
       t.string :ta_code
       t.string :instructor_code
       t.boolean :open, default: false
+      t.string :semester
       t.timestamps
     end
   end

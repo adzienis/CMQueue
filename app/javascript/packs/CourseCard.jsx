@@ -1,6 +1,5 @@
-import React from 'react';
 import useWrappedMutation from "./useWrappedMutation";
-import {Card} from "react-bootstrap";
+import React from 'react';
 
 export default props => {
 
@@ -11,9 +10,9 @@ export default props => {
     })
 
     return (
-        <Card as='a' href={`/courses/${course?.id}`} className='shadow-sm text-decoration-none hover-container' style={{ color: 'inherit'}}>
-            <Card.Body>
-                <Card.Title>
+        <a  href={`/courses/${course?.id}`} className='card shadow-sm text-decoration-none hover-container' style={{ color: 'inherit'}}>
+            <div className="card-body">
+                <div className="card-title">
                     <div style={{display: 'flex'}}>
                             <span style={{flex: 1}}>
                                 Go to <b>
@@ -29,8 +28,8 @@ export default props => {
                             }
                         }}/>
                     </div>
-                </Card.Title>
-            </Card.Body>
-        </Card>
+                </div>
+            </div>
+        </a>
     )
 }

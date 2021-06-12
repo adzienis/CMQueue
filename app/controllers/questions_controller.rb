@@ -33,7 +33,7 @@ class QuestionsController < ApplicationController
 
     @questions_ransack1 = @questions_ransack1.left_joins(:question, :user).select("distinct on(questions.id, questions.user_id) question_states.id ")
 
-    @questions_ransack ||= Question.left_joins(:question_states).where("question_states.id in (#{@questions_ransack1.to_sql})").ransack(params[:q])
+    @questions_ransack ||= Question.joins(:question_states).where("question_states.id in (#{@questions_ransack1.to_sql})").ransack(params[:q])
 
     @pagy, @records = pagy @questions_ransack.result
 
@@ -92,9 +92,7 @@ class QuestionsController < ApplicationController
   def update
     @question = Question.find(params[:id])
     @question.update(question_params)
-    @question.tags = (Tag.find(params[:tag][:tags])) if params.dig(:tag, :tags)
-
-    @question.tags = (Tag.find(params[:question][:tag_ids].reject(&:empty?))) if params.dig(:question, :tag_ids)
+    @question.tags = (Tag.find(params[:question][:tags])) if params.dig(:question, :tags)
 
     respond_to do |format|
       format.html { redirect_to course_questions_path(@question.course) }

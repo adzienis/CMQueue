@@ -23,6 +23,13 @@ $secondary: #5CABBC;
 @import "bootstrap";
 
 
+.err {
+  border-color: #dc3545;
+  border-radius: 5px;
+  border-width: 1px;
+  border-style: solid;
+}
+
 html body{
   height: initial !important;
 }
