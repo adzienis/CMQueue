@@ -22,7 +22,7 @@ export default props => {
     const {data: openStatus} = useQuery(['courses', parseInt(courseId, 10), 'open_status'])
 
 
-    const {register, handleSubmit, watch, control, formState: {errors: formErrors}} = useForm();
+    const {register, handleSubmit, control, formState: {errors: formErrors}} = useForm();
 
 
     const {mutateAsync: createQuestion, isLoading, errors} = useWrappedMutation((data) => ({
@@ -53,7 +53,6 @@ export default props => {
                             Ask a Question
                         </h1>
                         <Form>
-
                             <div className="mb-2">
                                 <label> Queue </label>
                                 <Controller

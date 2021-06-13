@@ -27,6 +27,9 @@ const Component = props => {
                 parseInt(v.id, 10),
                 'questions', 'count', '?', 'state=["unresolved", "frozen"]'])
             queryClient.prefetchQuery(['courses', parseInt(v.id, 10), 'activeTAs'])
+            queryClient.prefetchQuery(['courses',
+                parseInt(v.id, 10),
+                'questions', '?', `user_id=${userId}`, 'state=["unresolved", "frozen", "resolving"]'])
         })
     }, [studentCourses])
 

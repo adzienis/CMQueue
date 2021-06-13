@@ -1,10 +1,10 @@
-import React, {useEffect, useMemo, useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import {useMutation, useQuery} from "react-query";
 import mutationFn from "./mutationFn";
 import useWrappedMutation from "./useWrappedMutation";
-import stateEnumMapper from "./stateEnumMapper";
 import {Button, Card, Form, Spinner} from "react-bootstrap";
 import Select from "react-select";
+import {Controller, useForm} from "react-hook-form";
 
 
 export default function QuestionWaitingModal(props) {
@@ -18,7 +18,7 @@ export default function QuestionWaitingModal(props) {
     })
 
     useEffect(() => {
-        if(question) {
+        if (question) {
 
             setDescription(question?.description)
             setTried(question?.tried)
@@ -28,7 +28,7 @@ export default function QuestionWaitingModal(props) {
                 label: v.name
             })))
         }
-    },[question])
+    }, [question])
 
     const {data: messages} = useQuery(['questions', question?.id, 'messages'], {
         enabled: !!question
@@ -39,10 +39,10 @@ export default function QuestionWaitingModal(props) {
     })
     const {mutateAsync: updateQuestion} = useWrappedMutation(() => ({
         question: {
-            description,
-            tried,
-            location,
-            tags: queue.map(v => v.value)
+            description: formFields.description,
+            tried: formFields.tried,
+            location: formFields.location,
+            tags: formFields.queues.map(v => v.value)
         }
     }), `/questions/${question?.id}`, {
         method: 'PATCH'
@@ -100,6 +100,12 @@ export default function QuestionWaitingModal(props) {
         title = "Kicked"
     }
 
+
+    const {register, handleSubmit, control, watch,formState: {errors: formErrors}} = useForm();
+
+
+    const formFields = watch();
+
     return (
         <Card style={{border}} className="shadow-sm">
             <Card.Body>
@@ -139,66 +145,104 @@ export default function QuestionWaitingModal(props) {
                     </div>)}
                     <Form>
                         <div className="mb-2">
-                            <Form.Label> <b> Description</b> </Form.Label>
-                            <Form.Control as='textarea'
-                                          rows={3}
-                                          value={description}
-                                          onChange={e => setDescription(e.target.value)}
-                            />
-
-                        </div>
-                        <div className="mb-2">
-                            <Form.Label><b>Queue</b></Form.Label>
-
-                            <Select
-                                isMulti
-                                options={queues.filter(v => !v.archived).map(v => ({
-                                    value: v.id, label: v.name
+                            <label> Queue </label>
+                            <Controller
+                                defaultValue={question?.tags?.map(v => ({
+                                    value: v.id,
+                                    label: v.name
                                 }))}
-                                value={queue}
-
-                                onChange={v => {
-                                    setQueue(v)
+                                name="queues"
+                                control={control}
+                                render={({field}) =>
+                                    <Select
+                                        className={formErrors?.queues ? "err" : ""}
+                                        {...field}
+                                        isMulti
+                                        options={queues.filter(v => !v.archived).map(v => ({
+                                            value: v.id, label: v.name
+                                        }))}
+                                    />
+                                }
+                                rules={{
+                                    minLength: 3,
+                                    validate: {
+                                        checkLength: v => (typeof v !== "undefined" && (v.length > 0))
+                                    }
                                 }}
-
                             />
+                            {formErrors?.queues?.type === "checkLength" && <span className="invalid-feedback d-block">
+                                    "Select at least one queue"
+                                </span>}
                         </div>
                         <div className="mb-2">
-                            <Form.Label> <b>What Have You Tried?</b></Form.Label>
+                            <label> Description </label>
                             <Form.Control
+                                className={formErrors.description ? "is-invalid" : ""}
                                 as='textarea'
-                                rows={3}
-                                value={tried}
-                                onChange={e => setTried(e.target.value)}
+                                {...register("description", {
+                                    value: question?.description,
+                                    required: {
+                                        value: true,
+                                        message: "Description is required."
+                                    }
+                                })}
                             />
+                            {formErrors.description && <span className="invalid-feedback d-block">
+                                    {formErrors?.description?.message}
+                                </span>}
                         </div>
                         <div className="mb-2">
-                            <Form.Label> <b>Zoom</b> </Form.Label>
+                            <label> Tried </label>
+                            <Form.Control
+                                className={formErrors.tried ? "is-invalid" : ""}
+                                {...register("tried", {
+                                    value: question?.tried,
+                                    required: {
+                                        value: true,
+                                        message: "What you tried is required."
+                                    }
+                                })}
+                                as='textarea'
+                            />
+                            {formErrors.description && <span className="invalid-feedback d-block">
+                                    {formErrors?.tried?.message}
+                                </span>}
+                        </div>
+                        <div className="mb-3">
+                            <label> Location </label>
                             <Form.Control
                                 as='textarea'
-                                rows="1"
-                                value={location}
-                                onChange={e => setLocation(e.target.value)}
+                                className={formErrors.location ? "is-invalid" : ""}
+                                {...register("location", {
+                                    value: question?.location,
+                                    required: {
+                                        value: true,
+                                        message: "Location is required."
+                                    }
+                                })}
                             />
+                            {formErrors.description && <span className="invalid-feedback d-block">
+                                    {formErrors?.location?.message}
+                                </span>}
                         </div>
                     </Form>
                     <div
                         className="mt-3"
                         style={{
-                        display: 'grid',
-                        gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
-                        columnGap: '10px'
-                    }}>
+                            display: 'grid',
+                            gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+                            columnGap: '10px'
+                        }}>
                         <Button variant='success'
-                                disabled={(tried === question?.tried &&
-                                    description === question?.description &&
-                                    location === question?.location &&
-                                    question?.tags.length === queue.length &&
-                                    question?.tags?.map(v => v.id).every((v, i) => v === queue[i].value) &&
-                                    queue.every((v, i) => v.value === question?.tags?.map(v => v.id)[i]))}
-                                onClick={async e => {
+                                disabled={(formFields.tried === question?.tried &&
+                                    formFields.description === question?.description &&
+                                    formFields.location === question?.location &&
+                                    formFields.queues.length === queue.length &&
+                                    question?.tags?.map(v => v.id).every((v, i) => v === formFields.queues[i].value) &&
+                                    formFields.queues.every((v, i) => v.value === question?.tags?.map(v => v.id)[i]))}
+                                onClick={handleSubmit(async e => {
                                     await updateQuestion()
-                                }}
+                                })}
 
                         >
                             Change

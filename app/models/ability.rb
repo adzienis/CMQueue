@@ -14,22 +14,18 @@ class Ability
         can :access, :rails_admin
       end
 
-
       can :read, :dashboard
       can :access, :rails_admin
 
-      # || question.user_id == user.id
-
-      #can :manage, QuestionState, :user => { id: user.id }
       can :manage, Message, :question_state => { :question => { :user => { id: user.id } } }
 
-      #can :manage, User, id: user.id
       can [:search], Course
 
       can [:read, :active_tas, :open_status], Course
 
+
       can [:course_info, :roster, :open,
-           :update, :top_question, :answer, :answer_page], Course, Course.all do |course|
+           :update, :top_question, :answer, :answer_page], Course, Course.where(id: Course.find_roles(:ta, user).pluck(:resource_id)) do |course|
         user.has_role? :ta, course
       end
       can :manage, QuestionState, QuestionState.joins(:question)
@@ -47,7 +43,7 @@ class Ability
       end
 
       can :read, Tag
-      can :create, Tag
+      can :create, Tag if user.roles.where(name: "ta").count > 0
 
       can :manage, Tag, Tag
                           .where(course_id: Course

@@ -87,11 +87,11 @@
       </fieldset>
     <% end %>
   </div>
-  <% if !options[:actions].empty? %>
+  <% if !options[:actions].empty? && options[:actions].collect { |v| can? v, model_instance}.any? %>
     <div class="card-footer d-flex flex-row">
       <div class="flex-1"></div>
-      <%= button_to "Edit", edit_polymorphic_path(model_instance), class: "btn btn-warning me-2", method: :get if options[:actions].include? :edit %>
-      <%= button_to "Delete", polymorphic_path(model_instance), class: "btn btn-danger", method: :delete if options[:actions].include? :delete %>
+      <%= button_to "Edit", edit_polymorphic_path(model_instance), class: "btn btn-warning me-2", method: :get if options[:actions].include?(:edit) and can? :edit, model_instance %>
+      <%= button_to "Delete", polymorphic_path(model_instance), class: "btn btn-danger", method: :delete if options[:actions].include?(:delete) and can? :delete, model_instance %>
     </div>
   <% end %>
 </div>

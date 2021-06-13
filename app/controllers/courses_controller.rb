@@ -1,5 +1,5 @@
 class CoursesController < ApplicationController
-  load_and_authorize_resource
+  load_and_authorize_resource id_param: :course_id
 
   def edit
     @course = Course.find(params[:course_id])
