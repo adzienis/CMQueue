@@ -1,7 +1,7 @@
 <div class="h-100" style="display: flex; justify-content: center;">
   <div style="display: flex;flex-direction: column; height: 80%; align-items: center; justify-content: center">
     <%= image_tag 'logo.png', height: '300px', width: '300px', class: "shadow mb-3" %>
-    <%= button_to user_google_oauth2_omniauth_authorize_path,
+    <%= button_to "/users/auth/google_oauth2",
                   method: :post,
                   data: { 'turbo': "false" },
                   style: "padding: 0px; border: 0px",

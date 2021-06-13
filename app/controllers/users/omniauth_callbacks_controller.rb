@@ -1,12 +1,18 @@
 class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
-  def google_oauth2
-    # You need to implement the method below in your model (e.g. app/models/userAPI.rb)
-    @user = User.from_omniauth(request.env["omniauth.auth"])
+  include Devise::Controllers::SignInOut
 
+  def google_oauth2
+    @user = User.from_omniauth(request.env["omniauth.auth"])
+    #byebug
     if @user.persisted?
+
+      #byebug
+      puts "----------------asd"
+      puts request.env["omniauth.auth"]
+
       session[:user_id] = @user.id
-      sign_in_and_redirect @user, event: :authentication # this will throw if @user is not activated
-      set_flash_message(:notice, :success, kind: "Google") if is_navigational_format?
+      sign_in @user
+      sign_in_and_redirect @user, event: :authentication
     else
       redirect_to new_user_session_url
     end

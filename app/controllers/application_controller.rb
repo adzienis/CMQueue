@@ -1,6 +1,9 @@
 class ApplicationController < ActionController::Base
   include Pagy::Backend
 
+  protect_from_forgery with: :null_session
+
+
   before_action :authenticate_user!
 
   def new_session_path(scope)

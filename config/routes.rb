@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+  get 'authentications/create'
+  get 'oauth_accounts/create_or_update'
+  get 'oauth_accounts/error'
   mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
   mount PgHero::Engine, at: "pghero"
   mount API => '/'
@@ -65,10 +68,16 @@ Rails.application.routes.draw do
   get 'landing/', to: "landing#index"
   root to: "landing#index"
 
-  devise_for :users, controllers: { omniauth_callbacks: "users/omniauth_callbacks" }
+  get '/users/auth/google_oauth2/callback', to: "oauth_accounts#create_or_update", constraints: lambda { |req| !(req.env['omniauth.origin'] =~ /login/) }
+  get '/users/auth/failure', to: 'oauth_accounts#error', constraints: lambda { |req| !(req.env['omniauth.origin'] =~ /login/) }
 
   devise_scope :user do
-    get 'sign_in', to: 'landing#index', as: :new_user_session
-    get 'sign_out', to: 'devise/sessions#destroy', as: :destroy_user_session
-  end
+      get 'auth/google_oauth2/callback', to: 'users/omniauth_callbacks#google_oauth2'
+      get 'auth/failure', to: 'users/omniauth_callbacks#failure'
+      get 'sign_in', to: 'landing#index', as: :new_user_session
+      get 'sign_out', to: 'devise/sessions#destroy', as: :destroy_user_session
+    end
+
+  #devise_for :users, skip: :all
+  devise_for :users, controllers: { omniauth_callbacks: "users/omniauth_callbacks" }
 end
