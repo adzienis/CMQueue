@@ -11,6 +11,8 @@ class OauthAccountsController < ApplicationController
 
 
     if @user.persisted?
+
+      session[:user_id] = @user.id
       sign_in @user
 
       render json: request.env["omniauth.auth"]

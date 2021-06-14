@@ -101,3 +101,5 @@ gem "pghero", "~> 2.8"
 gem "grape", "~> 1.5"
 
 gem "grape-swagger", "~> 1.4"
+
+gem "doorkeeper", "~> 5.5"

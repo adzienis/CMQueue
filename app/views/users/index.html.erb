@@ -7,7 +7,6 @@
              course: @course,
              pagy: @pagy,
              options: {
-               except: [:course_id, :user_id, :role_id, :id],
-               extra_columns: [{user: :given_name}, {role: :name}]
+               except: [:course_id, :user_id, :role_id, :id, :provider, :uid],
              }
            } %>

@@ -1,7 +1,9 @@
+
+require 'doorkeeper/grape/helpers'
 module QueueAPI
 
-  class TagAPI < Grape::API
-    helpers Helpers
+  class TagAPI < BaseAPI
+    helpers Doorkeeper::Grape::Helpers
 
     namespace 'courses/:course_id' do
       resource :tags do

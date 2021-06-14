@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  use_doorkeeper
   get 'authentications/create'
   get 'oauth_accounts/create_or_update'
   get 'oauth_accounts/error'

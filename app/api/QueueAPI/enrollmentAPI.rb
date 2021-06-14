@@ -1,7 +1,10 @@
+
+
+require 'doorkeeper/grape/helpers'
 module QueueAPI
 
-  class EnrollmentAPI < Grape::API
-    helpers Helpers
+  class EnrollmentAPI < BaseAPI
+    helpers Doorkeeper::Grape::Helpers
 
     namespace 'users/:user_id' do
       resource :enrollments do

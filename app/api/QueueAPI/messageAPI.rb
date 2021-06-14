@@ -1,7 +1,8 @@
-module QueueAPI
 
-  class MessageAPI < Grape::API
-    helpers Helpers
+require 'doorkeeper/grape/helpers'
+module QueueAPI
+  class MessageAPI < BaseAPI
+    helpers Doorkeeper::Grape::Helpers
 
     namespace 'questions/:question_id' do
       resource :messages do

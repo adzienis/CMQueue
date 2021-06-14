@@ -1,6 +1,7 @@
+require 'doorkeeper/grape/helpers'
 module QueueAPI
-  class QuestionAPI < Grape::API
-    helpers Helpers
+  class QuestionAPI < BaseAPI
+    helpers Doorkeeper::Grape::Helpers
 
     namespace 'courses/:course_id' do
       resource :questions do
@@ -12,9 +13,7 @@ module QueueAPI
           questions = questions.where(course_id: params[:course_id]) if params[:course_id]
           questions = questions.where(user_id: params[:user_id]) if params[:user_id]
           questions = questions.questions_by_state(JSON.parse(params[:state])) if params[:state]
-
-          puts "------------------------------------------ads"
-
+          
           questions.count
         end
 

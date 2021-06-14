@@ -52,7 +52,7 @@
                 Are you sure you want to delete this?
               </div>
               <div class="modal-footer">
-                <%= link_to polymorphic_url([tag.course, tag], q: { course_id_eq: @course.id }), method: :delete, class: "btn btn-primary" do %>
+                <%= link_to polymorphic_url([tag], q: { course_id_eq: @course.id }), method: :delete, class: "btn btn-primary" do %>
                   Delete
                 <% end %>
               </div>

@@ -1,8 +1,8 @@
+
+require 'doorkeeper/grape/helpers'
 module QueueAPI
-
-  class CourseAPI < Grape::API
-
-    helpers Helpers
+  class CourseAPI < BaseAPI
+    helpers Doorkeeper::Grape::Helpers
 
     resource :courses do
 
@@ -50,9 +50,6 @@ module QueueAPI
 
         question_state = User.find(params[:user_id]).question_state
         top_question = Question.joins(:question_state).where("question_states.id": question_state&.id).includes(:user).first
-
-        puts "-----------------------------------------------------asds"
-        puts top_question.to_json
 
         if question_state&.state == "resolving"
           top_question.as_json include: [:user, :question_state, :tags]

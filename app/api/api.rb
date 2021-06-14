@@ -8,6 +8,8 @@ class API < Grape::API
   mount QueueAPI::EnrollmentAPI
   mount QueueAPI::MessageAPI
 
+
+
   add_swagger_documentation \
   info: {
     title: "CMQueue",
