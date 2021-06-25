@@ -14,83 +14,106 @@
           <h3>
             Attributes
           </h3>
-          <% model_instance.class.content_columns
-                           .reject { |v| options&.dig(:except)&.include? v.name.to_sym }
+          <% model_instance.attributes.keys
+                           .reject { |v| options&.dig(:except)&.include? v.to_sym }
                            .each do |col| %>
             <div class="mb-2">
               <label class="form-label">
                 <b>
-                  <%= col.name.humanize %>
+                  <%= col.humanize %>
                 </b>
               </label>
-              <input type="text" class="form-control" value=<%= "#{model_instance.send(col.name)}" %>>
+              <input type="text" class="form-control" value=<%= "#{model_instance.send(col)}" %>>
             </div>
           <% end %>
         </div>
-        <h3>
-          Associations
-        </h3>
-        <% [:has_and_belongs_to_many]
-             .collect { |s| model_instance.class.reflect_on_all_associations(s) }
-             .flatten
-             .reject { |v| [:courses, :roles, :enrollments].include? v.name.to_sym }
-             .each do |ass| %>
-          <div>
-            <label>
-              <label class="form-label">
-                <b>
-                  <%= link_to "View #{ass.name.to_s.humanize}", polymorphic_path([Course.find(params[:course_id]), ass.name],
-                                                                                 {
-                                                                                   "q[#{ass.options.dig(:through) ? ass.options.dig(:through).to_s + '_' : ''}" +
-                                                                                     "#{model_instance.class.name.to_s.pluralize.underscore}_id_eq]" => model_instance.id })
-                  %>
-                </b>
-              </label>
-          </div>
-        <% end %>
+
+      </fieldset>
+      <h3>
+        Associations
+      </h3>
+
+
+      <%= tag.div class: "accordion", id: "accordion-#{dom_id(model_instance)}" do %>
         <% [:has_many]
              .collect { |s| model_instance.class.reflect_on_all_associations(s) }
              .flatten
-             .reject { |v| [:courses, :roles, :enrollments].include? v.name.to_sym }
+             .reject { |v| options&.dig(:except)&.include? v.name.to_sym }
              .each do |ass| %>
+
           <div>
             <label class="form-label">
               <b>
-                <%= link_to "View #{ass.name.to_s.humanize}", polymorphic_path([Course.find(params[:course_id]), ass.name],
+                <%= link_to "View #{ass.name.to_s.humanize}", polymorphic_path(params[:course_id] ? [Course.find(params[:course_id]), ass.name] : [ass.name],
                                                                                {
                                                                                  "q[#{ass.options.dig(:through) ? ass.options.dig(:through).to_s + '_' : ''}" +
                                                                                    "#{model_instance.class.name.underscore}_id_eq]" => model_instance.id })
                 %>
               </b>
             </label>
-            <div>
-            </div>
           </div>
         <% end %>
-        <% [:has_one]
-             .collect { |s| model_instance.class.reflect_on_all_associations(s) }
-             .flatten
-             .reject { |v| [:courses, :roles, :enrollments].include? v.name.to_sym }
-             .each do |ass| %>
-          <div>
-            <label>
-              <b>
-                <% Array(model_instance.send(ass.name.to_sym)).each do |e| %>
-                  <%= link_to "View #{ass.name.to_s.humanize}",
-                              polymorphic_path(
-                                params[:course_id] ? [Course.find(params[:course_id]), e] : [e]) %>
-                <% end %>
-              </b>
-            </label>
-          </div>
-        <% end %>
-      </fieldset>
+      <% end %>
+
+
+      <% [:has_and_belongs_to_many]
+           .collect { |s| model_instance.class.reflect_on_all_associations(s) }
+           .flatten
+           .reject { |v| options&.dig(:except)&.include? v.name.to_sym }
+           .each do |ass| %>
+        <div>
+          <label class="form-label">
+            <b>
+              <%= link_to "View #{ass.name.to_s.humanize}", polymorphic_path(params[:course_id] ? [Course.find(params[:course_id]), ass.name] : [ass.name],
+                                                                             {
+                                                                               "q[#{ass.options.dig(:through) ? ass.options.dig(:through).to_s + '_' : ''}" +
+                                                                                 "#{model_instance.class.name.to_s.pluralize.underscore}_id_eq]" => model_instance.id })
+              %>
+            </b>
+          </label>
+        </div>
+      <% end %>
+
+      <% [:has_one]
+           .collect { |s| model_instance.class.reflect_on_all_associations(s) }
+           .flatten
+           .reject { |v| options&.dig(:except)&.include? v.name.to_sym }
+           .each do |ass| %>
+        <div>
+          <label class="form-label">
+            <b>
+              <% Array(model_instance.send(ass.name.to_sym)).each do |e| %>
+                <%= link_to "View #{ass.name.to_s.humanize}",
+                            polymorphic_path(
+                              params[:course_id] ? [Course.find(params[:course_id]), e] : [e]) %>
+              <% end %>
+            </b>
+          </label>
+        </div>
+      <% end %>
+      <% [:belongs_to]
+           .collect { |s| model_instance.class.reflect_on_all_associations(s) }
+           .flatten
+           .reject { |v| options&.dig(:except)&.include? v.name.to_sym }
+           .each do |ass| %>
+        <div>
+          <label class="form-label">
+            <b>
+              <% Array(model_instance.send(ass.name.to_sym)).each do |e| %>
+                <%= link_to "View #{ass.name.to_s.humanize}",
+                            polymorphic_path(
+                              params[:course_id] ? [Course.find(params[:course_id]), e] : [e]) %>
+              <% end %>
+            </b>
+          </label>
+        </div>
+      <% end %>
     <% end %>
   </div>
-  <% if !options[:actions].empty? && options[:actions].collect { |v| can? v, model_instance}.any? %>
+  <% if !options[:actions].empty? && options[:actions].collect { |v| can? v, model_instance }.any? %>
     <div class="card-footer d-flex flex-row">
       <div class="flex-1"></div>
-      <%= button_to "Edit", edit_polymorphic_path(model_instance), class: "btn btn-warning me-2", method: :get if options[:actions].include?(:edit) and can? :edit, model_instance %>
+      <%= button_to "Edit", model_instance.send(:course) ? edit_polymorphic_path([model_instance.send(:course), model_instance]) : edit_polymorphic_path(model_instance), class: "btn btn-warning me-2", method: :get if options[:actions].include?(:edit) and can? :edit, model_instance %>
       <%= button_to "Delete", polymorphic_path(model_instance), class: "btn btn-danger", method: :delete if options[:actions].include?(:delete) and can? :delete, model_instance %>
     </div>
   <% end %>

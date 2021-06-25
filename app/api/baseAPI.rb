@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 
 class BaseAPI < Grape::API
   include Rails.application.routes.url_helpers
@@ -6,9 +7,8 @@ class BaseAPI < Grape::API
     super
 
     subclass.class_eval do
-
       before do
-        doorkeeper_authorize! unless current_user
+        doorkeeper_authorize! if doorkeeper_token
       end
 
       helpers do
@@ -19,10 +19,10 @@ class BaseAPI < Grape::API
 
         def current_user
           doorkeeper_token&.try(:resource_owner_id)
-          warden = env["warden"]
-          current_user = warden&.authenticate || (User.find(doorkeeper_token&.try(:resource_owner_id)) if doorkeeper_token)
+          warden = env['warden']
+          current_user = warden&.authenticate
 
-          error!("Unauthorized", 401) unless current_user
+          error!('Unauthorized', 401) unless (current_user || doorkeeper_token)
 
           current_user
         end

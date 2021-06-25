@@ -1,27 +1,30 @@
-class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
-  include Devise::Controllers::SignInOut
+# frozen_string_literal: true
 
-  def google_oauth2
-    @user = User.from_omniauth(request.env["omniauth.auth"])
-    #byebug
-    if @user.persisted?
+module Users
+  class OmniauthCallbacksController < Devise::OmniauthCallbacksController
+    include Devise::Controllers::SignInOut
 
-      #byebug
-      puts "----------------asd"
-      puts request.env["omniauth.auth"]
+    def google_oauth2
+      @user = User.from_omniauth(request.env['omniauth.auth'])
+      if @user.persisted?
 
-      session[:user_id] = @user.id
-      sign_in_and_redirect @user, event: :authentication
-    else
-      redirect_to new_user_session_url
+        # byebug
+        puts '----------------asd'
+        puts request.env['omniauth.auth']
+
+        session[:user_id] = @user.id
+        sign_in_and_redirect @user, event: :authentication
+      else
+        redirect_to new_user_session_url
+      end
     end
-  end
 
-  def failure
-    redirect_to root_path
-  end
+    def failure
+      redirect_to root_path
+    end
 
-  def after_omniauth_failure_path_for(_scope)
-    new_user_session_path
+    def after_omniauth_failure_path_for(_scope)
+      new_user_session_path
+    end
   end
 end

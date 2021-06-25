@@ -27,3 +27,4 @@ test:
 production:
   <<: *default
   database: docker #db/production.sqlite3
+  port: 5434

@@ -32,22 +32,17 @@ class CourseCardReflex < ApplicationReflex
   #
   # Learn more at: https://docs.stimulusreflex.com/reflexes#reflex-classes
 
-
   def click(courseId)
-
     enrollment = User.find(session[:user_id]).enrollments.find(courseId)
     enrollment.destroy
     @enrollments = User.find(session[:user_id]).enrollments
   end
 
   def addShowCourse
-    puts "-----------"
+    puts '-----------'
     puts element.dataset[:visible]
     @peep = !@peep
   end
 
-  def addStudentCourseClick
-
-  end
-
+  def addStudentCourseClick; end
 end

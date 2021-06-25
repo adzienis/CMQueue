@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_13_181243) do
+ActiveRecord::Schema.define(version: 2021_06_24_144957) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -30,7 +30,6 @@ ActiveRecord::Schema.define(version: 2021_06_13_181243) do
     t.string "ta_code"
     t.string "instructor_code"
     t.boolean "open", default: false
-    t.string "semester"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
@@ -43,14 +42,15 @@ ActiveRecord::Schema.define(version: 2021_06_13_181243) do
   end
 
   create_table "enrollments", force: :cascade do |t|
-    t.bigint "course_id"
     t.bigint "user_id"
     t.bigint "role_id"
+    t.string "semester"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["course_id", "user_id"], name: "index_enrollments_on_course_id_and_user_id", unique: true
-    t.index ["course_id"], name: "index_enrollments_on_course_id"
+    t.datetime "discarded_at"
+    t.index ["discarded_at"], name: "index_enrollments_on_discarded_at"
     t.index ["role_id"], name: "index_enrollments_on_role_id"
+    t.index ["semester"], name: "index_enrollments_on_semester"
     t.index ["user_id"], name: "index_enrollments_on_user_id"
   end
 
@@ -74,7 +74,9 @@ ActiveRecord::Schema.define(version: 2021_06_13_181243) do
     t.datetime "created_at", null: false
     t.datetime "revoked_at"
     t.string "scopes", default: "", null: false
+    t.string "resource_owner_type", null: false
     t.index ["application_id"], name: "index_oauth_access_grants_on_application_id"
+    t.index ["resource_owner_id", "resource_owner_type"], name: "polymorphic_owner_oauth_access_grants"
     t.index ["resource_owner_id"], name: "index_oauth_access_grants_on_resource_owner_id"
     t.index ["token"], name: "index_oauth_access_grants_on_token", unique: true
   end
@@ -89,8 +91,10 @@ ActiveRecord::Schema.define(version: 2021_06_13_181243) do
     t.datetime "created_at", null: false
     t.string "scopes"
     t.string "previous_refresh_token", default: "", null: false
+    t.string "resource_owner_type"
     t.index ["application_id"], name: "index_oauth_access_tokens_on_application_id"
     t.index ["refresh_token"], name: "index_oauth_access_tokens_on_refresh_token", unique: true
+    t.index ["resource_owner_id", "resource_owner_type"], name: "polymorphic_owner_oauth_access_tokens"
     t.index ["resource_owner_id"], name: "index_oauth_access_tokens_on_resource_owner_id"
     t.index ["token"], name: "index_oauth_access_tokens_on_token", unique: true
   end
@@ -99,11 +103,14 @@ ActiveRecord::Schema.define(version: 2021_06_13_181243) do
     t.string "name", null: false
     t.string "uid", null: false
     t.string "secret", null: false
-    t.text "redirect_uri", null: false
+    t.text "redirect_uri"
     t.string "scopes", default: "", null: false
     t.boolean "confidential", default: true, null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.bigint "owner_id"
+    t.string "owner_type"
+    t.index ["owner_id", "owner_type"], name: "index_oauth_applications_on_owner_id_and_owner_type"
     t.index ["uid"], name: "index_oauth_applications_on_uid", unique: true
   end
 
@@ -135,7 +142,9 @@ ActiveRecord::Schema.define(version: 2021_06_13_181243) do
     t.text "description"
     t.text "notes"
     t.text "location"
+    t.datetime "discarded_at"
     t.index ["course_id"], name: "index_questions_on_course_id"
+    t.index ["discarded_at"], name: "index_questions_on_discarded_at"
     t.index ["user_id"], name: "index_questions_on_user_id"
   end
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateQuestionsTags < ActiveRecord::Migration[6.1]
   def change
     create_table :questions_tags, id: false do |t|

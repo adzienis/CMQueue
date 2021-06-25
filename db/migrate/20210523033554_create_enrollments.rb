@@ -1,11 +1,14 @@
+# frozen_string_literal: true
+
 class CreateEnrollments < ActiveRecord::Migration[6.1]
   def change
     create_table :enrollments do |t|
-      t.belongs_to :course
       t.belongs_to :user
       t.belongs_to :role
+      #t.belongs_to :course
+      t.string :semester
+      t.index :semester
       t.timestamps
     end
-    add_index :enrollments, [:course_id, :user_id], unique: true
   end
 end

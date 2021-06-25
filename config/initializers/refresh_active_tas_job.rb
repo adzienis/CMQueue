@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 
 class MyNewRailtie < Rails::Railtie
   config.after_initialize do

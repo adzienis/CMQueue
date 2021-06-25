@@ -1,11 +1,8 @@
 import consumer from "./consumer"
-import queryClient from "../packs/queryClientFile";
+import queryClient from "../src/queryClientFile";
 
 consumer.subscriptions.create("QueueChannel", {
     connected() {
-        // Called when the subscription is ready for use on the server
-        console.log("here we are")
-        console.log(location.pathname)
         this.update_course_channel = this.update_course_channel.bind(this)
         this.current_channel = null;
 
@@ -100,6 +97,6 @@ consumer.subscriptions.create("QueueChannel", {
             }
         }
 
-        console.log(consumer.subscriptions.subscriptions)
+        //console.log(consumer.subscriptions.subscriptions)
     }
 });

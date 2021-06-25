@@ -9,5 +9,5 @@
 </h2>
 
 <%= render partial: "shared/show_model",
-           locals: { model_instance: @enrollment, options: { except: [:uid, :provider] }}
+           locals: { model_instance: @enrollment, options: { except: [:uid, :provider, :discarded_at, :course] }}
 %>

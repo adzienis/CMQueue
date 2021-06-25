@@ -14,14 +14,20 @@
  *= require_self
  */
 
-
-$font-family-sans-serif: "Arimo";
+$modal-fade-transform: scale(.7);
+$font-family-sans-serif: 'Inter';
 $primary: #24527A;
-$secondary: #5CABBC;
 @import url('https://fonts.googleapis.com/css2?family=Arimo:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&display=swap');
 @import "font-awesome";
 @import "bootstrap";
 
+
+.nav-tabs {
+  overflow-x: scroll;
+  overflow-y: hidden;
+  white-space: nowrap;
+  flex-wrap: nowrap;
+}
 
 .err {
   border-color: #dc3545;
@@ -30,13 +36,18 @@ $secondary: #5CABBC;
   border-style: solid;
 }
 
-html body{
+html, body{
   height: initial !important;
+  scroll-behavior: auto !important;
 }
 
 .sidebar-opener {
   z-index: 10;
-  display: none
+  display: none;
+  position:fixed;
+  left: 0px;
+  margin-left: 0px;
+  transition: left .5s ease, margin-left .5s ease;
 }
 
 .sidebar {
@@ -44,6 +55,7 @@ html body{
   width: 200px;
   min-width: 200px;
   max-width: 200px;
+  transition: left .5s ease, margin-left .5s ease;
 }
 
 .shim {
@@ -76,7 +88,6 @@ html body{
   }
 
   .sidebar-opener {
-    position:fixed;
     display: block;
   }
 

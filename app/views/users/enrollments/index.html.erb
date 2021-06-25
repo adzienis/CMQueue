@@ -1,3 +1,5 @@
+
+
 <div style="display: flex; justify-content: center" class="container mt-4">
 
   <div style="display: grid;
@@ -6,13 +8,12 @@
     justify-items: center;"
        class="w-100"
   >
-    <div class="w-100">
+    <div class="w-100 mb-3">
       <h1 class="mb-3">
         Student Courses
       </h1>
 
-      <div id='enrollment-cards'
-           data-controller="courseCard">
+      <div id='enrollment-cards'>
 
         <%= content_tag :div, id: "hello-react", data: {
           userId: current_user.id,

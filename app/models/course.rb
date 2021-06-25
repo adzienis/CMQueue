@@ -1,21 +1,25 @@
-class Course < ApplicationRecord
+# frozen_string_literal: true
 
+class Course < ApplicationRecord
   resourcify
+
+  validates :name, uniqueness: true
+  validates :ta_code, presence: true, uniqueness: true
+  validates :student_code, presence: true, uniqueness: true
+  validates :instructor_code, presence: true, uniqueness: true
+
+  # Not required for now
+  # validates :course_code, presence: true, uniqueness: true
 
   has_many :enrollments
   has_many :users, through: :enrollments
-  #has_and_belongs_to_many :users
-  #has_many :enrollments, dependent: :destroy
-  #has_many :questions, through: :enrollments
   has_many :questions
   has_many :tags
 
-  before_create do
-
-    puts "creating --------------------------------------"
-    self.ta_code = SecureRandom.urlsafe_base64(6) if !self.ta_code
-    self.student_code = SecureRandom.urlsafe_base64(6) if !self.student_code
-    self.instructor_code = SecureRandom.urlsafe_base64(6) if !self.instructor_code
+  before_validation on: :create do
+    self.ta_code = SecureRandom.urlsafe_base64(6) unless ta_code
+    self.student_code = SecureRandom.urlsafe_base64(6) unless student_code
+    self.instructor_code = SecureRandom.urlsafe_base64(6) unless instructor_code
   end
 
   after_update do
@@ -23,5 +27,4 @@ class Course < ApplicationRecord
       invalidate: ['courses', id, 'open_status']
     }
   end
-
 end

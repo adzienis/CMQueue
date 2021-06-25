@@ -6,11 +6,33 @@ Doorkeeper.configure do
   orm :active_record
 
   # This block will be called to check whether the resource owner is authenticated or not.
-  resource_owner_authenticator do
-    #raise "Please configure doorkeeper resource_owner_authenticator block located in #{__FILE__}"
+  resource_owner_authenticator do |routes|
+    # raise "Please configure doorkeeper resource_owner_authenticator block located in #{__FILE__}"
     # Put your resource owner authentication logic here.
     # Example implementation:
-    current_user || warden.authenticate!(scope: :user)
+    if current_user
+      if params[:scope].present?
+        case params[:scope]
+        when 'user'
+          redirect_to routes.root_path
+          #current_user # || warden.authenticate!(scope: :user)
+        when 'course'
+          course = Course.find(params[:course_id])
+          if params[:course_id].present? && current_user.has_role?(:ta, course)
+            course
+          else
+            redirect_to routes.root_path
+          end
+        else
+          redirect_to routes.root_path
+        end
+      else
+        redirect_to routes.root_path
+      end
+    else
+      redirect_to request.referer
+      redirect_to routes.root_path
+    end
   end
 
   # If you didn't skip applications controller from Doorkeeper routes in your application routes.rb
@@ -19,11 +41,11 @@ Doorkeeper.configure do
   # every time somebody will try to access the admin web interface.
   #
   admin_authenticator do
-    if current_user&.has_role?(:admin)
+    if current_user&.has_role?(:admin) || (params.has_key?(:course_id) && current_user&.has_role?(:instructor, Course.find(params[:course_id])))
     else
       redirect_to root_path
     end
-   end
+  end
 
   # You can use your own model classes if you need to extend (or even override) default
   # Doorkeeper models such as `Application`, `AccessToken` and `AccessGrant.
@@ -69,7 +91,7 @@ Doorkeeper.configure do
   # update `resource_owner_type` column in the database and fix migration template as it will
   # set NOT NULL constraint for Access Grants table.
   #
-  # use_polymorphic_resource_owner
+  use_polymorphic_resource_owner
 
   # If you are planning to use Doorkeeper in Rails 5 API-only application, then you might
   # want to use API mode that will skip all the views management and change the way how
@@ -219,14 +241,14 @@ Doorkeeper.configure do
   # NOTE: you must also run the rails g doorkeeper:application_owner generator
   # to provide the necessary support
   #
-  # enable_application_owner confirmation: false
+  enable_application_owner confirmation: false
 
   # Define access token scopes for your provider
   # For more information go to
   # https://doorkeeper.gitbook.io/guides/ruby-on-rails/scopes
   #
-  default_scopes  :public
-  optional_scopes :write, :update
+  default_scopes :public
+  optional_scopes :write, :update, :course
 
   # Allows to restrict only certain scopes for grant_type.
   # By default, all the scopes will be available for all the grant types.
@@ -287,7 +309,7 @@ Doorkeeper.configure do
   #
   # You can completely disable this feature with:
   #
-  # allow_blank_redirect_uri false
+  allow_blank_redirect_uri true
   #
   # Or you can define your custom check:
   #

@@ -146,3 +146,5 @@ en:
           home: 'Home'
       application:
         title: 'OAuth authorization required'
+    scopes:
+      write: "write"

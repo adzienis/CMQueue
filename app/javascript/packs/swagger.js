@@ -12,7 +12,6 @@ document.addEventListener('turbo:load', (e) => {
         node.forEach((v) => {
                 const data = JSON.parse(v.getAttribute('data'))
 
-
                 ReactDOM.render(<SwaggerUI
                     url="http://localhost:3000/api/swagger_doc"
                     title="asdad"

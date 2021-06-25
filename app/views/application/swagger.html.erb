@@ -1,5 +1,10 @@
 <%= render partial: "shared/back_navbar" %>
 
+
+<% content_for :opt_js do %>
+  <%= javascript_pack_tag 'swagger', 'data-turbo-track': 'reload'  %>
+<% end %>
+
 <div class="mb-5">
   <div id="swagger-ui-container"></div>
 </div>

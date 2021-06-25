@@ -3,7 +3,7 @@
   <%= tag.div id: "course-status", data: {
     courseId: @course.id
   }.to_json do %>
-  <% end if current_user.has_role? :ta, @course %>
+  <% end if current_user.has_any_role?({ name: :ta, resource: @course}, {name: :instructor, resource: @course}) %>
 
   <script>
       function toggle() {
@@ -30,14 +30,14 @@
       }
   </script>
   <div style="display: flex; flex-direction: row; ">
-    <% if current_user.has_role? :ta, @course %>
+    <% if current_user.has_any_role?({ name: :ta, resource: @course}, {name: :instructor, resource: @course}) %>
       <%= render partial: "shared/course_sidebar" %>
       <button class="btn btn-outline-secondary sidebar-opener" onclick="event.preventDefault(); toggle()">
         <i class="fas fa-chevron-right"></i>
       </button>
 
     <% end %>
-    <div id='courses-container' class="container w-100 mt-4 mb-5" style="min-height: 100vh">
+    <div id='courses-container' class="container w-100 mt-4 mb-5 overflow-hidden" style="min-height: 100vh">
       <%= content_for?(:courses_content) ? yield(:courses_content) : yield %>
     </div>
   </div>

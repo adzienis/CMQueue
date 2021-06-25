@@ -33,16 +33,16 @@ class QuestionFormReflex < ApplicationReflex
   # Learn more at: https://docs.stimulusreflex.com/reflexes#reflex-classes
 
   def submit
-    puts "reeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeflexxxxxxxxxxxxxxxxxxxxxxxxxxasasdasdqwed"
+    puts 'reeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeflexxxxxxxxxxxxxxxxxxxxxxxxxxasasdasdqwed'
 
     puts enrollment_params.inspect
     @question = Question.create(enrollment_params)
   end
 
   private
+
   def enrollment_params
     puts element.dataset
     params.require(:question).permit(:course_id, :description, :tried, :question_queue_id, :location, :user_id)
   end
-
 end

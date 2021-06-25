@@ -1,12 +1,12 @@
-require_relative "boot"
+# frozen_string_literal: true
+
+require_relative 'boot'
 require 'devise'
 
-
-require "rails/all"
+require 'rails/all'
 
 require 'action_view'
 require 'haml'
-
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -16,11 +16,20 @@ module Meet
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 6.1
-    config.assets.paths << Rails.root.join("app", "assets", "fonts")
+    config.assets.paths << Rails.root.join('app', 'assets', 'fonts')
     config.autoload_paths << "#{Rails.root}/lib/search"
-    config.hosts << "testme.com"
+    config.action_view.raise_on_missing_translations = false
 
+    config.to_prepare do
+      # Only Applications list
+      Doorkeeper::ApplicationsController.layout 'layouts/doorkeeper/application'
 
+      # Only Authorization endpoint
+      # Doorkeeper::AuthorizationsController.layout "my_layout"
+
+      # Only Authorized Applications
+      Doorkeeper::AuthorizedApplicationsController.layout 'layouts/doorkeeper/admin'
+    end
 
     # Configuration for the application, engines, and railties goes here.
     #

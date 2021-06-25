@@ -1,17 +1,17 @@
 
 <%= render partial: "shared/back_navbar" %>
 
-
 <h2>
   <b>
     <%= Question.name.humanize %>
   </b>
 </h2>
 
+
 <%= render partial: "shared/show_model",
            locals: {
              model_instance: @question,
              options: {
-               except: [:notes],
+               except: [:notes, :question_states, :course, :title, :discarded_at, :id, :user_id, :course_id],
              }
            } %>

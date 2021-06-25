@@ -39,22 +39,18 @@ class UserSearchReflex < ApplicationReflex
   end
 
   def search
-
     session[:filter] ||= {}
-    session[:filter][:search] ||= "given_name"
+    session[:filter][:search] ||= 'given_name'
     course = Course.find(element.dataset[:course_id])
 
-
     @filtered_students = if element.value.empty?
-      course.users.with_role :student, course
-    else
-      if session.dig(:filter, :search) == "given_name"
-                          course.users.where("LOWER(users.#{session.dig(:filter, :search)}) LIKE LOWER(?)", "#{element.value}%").with_role(:student, course)
-                        else
-                          course.users.with_role :student, course
-                        end
-    end
-
+                           course.users.with_role :student, course
+                         elsif session.dig(:filter, :search) == 'given_name'
+                           course.users.where("LOWER(users.#{session.dig(:filter, :search)}) LIKE LOWER(?)", "#{element.value}%").with_role(
+                             :student, course
+                           )
+                         else
+                           course.users.with_role :student, course
+                         end
   end
-
 end

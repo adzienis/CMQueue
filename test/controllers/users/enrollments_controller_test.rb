@@ -1,13 +1,17 @@
-require "test_helper"
+# frozen_string_literal: true
 
-class Users::EnrollmentsControllerTest < ActionDispatch::IntegrationTest
-  test "should get index" do
-    get users_enrollments_index_url
-    assert_response :success
-  end
+require 'test_helper'
 
-  test "should get create" do
-    get users_enrollments_create_url
-    assert_response :success
+module Users
+  class EnrollmentsControllerTest < ActionDispatch::IntegrationTest
+    test 'should get index' do
+      get users_enrollments_index_url
+      assert_response :success
+    end
+
+    test 'should get create' do
+      get users_enrollments_create_url
+      assert_response :success
+    end
   end
 end

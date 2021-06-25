@@ -35,7 +35,6 @@ class QuestionWaitingModalReflex < ApplicationReflex
   def delete(id)
     Question.find(id).destroy
     puts element.dataset.inspect
-    puts "daaaaaaaaaaaaaaaaaaaaaataaaaaaaaaaaaaaaaaaaaset"
+    puts 'daaaaaaaaaaaaaaaaaaaaaataaaaaaaaaaaaaaaaaaaaset'
   end
-
 end

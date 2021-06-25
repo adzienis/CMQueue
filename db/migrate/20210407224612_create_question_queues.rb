@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateQuestionQueues < ActiveRecord::Migration[6.1]
   def change
     create_table :question_queues do |t|

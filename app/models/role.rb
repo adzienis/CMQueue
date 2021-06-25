@@ -1,16 +1,22 @@
-class Role < ApplicationRecord
-  has_and_belongs_to_many :users, :join_table => :users_roles
+# frozen_string_literal: true
 
-  scope :with_course, ->(course) { where(resource_id: course.id)}
-  
+class Role < ApplicationRecord
+  has_and_belongs_to_many :users, join_table: :users_roles
+
+  has_many :enrollments, dependent: :delete_all
+
+  scope :with_course, ->(course) { where(resource_id: course.id) }
+
   belongs_to :resource,
-             :polymorphic => true,
-             :optional => true
-  
+             polymorphic: true,
+             optional: true
 
   validates :resource_type,
-            :inclusion => { :in => Rolify.resource_types },
-            :allow_nil => true
+            inclusion: { in: Rolify.resource_types },
+            allow_nil: true
+
+  scope :undiscarded, ->{joins(:enrollments).merge(Enrollment.undiscarded)}
 
   scopify
+
 end

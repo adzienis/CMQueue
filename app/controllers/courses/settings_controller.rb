@@ -1,7 +1,11 @@
-class Courses::SettingsController < ApplicationController
-  def index
-    @course = Course.find(params[:id])
+# frozen_string_literal: true
 
-    @tags = Course.find(params[:id]).tags
+module Courses
+  class SettingsController < ApplicationController
+    def index
+      @course = Course.find(params[:id])
+
+      @tags = Course.find(params[:id]).tags
+    end
   end
 end

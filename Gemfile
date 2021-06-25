@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
@@ -35,7 +37,7 @@ gem 'bootsnap', '>= 1.4.4', require: false
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
-  gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
+  gem 'byebug', platforms: %i[mri mingw x64_mingw]
 end
 
 group :development do
@@ -58,48 +60,55 @@ group :test do
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
-gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
+gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
 
-gem "stimulus_reflex", "~> 3.4"
+gem 'stimulus_reflex', '~> 3.4'
 
-gem "font-awesome-rails", "~> 4.7"
+gem 'font-awesome-rails', '~> 4.7'
 
+gem 'rack-cors', '~> 1.1'
 
-gem "rack-cors", "~> 1.1"
-
-gem "react_on_rails", "~> 12.2"
 gem 'mini_racer', platforms: :ruby
+gem 'react_on_rails', '~> 12.2'
 
-gem "cable_ready", "~> 4.5"
+gem 'cable_ready', '~> 4.5'
 
-gem "cancancan", "~> 3.2"
+gem 'cancancan', '~> 3.2'
 
-gem "rolify", "~> 6.0"
+gem 'rolify', '~> 6.0'
 
-gem "turbo-rails", "~> 0.5.9"
+gem 'turbo-rails', '~> 0.5.9'
 
-gem "pg", "~> 1.2"
+gem 'pg', '~> 1.2'
 
-gem "bootstrap", "= 5.0.1"
+gem 'bootstrap', '= 5.0.1'
 
-gem "kaminari", "~> 1.2"
+gem 'kaminari', '~> 1.2'
 
-gem "pagy"
+gem 'pagy'
 
-gem "ransack", "~> 2.4"
+gem 'ransack', '~> 2.4'
 
-gem "activeadmin", "~> 2.9"
+gem 'activeadmin', '~> 2.9'
 
-gem "rails_admin_import", "~> 2.2"
+gem 'rails_admin_import', '~> 2.2'
 
-gem "simple_form", "~> 5.1"
+gem 'simple_form', '~> 5.1'
 
-gem "rails_admin", "~> 2.1"
+gem 'rails_admin', '~> 2.1'
 
-gem "pghero", "~> 2.8"
+gem 'pghero', '~> 2.8'
 
-gem "grape", "~> 1.5"
+gem 'grape', '~> 1.5'
 
-gem "grape-swagger", "~> 1.4"
+gem 'grape-swagger', '~> 1.4'
 
-gem "doorkeeper", "~> 5.5"
+gem 'doorkeeper', '~> 5.5'
+
+gem 'rubocop', '~> 1.17'
+
+gem 'rubocop-rails', '~> 2.10'
+
+gem "discard", "~> 1.2"
+
+gem "doorkeeper-i18n", "~> 5.2"

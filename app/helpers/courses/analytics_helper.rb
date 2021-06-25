@@ -1,2 +1,6 @@
-module Courses::AnalyticsHelper
+# frozen_string_literal: true
+
+module Courses
+  module AnalyticsHelper
+  end
 end

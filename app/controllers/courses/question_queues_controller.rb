@@ -1,16 +1,18 @@
-class Courses::QuestionQueuesController < ApplicationController
-  def create
-  end
+# frozen_string_literal: true
 
-  def index
-    @question_queus = Question_Queue.all
+module Courses
+  class QuestionQueuesController < ApplicationController
+    def create; end
 
-    respond_to do |format|
-      format.html
-      format.json { render json: Course.where("name LIKE :name", name: "%#{params[:name]}%") }
+    def index
+      @question_queus = Question_Queue.all
+
+      respond_to do |format|
+        format.html
+        format.json { render json: Course.where('name LIKE :name', name: "%#{params[:name]}%") }
+      end
     end
-  end
 
-  def show
+    def show; end
   end
 end

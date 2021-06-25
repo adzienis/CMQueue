@@ -1,12 +1,11 @@
+# frozen_string_literal: true
+
 class ApplicationController < ActionController::Base
   include Pagy::Backend
 
-  protect_from_forgery with: :null_session
-
-
   before_action :authenticate_user!
 
-  def new_session_path(scope)
+  def new_session_path(_scope)
     new_user_session_path
   end
 
@@ -18,7 +17,5 @@ class ApplicationController < ActionController::Base
     stored_location_for(resource_or_scope) || user_enrollments_path
   end
 
-  def swagger
-
-  end
+  def swagger; end
 end

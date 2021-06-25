@@ -1,0 +1,45 @@
+<div class="border-bottom mb-4">
+  <h1>Applications</h1>
+</div>
+
+<div class="card shadow-sm">
+  <div class="card-body">
+
+    <p><%= link_to t('.new'), new_oauth_application_path(Course.find(params[:course_id])), class: 'btn btn-success' %></p>
+
+    <div class="table-responsive">
+      <table class="table table-striped">
+        <thead>
+        <tr>
+          <th><%= t('.name') %></th>
+          <th><%= t('.callback_url') %></th>
+          <th><%= t('.confidential') %></th>
+          <th><%= t('.actions') %></th>
+          <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <% @applications.each do |application| %>
+          <tr id="application_<%= application.id %>">
+            <td class="align-middle">
+              <%= link_to application.name, oauth_application_path(Course.find(params[:course_id]),application) %>
+            </td>
+            <td class="align-middle">
+              <%= simple_format(application.redirect_uri) %>
+            </td>
+            <td class="align-middle">
+              <%= application.confidential? ? t('doorkeeper.applications.index.confidentiality.yes') : t('doorkeeper.applications.index.confidentiality.no') %>
+            </td>
+            <td class="align-middle">
+              <%= link_to t('doorkeeper.applications.buttons.edit'), edit_oauth_application_path(Course.find(params[:course_id]),application), class: 'btn btn-link' %>
+            </td>
+            <td class="align-middle">
+              <%= render 'delete_form', application: application %>
+            </td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

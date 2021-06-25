@@ -1,45 +1,22 @@
+# frozen_string_literal: true
+
 class QuestionsController < ApplicationController
   load_and_authorize_resource
 
   def index
     @course = Course.find(params[:course_id]) if params[:course_id]
 
-    @questions = @questions.includes(:user, :question_state, :tags)
-    @questions = @questions.where(course_id: params[:course_id]) if params[:course_id]
-    @questions = @questions.where(user_id: params[:user_id]) if params[:user_id]
-    @questions = @questions.questions_by_state(JSON.parse(params[:state])) if params[:state]
-
-    if params[:cursor]
-      @questions = @questions.order("questions.updated_at DESC").limit(5) if params[:cursor] == "-1"
-      @questions = @questions.where('questions.id <= ?', params[:cursor]).order("questions.updated_at DESC").limit(5) unless params[:cursor] == "-1"
-      @offset = @questions.offset(5).first
-
-      respond_to do |format|
-        format.html
-        format.json do
-          render json: {
-            data: @questions,
-            cursor: @offset
-          }, include: [:user, :question_state, :tags]
-        end
-      end
-
-      return
-    end
-
-    @questions_ransack1 = QuestionState.where(question_id: Question.all.accessible_by(current_ability).pluck(:id))
-    @questions_ransack1 = @questions_ransack1.joins(:question).where("questions.course_id": params[:course_id]) if params[:course_id]
-    @questions_ransack1 = @questions_ransack1.joins(:question).where("questions.user_id": params[:user_id]) if params[:user_id]
-
-    @questions_ransack1 = @questions_ransack1.left_joins(:question, :user).select("distinct on(questions.id, questions.user_id) question_states.id ")
-
-    @questions_ransack ||= Question.joins(:question_states).where("question_states.id in (#{@questions_ransack1.to_sql})").ransack(params[:q])
+    @questions_ransack = @questions.undiscarded
+    @questions_ransack = @questions_ransack.where(course_id: params[:course_id]) if params[:course_id]
+    @questions_ransack = @questions_ransack.ransack(params[:q])
 
     @pagy, @records = pagy @questions_ransack.result
 
     respond_to do |format|
       format.html
-      format.json { render json: @questions, include: [:user, :question_state, :tags] }
+      # to download file with form submit
+      format.js { render inline: "window.open('#{URI::HTTP.build(path: "#{request.path}.csv", query: request.query_parameters.to_query, format: :csv)}', '_blank')"}
+      format.csv { send_data helpers.to_csv(params[:question].to_unsafe_h, @questions_ransack.result, Question), filename: "test.csv" }
     end
   end
 
@@ -61,8 +38,7 @@ class QuestionsController < ApplicationController
 
   def previous_questions
     @question = Question.find(params[:id])
-    @previous_questions = Question.previous_questions(@question).order("question_states.created_at DESC")
-
+    @previous_questions = Question.previous_questions(@question).order('question_states.created_at DESC')
   end
 
   def edit
@@ -76,17 +52,9 @@ class QuestionsController < ApplicationController
     @previous_questions = Question.previous_questions(@question.id)
   end
 
-  def create
-    @question = Question.create(question_params)
-    @question.tags = Tag.find(params[:question][:tags])
+  def create; end
 
-    if @question.errors.any?
-
-      render json: @question.errors.messages.to_json, status: :unprocessable_entity
-      return
-    end
-
-    redirect_to course_path(@question.course)
+  def download_form
   end
 
   def update
@@ -104,11 +72,11 @@ class QuestionsController < ApplicationController
     @question = Question.find(params[:id])
     @paginated_past_questions = Question
                                   .left_joins(:question_state)
-                                  .where("question_states.state = #{QuestionState.states["resolved"]}")
-                                  .where("questions.created_at < ?", @question.created_at)
+                                  .where("question_states.state = #{QuestionState.states['resolved']}")
+                                  .where('questions.created_at < ?', @question.created_at)
                                   .where(user_id: @question.user_id)
                                   .where(course_id: @question.course_id)
-                                  .order("question_states.created_at DESC")
+                                  .order('question_states.created_at DESC')
                                   .limit(5)
     respond_to do |format|
       format.html
@@ -117,7 +85,7 @@ class QuestionsController < ApplicationController
   end
 
   def destroy
-    Question.find(params[:id]).destroy
+    Question.find(params[:id]).discard
   end
 
   private

@@ -32,21 +32,19 @@ class CourseSearchReflex < ApplicationReflex
   #
   # Learn more at: https://docs.stimulusreflex.com/reflexes#reflex-classes
 
-
   def addClick(course_id)
     user = User.find(session[:user_id])
     user.enrollments.create(course_id: course_id)
     @courses = user.courses
-
   end
 
-  def reflexError element, reflex, error, reflexId
-    puts "ERRRRRRRRRRRRRRORR-------------------------"
+  def reflexError(_element, _reflex, error, _reflexId)
+    puts 'ERRRRRRRRRRRRRRORR-------------------------'
     puts error.inspect
   end
 
   def search(name)
-    @searched_courses = Course.where("name LIKE :name", name: "%#{name}%")
+    @searched_courses = Course.where('name LIKE :name', name: "%#{name}%")
     user = User.find(session[:user_id])
     @courses = user.courses
   end

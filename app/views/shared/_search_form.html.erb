@@ -2,134 +2,154 @@
 <% options[:extra_columns] ||= [] %>
 <% options[:except] ||= [] %>
 <% options[:actions] ||= [] %>
+<% options[:other_filters] ||= [] %>
+
+<% session[:default_filter] ||= '' %>
+
+<% session[:default_filter] = request.fullpath unless request.referer.nil? || (URI(request.referer).path == polymorphic_path([@course, records.model])) %>
 
 <%= content_tag :div, id: "dropdown-filter", data: {
-  colNames: records.model.column_names, queries: params[:q]
+  except: options[:except],
+  columns: {
+    root: records.model.column_names,
+    associations: options[:other_filters]
+  }, queries: params[:q],
+  reset: session[:default_filter]
 }.to_json do %>
 <% end %>
 
-<h3>
-  Results
-</h3>
+<ul class="nav nav-tabs mt-4 overflow-x-scroll">
+  <li class="nav-item">
+    <a class="nav-link active" data-bs-toggle="tab" data-bs-target="#results" href="#">
+      Results
+    </a>
+  </li>
 
-<% if !records.empty? %>
-  <div class="table-responsive mb-3" id="results">
-    <table class="table table-hover table-striped">
-      <thead>
-      <tr>
-        <th>
-          Actions
-        </th>
-        <% options[:extra_columns].each do |extra| %>
-          <th style="min-width: 125px">
-            <% if extra.instance_of? Hash %>
-              <%= sort_link(ransack, extra.flatten.join('_')) do %>
-                <%= "#{extra.flatten[-2].to_s.humanize} #{extra.flatten[-1].to_s.humanize}" %>
-              <% end %>
-            <% else %>
-              <%= sort_link(ransack, extra.to_s) %>
-            <% end %>
-          </th>
-        <% end %>
-        <% records.model.column_names.reject { |c| options[:except].include? c.to_sym }.each do |k| %>
-          <th style="min-width: 125px">
-            <%= sort_link(ransack, k.to_sym) %>
-          </th>
-        <% end %>
-      </tr>
-      </thead>
-      <tbody>
-      <% records&.each do |tag| %>
+  <%= tag.li class: "nav-item" do %>
 
-        <div class="modal fade" id=<%= "modal-instance#{tag.id}"%> tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-          <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel"> Delete Confirmation </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div class="modal-body">
-                Are you sure you want to delete this?
-              </div>
-              <div class="modal-footer">
-                <%= link_to polymorphic_url([tag], q: { course_id_eq: @course.id }), method: :delete, class: "btn btn-primary" do %>
-                  Delete
+    <%= link_to new_polymorphic_path([@course, records.model]), class: "nav-link" do %>
+      <i class="fas fa-plus fa-lg me-2"></i>
+      <span> Add a new <%= records.model.name.humanize %> </span>
+    <% end %>
+  <% end if options[:actions].include? :new  %>
+
+  <%= tag.li class: "nav-item" do %>
+    <%= link_to polymorphic_path([:download_form, records.model], **request.query_parameters), class: "nav-link" do %>
+      <i class="fas fa-download fa-lg me-2"></i>
+      <span>Export to CSV </span>
+    <% end %>
+  <% end if options[:actions].include? :download  %>
+
+
+</ul>
+<div class="tab-content">
+  <div class="tab-pane fade show active" id="results">
+    <% if !records.empty? %>
+      <div class="table-responsive mb-3" id="results">
+        <table class="table table-hover table-striped">
+          <thead>
+          <tr>
+            <th>
+              Actions
+            </th>
+            <% options[:extra_columns].each do |extra| %>
+              <th style="min-width: 125px">
+                <% if extra.instance_of? Hash %>
+                  <%= sort_link(ransack, extra.flatten.join('_')) do %>
+                    <%= "#{extra.flatten[-2].to_s.humanize} #{extra.flatten[-1].to_s.humanize}" %>
+                  <% end %>
+                <% else %>
+                  <%= sort_link(ransack, extra.to_s) %>
                 <% end %>
+              </th>
+            <% end %>
+            <% records.model.column_names.reject { |c| options[:except].include? c.to_sym }.each do |k| %>
+              <th style="min-width: 125px">
+                <%= sort_link(ransack, k.to_sym) %>
+              </th>
+            <% end %>
+          </tr>
+          </thead>
+          <tbody>
+          <% records&.each do |tag| %>
+            <div class="modal fade" id=<%= "modal-instance#{tag.id}" %> tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel"> Delete Confirmation </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    Are you sure you want to delete this?
+                  </div>
+                  <div class="modal-footer">
+                    <%= link_to polymorphic_url([tag], q: { course_id_eq: @course.id }), method: :delete, class: "btn btn-primary" do %>
+                      Delete
+                    <% end %>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
 
-        <tr>
-          <td>
-            <%= link_to url_for([course, tag]) do %>
-              <i class="fas fa-info-circle me-1"></i>
-            <% end %>
-            <%= link_to edit_polymorphic_url([course || tag.course, tag]) do %>
-              <i class="fas fa-edit me-1"></i>
-            <% end if options[:actions].include?(:edit) and can? :edit, tag %>
-            <%= link_to "" do %>
-              <i class="fas fa-times" onclick="event.preventDefault()" data-bs-toggle="modal" data-bs-target=<%= "#modal-instance#{tag.id}"%> style="cursor: pointer"></i>
-            <% end  if options[:actions].include?(:destroy) and can? :delete, tag  %>
-          </td>
-          <% options[:extra_columns].each do |extra| %>
-            <td>
-              <% if extra.instance_of? Hash %>
-                <%= ApplicationHelper::SearchClass.fetch_attribute(tag, extra) %>
-              <% else %>
-                <%= tag.send(extra) %>
-              <% end %>
-            </td>
-          <% end %>
-          <% records.model.column_names.reject { |c| options[:except].include? c.to_sym }.each do |k| %>
-            <td>
-              <div style="  display: -webkit-box;
-                -webkit-line-clamp: 3;
-                -webkit-box-orient: vertical;
-                overflow: hidden">
-                <% if records.model.column_for_attribute(k).type.to_s == "datetime" %>
-                  <%= tag.try(k.to_sym).localtime.to_formatted_s(:short) %>
-                <% else %>
-                  <%= tag.send(k.to_sym) %>
+            <tr>
+              <td>
+                <%= link_to url_for([course, tag]) do %>
+                  <i class="fas fa-info-circle me-1"></i>
                 <% end %>
-              </div>
-            </td>
+                <%= link_to edit_polymorphic_url([course || tag.course, tag]) do %>
+                  <i class="fas fa-edit me-1"></i>
+                <% end if options[:actions].include?(:edit) and can? :edit, tag %>
+                <%= link_to "" do %>
+                  <i class="fas fa-times" onclick="event.preventDefault()" data-bs-toggle="modal" data-bs-target=<%= "#modal-instance#{tag.id}" %> style="cursor: pointer"></i>
+                <% end  if options[:actions].include?(:destroy) and can? :delete, tag %>
+              </td>
+              <% options[:extra_columns].each do |extra| %>
+                <td>
+                  <% if extra.instance_of? Hash %>
+                    <%= ApplicationHelper::SearchClass.fetch_attribute(tag, extra) %>
+                  <% else %>
+                    <%= tag.send(extra) %>
+                  <% end %>
+                </td>
+              <% end %>
+              <% records.model.column_names.reject { |c| options[:except].include? c.to_sym }.each do |k| %>
+                <td>
+                  <div style="  display: -webkit-box;
+                    -webkit-line-clamp: 3;
+                    -webkit-box-orient: vertical;
+                    overflow: hidden">
+                    <% if records.model.column_for_attribute(k).type.to_s == "datetime" %>
+                      <%= tag.try(k.to_sym)&.localtime&.to_formatted_s(:short) %>
+                    <% else %>
+                      <%= tag.send(k.to_sym) %>
+                    <% end %>
+                  </div>
+                </td>
+              <% end %>
+            </tr>
           <% end %>
-        </tr>
-      <% end %>
-      </tbody>
-    </table>
-  </div>
-  <div>
-
-    <%= link_to new_polymorphic_path([@course, records.model]), class: "d-flex align-items-center" do %>
-      <i class="fas fa-plus fa-lg me-2"></i>
-      <span> Add a new tag </span>
-    <% end  if options[:actions].include? :new %>
-
-  </div>
-  <div>
-    <% if pagy.count == 1 %>
-      <%= "#{pagy.count} #{records.model.name}" %>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <% if pagy.count == 1 %>
+          <%= "#{pagy.count} #{records.model.name}" %>
+        <% else %>
+          <%= "#{pagy.count} #{records.model.name.pluralize}" %>
+        <% end %>
+      </div>
     <% else %>
+
+      <div class="alert alert-warning shadow-sm">
+        Empty
+      </div>
       <%= "#{pagy.count} #{records.model.name.pluralize}" %>
     <% end %>
+
+
+
+    <div class="w-100 d-flex justify-content-center">
+      <%== render partial: "pagy/nav.html.erb", locals: { pagy: pagy } %>
+    </div>
   </div>
-<% else %>
-
-  <div class="alert alert-warning shadow-sm">
-    Empty
-  </div>
-
-  <%= link_to new_polymorphic_path([@course, records.model]), class: "d-flex align-items-center" do %>
-    <i class="fas fa-plus fa-lg me-2"></i>
-    <span> Add a new tag </span>
-  <% end  if options[:actions].include? :new %>
-  <%= "#{pagy.count} #{records.model.name.pluralize}" %>
-<% end %>
-
-
-
-<div class="w-100 d-flex justify-content-center">
-  <%== render partial: "pagy/nav.html.erb", locals: { pagy: pagy } %>
 </div>

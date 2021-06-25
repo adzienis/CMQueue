@@ -1,13 +1,16 @@
-class Foo::CustomInput 
-  include Formtastic::Inputs::Base
+# frozen_string_literal: true
 
-  def to_html
-    puts "this is my modified version of StringInput"
-    super
+module Foo
+  class CustomInput
+    include Formtastic::Inputs::Base
+
+    def to_html
+      puts 'this is my modified version of StringInput'
+      super
+    end
+
+    def input_html_options
+      super.merge(class: 'flexible-text-area')
+    end
   end
-
-  def input_html_options
-    super.merge(:class => "flexible-text-area")
-  end
-
 end

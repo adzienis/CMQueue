@@ -9,11 +9,17 @@
   }
 <% end %>
 
-<%= render partial: "shared/back_navbar" %>
+
+<%= tag.div class: "mb-3", id: "ta-chart", data: {
+  courseId: @course.id
+}.to_json do %>
+<% end %>
+
+
+<hr>
+
 
 <iframe
   src="http://office-hours-01.andrew.cmu.edu:3010/public/dashboard/265a1bae-84cd-4f7e-8f09-f47052aea0d1"
-  frameborder="0"
   class="w-100 h-100"
-  allowtransparency
 ></iframe>

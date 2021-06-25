@@ -1,40 +1,68 @@
-class QuestionState < ApplicationRecord
-  belongs_to :question, touch: true, optional: true
-  belongs_to :user
-  enum state: %i[unresolved resolving resolved frozen kicked], _default: :unresolved
+# frozen_string_literal: true
 
-  scope :with_course, ->(course) { joins(:question).where("questions.course_id": course.id)}
+class QuestionState < ApplicationRecord
+  belongs_to :question, touch: true, optional: false
+  belongs_to :user
+
+  validates_presence_of :question, :state, :user
+  validate :proper_answer, on: :create
+  validate :not_handling_another, on: :create
+
+  def proper_answer
+    question = Question.find(question_id) if question_id
+
+    return unless question
+
+    old_qs = question.question_state
+
+    return unless old_qs
+
+    errors.add(:question, "already answered.") if (old_qs.state != "unresolved") && state == "resolving"
+    errors.add(:action, "already occurred.") if old_qs.state == state
+  end
+
+  def not_handling_another
+    return unless user&.question_state && question
+    errors.add(:user, "already handling another question.") if user.question_state.state == "resolving" && question.id != user.question_state.question.id
+  end
+
+
+  enum state: { unresolved: 0, resolving: 1, resolved: 2, frozen: 3, kicked: 4 }, _default: :unresolved
+
+  scope :with_course, ->(course) { joins(:question).where("questions.course_id": course.id) }
 
   has_many :messages, dependent: :destroy
 
   delegate :course, to: :question, allow_nil: true
 
-  def self.ransackable_scopes(auth_object = nil)
-    %i(previous_questions)
+  def self.ransackable_scopes(_auth_object = nil)
+    %i[previous_questions]
   end
 
-  scope :previous_questions, ->(question = nil) {
-    q = Question.find_by_id(question)
+  scope :previous_questions, lambda { |question = nil|
+    q = Question.find_by(id: question)
 
     return none unless q
 
     where(question_id: Question
-                         .where("questions.created_at < ?", q.created_at)
+                         .where('questions.created_at < ?', q.created_at)
                          .where(user_id: q.user_id)
                          .where(course_id: q.course_id)
-                         .order("questions.created_at DESC")
-                         .pluck("questions.id"))
+                         .order('questions.created_at DESC')
+                         .pluck('questions.id'))
   }
 
   after_create_commit do
-    question.update(question_state: self)
-    self.user.update(question_state: self)
 
     QueueChannel.broadcast_to course, {
       invalidate: ['courses', question.course.id, 'activeTAs']
     }
 
     ActionCable.server.broadcast "#{course.id}#ta", {
+      invalidate: ['courses', question.course.id, 'topQuestion']
+    }
+
+    ActionCable.server.broadcast "#{course.id}#instructor", {
       invalidate: ['courses', question.course.id, 'topQuestion']
     }
 
@@ -46,9 +74,17 @@ class QuestionState < ApplicationRecord
       invalidate: ['courses', question.course_id, 'paginatedQuestions']
     }
 
+    ActionCable.server.broadcast "#{course.id}#instructor", {
+      invalidate: ['courses', question.course_id, 'paginatedQuestions']
+    }
+
     ActionCable.server.broadcast "#{course.id}#ta", {
       invalidate: ['courses', question.course_id, 'paginatedPastQuestions']
     }
 
+
+    ActionCable.server.broadcast "#{course.id}#instructor", {
+      invalidate: ['courses', question.course_id, 'paginatedPastQuestions']
+    }
   end
 end

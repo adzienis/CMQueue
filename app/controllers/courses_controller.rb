@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CoursesController < ApplicationController
   load_and_authorize_resource id_param: :course_id
 
@@ -7,25 +9,23 @@ class CoursesController < ApplicationController
 
   def show
     @course = current_user.courses.find_by(id: params[:course_id])
-    unless @course
-      redirect_to user_enrollments_path and return
-    end
+    redirect_to user_enrollments_path and return unless @course
 
-    if current_user.question_state&.state == "resolving"
-      redirect_to answer_course_path(@course) and return
-    end
+    redirect_to answer_course_path(@course) and return if current_user.question_state&.state == 'resolving'
 
     @questions = @course.questions
     @user_question = current_user.courses.find(@course.id).questions.first
 
     @question = Question.all
                         .left_joins(:question_state, :user)
-                        .where("questions.id = ?", current_user.id)
-                        .where("question_states.state in (?)", [QuestionState.states["unresolved"], QuestionState.states["frozen"]]).first
+                        .where('questions.id = ?', current_user.id)
+                        .where('question_states.state in (?)', [QuestionState.states['unresolved'],
+                                                                QuestionState.states['frozen']]).first
     @tags = Tag.all.where(course_id: @course.id).where(archived: false)
 
     @top_question = current_user.question_state&.question
 
+    @enrollment = Enrollment.joins(:role).find_by(user_id: current_user.id, "roles.resource_id": @course.id)
   end
 
   def answer_page
@@ -34,22 +34,20 @@ class CoursesController < ApplicationController
     @top_question = question_state&.question
   end
 
-  def new
-  end
+  def new; end
 
   def index
     @courses = Course.all
   end
 
   def create
-
     @course = Course.create(course_params)
 
     redirect_to courses_path
   end
 
   def course_info
-    @course = Course.find(params[:course_id])
+    @course = Course.accessible_by(current_ability).select(current_ability.permitted_attributes(:read, @course)).find(params[:course_id])
   end
 
   def update
@@ -67,7 +65,6 @@ class CoursesController < ApplicationController
     @tags_ransack = @tags.ransack(params[:q])
 
     @pagy, @records = pagy @tags_ransack.result
-
   end
 
   def roster
@@ -87,5 +84,4 @@ class CoursesController < ApplicationController
   def answer_params
     params.require(:answer).permit(:id, :course_id, :state, :user_id)
   end
-
 end

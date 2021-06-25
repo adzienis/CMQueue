@@ -1,26 +1,29 @@
-class Users::CoursesController < ApplicationController
-  def show
-  end
+# frozen_string_literal: true
 
-  def index
-    @peep ||= false
-    @courses ||= current_user.courses
-    @searched_courses ||= []
-  end
+module Users
+  class CoursesController < ApplicationController
+    def show; end
 
-  def new
-    @course = Course.new
-  end
+    def index
+      @peep ||= false
+      @courses ||= current_user.courses
+      @searched_courses ||= []
+    end
 
-  def create
-    @user = User.find(current_user.id)
-    @course = Course.create(course_params)
-    redirect_to user_courses_path
-  end
+    def new
+      @course = Course.new
+    end
 
-  private
+    def create
+      @user = User.find(current_user.id)
+      @course = Course.create(course_params)
+      redirect_to user_courses_path
+    end
 
-  def course_params
-    params.require(:course).permit(:name)
+    private
+
+    def course_params
+      params.require(:course).permit(:name)
+    end
   end
 end

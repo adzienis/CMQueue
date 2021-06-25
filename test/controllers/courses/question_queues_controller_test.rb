@@ -1,18 +1,22 @@
-require "test_helper"
+# frozen_string_literal: true
 
-class Courses::QuestionQueuesControllerTest < ActionDispatch::IntegrationTest
-  test "should get create" do
-    get courses_question_queues_create_url
-    assert_response :success
-  end
+require 'test_helper'
 
-  test "should get index" do
-    get courses_question_queues_index_url
-    assert_response :success
-  end
+module Courses
+  class QuestionQueuesControllerTest < ActionDispatch::IntegrationTest
+    test 'should get create' do
+      get courses_question_queues_create_url
+      assert_response :success
+    end
 
-  test "should get show" do
-    get courses_question_queues_show_url
-    assert_response :success
+    test 'should get index' do
+      get courses_question_queues_index_url
+      assert_response :success
+    end
+
+    test 'should get show' do
+      get courses_question_queues_show_url
+      assert_response :success
+    end
   end
 end

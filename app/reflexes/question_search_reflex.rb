@@ -36,10 +36,7 @@ class QuestionSearchReflex < ApplicationReflex
     @filtered_questions = Searches::QuestionSearch.get_filtered(params)
   end
 
-
   def search
     @filtered_questions = Searches::QuestionSearch.get_filtered(params)
-
   end
-
 end

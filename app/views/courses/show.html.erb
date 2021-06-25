@@ -2,11 +2,13 @@
   <%= @course.name %>
 </h1>
 
+<hr>
+
 <div
   style="display: flex; flex-direction: column; align-items: center" class="w-100">
 
   <%= content_tag :div, id: "queue-info-panel", class: 'w-100', data: {
-    courseId: @course.id, userId: current_user.id,
+    courseId: @course.id, userId: current_user.id, enrollment: @enrollment.as_json(include: :role)
   }.to_json do %>
   <% end %>
 

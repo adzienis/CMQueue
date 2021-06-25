@@ -3,28 +3,34 @@
 // a relevant structure within app/javascript and only use these pack files to reference
 // that code so it'll be compiled.
 
-import Rails from "@rails/ujs"
+import Rails from "rails-ujs"
 import "@hotwired/turbo-rails"
+import 'bootstrap'
+import 'popper.js'
 import * as ActiveStorage from "@rails/activestorage"
 import "channels"
-import './search_modal'
-import './studentQueueView'
-import './QuestionWaitingModal'
-import './addCourseByCode'
-import './QueueInfoPanel'
-import './taQueueView'
-import './QueueOpener'
-import './QuestionAnswererPage'
-import './filterDropdown'
-import './taActionPane'
-import queryClient from './queryClientFile'
+import '../src/search_modal'
+import '../src/studentQueueView'
+import '../src/QuestionWaitingModal'
+import '../src/addCourseByCode'
+import '../src/QueueInfoPanel'
+import '../src/taQueueView'
+import '../src/QueueOpener'
+import '../src/QuestionAnswererPage'
+import '../src/filterDropdown'
+import '../src/taActionPane'
+import queryClient from '../src/queryClientFile'
 import ReactStudentChannel from '../channels/react_student_channel'
-import './Prefetcher'
-import './CourseStatus'
-import './swagger'
+import '../src/Prefetcher'
+import '../src/CourseStatus'
+import '../src/TALog'
 
-import { Turbo } from "@hotwired/turbo-rails"
+
+import {Turbo} from "@hotwired/turbo-rails"
+import "controllers"
+
 window.Turbo = Turbo
+window.queryClient = queryClient
 
 ReactStudentChannel.received = async data => {
     console.log('invalidating', data.invalidate)
@@ -37,8 +43,6 @@ ReactStudentChannel.received = async data => {
 
 Rails.start()
 ActiveStorage.start()
-
-import "controllers"
 
 document.addEventListener('turbo:before-cache', () => {
     const nodes = document.querySelectorAll('.collapse')

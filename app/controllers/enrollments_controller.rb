@@ -1,21 +1,30 @@
+# frozen_string_literal: true
+
 class EnrollmentsController < ApplicationController
   def index
-    @courses = current_user.courses.with_role params[:role], current_user if params[:role] && params[:user_id]
-    @courses = current_user.courses unless params[:role]
 
     @course = Course.find(params[:course_id]) if params[:course_id]
 
-    @enrollments_ransack = Enrollment.ransack(params[:q])
+    @enrollments_ransack = Enrollment.undiscarded
+    @enrollments_ransack = @enrollments_ransack.joins(:role).where("roles.resource_id": params[:course_id]) if params[:course_id]
+
+    @enrollments_ransack = @enrollments_ransack.ransack(params[:q])
 
     @pagy, @records = pagy @enrollments_ransack.result
 
     respond_to do |format|
       format.html
-      format.json { render json: @courses }
+      format.js { render inline: "window.open('#{URI::HTTP.build(path: "#{request.path}.csv", query: request.query_parameters.to_query, format: :csv)}', '_blank')"}
+      format.csv { send_data helpers.to_csv(params[:enrollment].to_unsafe_h, @enrollments_ransack.result, Enrollment), filename: "test.csv" }
     end
   end
 
+  def download_form
+
+  end
+
   def show
+    @course = Course.find(params[:course_id]) if params[:course_id]
     @enrollment = Enrollment.find(params[:id])
   end
 
@@ -25,37 +34,50 @@ class EnrollmentsController < ApplicationController
       instructor_course = Course.find_by(instructor_code: enrollment_params[:code])
 
       if ta_course
-        current_user.courses << ta_course
+        # current_user.courses << ta_course
         current_user.add_role :ta, ta_course
-        Enrollment.find_by(user_id: current_user.id, course_id: ta_course.id).update(role_id: Role.find_by(resource_id: ta_course.id, name: :ta).id)
+        current_user.enrollments.create!(
+          semester_id: Semester.find_by(name: Semester.default_semester,
+                                        course_id: ta_course.id).id, role_id: Role.find_by(resource_id: ta_course.id, name: 'ta').id
+        )
+
+        # Enrollment.find_by(user_id: current_user.id, course_id: ta_course.id).update(role_id: Role.find_by(resource_id: ta_course.id, name: :ta).id)
         @course = ta_course
       end
       if instructor_course
-        current_user.courses << instructor_course
+        # current_user.courses << instructor_course
         current_user.add_role :instructor, instructor_course
-        Enrollment.find_by(user_id: current_user.id, course_id: instructor_course.id).update(role_id: Role.find_by(resource_id: instructor_course.id, name: :instructor).id)
+
+        current_user.enrollments.create!(
+          semester_id: Semester.find_by(name: Semester.default_semester,
+                                        course_id: ta_course.id).id, role_id: Role.find_by(resource_id: ta_course.id, name: 'instructor').id
+        )
         @course = instructor_course
       end
 
       respond_to do |format|
         format.html
-        format.json {
+        format.json do
           if @course
             render json: @course
           else
             render json: { course: ["Can't find course"] }, status: :unprocessable_entity
           end
-        }
+        end
       end
       return
     else
       @course = Course.find(enrollment_params[:course_id])
-      current_user.courses << @course
+      # current_user.courses << @course
       current_user.add_role :student, @course
-      Enrollment.find_by(user_id: current_user.id, course_id: @course.id).update(role_id: Role.find_by(resource_id: @course.id, name: :student).id)
+
+      current_user.enrollments.create!(
+        semester_id: Semester.find_by(name: Semester.default_semester,
+                                      course_id: ta_course.id).id, role_id: Role.find_by(resource_id: ta_course.id, name: 'student').id
+      )
     end
 
-    if @course and @course.errors.any?
+    if @course&.errors&.any?
       render json: @course.errors.messages.to_json, status: :unprocessable_entity
       return
     end
@@ -63,13 +85,13 @@ class EnrollmentsController < ApplicationController
   end
 
   def destroy
-    @enrollment = current_user.courses.destroy(Course.find(params[:id]))
+    @enrollment = current_user.enrollments.undiscarded.joins(:role).find_by("roles.resource_id": Course.find(params[:id])).discard
 
     respond_to do |format|
       format.html
-      format.json {
+      format.json do
         render json: @enrollment
-      }
+      end
     end
   end
 

@@ -1,26 +1,28 @@
+# frozen_string_literal: true
+
 class TagsController < ApplicationController
   load_and_authorize_resource
 
   def index
-    @tags = @tags.where(course_id: params[:course_id]) if params[:course_id]
     @course = Course.find(params[:course_id]) if params[:course_id]
 
+    @tags = @tags.where(course_id: params[:course_id]) if params[:course_id]
     @tags_ransack = @tags.ransack(params[:q])
 
     @pagy, @records = pagy @tags_ransack.result
 
+
     respond_to do |format|
       format.html
-      format.json do
-        render json: @tags
-      end
+      format.js { render inline: "window.open('#{URI::HTTP.build(path: "#{request.path}.csv", query: request.query_parameters.to_query, format: :csv)}', '_blank')"}
+      format.csv { send_data helpers.to_csv(params[:tag].to_unsafe_h, @tags_ransack.result, Tag), filename: "test.csv" }
     end
   end
 
   def destroy
     tag = Tag.find(params[:id])
 
-    tag.destroy if tag
+    tag&.destroy
 
     redirect_to course_tags_path(tag.course)
   end

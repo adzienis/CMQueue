@@ -1,0 +1,79 @@
+<% options ||= {} %>
+<% options[:except] ||= {} %>
+
+
+<h1>
+  <%= model.name.to_s.humanize %> Export
+</h1>
+<div class="card mb-5 shadow-sm">
+  <div class="card-body">
+    <%= form_with model: model, url: polymorphic_url([model], **request.query_parameters), method: :get, local: false do |f| %>
+
+      <div class="mb-2">
+        <%= tag.label "All", class: "form-check-label fw-bold", id: "check-label" %>
+        <%= tag.input id: "check", type: "checkbox", onclick: "document.querySelectorAll('input').forEach(v => v.checked=event.target.checked);", class: "form-check-control checkbox-1x"%>
+      </div>
+      <div class="mb-3 d-grid" style="grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); column-gap: 15px">
+        <div class="d-flex flex-column">
+          <div>
+
+            <h4>
+              Attributes
+            </h4>
+            <div class="mb-2">
+              <%= tag.label "All", class: "form-check-label fw-bold", id: "check-#{model.name}-label" %>
+              <%= tag.input id: "check-#{model.name}", type: "checkbox", onclick: "document.querySelectorAll('##{model.name} .form-check-control').forEach(v => v.checked=event.target.checked);", class: "form-check-control checkbox-1x" %>
+            </div>
+            <%# FIXME need to fix this right here for 'resource id' %>
+            <div id="<%= model.name %>">
+              <% model.column_names.reject { |col| (col =~ /.*_id/) && col != "resource_id" }.each do |col| %>
+                <div class="d-flex">
+                  <%= f.label col, class: "form-check-label " %>
+                  <div style="flex: 1"></div>
+                  <%= f.check_box col, class: "form-check-control checkbox-1x" %>
+                </div>
+              <% end %>
+            </div>
+          </div>
+          <div style="flex: 1"></div>
+          <hr >
+        </div>
+          <% [:has_and_belongs_to_many, :belongs_to, :has_one, :has_many]
+               .collect { |s| model.reflect_on_all_associations(s) }
+               .flatten
+               .reject { |v| options&.dig(:except)&.include? v.name.to_sym }
+               .reject {|v| [:course].include?(v.name)}
+               .each do |ass| %>
+            <div class="d-flex flex-column">
+              <div>
+                <h4>
+                  <%= ass.name.to_s.humanize %>
+                </h4>
+                <div class="d-flex">
+                  <%= tag.label "All", class: "form-check-label fw-bold", id: "check-#{ass.name}-label" %>
+                  <div style="flex: 1"></div>
+                  <%= tag.input id: "check-#{ass.name}", type: "checkbox", onclick: "document.querySelectorAll('##{ass.name} .form-check-control').forEach(v => v.checked=event.target.checked);", class: "form-check-control checkbox-1x" %>
+                </div>
+                <div id="<%= ass.name %>">
+                  <%= f.fields_for ass.name do |ass_f| %>
+                    <% ass.klass
+                         .column_names.reject { |col| (col =~ /.*_id/)  && col != "resource_id" }
+                         .each do |col| %>
+                      <div class="d-flex">
+                        <%= ass_f.label col, class: "form-check-label" %>
+                        <div style="flex: 1"></div>
+                        <%= ass_f.check_box col, class: "form-check-control checkbox-1x" %>
+                      </div>
+                    <% end %>
+                  <% end %>
+                </div>
+              </div>
+              <div style="flex: 1"></div>
+              <hr>
+            </div>
+          <% end %>
+        </div>
+      <%= f.submit :Download, method: :get, class: "btn btn-primary", data: { disable_with: false }, download: true  %>
+    <% end %>
+  </div>
+</div>
