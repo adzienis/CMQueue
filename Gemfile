@@ -38,6 +38,8 @@ gem 'bootsnap', '>= 1.4.4', require: false
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: %i[mri mingw x64_mingw]
+
+  gem "rails-erd"
 end
 
 group :development do
@@ -112,3 +114,7 @@ gem 'rubocop-rails', '~> 2.10'
 gem "discard", "~> 1.2"
 
 gem "doorkeeper-i18n", "~> 5.2"
+
+gem "noticed", "~> 1.4"
+
+gem "sidekiq", "~> 6.2"

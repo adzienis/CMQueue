@@ -12,6 +12,11 @@ class BaseAPI < Grape::API
       end
 
       helpers do
+
+        def authorize!(*args)
+          ::Ability.new(current_user).authorize!(*args)
+        end
+
         def current_ability
           current_ability ||= Ability.new(current_user)
           current_ability

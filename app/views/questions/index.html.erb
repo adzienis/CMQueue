@@ -8,7 +8,7 @@
              pagy: @pagy,
              options: {
                extra_columns: [{ user: :given_name},{question_state: :state}],
-               except: [:title, :notes, :user_id, :course_id, :id, :discarded_at],
+               except: [:title, :notes, :user_id, :course_id, :id, :discarded_at, :enrollment_id],
                actions: [:download],
                other_filters: {
                  user: User.column_names.excluding("id", "created_at", "updated_at", "provider", "uid"),

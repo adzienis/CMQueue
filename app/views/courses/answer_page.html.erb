@@ -1,4 +1,5 @@
 <%= content_tag :div, id: "question-answerer", data: {
-  courseId: @course.id, userId: current_user.id
+  courseId: @course.id, userId: current_user.id,
+  enrollmentId: current_user.enrollments.most_recent_enrollment_by_course(@course.id).id
 }.to_json do %>
 <% end %>

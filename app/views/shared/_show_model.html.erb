@@ -23,7 +23,13 @@
                   <%= col.humanize %>
                 </b>
               </label>
-              <input type="text" class="form-control" value=<%= "#{model_instance.send(col)}" %>>
+              <% if model_instance.class.columns_hash[col].type == :datetime %>
+                <input type="text" class="form-control" value="<%= "#{model_instance.send(col).to_formatted_s(:short)}" %>">
+
+                <% else %>
+                <input type="text" class="form-control" value="<%= "#{model_instance.send(col)}" %>">
+
+                <% end %>
             </div>
           <% end %>
         </div>
@@ -113,7 +119,7 @@
   <% if !options[:actions].empty? && options[:actions].collect { |v| can? v, model_instance }.any? %>
     <div class="card-footer d-flex flex-row">
       <div class="flex-1"></div>
-      <%= button_to "Edit", model_instance.send(:course) ? edit_polymorphic_path([model_instance.send(:course), model_instance]) : edit_polymorphic_path(model_instance), class: "btn btn-warning me-2", method: :get if options[:actions].include?(:edit) and can? :edit, model_instance %>
+      <%= button_to "Edit", model_instance.try(:course) ? edit_polymorphic_path([model_instance.send(:course), model_instance]) : edit_polymorphic_path(model_instance), class: "btn btn-warning me-2", method: :get if options[:actions].include?(:edit) and can? :edit, model_instance %>
       <%= button_to "Delete", polymorphic_path(model_instance), class: "btn btn-danger", method: :delete if options[:actions].include?(:delete) and can? :delete, model_instance %>
     </div>
   <% end %>

@@ -3,55 +3,55 @@
 // a relevant structure within app/javascript and only use these pack files to reference
 // that code so it'll be compiled.
 
-import Rails from "rails-ujs"
-import "@hotwired/turbo-rails"
-import 'bootstrap'
-import 'popper.js'
-import * as ActiveStorage from "@rails/activestorage"
-import "channels"
-import '../src/search_modal'
-import '../src/studentQueueView'
-import '../src/QuestionWaitingModal'
-import '../src/addCourseByCode'
-import '../src/QueueInfoPanel'
-import '../src/taQueueView'
-import '../src/QueueOpener'
-import '../src/QuestionAnswererPage'
-import '../src/filterDropdown'
-import '../src/taActionPane'
-import queryClient from '../src/queryClientFile'
-import ReactStudentChannel from '../channels/react_student_channel'
-import '../src/Prefetcher'
-import '../src/CourseStatus'
-import '../src/TALog'
+import Rails from "rails-ujs";
+import "@hotwired/turbo-rails";
+import "bootstrap";
+import "popper.js";
+import * as ActiveStorage from "@rails/activestorage";
+import "channels";
+import "../src/components/search_modal";
+import "../src/components/studentQueueView";
+import "../src/components/QuestionWaitingModal";
+import "../src/components/addCourseByCode";
+import "../src/components/QueueInfoPanel";
+import "../src/components/taQueueView";
+import "../src/components/QueueOpener";
+import "../src/components/QuestionAnswererPage";
+import "../src/components/filterDropdown";
+import "../src/components/taActionPane";
+import queryClient from "../src/components/queryClientFile";
+import ReactStudentChannel from "../channels/react_student_channel";
+import "../src/components/Prefetcher";
+import "../src/components/CourseStatus";
+import "../src/components/TALog";
+import '../src/components/NotificationFeed'
+import "../src/components/UserSettings"
 
+import { Turbo } from "@hotwired/turbo-rails";
+import "controllers";
 
-import {Turbo} from "@hotwired/turbo-rails"
-import "controllers"
+window.Turbo = Turbo;
+window.queryClient = queryClient;
 
-window.Turbo = Turbo
-window.queryClient = queryClient
+ReactStudentChannel.received = async (data) => {
+  console.log("invalidating", data.invalidate);
 
-ReactStudentChannel.received = async data => {
-    console.log('invalidating', data.invalidate)
+  //Turbo.visit(window.location.toString(), { action: 'replace' })
+  await queryClient.invalidateQueries(data.invalidate);
 
-    //Turbo.visit(window.location.toString(), { action: 'replace' })
-    await queryClient.invalidateQueries(data.invalidate)
+  await queryClient.refetchQueries(data.invalidate);
+};
 
-    await queryClient.refetchQueries(data.invalidate)
-}
+Rails.start();
+ActiveStorage.start();
 
-Rails.start()
-ActiveStorage.start()
+document.addEventListener("turbo:before-cache", () => {
+  const nodes = document.querySelectorAll(".collapse");
 
-document.addEventListener('turbo:before-cache', () => {
-    const nodes = document.querySelectorAll('.collapse')
-
-    for (const node of nodes) {
-        node.classList.remove("show")
-    }
+  for (const node of nodes) {
+    node.classList.remove("show");
+  }
 });
-
 
 /*
 queryClient.prefetchQuery(['courses', 1, 'open'])

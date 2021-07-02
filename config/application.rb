@@ -12,14 +12,14 @@ require 'haml'
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
-module Meet
+module CMQueue
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 6.1
     config.assets.paths << Rails.root.join('app', 'assets', 'fonts')
     config.autoload_paths << "#{Rails.root}/lib/search"
     config.action_view.raise_on_missing_translations = false
-
+    config.active_record.schema_format = :sql
     config.to_prepare do
       # Only Applications list
       Doorkeeper::ApplicationsController.layout 'layouts/doorkeeper/application'

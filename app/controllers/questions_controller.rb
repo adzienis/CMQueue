@@ -49,7 +49,6 @@ class QuestionsController < ApplicationController
   def show
     @course = Course.find(params[:course_id]) if params[:course_id]
     @question = Question.find(params[:id])
-    @previous_questions = Question.previous_questions(@question.id)
   end
 
   def create; end

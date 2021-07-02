@@ -15,10 +15,17 @@ module QueueAPI
               .with_course(Course.find(1))
               .where('question_states.created_at < ?', time.end_of_day)
               .where('question_states.created_at > ?', time.beginning_of_day)
-              .where(state: 'resolved')
+              .where(state: ['resolved', 'frozen'])
               .as_json include: :user
           l
         end
+      end
+    end
+
+    resource :question_states do
+
+      route_param :question_state_id do
+
       end
     end
   end

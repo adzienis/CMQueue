@@ -2,9 +2,11 @@
 
 class QuestionState < ApplicationRecord
   belongs_to :question, touch: true, optional: false
-  belongs_to :user
+  belongs_to :enrollment
 
-  validates_presence_of :question, :state, :user
+  has_one :user, through: :enrollment
+
+  validates_presence_of :question, :enrollment
   validate :proper_answer, on: :create
   validate :not_handling_another, on: :create
 
@@ -31,7 +33,7 @@ class QuestionState < ApplicationRecord
 
   scope :with_course, ->(course) { joins(:question).where("questions.course_id": course.id) }
 
-  has_many :messages, dependent: :destroy
+  #has_many :messages, dependent: :destroy
 
   delegate :course, to: :question, allow_nil: true
 
@@ -86,5 +88,15 @@ class QuestionState < ApplicationRecord
     ActionCable.server.broadcast "#{course.id}#instructor", {
       invalidate: ['courses', question.course_id, 'paginatedPastQuestions']
     }
+
+    case state
+    when "frozen"
+      SiteNotification.with(type: "QuestionState", why: description, title: "Question Frozen").deliver(question.enrollment.user)
+    when "kicked"
+      SiteNotification.with(type: "QuestionState", why: description, title: "Question Kicked").deliver(question.enrollment.user)
+    end
+
+
+
   end
 end

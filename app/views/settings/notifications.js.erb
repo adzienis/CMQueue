@@ -1,0 +1,48 @@
+if (!("Notification" in window)) {
+    console.log("This browser does not support desktop notification");
+}
+
+else if (Notification.permission === "granted") {
+    var notification = new Notification("Hi there!");
+}
+
+else {
+    Notification.requestPermission().then(async function (permission) {
+
+        if (permission === "granted") {
+
+            const token = document
+              .querySelector("meta[name='csrf-token']")
+              .getAttribute("content");
+
+
+            await fetch("/settings/<%= current_user.settings.find_by(key: "Desktop_Notifications").id %>?user_id=<%= current_user.id %>", {
+                method: 'PATCH',
+                credentials: "include",
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json",
+                    "X-CSRF-Token": token,
+                },
+                body: JSON.stringify({ [<%= current_user.settings.find_by(key: "Desktop_Notifications").id %>]: "true"})
+            })
+        } else if(permission === "denied") {
+            const token = document
+              .querySelector("meta[name='csrf-token']")
+              .getAttribute("content");
+
+
+            await fetch("/settings/<%= current_user.settings.find_by(key: "Desktop_Notifications").id %>?user_id=<%= current_user.id %>", {
+                method: 'PATCH',
+                credentials: "include",
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json",
+                    "X-CSRF-Token": token,
+                },
+                body: JSON.stringify({ [<%= current_user.settings.find_by(key: "Desktop_Notifications").id %>]: "false"})
+            })
+        }
+    });
+
+}

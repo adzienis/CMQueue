@@ -87,12 +87,6 @@ class EnrollmentsController < ApplicationController
   def destroy
     @enrollment = current_user.enrollments.undiscarded.joins(:role).find_by("roles.resource_id": Course.find(params[:id])).discard
 
-    respond_to do |format|
-      format.html
-      format.json do
-        render json: @enrollment
-      end
-    end
   end
 
   private

@@ -25,6 +25,7 @@ Rails.application.routes.draw do
   resources :messages
   resources :applications
   resources :semesters
+  resources :settings
   resources :enrollments do
     collection do
       get 'download_form', to: "enrollments#download_form"
@@ -47,7 +48,11 @@ Rails.application.routes.draw do
     resources :messages
   end
 
-  resources :users, param: :user_id
+  resources :users do
+    resource :settings do
+      get 'notifications', to: "settings#notifications"
+    end
+  end
 
   resources :users, only: [], shallow: true do
     resources :questions

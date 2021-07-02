@@ -5,12 +5,6 @@ require 'active_support/core_ext/integer/time'
 Rails.application.configure do
   config.session_store :cache_store
 
-
-  config.hosts << '192.168.48.1'
-  config.hosts << "localhost:8080"
-
-  Rails.application.config.action_cable.allowed_request_origins = ['http://localhost:8020']
-
   # Settings specified here will take precedence over those in config/application.rb.
 
   # In the development environment your application's code is reloaded any time

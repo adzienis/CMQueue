@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 class Message < ApplicationRecord
-  belongs_to :user
-  belongs_to :question_state
+  #belongs_to :user
+  #belongs_to :question_state
 
   delegate :course, to: :question_state, allow_nil: true
 

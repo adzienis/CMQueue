@@ -31,14 +31,14 @@
       <i class="fas fa-plus fa-lg me-2"></i>
       <span> Add a new <%= records.model.name.humanize %> </span>
     <% end %>
-  <% end if options[:actions].include? :new  %>
+  <% end if options[:actions].include? :new %>
 
   <%= tag.li class: "nav-item" do %>
     <%= link_to polymorphic_path([:download_form, records.model], **request.query_parameters), class: "nav-link" do %>
       <i class="fas fa-download fa-lg me-2"></i>
       <span>Export to CSV </span>
     <% end %>
-  <% end if options[:actions].include? :download  %>
+  <% end if options[:actions].include? :download %>
 
 
 </ul>
@@ -49,9 +49,9 @@
         <table class="table table-hover table-striped">
           <thead>
           <tr>
-            <th>
+            <%= content_tag :th do %>
               Actions
-            </th>
+            <% end unless request.headers.key? "Turbo-Frame" %>
             <% options[:extra_columns].each do |extra| %>
               <th style="min-width: 125px">
                 <% if extra.instance_of? Hash %>
@@ -92,7 +92,8 @@
             </div>
 
             <tr>
-              <td>
+              <%= content_tag :td do %>
+
                 <%= link_to url_for([course, tag]) do %>
                   <i class="fas fa-info-circle me-1"></i>
                 <% end %>
@@ -102,7 +103,7 @@
                 <%= link_to "" do %>
                   <i class="fas fa-times" onclick="event.preventDefault()" data-bs-toggle="modal" data-bs-target=<%= "#modal-instance#{tag.id}" %> style="cursor: pointer"></i>
                 <% end  if options[:actions].include?(:destroy) and can? :delete, tag %>
-              </td>
+              <% end unless request.headers.key? "Turbo-Frame" %>
               <% options[:extra_columns].each do |extra| %>
                 <td>
                   <% if extra.instance_of? Hash %>
@@ -133,9 +134,9 @@
       </div>
       <div>
         <% if pagy.count == 1 %>
-          <%= "#{pagy.count} #{records.model.name}" %>
+          <%= "#{pagy.count} #{records.model.model_name.human}" %>
         <% else %>
-          <%= "#{pagy.count} #{records.model.name.pluralize}" %>
+          <%= "#{pagy.count} #{records.model.model_name.human.pluralize}" %>
         <% end %>
       </div>
     <% else %>
@@ -143,7 +144,7 @@
       <div class="alert alert-warning shadow-sm">
         Empty
       </div>
-      <%= "#{pagy.count} #{records.model.name.pluralize}" %>
+      <%= "#{pagy.count} #{records.model_name.human.pluralize}" %>
     <% end %>
 
 

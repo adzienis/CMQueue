@@ -12,7 +12,8 @@ class CreateDuplicateQuestionTrigger < ActiveRecord::Migration[6.1]
                     state := (select question_states.state from question_states where question_states.id =#{' '}
                     (select max(question_states.id) from question_states#{' '}
                       inner join questions on questions.id = question_states.question_id#{' '}
-                      where questions.user_id = NEW.user_id and questions.discarded_at is null));
+                      inner join enrollments on enrollments.id = questions.enrollment_id
+                      where enrollments.id = NEW.enrollment_id and questions.discarded_at is null));
             #{'      '}
                   if state IS NULL OR (state in (2,4))  then
                   return NEW;

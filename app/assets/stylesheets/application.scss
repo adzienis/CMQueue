@@ -14,16 +14,37 @@
  *= require_self
  */
 
+@import "bootstrap/scss/functions";
+
+
+$primary: #24527A;
+
+@import "../node_modules/bootstrap/scss/variables";
+@import "../node_modules/bootstrap/scss/mixins";
+
+
 $modal-fade-transform: scale(.7);
 $font-family-sans-serif: 'Inter';
-$primary: #24527A;
+$toast-background-color: rgba($white, 1.0);
+
+@import "bootstrap/scss/bootstrap";
+
+
 @import url('https://fonts.googleapis.com/css2?family=Arimo:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&display=swap');
 @import "font-awesome";
-@import "bootstrap";
 
+:root {
+  --frozen: rgb(33, 133, 208);
+  --resolved: #19d754;
+  --unresolved: rgb(70,70,70);
+}
+
+.toast-container {
+  z-index: 1001
+}
 
 .nav-tabs {
-  overflow-x: scroll;
+  overflow-x: auto;
   overflow-y: hidden;
   white-space: nowrap;
   flex-wrap: nowrap;

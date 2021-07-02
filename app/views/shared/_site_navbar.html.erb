@@ -20,6 +20,9 @@
             <%= link_to "Enrollments", user_enrollments_url, class: "nav-link #{request.path == user_enrollments_path ? 'active' : ''}" %>
           </li>
           <li class="nav-item">
+            <%= link_to "Settings", user_settings_path(current_user), class: "nav-link #{request.path == user_settings_path(current_user) ? 'active' : ''}"  %>
+          </li>
+          <li class="nav-item">
             <%= link_to "Sign out", destroy_user_session_path, class: "nav-link" %>
           </li>
           <li class="nav-item">

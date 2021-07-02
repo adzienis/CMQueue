@@ -1,12 +1,14 @@
 development:
   adapter: redis
-  url: <%= ENV.fetch("REDIS_URL") { "redis://localhost:6379/1" } %>
-  channel_prefix: meet_development
+  url: <%= ENV.fetch("REDIS_URL") { "redis://localhost:6380/1" } %>
+  channel_prefix: cmqueue_development
 
 test:
   adapter: test
+  url: <%= ENV.fetch("REDIS_URL") { "redis://localhost:6382/1" } %>
+  channel_prefix: cmqueue_test
 
 production:
   adapter: redis
-  url: <%= ENV.fetch("REDIS_URL") { "redis://localhost:6379/1" } %>
-  channel_prefix: meet_production
+  url: <%= ENV.fetch("REDIS_URL") { "redis://localhost:6381/1" } %>
+  channel_prefix: cmqueue_production

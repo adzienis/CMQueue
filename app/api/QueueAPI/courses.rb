@@ -10,16 +10,19 @@ module QueueAPI
       post ':course_id/answer', scopes: [:write] do
         top_question = Question.with_course(Course.find(params[:course_id])).questions_by_state(['unresolved']).undiscarded.first
 
-        top_question.question_states.create(state: params[:answer][:state], user_id: params[:answer][:user_id])
+        top_question.question_states.create(state: params[:answer][:state], enrollment_id: params[:answer][:enrollment_id])
         top_question
       end
 
       desc 'Search for courses by name.'
       params do
-        requires :name, type: String
+        optional :name, type: String
       end
       get 'search', scopes: [:public] do
-        Course.where('name LIKE :name', name: "%#{params[:name]}%") if params[:name]
+        courses = Course.all
+        courses = courses.where('name LIKE :name', name: "%#{params[:name]}%") if params[:name]
+
+        courses
       end
 
       desc 'Get all courses'
@@ -57,7 +60,7 @@ module QueueAPI
       get ':course_id/activeTAs', scopes: [:public] do
         course = Course.find(params[:course_id])
         tas = User.with_role :ta, course
-        tas = tas.joins(:question_state).where('question_states.created_at > ?', 15.minutes.ago).distinct
+        tas = tas.joins(:enrollments, enrollments: :question_state).where('question_states.created_at > ?', 15.minutes.ago).distinct
       end
 
       get ':course_id/topQuestion', scopes: [:public] do

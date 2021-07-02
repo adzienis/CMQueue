@@ -32,10 +32,10 @@ class QuestionStatesController < ApplicationController
   private
 
   def create_params
-    params.require(:question_state).permit(:user_id, :course_id, :state, :question_id)
+    params.require(:question_state).permit(:user_id, :course_id, :state, :question_id, :description, :enrollment_id)
   end
 
   def search_params
-    params.permit(:question_id, :user_id, :course_id)
+    params.permit(:question_id, :course_id, :enrollment_id)
   end
 end

@@ -17,7 +17,7 @@ class CoursesController < ApplicationController
     @user_question = current_user.courses.find(@course.id).questions.first
 
     @question = Question.all
-                        .left_joins(:question_state, :user)
+                        .left_joins(:question_state, :enrollment, enrollment: :user)
                         .where('questions.id = ?', current_user.id)
                         .where('question_states.state in (?)', [QuestionState.states['unresolved'],
                                                                 QuestionState.states['frozen']]).first
@@ -25,7 +25,7 @@ class CoursesController < ApplicationController
 
     @top_question = current_user.question_state&.question
 
-    @enrollment = Enrollment.joins(:role).find_by(user_id: current_user.id, "roles.resource_id": @course.id)
+    @enrollment = Enrollment.undiscarded.joins(:role).find_by(user_id: current_user.id, "roles.resource_id": @course.id)
   end
 
   def answer_page

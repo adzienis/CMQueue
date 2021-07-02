@@ -1,4 +1,3 @@
-
 <%= render partial: "shared/back_navbar" %>
 
 
@@ -9,5 +8,14 @@
 </h2>
 
 <%= render partial: "shared/show_model",
-           locals: { model_instance: @user, options: { except: [:uid, :provider, :course, :access_tokens, :access_grants, :courses, :roles, :enrollments, :question_states, :question_state] }}
+           locals: {
+             model_instance: @user,
+             options: {
+               except: [
+                 :uid, :provider, :course, :access_tokens, :access_grants,
+                 :courses, :roles, :enrollments, :question_states,
+                 :question_state, :notifications
+               ]
+             }
+           }
 %>

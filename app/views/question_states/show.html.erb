@@ -5,5 +5,5 @@
   <%= render partial: "shared/show_model",
              locals: {
                model_instance: @question_state,
-               options: { except: [:id, :question_id, :user_id] }
+               options: { except: [:id, :question_id, :user_id, :enrollment_id] }
              } %>

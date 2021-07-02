@@ -10,6 +10,8 @@ class API < Grape::API
   mount QueueAPI::Enrollments
   mount QueueAPI::Messages
   mount QueueAPI::QuestionStates
+  mount QueueAPI::Notifications
+  mount QueueAPI::Settings
 
   add_swagger_documentation \
     info: {

@@ -1,5 +1,21 @@
 <h1> Question States </h1>
 
+
+<%= turbo_frame_tag :container  do %>
+  <%= render partial: "shared/search_form",
+             locals: {
+               records: @records,
+               ransack: @question_states_ransack,
+               course: @course,
+               pagy: @pagy,
+               options: {
+                 actions: [],
+                 except: [:user_id, :question_id, :id, :updated_at, :enrollment_id],
+                 extra_columns: [{ user: :given_name }],
+               }
+             } %>
+<% end if request.headers.key? "Turbo-Frame"  %>
+
 <%= render partial: "shared/search_form",
            locals: {
              records: @records,
@@ -8,6 +24,8 @@
              pagy: @pagy,
              options: {
                actions: [],
-               extra_columns: [{ user: :given_name}],
+               except: [:user_id, :question_id, :id, :updated_at, :enrollment_id],
+               extra_columns: [{ user: :given_name }],
              }
-           } %>
+           } unless request.headers.key? "Turbo-Frame" %>
+

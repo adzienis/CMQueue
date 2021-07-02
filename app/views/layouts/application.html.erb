@@ -23,6 +23,11 @@
 
 <body style="background-color: #F3F4EF">
 
+<%= content_tag :div, id: "notification-feed", data: {
+  userId: current_user.id
+}.to_json do %>
+<% end if current_user %>
+
 <%= content_tag :div, id: "prefetcher", data: {
   userId: current_user.id,
 }.to_json do %>

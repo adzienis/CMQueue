@@ -16,6 +16,30 @@ class Ability
       can [:active_tas, :open_status, :read, :search], Course
       can :read, User
 
+      can :read, Enrollment, Enrollment.joins(:role)
+                                          .where("roles.resource_id": Course
+                                                                          .where("courses.id": Course.find_roles([:ta], user)
+                                                                                                     .pluck(:resource_id))
+                                                                          .pluck(:id))
+
+      can :manage, Enrollment, Enrollment.joins(:role)
+                                       .where("roles.resource_id": Course
+                                                                     .where("courses.id": Course.find_roles([:instructor], user)
+                                                                                                .pluck(:resource_id))
+                                                                     .pluck(:id))
+                                       .or(Enrollment.where("enrollments.user_id": user.id)) do |enrollment|
+        enrollment.user_id == user.id || (user.has_any_role?({name: :instructor, resource: enrollment.course }))
+      end
+
+      can :manage, Message, Message.joins(:question_state).joins(question_state: :question)
+                                      .where("questions.course_id": Course
+                                                                    .where("courses.id": Course.find_roles([:instructor], user)
+                                                                                               .pluck(:resource_id))
+                                                                    .pluck(:id))
+                                      .or(Message.where(user_id: user.id))
+
+
+
       cannot :read, Course, [:instructor_code] do |course|
         !user.has_role?(:instructor, course)
       end
@@ -35,8 +59,8 @@ class Ability
                                                         .where("courses.id": Course.find_roles([:ta, :instructor], user)
                                                                          .pluck(:resource_id))
                                                         .pluck(:id))
-                                               .or(QuestionState.where("question_states.user_id": user.id))
-                                               .or(QuestionState.where("questions.user_id": user.id)) do |state|
+                                               .or(QuestionState.where("question_states.enrollment_id": user.enrollments.pluck(:id)))
+                                               .or(QuestionState.where("questions.enrollment_id": user.enrollments.pluck(:id))) do |state|
 
         user.has_any_role?({ name: :ta, resource: state.question.course}, {name: :instructor, resource: state.question.course}) || state.question.user_id == user.id
       end
@@ -59,12 +83,11 @@ class Ability
         user.has_any_role?({ name: :ta, resource: tag.course}, {name: :instructor, resource: tag.course})
       end
 
-      can :manage, Question, Question
-        .where(course_id: Course
-                                                   .where(id: Course.find_roles([:ta, :instructor], user)
+      can :manage, Question, Question.joins(:enrollment)
+        .where(course_id: Course.where(id: Course.find_roles([:ta, :instructor], user)
                                                                     .pluck(:resource_id))
-                                                   .pluck(:id)).or(Question.where(user_id: user.id)) do |question|
-        user.has_any_role?({ name: :ta, resource: question.course}, {name: :instructor, resource: question.course}) || question.user_id == user.id
+                                                   .pluck(:id)).or(Question.where("enrollments.user_id": user.id)) do |question|
+        user.has_any_role?({ name: :ta, resource: question.course}, {name: :instructor, resource: question.course}) || question.user.id == user.id
       end
 
     end

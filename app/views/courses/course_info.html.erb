@@ -15,6 +15,7 @@
            locals: {
              model_instance: @course,
              options: {
-               except: [:course_code, :student_code, :id]
+               except: [:course_code, :student_code, :id, :course_id],
+               actions: [:edit]
              }
            } %>

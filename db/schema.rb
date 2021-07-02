@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_24_144957) do
+ActiveRecord::Schema.define(version: 2021_07_01_224457) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -55,14 +55,26 @@ ActiveRecord::Schema.define(version: 2021_06_24_144957) do
   end
 
   create_table "messages", force: :cascade do |t|
-    t.bigint "user_id"
     t.bigint "question_state_id"
     t.text "description", default: ""
     t.boolean "seen", default: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.bigint "enrollment_id", null: false
+    t.index ["enrollment_id"], name: "index_messages_on_enrollment_id"
     t.index ["question_state_id"], name: "index_messages_on_question_state_id"
-    t.index ["user_id"], name: "index_messages_on_user_id"
+  end
+
+  create_table "notifications", force: :cascade do |t|
+    t.string "recipient_type", null: false
+    t.bigint "recipient_id", null: false
+    t.string "type", null: false
+    t.jsonb "params"
+    t.datetime "read_at"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["read_at"], name: "index_notifications_on_read_at"
+    t.index ["recipient_type", "recipient_id"], name: "index_notifications_on_recipient"
   end
 
   create_table "oauth_access_grants", force: :cascade do |t|
@@ -124,17 +136,17 @@ ActiveRecord::Schema.define(version: 2021_06_24_144957) do
 
   create_table "question_states", force: :cascade do |t|
     t.bigint "question_id"
-    t.bigint "user_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.text "description"
     t.integer "state", null: false
+    t.bigint "enrollment_id", null: false
+    t.index ["enrollment_id"], name: "index_question_states_on_enrollment_id"
     t.index ["question_id"], name: "index_question_states_on_question_id"
-    t.index ["user_id"], name: "index_question_states_on_user_id"
   end
 
   create_table "questions", force: :cascade do |t|
     t.bigint "course_id"
-    t.bigint "user_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.text "title"
@@ -143,9 +155,10 @@ ActiveRecord::Schema.define(version: 2021_06_24_144957) do
     t.text "notes"
     t.text "location"
     t.datetime "discarded_at"
+    t.bigint "enrollment_id", null: false
     t.index ["course_id"], name: "index_questions_on_course_id"
     t.index ["discarded_at"], name: "index_questions_on_discarded_at"
-    t.index ["user_id"], name: "index_questions_on_user_id"
+    t.index ["enrollment_id"], name: "index_questions_on_enrollment_id"
   end
 
   create_table "questions_tags", id: false, force: :cascade do |t|
@@ -166,6 +179,17 @@ ActiveRecord::Schema.define(version: 2021_06_24_144957) do
     t.index ["name", "resource_type", "resource_id"], name: "index_roles_on_name_and_resource_type_and_resource_id"
     t.index ["name"], name: "index_roles_on_name"
     t.index ["resource_type", "resource_id"], name: "index_roles_on_resource"
+  end
+
+  create_table "settings", force: :cascade do |t|
+    t.string "resource_type"
+    t.bigint "resource_id"
+    t.string "key", null: false
+    t.string "value", null: false
+    t.integer "setting_type", default: 0, null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["resource_type", "resource_id"], name: "index_settings_on_resource"
   end
 
   create_table "tags", force: :cascade do |t|
@@ -198,14 +222,19 @@ ActiveRecord::Schema.define(version: 2021_06_24_144957) do
     t.index ["user_id"], name: "index_users_roles_on_user_id"
   end
 
+  add_foreign_key "courses_questions", "courses"
+  add_foreign_key "courses_questions", "questions"
+  add_foreign_key "enrollments", "roles"
+  add_foreign_key "enrollments", "users"
+  add_foreign_key "messages", "enrollments"
   add_foreign_key "messages", "question_states"
-  add_foreign_key "messages", "users"
   add_foreign_key "oauth_access_grants", "oauth_applications", column: "application_id"
   add_foreign_key "oauth_access_tokens", "oauth_applications", column: "application_id"
+  add_foreign_key "question_states", "enrollments"
   add_foreign_key "question_states", "questions"
-  add_foreign_key "question_states", "users"
   add_foreign_key "questions", "courses"
-  add_foreign_key "questions", "users"
+  add_foreign_key "questions", "enrollments"
   add_foreign_key "questions_tags", "questions"
   add_foreign_key "questions_tags", "tags"
+  add_foreign_key "tags", "courses"
 end

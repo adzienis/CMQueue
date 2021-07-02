@@ -3,11 +3,19 @@
 class Question < ApplicationRecord
   include Discard::Model
 
-  validates :location, :description, :tried, presence: true
-  validate :duplicate_question, :on => :create
+  validates :location, :description, :tried, :course_id, presence: true
+  validate :duplicate_question, on: :create
+
+  validate :has_at_least_one_tag, on: :create
+
+  def has_at_least_one_tag
+    if tags.length == 0
+      errors.add(:tags, "must have at least one")
+    end
+  end
 
   def duplicate_question
-    state = QuestionState.find_by(id: QuestionState.joins(:question).where("questions.user_id": user_id).where("questions.discarded_at is null").select("MAX(question_states.id)").pluck(:id))
+    state = question_state
 
     return unless state
 
@@ -16,8 +24,12 @@ class Question < ApplicationRecord
     end
   end
 
-  belongs_to :course
-  belongs_to :user
+  belongs_to :enrollment
+  has_one :course, through: :enrollment
+  has_one :user, through: :enrollment
+
+
+  #has_many :notifications, as: :recipient
 
   has_many :question_states, dependent: :destroy
   has_one :question_state, -> { order('created_at DESC') }, dependent: :destroy
@@ -116,7 +128,7 @@ class Question < ApplicationRecord
   end
 
   after_create_commit do
-    update(question_state: QuestionState.create(question_id: id, user_id: user_id)) if self
+    update!(question_state: QuestionState.create!(question_id: id, enrollment_id: enrollment_id)) if self
   end
 
   after_destroy do

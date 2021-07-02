@@ -1,15 +1,14 @@
 # frozen_string_literal: true
 
 class User < ApplicationRecord
-  has_many :enrollments
-  rolify has_many_through: :enrollments
-  devise :omniauthable, omniauth_providers: %i[google_oauth2]
+  has_many :enrollments, dependent: :destroy
+
+  has_many :notifications, as: :recipient, dependent: :destroy
 
   has_many :access_grants,
            class_name: 'Doorkeeper::AccessGrant',
            foreign_key: :resource_owner_id,
            dependent: :delete_all
-
   has_many :access_tokens,
            class_name: 'Doorkeeper::AccessToken',
            foreign_key: :resource_owner_id,
@@ -17,16 +16,19 @@ class User < ApplicationRecord
 
   has_many :courses, through: :enrollments
 
-  has_many :questions, dependent: :destroy
+  has_many :questions, dependent: :destroy, through: :enrollments
 
-  has_many :question_states, -> { order('question_states.id DESC') }
+  has_many :question_states, -> { order('question_states.id DESC') }, through: :enrollments, dependent: :destroy, source: :question_states
 
-
-  has_one :course, through: :role, source: :resource, source_type: 'Course'
+  has_many :settings, as: :resource, dependent: :destroy
 
   has_many :oauth_applications, as: :owner
 
-  has_one :question_state, -> { order('question_states.id DESC') }
+  #has_one :question_state, -> { order('question_states.id DESC') }, through: :enrollments
+
+  def question_state
+    QuestionState.joins(:enrollment).where("enrollments.user_id": id).order('question_states.id DESC').first
+  end
 
   def self.ransackable_scopes(_auth_object = nil)
     %i[with_role_ransack]
@@ -87,5 +89,14 @@ class User < ApplicationRecord
     end
   end
 
+
+  after_create_commit do
+    self.settings.create([{ key: "Desktop_Notifications", value: "false"}, { key: "Site Notifications", value: "false"}])
+  end
+
+
+
+  rolify has_many_through: :enrollments
+  devise :omniauthable, omniauth_providers: %i[google_oauth2]
 
 end

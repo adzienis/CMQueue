@@ -1,15 +1,12 @@
-import consumer from './consumer'
-import CableReady from 'cable_ready'
+import consumer from "./consumer";
+import CableReady from "cable_ready";
 
-consumer.subscriptions.create('StudentChannel', {
-    connected() {
-    },
+consumer.subscriptions.create("StudentChannel", {
+  connected() {},
 
-    disconnected() {
+  disconnected() {},
 
-    },
-
-    received(data) {
-        if (data.cableReady) CableReady.perform(data.operations);
-    }
-})
+  received(data) {
+    if (data.cableReady) CableReady.perform(data.operations);
+  },
+});
