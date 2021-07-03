@@ -8,9 +8,15 @@ module QueueAPI
     resource :courses do
       desc 'Answer the topmost question in the course.'
       post ':course_id/answer', scopes: [:write] do
-        top_question = Question.with_course(Course.find(params[:course_id])).questions_by_state(['unresolved']).undiscarded.first
+        top_question = Question
+                         .undiscarded
+                         .with_course(Course.find(params[:course_id]))
+                         .questions_by_state(['unresolved'])
+                         .order(created_at: :desc)
+                         .first
 
-        top_question.question_states.create(state: params[:answer][:state], enrollment_id: params[:answer][:enrollment_id])
+        top_question.question_states.create(state: params[:answer][:state],
+                                            enrollment_id: params[:answer][:enrollment_id])
         top_question
       end
 
@@ -27,9 +33,8 @@ module QueueAPI
 
       desc 'Get all courses'
       get scopes: [:public] do
-        Course.all.select(Course.column_names - ["instructor_code", "ta_code"])
+        Course.all.select(Course.column_names - %w[instructor_code ta_code])
       end
-
 
       desc 'Gets the open status of a course'
       params do
@@ -47,10 +52,10 @@ module QueueAPI
       post ':course_id/open', scopes: [:write] do
         course = Course.find(params[:course_id])
 
-        if current_user.has_any_role?({name: :ta, resource: course}, { name: :instructor, resource: course})
+        if !doorkeeper_token && current_user.has_any_role?({ name: :ta, resource: course },
+                                                           { name: :instructor, resource: course })
           Course.find(params[:course_id]).update(open: params[:status])
-        end unless doorkeeper_token
-
+        end
       end
 
       desc 'Get TA\'s with any activity in the past 15 minutes'
@@ -59,8 +64,9 @@ module QueueAPI
       end
       get ':course_id/activeTAs', scopes: [:public] do
         course = Course.find(params[:course_id])
-        tas = User.with_role :ta, course
-        tas = tas.joins(:enrollments, enrollments: :question_state).where('question_states.created_at > ?', 15.minutes.ago).distinct
+        tas = User.with_course(course).with_any_roles :ta, :instructor
+        tas = tas.joins(:enrollments, enrollments: :question_state).where('question_states.created_at > ?',
+                                                                          15.minutes.ago).distinct
       end
 
       get ':course_id/topQuestion', scopes: [:public] do

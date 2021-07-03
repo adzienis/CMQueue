@@ -29,7 +29,7 @@ class UsersController < ApplicationController
                    .where('question_states.id = (select max(question_states.id) from question_states where question_states.question_id = questions.id)')
       @unique_questions = @questions
 
-      @unique_questions_count = @questions.select('distinct questions.id').count
+      #@unique_questions_count = @questions.select('distinct questions.id').count
     end
   end
 end

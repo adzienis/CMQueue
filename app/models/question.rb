@@ -49,7 +49,6 @@ class Question < ApplicationRecord
       .where("question_states.state in (#{states.map do |x|
         QuestionState.states[x]
       end.join(',')})")
-      .order('question_states.created_at DESC')
   }
 
   scope :previous_questions, lambda { |question = nil|

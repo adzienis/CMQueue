@@ -37,8 +37,6 @@ export default (props) => {
     return data?.pages.map((v) => v.data).flat();
   }, [data]);
 
-  console.log(data)
-
   return (
     <div>
       <div className="mb-4">

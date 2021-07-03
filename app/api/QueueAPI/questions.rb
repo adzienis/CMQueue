@@ -28,14 +28,14 @@ module QueueAPI
           questions = questions.questions_by_state(JSON.parse(params[:state])) if params[:state]
 
           if params[:cursor]
-            questions = questions.order('questions.updated_at DESC').limit(5) if params[:cursor] == '-1'
+            questions = questions.order('questions.created_at desc').limit(5) if params[:cursor] == '-1'
             unless params[:cursor] == '-1'
               questions = questions.where('questions.id <= ?',
-                                          params[:cursor]).order('questions.updated_at DESC').limit(5)
+                                          params[:cursor]).order('questions.created_at desc').limit(5)
             end
             offset = questions.offset(5).first
             return {
-              data: questions.as_json(include: %i[question_state user tags]),
+              data: questions.as_json(include: [:question_state, :user, :tags]),
               cursor: offset
             }
           end
@@ -55,6 +55,15 @@ module QueueAPI
     resource :questions do
 
       route_param :question_id do
+            post 'answer', scopes: [:write] do
+              question = Question.find(params[:question_id])
+      
+              question.question_states.create(state: "resolving",
+                                                  enrollment_id: params[:answer][:enrollment_id])
+              question
+          end
+
+
 
         get :question_states do
           QuestionState.where(question_id: params[:question_id])

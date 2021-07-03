@@ -6,12 +6,12 @@
 import Rails from "rails-ujs";
 import "@hotwired/turbo-rails";
 import "bootstrap";
-import "popper.js";
 import * as ActiveStorage from "@rails/activestorage";
 import "channels";
 import { Turbo } from "@hotwired/turbo-rails";
 import "controllers";
 import "../src/utilities/register_component";
+
 
 import SearchModal from "../src/components/search_modal";
 import StudentQueueView from "../src/components/studentQueueView";
