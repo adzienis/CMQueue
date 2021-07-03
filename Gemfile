@@ -118,3 +118,5 @@ gem "doorkeeper-i18n", "~> 5.2"
 gem "noticed", "~> 1.4"
 
 gem "sidekiq", "~> 6.2"
+
+gem "solargraph", "~> 0.42.3"

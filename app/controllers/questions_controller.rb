@@ -6,7 +6,7 @@ class QuestionsController < ApplicationController
   def index
     @course = Course.find(params[:course_id]) if params[:course_id]
 
-    @questions_ransack = @questions.undiscarded
+    @questions_ransack = @questions.undiscarded.order(updated_at: :desc)
     @questions_ransack = @questions_ransack.where(course_id: params[:course_id]) if params[:course_id]
     @questions_ransack = @questions_ransack.ransack(params[:q])
 

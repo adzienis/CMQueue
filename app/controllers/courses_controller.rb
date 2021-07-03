@@ -7,7 +7,7 @@ class CoursesController < ApplicationController
     @course = Course.find(params[:course_id])
   end
 
-  def show
+  def queue
     @course = current_user.courses.find_by(id: params[:course_id])
     redirect_to user_enrollments_path and return unless @course
 
@@ -26,6 +26,10 @@ class CoursesController < ApplicationController
     @top_question = current_user.question_state&.question
 
     @enrollment = Enrollment.undiscarded.joins(:role).find_by(user_id: current_user.id, "roles.resource_id": @course.id)
+  end
+
+  def show
+    @course = Course.accessible_by(current_ability).select(current_ability.permitted_attributes(:read, @course)).find(params[:course_id])
   end
 
   def answer_page
@@ -47,7 +51,6 @@ class CoursesController < ApplicationController
   end
 
   def course_info
-    @course = Course.accessible_by(current_ability).select(current_ability.permitted_attributes(:read, @course)).find(params[:course_id])
   end
 
   def update

@@ -5,14 +5,14 @@ class User < ApplicationRecord
 
   has_many :notifications, as: :recipient, dependent: :destroy
 
-  has_many :access_grants,
-           class_name: 'Doorkeeper::AccessGrant',
-           foreign_key: :resource_owner_id,
-           dependent: :delete_all
-  has_many :access_tokens,
-           class_name: 'Doorkeeper::AccessToken',
-           foreign_key: :resource_owner_id,
-           dependent: :delete_all
+  #has_many :access_grants,
+  #         class_name: 'Doorkeeper::AccessGrant',
+  #         foreign_key: :resource_owner_id,
+  #         dependent: :delete_all
+  #has_many :access_tokens,
+  #         class_name: 'Doorkeeper::AccessToken',
+  #         foreign_key: :resource_owner_id,
+  #         dependent: :delete_all
 
   has_many :courses, through: :enrollments
 
@@ -22,7 +22,7 @@ class User < ApplicationRecord
 
   has_many :settings, as: :resource, dependent: :destroy
 
-  has_many :oauth_applications, as: :owner
+  #has_many :oauth_applications, as: :owner
 
   #has_one :question_state, -> { order('question_states.id DESC') }, through: :enrollments
 
@@ -98,5 +98,4 @@ class User < ApplicationRecord
 
   rolify has_many_through: :enrollments
   devise :omniauthable, omniauth_providers: %i[google_oauth2]
-
 end

@@ -8,7 +8,7 @@ import { QueryClientProvider, useQuery } from "react-query";
 import QuestionWaitingModal from "./QuestionWaitingModal";
 import QuestionCreator from "./QuestionCreator";
 
-const Component = (props) => {
+export default (props) => {
   const { courseId, userId, enrollmentId } = props;
 
   const {
@@ -55,19 +55,3 @@ const Component = (props) => {
     </>
   );
 };
-
-document.addEventListener("turbo:load", (e) => {
-  const node = document.querySelectorAll("#student-queue-view");
-  if (node.length > 0) {
-    node.forEach((v) => {
-      const data = JSON.parse(v.getAttribute("data"));
-
-      ReactDOM.render(
-        <QueryClientProvider client={window.queryClient} contextSharing>
-          <Component {...data} />
-        </QueryClientProvider>,
-        v
-      );
-    });
-  }
-});

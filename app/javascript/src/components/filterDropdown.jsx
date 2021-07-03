@@ -4,7 +4,7 @@ import { QueryClientProvider } from "react-query";
 
 import FormInput from "./FormInput";
 
-const Component = (props) => {
+export default (props) => {
   const { columns, queries, except, reset } = props;
 
   const { root: colNames, associations } = columns;
@@ -194,20 +194,3 @@ const Component = (props) => {
     </div>
   );
 };
-
-// Render component with data
-document.addEventListener("turbo:load", (e) => {
-  const node = document.querySelectorAll("#dropdown-filter");
-  if (node.length > 0) {
-    node.forEach((v) => {
-      const data = JSON.parse(v.getAttribute("data"));
-
-      ReactDOM.render(
-        <QueryClientProvider client={window.queryClient} contextSharing>
-          <Component {...data} />
-        </QueryClientProvider>,
-        v
-      );
-    });
-  }
-});

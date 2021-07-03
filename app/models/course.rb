@@ -15,6 +15,19 @@ class Course < ApplicationRecord
   has_many :users, through: :enrollments
   has_many :questions
   has_many :tags
+  #has_many :announcements
+
+  has_many :access_grants,
+           class_name: 'Doorkeeper::AccessGrant',
+           foreign_key: :resource_owner_id,
+           dependent: :delete_all
+  has_many :access_tokens,
+           class_name: 'Doorkeeper::AccessToken',
+           foreign_key: :resource_owner_id,
+           dependent: :delete_all
+
+
+  has_many :applications, class_name: "Doorkeeper::Application", as: :owner
 
   before_validation on: :create do
     self.ta_code = SecureRandom.urlsafe_base64(6) unless ta_code

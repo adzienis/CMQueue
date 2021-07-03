@@ -6,7 +6,7 @@ class TagsController < ApplicationController
   def index
     @course = Course.find(params[:course_id]) if params[:course_id]
 
-    @tags = @tags.where(course_id: params[:course_id]) if params[:course_id]
+    @tags = @tags.undiscarded.order(updated_at: :desc).where(course_id: params[:course_id]) if params[:course_id]
     @tags_ransack = @tags.ransack(params[:q])
 
     @pagy, @records = pagy @tags_ransack.result
@@ -22,7 +22,7 @@ class TagsController < ApplicationController
   def destroy
     tag = Tag.find(params[:id])
 
-    tag&.destroy
+    tag&.discard
 
     redirect_to course_tags_path(tag.course)
   end

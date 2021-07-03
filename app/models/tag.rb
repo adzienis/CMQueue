@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Tag < ApplicationRecord
+  include Discard::Model
+
   scope :with_course, ->(course) { where(course_id: course.id) }
 
   belongs_to :course

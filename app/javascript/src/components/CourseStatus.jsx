@@ -2,7 +2,7 @@ import React, { useEffect, useLayoutEffect } from "react";
 import ReactDOM from "react-dom";
 import { QueryClientProvider, useQuery } from "react-query";
 
-const Component = (props) => {
+export default (props) => {
   const { courseId } = props;
 
   const { data: count } = useQuery([
@@ -26,20 +26,3 @@ const Component = (props) => {
 
   return null;
 };
-
-// Render component with data
-document.addEventListener("turbo:load", (e) => {
-  const node = document.querySelectorAll("#course-status");
-  if (node.length > 0) {
-    node.forEach((v) => {
-      const data = JSON.parse(v.getAttribute("data"));
-
-      ReactDOM.render(
-        <QueryClientProvider client={window.queryClient} contextSharing>
-          <Component {...data} />
-        </QueryClientProvider>,
-        v
-      );
-    });
-  }
-});

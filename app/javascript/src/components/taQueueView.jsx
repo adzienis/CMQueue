@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 import { QueryClientProvider, useInfiniteQuery } from "react-query";
 import QuestionCard from "./QuestionCard";
 
-const Component = (props) => {
+export default (props) => {
   const { courseId, userId, enrollmentId } = props;
 
   const { data, fetchNextPage, hasNextPage } = useInfiniteQuery(
@@ -73,19 +73,3 @@ const Component = (props) => {
     </div>
   );
 };
-
-document.addEventListener("turbo:load", (e) => {
-  const node = document.querySelectorAll("#ta-queue-view");
-  if (node.length > 0) {
-    node.forEach((v) => {
-      const data = JSON.parse(v.getAttribute("data"));
-
-      ReactDOM.render(
-        <QueryClientProvider client={window.queryClient} contextSharing>
-          <Component {...data} />
-        </QueryClientProvider>,
-        v
-      );
-    });
-  }
-});

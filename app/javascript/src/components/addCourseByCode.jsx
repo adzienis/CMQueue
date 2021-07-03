@@ -5,8 +5,9 @@ import { QueryClientProvider, useQuery } from "react-query";
 import queryClient from "./queryClientFile";
 import useWrappedMutation from "./useWrappedMutation";
 import CourseCard from "./CourseCard";
+import register_component from "../utilities/register_component";
 
-const Component = (props) => {
+export default (props) => {
   const { userId } = props;
 
   const { data: courses } = useQuery([
@@ -37,8 +38,6 @@ const Component = (props) => {
   );
   const [code, setCode] = useState("");
   const [open, setOpen] = useState(false);
-
-  console.log(courses?.concat(instructor_courses));
 
   return (
     <>
@@ -105,19 +104,3 @@ const Component = (props) => {
   );
 };
 
-// Render component with data
-document.addEventListener("turbo:load", (e) => {
-  const node = document.querySelectorAll("#add-course-by-code");
-  if (node.length > 0) {
-    node.forEach((v) => {
-      const data = JSON.parse(v.getAttribute("data"));
-
-      ReactDOM.render(
-        <QueryClientProvider client={queryClient} contextSharing>
-          <Component {...data} />
-        </QueryClientProvider>,
-        v
-      );
-    });
-  }
-});

@@ -9,26 +9,40 @@ import "bootstrap";
 import "popper.js";
 import * as ActiveStorage from "@rails/activestorage";
 import "channels";
-import "../src/components/search_modal";
-import "../src/components/studentQueueView";
-import "../src/components/QuestionWaitingModal";
-import "../src/components/addCourseByCode";
-import "../src/components/QueueInfoPanel";
-import "../src/components/taQueueView";
-import "../src/components/QueueOpener";
-import "../src/components/QuestionAnswererPage";
-import "../src/components/filterDropdown";
-import "../src/components/taActionPane";
-import queryClient from "../src/components/queryClientFile";
-import ReactStudentChannel from "../channels/react_student_channel";
-import "../src/components/Prefetcher";
-import "../src/components/CourseStatus";
-import "../src/components/TALog";
-import '../src/components/NotificationFeed'
-import "../src/components/UserSettings"
-
 import { Turbo } from "@hotwired/turbo-rails";
 import "controllers";
+import "../src/utilities/register_component";
+
+import SearchModal from "../src/components/search_modal";
+import StudentQueueView from "../src/components/studentQueueView";
+import AddCourseByCode from "../src/components/addCourseByCode";
+import FilterDropdown from "../src/components/filterDropdown";
+import queryClient from "../src/components/queryClientFile";
+import ReactStudentChannel from "../channels/react_student_channel";
+import CourseStatus from "../src/components/CourseStatus";
+import NotificationFeed from "../src/components/NotificationFeed";
+import Prefetcher from "../src/components/Prefetcher";
+import register_component from "../src/utilities/register_component";
+import QuestionAnswererPage from "../src/components/QuestionAnswererPage";
+import QueueInfoPanel from "../src/components/QueueInfoPanel";
+import TAActionPane from "../src/components/taActionPane";
+import TALog from "../src/components/TALog";
+import TAQueueView from "../src/components/taQueueView";
+import UserSettings from "../src/components/UserSettings";
+
+register_component(AddCourseByCode, "#add-course-by-code");
+register_component(CourseStatus, "#course-status");
+register_component(FilterDropdown, "#dropdown-filter");
+register_component(NotificationFeed, "#notification-feed");
+register_component(Prefetcher, "#prefetcher");
+register_component(QuestionAnswererPage, "#question-answerer");
+register_component(QueueInfoPanel, "#queue-info-panel");
+register_component(SearchModal, "#hello-react");
+register_component(StudentQueueView, "#student-queue-view");
+register_component(TAActionPane, "#ta-action-pane");
+register_component(TALog, "#ta-chart");
+register_component(TAQueueView, "#ta-queue-view");
+register_component(UserSettings, "#user-settings");
 
 window.Turbo = Turbo;
 window.queryClient = queryClient;
@@ -36,7 +50,6 @@ window.queryClient = queryClient;
 ReactStudentChannel.received = async (data) => {
   console.log("invalidating", data.invalidate);
 
-  //Turbo.visit(window.location.toString(), { action: 'replace' })
   await queryClient.invalidateQueries(data.invalidate);
 
   await queryClient.refetchQueries(data.invalidate);
@@ -52,29 +65,3 @@ document.addEventListener("turbo:before-cache", () => {
     node.classList.remove("show");
   }
 });
-
-/*
-queryClient.prefetchQuery(['courses', 1, 'open'])
-
-queryClient.prefetchQuery(['courses', 1, 'questions', '?', `state=["unresolved"]`])
-
-queryClient.prefetchInfiniteQuery(['courses', 1, 'paginatedPastQuestions'],
-    ({pageParam = 0}) => {
-        return fetch(`/courses/${1}/questions?cursor=${pageParam}&` +
-            `state=["kicked", "resolved"]&course_id=${1}`, {
-            headers: {
-                'Accept': 'application/json'
-            }
-        }).then(resp => resp.json()).then(json => {
-
-            return {
-                cursor: json.cursor?.id,
-                data: json.data
-            }
-        })
-    }, {
-        getNextPageParam: (lastPage, pages) => {
-            return lastPage.cursor
-        }
-    })
-*/

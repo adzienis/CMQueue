@@ -551,7 +551,8 @@ CREATE TABLE public.tags (
     updated_at timestamp(6) without time zone NOT NULL,
     archived boolean DEFAULT true,
     name text DEFAULT ''::text,
-    description text DEFAULT ''::text
+    description text DEFAULT ''::text,
+    discarded_at timestamp without time zone
 );
 
 
@@ -1087,6 +1088,13 @@ CREATE INDEX index_tags_on_course_id ON public.tags USING btree (course_id);
 
 
 --
+-- Name: index_tags_on_discarded_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_tags_on_discarded_at ON public.tags USING btree (discarded_at);
+
+
+--
 -- Name: index_users_roles_on_role_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1279,6 +1287,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20210627202209'),
 ('20210701224331'),
 ('20210701224353'),
-('20210701224457');
+('20210701224457'),
+('20210703035725');
 
 

@@ -38,7 +38,7 @@ export default (props) => {
   return (
     <div
       style={{ border: state === "frozen" ? "2px solid #2185D0" : "" }}
-      className="card mb-2 shadow-sm"
+      className="card mb-3 shadow-sm"
     >
       <div className="position-absolute" style={{ top: "-15px", left: "0px" }}>
         {

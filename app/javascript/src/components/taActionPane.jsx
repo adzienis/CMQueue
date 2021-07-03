@@ -8,7 +8,7 @@ import { QueryClientProvider, useInfiniteQuery } from "react-query";
 import QuestionAnswerer from "./QuestionAnswererButton";
 import QueueOpener from "./QueueOpener";
 
-const Component = (props) => {
+export default (props) => {
   const { courseId, userId, enrollmentId } = props;
   return (
     <div className="mb-4">
@@ -28,19 +28,3 @@ const Component = (props) => {
     </div>
   );
 };
-// Render component with data
-document.addEventListener("turbo:load", (e) => {
-  const node = document.querySelectorAll("#ta-action-pane");
-  if (node.length > 0) {
-    node.forEach((v) => {
-      const data = JSON.parse(v.getAttribute("data"));
-
-      ReactDOM.render(
-        <QueryClientProvider client={window.queryClient} contextSharing>
-          <Component {...data} />
-        </QueryClientProvider>,
-        v
-      );
-    });
-  }
-});

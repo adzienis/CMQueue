@@ -1,12 +1,8 @@
-// Run this example by adding <%= javascript_pack_tag 'hello_react' %> to the head of your layout file,
-// like app/views/layouts/application.html.erb. All it does is render <div>Hello React</div> at the bottom
-// of the page.
-
 import React, { useEffect } from "react";
 import ReactDOM from "react-dom";
 import { QueryClientProvider, useQuery, useQueryClient } from "react-query";
 
-const Component = (props) => {
+export default (props) => {
   const { userId } = props;
   const queryClient = useQueryClient();
 
@@ -140,20 +136,3 @@ const Component = (props) => {
 
   return null;
 };
-
-// Render component with data
-document.addEventListener("turbo:load", (e) => {
-  const node = document.querySelectorAll("#prefetcher");
-  if (node.length > 0) {
-    node.forEach((v) => {
-      const data = JSON.parse(v.getAttribute("data"));
-
-      ReactDOM.render(
-        <QueryClientProvider client={window.queryClient} contextSharing>
-          <Component {...data} />
-        </QueryClientProvider>,
-        v
-      );
-    });
-  }
-});

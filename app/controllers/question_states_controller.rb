@@ -6,7 +6,7 @@ class QuestionStatesController < ApplicationController
   def index
     @course = Course.find(params[:course_id]) if params[:course_id]
 
-    @question_states = @question_states.joins(:question).where("questions.course_id": params[:course_id]) if params[:course_id]
+    @question_states = @question_states.order(updated_at: :desc).joins(:question).where("questions.course_id": params[:course_id]) if params[:course_id]
 
     @question_states_ransack = @question_states.ransack(params[:q])
 

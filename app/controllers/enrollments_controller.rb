@@ -5,7 +5,7 @@ class EnrollmentsController < ApplicationController
 
     @course = Course.find(params[:course_id]) if params[:course_id]
 
-    @enrollments_ransack = Enrollment.undiscarded
+    @enrollments_ransack = Enrollment.undiscarded.order(updated_at: :desc)
     @enrollments_ransack = @enrollments_ransack.joins(:role).where("roles.resource_id": params[:course_id]) if params[:course_id]
 
     @enrollments_ransack = @enrollments_ransack.ransack(params[:q])

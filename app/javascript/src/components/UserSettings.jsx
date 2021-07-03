@@ -72,7 +72,7 @@ const handle_permission = async (setting_id, checked) => {
 }
 
 
-const Component = props => {
+export default props => {
     const {settings: settingsPlaceholder, userId} = props;
 
     const {data: settings} = useQuery(['settings', '?', `user_id=${userId}`], {
@@ -165,20 +165,3 @@ const Component = props => {
         })}
     </ul>
 }
-
-
-document.addEventListener("turbo:load", (e) => {
-    const node = document.querySelectorAll("#user-settings");
-    if (node.length > 0) {
-        node.forEach((v) => {
-            const data = JSON.parse(v.getAttribute("data"));
-
-            ReactDOM.render(
-                <QueryClientProvider client={window.queryClient} contextSharing>
-                    <Component {...data} />
-                </QueryClientProvider>,
-                v
-            );
-        });
-    }
-});

@@ -12,6 +12,9 @@ class Ability
         can :access, :rails_admin
       end
       #can :manage, Message, question_state: { question: { user: { id: user.id } } }
+      #
+
+      can :queue, Course
 
       can [:active_tas, :open_status, :read, :search], Course
       can :read, User
@@ -31,12 +34,12 @@ class Ability
         enrollment.user_id == user.id || (user.has_any_role?({name: :instructor, resource: enrollment.course }))
       end
 
-      can :manage, Message, Message.joins(:question_state).joins(question_state: :question)
-                                      .where("questions.course_id": Course
-                                                                    .where("courses.id": Course.find_roles([:instructor], user)
-                                                                                               .pluck(:resource_id))
-                                                                    .pluck(:id))
-                                      .or(Message.where(user_id: user.id))
+      #can :manage, Message, Message.joins(:question_state).joins(question_state: :question)
+      #                                .where("questions.course_id": Course
+      #                                                              .where("courses.id": Course.find_roles([:instructor], user)
+      #                                                                                         .pluck(:resource_id))
+      #                                                              .pluck(:id))
+      #                                .or(Message.where(user_id: user.id))
 
 
 
@@ -65,9 +68,9 @@ class Ability
         user.has_any_role?({ name: :ta, resource: state.question.course}, {name: :instructor, resource: state.question.course}) || state.question.user_id == user.id
       end
 
-      can :manage, Message, Message.all do |message|
-        user.has_any_role?({ name: :ta, resource: message.question_state.question.course}, {name: :instructor, resource: message.question_state.question.course})
-      end
+      #can :manage, Message, Message.all do |message|
+      #  user.has_any_role?({ name: :ta, resource: message.question_state.question.course}, {name: :instructor, resource: message.question_state.question.course})
+      #end
 
       can :read, Tag
       can :create, Tag if (user.roles.where(name: 'ta').or(user.roles.where(name: 'instructor'))).count.positive?

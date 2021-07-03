@@ -8,9 +8,9 @@
       <div style="width: 16px" class="d-flex justify-content-center">
         <i class="fas fa-chalkboard-teacher"></i>
       </div>
-      <%= button_to "Queue", course_path(@course),
+      <%= button_to "Queue", queue_course_path(@course),
                     class: "btn btn-toggle align-items-center text-decoration-none
-                            #{request.path == course_path(@course) ||
+                            #{request.path == queue_course_path(@course) ||
                       request.path == answer_course_path(@course) ? 'active-link' : ''}",
                     method: :get %>
     </li>
@@ -20,7 +20,7 @@
           <i class="fas fa-info"></i>
         </div>
         <%= button_tag class: "btn btn-toggle align-items-center text-decoration-none
-                            #{(request.path == courseInfo_course_path(@course) ||
+                            #{(request.path == course_path(@course) ||
           request.path == course_enrollments_path(@course) ||
           request.path == course_questions_path(@course) ||
           request.path == course_tags_path(@course) ||
@@ -47,8 +47,8 @@
             <div style="width: 16px" class="d-flex justify-content-center">
               <i class="fas fa-book"></i>
             </div>
-            <%= button_to "Course", courseInfo_course_path(@course),
-                          class: "btn text-decoration-none #{(request.path == courseInfo_course_path(@course)) ?
+            <%= button_to "Course", course_path(@course),
+                          class: "btn text-decoration-none #{(request.path == course_path(@course)) ?
                                                                "active-link" : ""}", method: :get %>
           </li>
           <li class="d-flex align-items-center">

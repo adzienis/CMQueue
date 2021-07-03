@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 import { QueryClientProvider, useQuery } from "react-query";
 import QueueInfoItem from "./QueueInfoItem";
 
-const Component = (props) => {
+export default (props) => {
   const { courseId, userId, enrollment } = props;
 
   const {
@@ -130,19 +130,3 @@ const Component = (props) => {
     </div>
   );
 };
-// Render component with data
-document.addEventListener("turbo:load", (e) => {
-  const node = document.querySelectorAll("#queue-info-panel");
-  if (node.length > 0) {
-    node.forEach((v) => {
-      const data = JSON.parse(v.getAttribute("data"));
-
-      ReactDOM.render(
-        <QueryClientProvider client={window.queryClient} contextSharing>
-          <Component {...data} />
-        </QueryClientProvider>,
-        v
-      );
-    });
-  }
-});

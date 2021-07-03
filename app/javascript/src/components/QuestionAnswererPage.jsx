@@ -7,7 +7,7 @@ import ReactDOM from "react-dom";
 import modal from "bootstrap/js/dist/modal";
 import useOneShot from "../hooks/useOneShot";
 
-const Component = (props) => {
+export default (props) => {
   const { userId, courseId, enrollmentId } = props;
   const refq = useRef();
 
@@ -213,20 +213,3 @@ const Component = (props) => {
     </>
   );
 };
-
-// Render component with data
-document.addEventListener("turbo:load", (e) => {
-  const node = document.querySelectorAll("#question-answerer");
-  if (node.length > 0) {
-    node.forEach((v) => {
-      const data = JSON.parse(v.getAttribute("data"));
-
-      ReactDOM.render(
-        <QueryClientProvider client={window.queryClient} contextSharing>
-          <Component {...data} />
-        </QueryClientProvider>,
-        v
-      );
-    });
-  }
-});

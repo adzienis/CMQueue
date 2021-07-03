@@ -5,7 +5,7 @@ import ReactDOM from "react-dom";
 
 import "react-datepicker/dist/react-datepicker.css";
 
-const Component = (props) => {
+export default (props) => {
     const {selectedQueueId, courseId} = props;
 
     const queryClient = useQueryClient();
@@ -246,19 +246,3 @@ const Component = (props) => {
         </div>
     );
 };
-
-document.addEventListener("turbo:load", (e) => {
-    const node = document.querySelectorAll("#ta-chart");
-    if (node.length > 0) {
-        node.forEach((v) => {
-            const data = JSON.parse(v.getAttribute("data"));
-
-            ReactDOM.render(
-                <QueryClientProvider client={window.queryClient} contextSharing>
-                    <Component {...data} />
-                </QueryClientProvider>,
-                v
-            );
-        });
-    }
-});

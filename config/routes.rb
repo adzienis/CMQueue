@@ -86,7 +86,7 @@ Rails.application.routes.draw do
   resources :courses, param: :course_id do
     member do
       get 'roster', to: 'courses#roster'
-      get 'courseInfo', to: 'courses#course_info'
+      get 'queue', to: 'courses#queue'
       get 'settings/queues', to: 'courses#queues'
       get 'activeTAs', to: 'courses#active_tas'
       get 'analytics', to: 'courses/analytics#index'

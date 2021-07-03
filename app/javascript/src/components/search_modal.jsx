@@ -8,7 +8,7 @@ import { QueryClientProvider, useQuery } from "react-query";
 import useWrappedMutation from "./useWrappedMutation";
 import CourseCard from "./CourseCard";
 
-const Component = (props) => {
+export default (props) => {
   const { userId } = props;
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
@@ -195,20 +195,3 @@ const Component = (props) => {
     </>
   );
 };
-
-// Render component with data
-document.addEventListener("turbo:load", (e) => {
-  const node = document.querySelectorAll("#hello-react");
-  if (node.length > 0) {
-    node.forEach((v) => {
-      const data = JSON.parse(v.getAttribute("data"));
-
-      ReactDOM.render(
-        <QueryClientProvider client={window.queryClient} contextSharing>
-          <Component {...data} />
-        </QueryClientProvider>,
-        v
-      );
-    });
-  }
-});
