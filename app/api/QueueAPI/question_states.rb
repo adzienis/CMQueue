@@ -10,14 +10,16 @@ module QueueAPI
         get do
           time = Time.zone.now
           time = Time.zone.parse(params[:date]) if params[:date]
-          l = QuestionState
-              .accessible_by(current_ability)
-              .with_course(Course.find(1))
-              .where('question_states.created_at < ?', time.end_of_day)
-              .where('question_states.created_at > ?', time.beginning_of_day)
-              .where(state: ['resolved', 'frozen'])
-              .as_json include: :user
-          l
+
+          states = QuestionState.all
+          states = states.accessible_by(current_ability) if current_user
+          states = states.with_course(Course.find_by(id: params[:course_id])) if params[:course_id]
+          states = states
+                     .where('question_states.created_at < ?', time.end_of_day)
+                     .where('question_states.created_at > ?', time.beginning_of_day)
+                     .where(state: ['resolved', 'frozen'])
+                     .as_json include: :user
+          states
         end
       end
     end
