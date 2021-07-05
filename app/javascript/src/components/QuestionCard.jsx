@@ -2,7 +2,7 @@ import React from "react";
 import useWrappedMutation from "./useWrappedMutation";
 import QuestionHistory from "./QuestionHistory";
 import DelayedSpinner from "./DelayedSpinner";
-import useOneShot from "../hooks/useOneShot";
+import {useQuery} from "react-query";
 
 
 export default (props) => {
@@ -10,8 +10,13 @@ export default (props) => {
 
     const state = question?.question_state.state;
 
-
-    const one = useOneShot(() => Turbo.visit(`/courses/${courseId}/answer`))
+    const {data: topQuestion} = useQuery([
+        "courses",
+        parseInt(courseId, 10),
+        "topQuestion",
+        "?",
+        `user_id=${userId}`,
+    ]);
 
     const {mutateAsync: unfreeze, isLoading: frozenLoading} =
         useWrappedMutation(
@@ -27,12 +32,10 @@ export default (props) => {
 
     const {mutate: answerQuestion, isLoading: answerLoading} = useWrappedMutation(
         () => ({
-            answer: {
-                state: "resolving",
-                enrollment_id: enrollmentId,
-            },
+            state: "resolving",
+            enrollment_id: enrollmentId,
         }),
-        `/api/questions/${question?.id}/answer`
+        `/api/questions/${question?.id}/handleQuestion`
     );
 
     let statusText = "";
@@ -62,7 +65,7 @@ export default (props) => {
                         : null
                 }
                 {question?.tags.map((v) => (
-                    <span className="badge bg-danger me-1">
+                    <span key={v.name} className="badge bg-danger me-1">
             {v.name}
           </span>
                 ))}
@@ -92,8 +95,8 @@ export default (props) => {
                 <div className="card-text elipsis">{question.description}</div>
             </div>
             <div className="card-footer">
-                {state === "frozen" ? (
-                    <div className="me-2 mb-2">
+                <div className="card-footer-buttons">
+                    {state === "frozen" ? (
                         <button
                             className="btn btn-primary"
                             style={{backgroundColor: "rgb(33, 133, 208)"}}
@@ -107,31 +110,30 @@ export default (props) => {
                                 Unfreeze
                             </DelayedSpinner>
                         </button>
-                    </div>
-                ) : null}
-                <div className="btn-group">
-                    <button
-                        className="btn btn-success me-2"
-                        onClick={e => {
-                            try {
-                                answerQuestion()
-                            } catch (e) {
+                    ) : null}
+                    {
+                        state === "unresolved" ? (
+                            <button
+                                className="btn btn-success"
+                                onClick={e => {
+                                    try {
+                                        answerQuestion()
+                                    } catch (e) {
 
-                            }
-                        }}>
-                        Answer
-                    </button>
+                                    }
+                                }}>
+                                <DelayedSpinner loading={answerLoading} small>
+                                    Answer
+                                </DelayedSpinner>
+                            </button>
+                        ) : null
+                    }
 
                     <a
                         href={`/courses/${courseId}/questions/${question?.id}`}
-                        className="text-decoration-none me-2"
-                        style={{color: "inherit"}}
+                        className="btn btn-secondary text-decoration-none"
                     >
-                        <button className="btn btn-secondary">
-                      <span>
-                More info
-                </span>
-                        </button>
+                        More info
                     </a>
                     <QuestionHistory question={question}/>
                 </div>

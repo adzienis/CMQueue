@@ -1,6 +1,7 @@
-import React, { useRef, useState } from "react";
+import React, {useEffect, useRef, useState} from "react";
 import useWrappedMutation from "./useWrappedMutation";
 import DelayedSpinner from "./DelayedSpinner";
+import useAutoFocusModal from "../hooks/useAutoFocusModal";
 
 export default (props) => {
   const { question, userId, callback, open, setOpen } = props;
@@ -9,6 +10,8 @@ export default (props) => {
   let newState = null;
 
   const refq = useRef();
+
+  useAutoFocusModal('#explanationModal', '#explanation')
 
   const { mutateAsync: createMessage, isLoading } = useWrappedMutation(
     () => ({
@@ -31,15 +34,13 @@ export default (props) => {
     <>
       <div
         className="modal fade"
-        id="exampleModal"
+        id="explanationModal"
         tabIndex="-1"
-        aria-labelledby="exampleModalLabel"
-        aria-hidden="true"
       >
         <div className="modal-dialog modal-dialog-centered modal-lg">
           <div className="modal-content">
             <div className="modal-header">
-              <h5 className="modal-title" id="exampleModalLabel">
+              <h5 className="modal-title">
                 {" "}
                 Explanation{" "}
               </h5>
@@ -47,8 +48,7 @@ export default (props) => {
                 type="button"
                 className="btn-close"
                 data-bs-dismiss="modal"
-                aria-label="Close"
-              ></button>
+              />
             </div>
             <div className="modal-body">
               <form>
@@ -58,6 +58,7 @@ export default (props) => {
                     <b>Description</b>{" "}
                   </label>
                   <textarea
+                      id="explanation"
                     rows={3}
                     className="form-control"
                     onChange={(e) => setDescription(e.target.value)}

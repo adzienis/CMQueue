@@ -25,7 +25,7 @@
              options: {
                actions: [],
                except: [:user_id, :question_id, :id, :updated_at, :enrollment_id],
-               extra_columns: [{ user: :given_name }],
+               extra_columns: [{ user: :given_name}, {enrollment: { role: :name} }],
              }
            } unless request.headers.key? "Turbo-Frame" %>
 

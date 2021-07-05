@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import ReactDOM from "react-dom";
 import { QueryClientProvider, useQuery } from "react-query";
 
-import queryClient from "./queryClientFile";
+import queryClient from "../utilities/queryClientFile";
 import useWrappedMutation from "./useWrappedMutation";
 import CourseCard from "./CourseCard";
 import register_component from "../utilities/register_component";

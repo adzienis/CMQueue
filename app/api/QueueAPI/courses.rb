@@ -6,17 +6,30 @@ module QueueAPI
     helpers Doorkeeper::Grape::Helpers
 
     resource :courses do
-      desc 'Answer the topmost question in the course.'
-      post ':course_id/answer', scopes: [:write] do
+      desc 'Handle the topmost question in the course, by default all tags'
+      params do
+        optional :tags, type: Array[Integer]
+        requires :state, type: String
+        requires :enrollment_id, type: Integer
+        requires :course_id, type: Integer
+      end
+      post ':course_id/handleQuestion', scopes: [:admin] do
+        top_question = Question.undiscarded
         top_question = Question
-                         .undiscarded
+                         .joins(:tags)
+                         .where("tags.name": params[:tags]) if params[:tags]
+
+        top_question = top_question
                          .with_course(Course.find(params[:course_id]))
                          .questions_by_state(['unresolved'])
-                         .order(created_at: :desc)
+                         .order(created_at: :asc)
                          .first
 
-        top_question.question_states.create(state: params[:answer][:state],
-                                            enrollment_id: params[:answer][:enrollment_id])
+        state = top_question.question_states.create(state: params[:state],
+                                            enrollment_id: params[:enrollment_id])
+
+        error!("Unable to handle question.", :bad_request) and return if state.errors.any?
+
         top_question
       end
 
@@ -31,12 +44,12 @@ module QueueAPI
         courses
       end
 
-      desc 'Get all courses'
+      desc 'Get all courses.'
       get scopes: [:public] do
         Course.all.select(Course.column_names - %w[instructor_code ta_code])
       end
 
-      desc 'Gets the open status of a course'
+      desc 'Gets the open status of a course.'
       params do
         requires :course_id, type: Integer
       end
@@ -44,12 +57,12 @@ module QueueAPI
         Course.find(params[:course_id]).open
       end
 
-      desc 'Update the open status of a course/'
+      desc 'Update the open status of a course.'
       params do
         requires :course_id, type: Integer
         requires :status, type: Boolean
       end
-      post ':course_id/open', scopes: [:write] do
+      post ':course_id/open', scopes: [:admin] do
         course = Course.find(params[:course_id])
 
         if !doorkeeper_token && current_user.has_any_role?({ name: :ta, resource: course },
@@ -58,7 +71,7 @@ module QueueAPI
         end
       end
 
-      desc 'Get TA\'s with any activity in the past 15 minutes'
+      desc 'Get TA\'s with any activity in the past 15 minutes.'
       params do
         requires :course_id, type: Integer
       end
@@ -69,8 +82,14 @@ module QueueAPI
                                                                           15.minutes.ago).distinct
       end
 
+      desc 'Get the question at the top of the queue for a user.'
+      params do
+        optional :tag_id, type: Integer
+      end
       get ':course_id/topQuestion', scopes: [:public] do
         question_state = User.find(params[:user_id]).question_state
+
+
         top_question = Question.joins(:question_state).where("question_states.id": question_state&.id).undiscarded.first
 
         top_question.as_json include: %i[user question_state tags] if question_state&.state == 'resolving'

@@ -26,8 +26,6 @@ when 'development'
       given_name: "arthur_#{v}",
       family_name: "family_#{v}",
       email: "arthur_#{v}@gmail.com",
-      provider: 'google_oauth2',
-      uid: SecureRandom.urlsafe_base64(10)
     )
 
     user.add_role :student, @course0

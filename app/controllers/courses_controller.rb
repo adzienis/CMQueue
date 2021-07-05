@@ -38,7 +38,9 @@ class CoursesController < ApplicationController
     @top_question = question_state&.question
   end
 
-  def new; end
+  def new
+
+  end
 
   def index
     @courses = Course.all
@@ -46,6 +48,8 @@ class CoursesController < ApplicationController
 
   def create
     @course = Course.create(course_params)
+
+    render turbo_stream:  (turbo_stream.update @course,  partial: "shared/form", locals: { model_instance: @course }) and return unless @course.errors.count == 0
 
     redirect_to courses_path
   end
@@ -55,9 +59,12 @@ class CoursesController < ApplicationController
 
   def update
     @course = Course.find(params[:course_id])
+
     @course.update(course_params)
 
-    redirect_to courseInfo_course_path(@course)
+    render turbo_stream:  (turbo_stream.update @course,  partial: "shared/form", locals: { model_instance: @course }) and return unless @course.errors.count == 0
+
+    redirect_to course_path(@course)
   end
 
   def queues
@@ -81,10 +88,10 @@ class CoursesController < ApplicationController
   private
 
   def course_params
-    params.require(:course).permit(:name, :course_id, :status, :ta_code, :instructor_code, :open)
+    params.require(:course).permit(:name,:status, :ta_code, :instructor_code, :open)
   end
 
   def answer_params
-    params.require(:answer).permit(:id, :course_id, :state, :user_id)
+    params.require(:answer).permit(:id, :state, :user_id)
   end
 end

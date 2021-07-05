@@ -33,6 +33,16 @@ $toast-background-color: rgba($white, 1.0);
 @import url('https://fonts.googleapis.com/css2?family=Arimo:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&display=swap');
 @import "font-awesome";
 
+.card-footer-buttons {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(125px, 250px));
+  column-gap: 5px;
+  row-gap: 5px;
+}
+
+.recharts-legend-item-text {
+  font-weight: bolder;
+}
 
 .frozen-card {
   border: 2px solid #2185D0;
@@ -40,8 +50,12 @@ $toast-background-color: rgba($white, 1.0);
 
 :root {
   --frozen: #2185D0;
-  --resolved: #19d754;
+  --resolved: #197754;
   --unresolved: rgb(70,70,70);
+}
+
+.bg-frozen {
+  background-color: var(--frozen);
 }
 
 .toast-container {
@@ -103,6 +117,15 @@ html, body{
 }
 
 @media (max-width: 768px) {
+
+
+  .card-footer-buttons {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    column-gap: 5px;
+    row-gap: 5px;
+    justify-content: center;
+  }
 
   .filter-row {
     flex-direction: column;

@@ -64,6 +64,23 @@ module ApplicationHelper
     end
   end
 
+  def flatten_hash(collection)
+
+    flat = collection.flatten
+
+    flat = flat.map do |v|
+      case v
+      when Hash
+        flatten_hash(v)
+      else
+        v
+      end
+    end
+
+    flat.flatten
+
+  end
+
   def to_csv(hash, records, model)
     asses = hash.keys.filter { |v| hash[v].is_a? Hash }
     full_asses = asses.collect { |u| { u => hash[u].keys.filter { |x| hash[u][x] == "1" } } }.flatten

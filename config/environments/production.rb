@@ -103,7 +103,7 @@ Rails.application.configure do
   config.hosts << '127.0.0.1'
   config.hosts << "gardenzone.xyz"
 
-  Rails.application.config.action_cable.allowed_request_origins = ['http://localhost:8020', 'http://gardenzone.xyz:8020', 'https://gardenzone.xyz']
+  Rails.application.config.action_cable.allowed_request_origins = ['https://localhost', 'http://gardenzone.xyz:8020', 'https://gardenzone.xyz']
 
   # Inserts middleware to perform automatic connection switching.
   # The `database_selector` hash is used to pass options to the DatabaseSelector

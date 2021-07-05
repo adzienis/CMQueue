@@ -1,5 +1,5 @@
 import consumer from "./consumer"
-import queryClient from "../src/components/queryClientFile";
+import queryClient from "../src/utilities/queryClientFile";
 
 consumer.subscriptions.create("SiteChannel", {
   connected() {

@@ -21,7 +21,7 @@ export default (props) => {
 
   return (
     <a
-      href={`/courses/${course?.id}`}
+      href={`/courses/${course?.id}/queue`}
       className="card shadow-sm text-decoration-none hover-container"
       style={{ color: "inherit" }}
     >

@@ -29,6 +29,7 @@ Rails.application.routes.draw do
   resources :enrollments do
     collection do
       get 'download_form', to: "enrollments#download_form"
+      post 'import', to: "enrollments#import"
     end
   end
   resources :roles

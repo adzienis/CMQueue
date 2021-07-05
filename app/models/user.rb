@@ -69,7 +69,7 @@ class User < ApplicationRecord
   }
 
   def self.from_omniauth(auth)
-    where(provider: auth.provider, uid: auth.uid).first_or_create do |user|
+    find_or_create_by(email: auth.extra.id_info.email) do |user|
       user.given_name = auth.extra.id_info.given_name
       user.family_name = auth.extra.id_info.family_name
       user.email = auth.extra.id_info.email

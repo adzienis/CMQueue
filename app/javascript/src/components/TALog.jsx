@@ -1,16 +1,26 @@
-import React, {useMemo, useState} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import {QueryClientProvider, useQuery, useQueryClient} from "react-query";
 import {CartesianGrid, Legend, ResponsiveContainer, Scatter, ScatterChart, Tooltip, XAxis, YAxis,} from "recharts";
 import ReactDOM from "react-dom";
 
+import Popover from 'bootstrap/js/dist/popover'
+
 import "react-datepicker/dist/react-datepicker.css";
 
 export default (props) => {
-    const {selectedQueueId, courseId} = props;
+    const {selectedQueueId, courseId, height=470, limited=false} = props;
 
     const queryClient = useQueryClient();
 
     const [date, setDate] = useState(new Date());
+
+    useEffect(() => {
+        var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
+        var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+            return new Popover(popoverTriggerEl)
+        })
+
+    }, [])
 
     const {
         data: question_states,
@@ -27,6 +37,15 @@ export default (props) => {
         ],
         {
             placeholderData: [],
+            select: d => {
+                if(d) {
+                    if(limited) {
+                        return d.filter(x => ((new Date) - new Date(x.created_at) < 60*60*1000*2))
+                    } else {
+                        return d;
+                    }
+                }
+            }
         }
     );
 
@@ -91,8 +110,9 @@ export default (props) => {
     };
 
     const ticks = useMemo(() => {
-        if (question_states.length > 0) {
-            const mapped = question_states.map((v) =>
+        if ( question_states.length > 0) {
+            const mapped = question_states
+                .filter(x => ((new Date) - new Date(x.created_at) < 60*60*1000*2) || !limited).map((v) =>
                 new Date(v.created_at).getTime()
             );
             const minTime = mapped.reduce((prev, cur) => Math.min(prev, cur));
@@ -100,11 +120,11 @@ export default (props) => {
 
             const startTickDate = new Date(minTime);
             startTickDate.setHours(startTickDate.getHours());
-            startTickDate.setMinutes(0);
+            startTickDate.setMinutes(Math.floor((startTickDate.getMinutes()-1) / 15)*15);
             startTickDate.setSeconds(0);
             const endTickDate = new Date(maxTime);
-            endTickDate.setHours(endTickDate.getHours() + 1);
-            endTickDate.setMinutes(0);
+            endTickDate.setHours(endTickDate.getHours());
+            endTickDate.setMinutes(Math.ceil((startTickDate.getMinutes() + 1) / 15)*15);
             endTickDate.setSeconds(0);
 
             const numTicks =
@@ -129,8 +149,7 @@ export default (props) => {
                 iconSize={0}
                 payload={[
                     {value: 'Resolved', id: 'ID01', color: "var(--resolved)"},
-                    {value: 'Unresolved', type: 'line', id: 'ID01', color: "var(--unresolved)"},
-                    {value: 'Frozen', type: 'line', id: 'ID01', color: "var(--frozen)"}
+                    {value: 'Frozen', id: 'ID01', color: "var(--frozen)"}
                 ]}
             />
             <CartesianGrid stroke="#ccc" strokeDasharray="5 5"/>
@@ -148,6 +167,7 @@ export default (props) => {
                 type="category"
                 dataKey="firstInit"
                 allowDuplicatedCategory={false}
+                style={{ fill: 'black' }}
             />
             <Tooltip
                 labelFormatter={() => undefined}
@@ -200,32 +220,19 @@ export default (props) => {
     );
     return (
         <div className="bg-white p-3 shadow-sm">
-            <h4 className="mb-4">
-                Questions Answered
-                <br/>
-                <small className="text-muted">
-                    Records when a TA has finished resolving questions
-                </small>
-            </h4>
-            <div className="mb-2">
-                <div>
-                    <form>
-                        <div>
-                            <label className="form-label me-2 fw-bold">Date</label>
-                            <input
-                                type="date"
-                                className="form-control w-auto"
-                                onChange={(e) => setDate(new Date(e.target.value))}
-                                value={date.toISOString().slice(0, 10)}
-                            />
-                        </div>
-                    </form>
-                </div>
-            </div>
-
+            <a
+                href="#"
+                data-bs-toggle="popover"
+                title="Information"
+                data-bs-content="Logs what action each TA has taken on a question within around 2 hours."
+                onClick={e => e.preventDefault()}>
+                <i
+                    className="fas fa-info-circle fa-lg"
+                ></i>
+            </a>
             {isLoading || isFetching ? (
                 <div
-                    style={{height: "470px"}}
+                    style={{height }}
                     className="d-flex justify-content-center align-items-center w-100 bg-white"
                 >
                     <div className="spinner-border" role="status">
@@ -234,13 +241,13 @@ export default (props) => {
                 </div>
             ) : question_states?.length > 0 ? (
                 <div className="">
-                    <ResponsiveContainer height={470} width="100%">
+                    <ResponsiveContainer height={height} width="100%">
                         {renderLineChart}
                     </ResponsiveContainer>
                 </div>
             ) : (
-                <div className="alert bg-white" style={{height: "470px"}}>
-                    <span>No data yet!</span>
+                <div className="d-flex justify-content-center align-items-center w-100" style={{height}}>
+                    <h2>No data yet</h2>
                 </div>
             )}
         </div>

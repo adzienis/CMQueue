@@ -32,11 +32,18 @@ export default (props) => {
       {notifications?.map((v) => {
         let title = null;
         let body = null;
+        let className = ''
 
         switch (v.params.type) {
           case "QuestionState":
             title = v.params.title;
             body = v.params.why;
+            className = 'bg-frozen text-light'
+            break;
+          case "Success":
+            title = v.params.title;
+            body = v.params.body;
+            className = 'bg-success text-white';
             break;
         }
 
@@ -48,14 +55,14 @@ export default (props) => {
             aria-live="assertive"
             aria-atomic="true"
           >
-            <div className="toast-header">
+            <div className={`toast-header ${className}`}>
               <strong className="me-auto">{title}</strong>
-              <small className="text-muted">
+              <small className={className.includes("text-light") ? 'text-light' : 'text-muted' }>
                 {new Date(v.created_at).toLocaleTimeString()}
               </small>
               <button
                 type="button"
-                className="btn-close"
+                className={`btn-close ${className.includes("text-light") ? 'bg-light' : ''}`}
                 data-bs-dismiss="toast"
                 aria-label="Close"
                 onClick={(e) => {

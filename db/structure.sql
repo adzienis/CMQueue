@@ -166,40 +166,6 @@ ALTER SEQUENCE public.enrollments_id_seq OWNED BY public.enrollments.id;
 
 
 --
--- Name: messages; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.messages (
-    id bigint NOT NULL,
-    question_state_id bigint,
-    description text DEFAULT ''::text,
-    seen boolean DEFAULT false,
-    created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL,
-    enrollment_id bigint NOT NULL
-);
-
-
---
--- Name: messages_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.messages_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: messages_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.messages_id_seq OWNED BY public.messages.id;
-
-
---
 -- Name: notifications; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -585,9 +551,7 @@ CREATE TABLE public.users (
     family_name text,
     email text,
     created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL,
-    provider character varying,
-    uid character varying
+    updated_at timestamp(6) without time zone NOT NULL
 );
 
 
@@ -641,13 +605,6 @@ ALTER TABLE ONLY public.courses ALTER COLUMN id SET DEFAULT nextval('public.cour
 --
 
 ALTER TABLE ONLY public.enrollments ALTER COLUMN id SET DEFAULT nextval('public.enrollments_id_seq'::regclass);
-
-
---
--- Name: messages id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.messages ALTER COLUMN id SET DEFAULT nextval('public.messages_id_seq'::regclass);
 
 
 --
@@ -757,14 +714,6 @@ ALTER TABLE ONLY public.courses
 
 ALTER TABLE ONLY public.enrollments
     ADD CONSTRAINT enrollments_pkey PRIMARY KEY (id);
-
-
---
--- Name: messages messages_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.messages
-    ADD CONSTRAINT messages_pkey PRIMARY KEY (id);
 
 
 --
@@ -903,20 +852,6 @@ CREATE INDEX index_enrollments_on_semester ON public.enrollments USING btree (se
 --
 
 CREATE INDEX index_enrollments_on_user_id ON public.enrollments USING btree (user_id);
-
-
---
--- Name: index_messages_on_enrollment_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_messages_on_enrollment_id ON public.messages USING btree (enrollment_id);
-
-
---
--- Name: index_messages_on_question_state_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_messages_on_question_state_id ON public.messages USING btree (question_state_id);
 
 
 --
@@ -1185,14 +1120,6 @@ ALTER TABLE ONLY public.courses_questions
 
 
 --
--- Name: messages fk_rails_910e483a6a; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.messages
-    ADD CONSTRAINT fk_rails_910e483a6a FOREIGN KEY (enrollment_id) REFERENCES public.enrollments(id);
-
-
---
 -- Name: questions_tags fk_rails_98659cdfc1; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1206,14 +1133,6 @@ ALTER TABLE ONLY public.questions_tags
 
 ALTER TABLE ONLY public.oauth_access_grants
     ADD CONSTRAINT fk_rails_b4b53e07b8 FOREIGN KEY (application_id) REFERENCES public.oauth_applications(id);
-
-
---
--- Name: messages fk_rails_bb77094c5d; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.messages
-    ADD CONSTRAINT fk_rails_bb77094c5d FOREIGN KEY (question_state_id) REFERENCES public.question_states(id);
 
 
 --
@@ -1272,7 +1191,6 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20210415165206'),
 ('20210415171742'),
 ('20210415174313'),
-('20210417043248'),
 ('20210429033320'),
 ('20210429173311'),
 ('20210523033554'),
@@ -1286,7 +1204,6 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20210627150537'),
 ('20210627202209'),
 ('20210701224331'),
-('20210701224353'),
 ('20210701224457'),
 ('20210703035725');
 

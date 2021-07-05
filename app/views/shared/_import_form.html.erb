@@ -1,0 +1,24 @@
+<% format ||= [] %>
+
+<h5>
+  Format:
+</h5>
+
+<table class="table">
+  <thead>
+  <tr>
+    <% format.each do |f| %>
+      <%= tag.th do %>
+        <%= f.to_s %>
+      <% end %>
+    <% end %>
+  </tr>
+  </thead>
+</table>
+
+<%= form_with url: import_enrollments_url, method: :post do |f| %>
+  <%= f.hidden_field :course_id, value: params[:course_id] %>
+  <%= f.file_field :csv_file %>
+
+  <%= f.submit :Submit %>
+<% end %>

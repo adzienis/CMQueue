@@ -79,7 +79,7 @@ gem 'cancancan', '~> 3.2'
 
 gem 'rolify', '~> 6.0'
 
-gem 'turbo-rails', '~> 0.5.9'
+gem 'turbo-rails', '~> 0.5.9', git: "https://github.com/hotwired/turbo-rails", ref: '4fa9ae3'
 
 gem 'pg', '~> 1.2'
 
@@ -120,3 +120,5 @@ gem "noticed", "~> 1.4"
 gem "sidekiq", "~> 6.2"
 
 gem "solargraph", "~> 0.42.3"
+
+gem "whenever", "~> 1.0"

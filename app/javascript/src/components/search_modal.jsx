@@ -37,6 +37,7 @@ export default (props) => {
   } = useWrappedMutation(
     (course_id) => ({
       course_id,
+      user_id: userId
     }),
     "/api/enrollments",
     {}

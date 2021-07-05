@@ -12,12 +12,15 @@ class Ability
         can :access, :rails_admin
       end
       #can :manage, Message, question_state: { question: { user: { id: user.id } } }
-      #
 
       can :queue, Course
 
       can [:active_tas, :open_status, :read, :search], Course
       can :read, User
+
+      can :enroll_user, User do |u|
+        user.id == u.id
+      end
 
       can :read, Enrollment, Enrollment.joins(:role)
                                           .where("roles.resource_id": Course

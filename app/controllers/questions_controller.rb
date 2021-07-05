@@ -37,8 +37,14 @@ class QuestionsController < ApplicationController
   end
 
   def previous_questions
+    @course = Course.find(params[:course_id]) if params[:course_id]
     @question = Question.find(params[:id])
-    @previous_questions = Question.previous_questions(@question).order('question_states.created_at DESC')
+
+    @questions_ransack = Question.previous_questions(@question).order(:created_at).accessible_by(current_ability).undiscarded
+    @questions_ransack = @questions_ransack.where(course_id: params[:course_id]) if params[:course_id]
+    @questions_ransack = @questions_ransack.ransack(params[:q])
+
+    @pagy, @records = pagy @questions_ransack.result
   end
 
   def edit
@@ -59,7 +65,7 @@ class QuestionsController < ApplicationController
   def update
     @question = Question.find(params[:id])
     @question.update(question_params)
-    @question.tags = (Tag.find(params[:question][:tags])) if params.dig(:question, :tags)
+    @question.tags = (Tag.find(params[:question][:tags])) if params.try(:question, :tags)
 
     respond_to do |format|
       format.html { redirect_to course_questions_path(@question.course) }

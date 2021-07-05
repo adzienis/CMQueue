@@ -1,5 +1,5 @@
 import consumer from "./consumer";
-import queryClient from "../src/components/queryClientFile";
+import queryClient from "../src/utilities/queryClientFile";
 
 export default consumer.subscriptions.create("Noticed::NotificationChannel", {
     connected() {

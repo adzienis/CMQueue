@@ -24,7 +24,7 @@
                 </b>
               </label>
               <% if model_instance.class.columns_hash[col].type == :datetime %>
-                <input type="text" class="form-control" value="<%= "#{model_instance.send(col).to_formatted_s(:short)}" %>">
+                <input type="text" class="form-control" value="<%= "#{model_instance.send(col)&.to_formatted_s(:short)}" %>">
 
                 <% else %>
                 <input type="text" class="form-control" value="<%= "#{model_instance.send(col)}" %>">

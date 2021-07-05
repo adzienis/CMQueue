@@ -17,6 +17,12 @@ class SiteNotification < Noticed::Base
     }
   end
 
+  after_deliver do
+    if params.key? :delay
+      ClearNotificationJob.set(wait: params[:delay].seconds).perform_later(record.id)
+    end
+  end
+
   # deliver_by :email, mailer: "UserMailer"
   # deliver_by :slack
   # deliver_by :custom, class: "MyDeliveryMethod"

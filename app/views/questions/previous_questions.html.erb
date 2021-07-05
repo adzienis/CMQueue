@@ -1,51 +1,41 @@
-<div class="container mt-4">
-  <div class="mt-4 mb-4">
-    <nav class="
-        navbar
-        navbar-expand-lg
-        navbar-light
-        shadow-sm
-        bg-light
-"
-    >
-      <div class="container-fluid justify-content-md-center">
-        <ul class="navbar-nav">
+<h1> Previous Questions </h1>
 
-          <%= content_tag :li,
-                          class: "nav-item" do %>
-            <%= link_to "Back",
-                        "",
-                        class: "nav-link",
-                        onclick: "event.preventDefault(); window.history.back()"
-            %>
-          <% end %>
-        </ul>
-      </div>
-    </nav>
-  </div>
 
-  <h4>
-    Previous Questions
-  </h4>
-  <% if @previous_questions.count == 0 %>
-    <div class="alert alert-warning">
-      No Questions
-    </div>
-  <% end %>
-  <div class="list-group">
-    <% @previous_questions.each do |question| %>
-      <%= link_to question_path(question), class: "text-decoration-none", style: 'color: inherit' do %>
-        <div class="list-group-item">
-          <div>
-            <b>
-              <%= question.question_state.created_at.to_formatted_s(:short) %>
-            </b>
-          </div>
-          <div class="elipsis">
-            <%= question.description %>
-          </div>
-        </div>
-      <% end %>
-    <% end %>
-  </div>
-</div>
+
+<%= turbo_frame_tag :container  do %>
+
+  <%= render partial: "shared/search_form",
+             locals: {
+               records: @records,
+               ransack: @questions_ransack,
+               course: @course,
+               pagy: @pagy,
+               options: {
+                 extra_columns: [{ user: :given_name},{question_state: :state}],
+                 except: [:title, :notes, :user_id, :course_id, :discarded_at, :enrollment_id],
+                 actions: [:download],
+                 other_filters: {
+                   user: User.column_names.excluding("id", "created_at", "updated_at", "provider", "uid"),
+                   question_state: QuestionState.column_names.excluding("created_at", "updated_at", "id", "question_id", "user_id")
+                 }
+               }
+             } %>
+
+<% end if request.headers.key? "Turbo-Frame"  %>
+
+<%= render partial: "shared/search_form",
+           locals: {
+             records: @records,
+             ransack: @questions_ransack,
+             course: @course,
+             pagy: @pagy,
+             options: {
+               extra_columns: [{ user: :given_name},{question_state: :state}],
+               except: [:title, :notes, :user_id, :course_id, :discarded_at, :enrollment_id],
+               actions: [:download],
+               other_filters: {
+                 user: User.column_names.excluding("id", "created_at", "updated_at", "provider", "uid"),
+                 question_state: QuestionState.column_names.excluding("created_at", "updated_at", "id", "question_id", "user_id")
+               }
+             }
+           } unless request.headers.key? "Turbo-Frame" %>

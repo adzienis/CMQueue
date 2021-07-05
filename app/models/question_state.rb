@@ -35,7 +35,7 @@ class QuestionState < ApplicationRecord
 
   #has_many :messages, dependent: :destroy
 
-  delegate :course, to: :question, allow_nil: true
+  has_one :course, through: :question
 
   def self.ransackable_scopes(_auth_object = nil)
     %i[previous_questions]

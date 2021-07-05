@@ -3,6 +3,8 @@
 class Tag < ApplicationRecord
   include Discard::Model
 
+  validates :name, uniqueness: true, presence: true
+
   scope :with_course, ->(course) { where(course_id: course.id) }
 
   belongs_to :course

@@ -2,7 +2,6 @@
 
 class EnrollmentsController < ApplicationController
   def index
-
     @course = Course.find(params[:course_id]) if params[:course_id]
 
     @enrollments_ransack = Enrollment.undiscarded.order(updated_at: :desc)
@@ -17,6 +16,18 @@ class EnrollmentsController < ApplicationController
       format.js { render inline: "window.open('#{URI::HTTP.build(path: "#{request.path}.csv", query: request.query_parameters.to_query, format: :csv)}', '_blank')"}
       format.csv { send_data helpers.to_csv(params[:enrollment].to_unsafe_h, @enrollments_ransack.result, Enrollment), filename: "test.csv" }
     end
+  end
+
+  def import
+    course = Course.find(params[:course_id])
+    CSV.foreach(params[:csv_file], headers: true) do |row|
+      user = User.find_or_create_by!(row.to_hash)
+      user.add_role :student, course
+    end
+
+    SiteNotification.with(type: "Success", body: "Successfully imported file.", title: "Success", delay: 2).deliver(current_user)
+
+    redirect_to request.referer
   end
 
   def download_form

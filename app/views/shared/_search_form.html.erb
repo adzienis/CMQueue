@@ -3,12 +3,15 @@
 <% options[:except] ||= [] %>
 <% options[:actions] ||= [] %>
 <% options[:other_filters] ||= [] %>
+<% options[:format] ||= [] %>
 
 <% session[:default_filter] ||= '' %>
 
 <% session[:default_filter] = request.fullpath unless request.referer.nil? || (URI(request.referer).path == polymorphic_path([@course, records.model])) %>
 
+
 <%= content_tag :div, id: "dropdown-filter", data: {
+  base: request.path,
   except: options[:except],
   columns: {
     root: records.model.column_names,
@@ -25,20 +28,45 @@
     </a>
   </li>
 
-  <%= tag.li class: "nav-item" do %>
+  <% unless request.headers.key? "Turbo-Frame" %>
 
-    <%= link_to new_polymorphic_path([@course, records.model]), class: "nav-link" do %>
-      <i class="fas fa-plus fa-lg me-2"></i>
-      <span> Add a new <%= records.model.name.humanize %> </span>
-    <% end %>
-  <% end if options[:actions].include? :new %>
+    <%= tag.li class: "nav-item" do %>
 
-  <%= tag.li class: "nav-item" do %>
-    <%= link_to polymorphic_path([:download_form, records.model], **request.query_parameters), class: "nav-link" do %>
-      <i class="fas fa-download fa-lg me-2"></i>
-      <span>Export to CSV </span>
-    <% end %>
-  <% end if options[:actions].include? :download %>
+      <%= link_to new_polymorphic_path([@course, records.model]), class: "nav-link" do %>
+        <i class="fas fa-plus fa-lg me-2"></i>
+        <span> Add a new <%= records.model.name.humanize %> </span>
+      <% end %>
+    <% end if options[:actions].include? :new %>
+
+    <%= tag.li class: "nav-item" do %>
+      <%= link_to polymorphic_path([:download_form, records.model], **request.query_parameters), class: "nav-link" do %>
+        <i class="fas fa-download fa-lg me-2"></i>
+        <span>Export to CSV </span>
+      <% end %>
+    <% end if options[:actions].include? :download %>
+
+    <%= tag.li class: "nav-item" do %>
+      <a href="#" onclick="event.preventDefault()" class="nav-link" data-bs-toggle="modal" data-bs-target="#import-modal">
+        <i class="fas fa-upload fa-lg me-2"></i>
+        Import
+      </a>
+
+      <div class="modal fade" id="import-modal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title" id="import-modal-label"> Import <%= records.model.name.humanize %></h4>
+              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+              <%= render partial: "shared/import_form", locals: { format: options[:format] } %>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    <% end if options[:actions].include? :import %>
+  <% end %>
 
 
 </ul>
@@ -56,7 +84,7 @@
               <th style="min-width: 125px">
                 <% if extra.instance_of? Hash %>
                   <%= sort_link(ransack, extra.flatten.join('_')) do %>
-                    <%= "#{extra.flatten[-2].to_s.humanize} #{extra.flatten[-1].to_s.humanize}" %>
+                    <%= "#{flatten_hash(extra)[-2].to_s.humanize} #{flatten_hash(extra)[-1].to_s.humanize}" %>
                   <% end %>
                 <% else %>
                   <%= sort_link(ransack, extra.to_s) %>
@@ -83,7 +111,7 @@
                     Are you sure you want to delete this?
                   </div>
                   <div class="modal-footer">
-                    <%= link_to polymorphic_url([tag], q: { course_id_eq: @course.id }), method: :delete, class: "btn btn-primary" do %>
+                    <%= link_to polymorphic_url([tag]), method: :delete, class: "btn btn-primary" do %>
                       Delete
                     <% end %>
                   </div>

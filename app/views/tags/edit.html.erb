@@ -1,5 +1,5 @@
 <div class="container mt-4">
   <%= render partial: "shared/back_navbar" %>
 
-  <%= render partial: "shared/edit_model", locals: { model_instance: @tag } %>
+  <%= render partial: "shared/edit_model", locals: { model_instance: @tag, except: [ :discarded_at ] } %>
 </div>

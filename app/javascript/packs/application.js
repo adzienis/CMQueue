@@ -4,20 +4,20 @@
 // that code so it'll be compiled.
 
 import Rails from "rails-ujs";
-import "@hotwired/turbo-rails";
+import "@hotwired/turbo";
 import "bootstrap";
 import * as ActiveStorage from "@rails/activestorage";
 import "channels";
-import { Turbo } from "@hotwired/turbo-rails";
+import * as Turbo from "@hotwired/turbo"
 import "controllers";
 import "../src/utilities/register_component";
 
 
 import SearchModal from "../src/components/search_modal";
-import StudentQueueView from "../src/components/studentQueueView";
+import StudentQueueView from "../src/components/StudentQueueView";
 import AddCourseByCode from "../src/components/addCourseByCode";
-import FilterDropdown from "../src/components/filterDropdown";
-import queryClient from "../src/components/queryClientFile";
+import FilterDropdown from "../src/components/FilterDropdown";
+import queryClient from "../src/utilities/queryClientFile";
 import ReactStudentChannel from "../channels/react_student_channel";
 import CourseStatus from "../src/components/CourseStatus";
 import NotificationFeed from "../src/components/NotificationFeed";
@@ -25,9 +25,9 @@ import Prefetcher from "../src/components/Prefetcher";
 import register_component from "../src/utilities/register_component";
 import QuestionAnswererPage from "../src/components/QuestionAnswererPage";
 import QueueInfoPanel from "../src/components/QueueInfoPanel";
-import TAActionPane from "../src/components/taActionPane";
+import TAActionPane from "../src/components/TAActionPane";
 import TALog from "../src/components/TALog";
-import TAQueueView from "../src/components/taQueueView";
+import TAQueueView from "../src/components/TAQueueView";
 import UserSettings from "../src/components/UserSettings";
 
 register_component(AddCourseByCode, "#add-course-by-code");
@@ -65,3 +65,26 @@ document.addEventListener("turbo:before-cache", () => {
     node.classList.remove("show");
   }
 });
+
+
+window.addEventListener('load', function() { initializeTurboFrameEvent() })
+document.addEventListener('turbo:load', function() { initializeTurboFrameEvent() } )
+document.addEventListener('react-component:load', function() { initializeTurboFrameEvent() } )
+
+function initializeTurboFrameEvent() {
+  const turboFrameEvent = new Event('not-turbo:frame-loaded')
+
+  const observer = new MutationObserver(function(mutationList, observer) {
+    document.dispatchEvent(turboFrameEvent)
+  })
+
+  const targetNodes = document.querySelectorAll("turbo-frame")
+  const observerOptions = {
+    childList: true,
+    attributes: false,
+    subtree: true
+  }
+
+  targetNodes.forEach(targetNode => observer.observe(targetNode, observerOptions))
+}
+

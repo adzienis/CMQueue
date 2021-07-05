@@ -28,7 +28,6 @@ class Question < ApplicationRecord
   has_one :course, through: :enrollment
   has_one :user, through: :enrollment
 
-
   #has_many :notifications, as: :recipient
 
   has_many :question_states, dependent: :destroy
@@ -46,21 +45,17 @@ class Question < ApplicationRecord
     joins(:question_state)
       .where('question_states.id = (SELECT MAX(question_states.id)
                                         FROM question_states where question_states.question_id = questions.id)')
-      .where("question_states.state in (#{states.map do |x|
-        QuestionState.states[x]
-      end.join(',')})")
+      .where("question_states.state": states)
   }
 
   scope :previous_questions, lambda { |question = nil|
     q = Question.find_by(id: question)
-    return none unless q
+    return Question.none unless q
 
-    joins(:question_state)
+    joins(:enrollment)
       .where('questions.created_at < ?', q.created_at)
-      .where(user_id: q.user_id)
+      .where("enrollments.user_id": q.enrollment.user_id)
       .where(course_id: q.course_id)
-      .order('questions.created_at DESC')
-      .distinct
   }
 
   after_update do
@@ -82,16 +77,13 @@ class Question < ApplicationRecord
                    'questions']
     }
 
-
     ActionCable.server.broadcast "#{course.id}#ta", {
       invalidate: ['courses', course_id, 'topQuestion']
     }
 
-
     ActionCable.server.broadcast "#{course.id}#instructor", {
       invalidate: ['courses', course_id, 'topQuestion']
     }
-
 
     ActionCable.server.broadcast "#{course.id}#ta", {
       invalidate: ['courses', course_id, 'paginatedQuestions']
@@ -99,7 +91,6 @@ class Question < ApplicationRecord
     ActionCable.server.broadcast "#{course.id}#instructor", {
       invalidate: ['courses', course_id, 'paginatedQuestions']
     }
-
 
     ActionCable.server.broadcast "#{course.id}#ta", {
       invalidate: ['courses', course_id, 'paginatedPastQuestions']
@@ -116,7 +107,6 @@ class Question < ApplicationRecord
     ActionCable.server.broadcast "#{course.id}#instructor", {
       invalidate: ['courses', course_id, 'paginatedQuestions']
     }
-
 
     ActionCable.server.broadcast "#{course.id}#ta", {
       invalidate: ['courses', course_id, 'paginatedPastQuestions']
@@ -163,7 +153,6 @@ class Question < ApplicationRecord
                    'questions']
     }
   end
-
 
   def self.to_csv(results)
     attributes = %w{id user_id course_id created_at updated_at tried description location}

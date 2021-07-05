@@ -5,36 +5,47 @@ module QueueAPI
   class Enrollments < BaseAPI
     helpers Doorkeeper::Grape::Helpers
 
-    namespace 'users/:user_id' do
-      resource :enrollments do
-        get do
-          courses = current_user.courses.with_role params[:role], current_user if params[:role]
-          courses = current_user.courses unless params[:role]
+    resource :users do
+      route_param :user_id do
+        resource :enrollments do
+          get do
+            courses = current_user.courses.with_role params[:role], current_user if params[:role]
+            courses = current_user.courses unless params[:role]
 
-          courses
+            courses
+          end
         end
       end
+
     end
 
     resource :enrollments do
+
+      desc "Enroll a user into a course."
       params do
         optional :code, type: String
         optional :course_id, type: Integer
+        requires :user_id, type: Integer
       end
-      post do
-        error!("Already enrolled in a course", :conflict) and return if current_user.roles.undiscarded.find_by(resource_id: 1)
+      post scopes: [:admin] do
+        user = User.accessible_by(current_ability).find_by(id: params[:user_id])
+
+        error!("User not found", :bad_request) and return unless user
+
+        error!("Unauthorized!", :unauthorized) and return unless authorize! :enroll_user, user
+
         if params[:code]
           ta_course = Course.find_by(ta_code: params[:code])
           instructor_course = Course.find_by(instructor_code: params[:code])
 
           if ta_course
-            current_user.add_role :ta, ta_course
+            user.add_role :ta, ta_course
           elsif instructor_course
-            current_user.add_role :instructor, instructor_course
+            user.add_role :instructor, instructor_course
           end
         else
           course = Course.find(params[:course_id])
-          current_user.add_role :student, course
+          user.add_role :student, course
         end
 
       end

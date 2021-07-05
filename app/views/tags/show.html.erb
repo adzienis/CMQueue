@@ -9,5 +9,5 @@
 
   <%= render partial: "shared/show_model", locals: {
     model_instance: @tag,
-    options: { actions: [:edit, :delete], except: [:course] }
+    options: { actions: [:edit, :delete], except: [:course, :course_id, :discarded_at] }
   } %>

@@ -13,7 +13,7 @@ export default (props) => {
 
   const [openExplain, setOpenExplain] = useState(false);
 
-  const one = useOneShot(() => Turbo.visit(`/courses/${courseId}/`))
+  const one = useOneShot(() => Turbo.visit(`/courses/${courseId}/queue`))
 
   const { data: topQuestion } = useQuery(
     [
@@ -157,7 +157,7 @@ export default (props) => {
               onClick={() => {
                 try {
                   const m = new modal(
-                    document.getElementById("exampleModal"),
+                    document.getElementById("explanationModal"),
                     {}
                   );
                   m.show();
@@ -178,7 +178,7 @@ export default (props) => {
               onClick={() => {
                 try {
                   const m = new modal(
-                    document.getElementById("exampleModal"),
+                    document.getElementById("explanationModal"),
                     {}
                   );
                   m.show();
