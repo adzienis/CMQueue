@@ -6,7 +6,7 @@ module QueueAPI
     helpers Doorkeeper::Grape::Helpers
 
     resource :courses do
-      desc 'Handle the topmost question in the course, by default all tags'
+      desc 'Handle the topmost question in the course, by default all tags.'
       params do
         optional :tags, type: Array[Integer]
         requires :state, type: String
@@ -14,6 +14,9 @@ module QueueAPI
         requires :course_id, type: Integer
       end
       post ':course_id/handleQuestion', scopes: [:admin] do
+
+        error!("Unable to handle question.", :unauthorized) and return if !
+
         top_question = Question.undiscarded
         top_question = Question
                          .joins(:tags)

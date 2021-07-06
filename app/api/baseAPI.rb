@@ -7,11 +7,24 @@ class BaseAPI < Grape::API
     super
 
     subclass.class_eval do
+
+      rescue_from :all
+
+      rescue_from NoMethodError do |e|
+        error!(e, 400)
+      end
+
+      rescue_from CanCan::AccessDenied do |e|
+        error!(e, 400)
+      end
+
       before do
         doorkeeper_authorize! if doorkeeper_token
       end
 
       helpers do
+
+        def authorize_route_for_current_user(action, resource = nil) end
 
         def authorize!(*args)
           ::Ability.new(current_user).authorize!(*args)

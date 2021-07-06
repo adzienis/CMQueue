@@ -11,8 +11,10 @@ module QueueAPI
         resource :notifications do
           desc 'Get all notifications associated with a question.'
           get do
+            notifications = Question.all
+            notifications = notifications.accessible_by(current_ability) if current_user
+            notifications = notifications.find(params[:question_id]).notifications
 
-            notifications = Question.accessible_by(current_ability).find(params[:question_id]).notifications
             notifications
           end
         end
@@ -26,17 +28,21 @@ module QueueAPI
 
           desc 'Get all notifications associated with a user'
           get do
-            notifications = User.accessible_by(current_ability).find(params[:user_id]).notifications
+            notifications = User.all
+            notifications = notifications.accessible_by(current_ability) if current_user
+            notifications = notifications.find(params[:user_id]).notifications
             notifications
           end
         end
-
 
         resource :unread_notifications do
 
           desc 'Get all notifications associated with a user'
           get do
-            notifications = User.accessible_by(current_ability).find(params[:user_id]).notifications.unread
+            notifications = User.all
+            notifications = notifications.accessible_by(current_ability) if current_user
+            notifications = notifications.find(params[:user_id]).notifications.unread
+
             notifications
           end
         end
@@ -46,13 +52,17 @@ module QueueAPI
     namespace :notifications do
       route_param :notification_id do
 
-
         desc 'Mark a notification as read'
         params do
           requires :notification_id, type: Integer
         end
         post 'mark_as_read' do
-          Notification.find(params[:notification_id]).mark_as_read!
+
+          notification = Notification.find(params[:notification_id])
+
+          authorize! :write, notification
+
+          notification.mark_as_read!
         end
       end
     end

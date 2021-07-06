@@ -5,51 +5,76 @@ module QueueAPI
   class Questions < BaseAPI
     helpers Doorkeeper::Grape::Helpers
 
-    namespace 'courses/:course_id' do
-      resource :questions do
-        get 'count', scopes: [:public] do
-          @course = Course.find(params[:course_id]) if params[:course_id]
+    namespace :courses do
 
-          questions = Question.undiscarded
-          questions = questions.where(course_id: params[:course_id]) if params[:course_id]
-          questions = questions.where(enrollment_id: params[:enrollment_id]) if params[:enrollment_id]
-          questions = questions.questions_by_state(JSON.parse(params[:state])) if params[:state]
+      route_param :course_id do
 
-          questions.count
-        end
+        resource :questions do
 
-        get do
-          questions = Question.undiscarded.accessible_by(current_ability).includes(:question_state, :tags, :enrollment, enrollment: :user)
-          questions = questions.where(course_id: params[:course_id]) if params[:course_id]
-          questions = questions.where(enrollment_id: params[:enrollment_id]) if params[:enrollment_id]
-          questions = questions.questions_by_state(JSON.parse(params[:state])) if params[:state]
-
-          if params[:cursor]
-            questions = questions.order('questions.created_at asc').limit(5) if params[:cursor] == '-1'
-            unless params[:cursor] == '-1'
-              questions = questions.where('questions.id >= ?',
-                                          params[:cursor]).order('questions.created_at asc').limit(5)
-            end
-            offset = questions.offset(5).first
-            return {
-              data: questions.as_json(include: [:question_state, :user, :tags]),
-              cursor: offset
+          desc "Get the count of questions."
+          params do
+            optional :course_id, type: Integer
+            optional :enrollment_id, type: Integer
+            group :state, type: Object, coerce_with: ->(val) {
+              Array(JSON.parse(val)).to_json
             }
           end
+          get 'count', scopes: [:public] do
 
-          questions.as_json include: [:question_state, :tags, enrollment: { include: :user }]
-        end
+            questions = Question.undiscarded
+            questions = questions.where(course_id: params[:course_id]) if params[:course_id]
+            questions = questions.where(enrollment_id: params[:enrollment_id]) if params[:enrollment_id]
+            questions = questions.questions_by_state(JSON.parse(params[:state])) if params[:state]
 
-        desc "Get the position of a question based on a query."
-        params do
-          optional :course_id, type: Integer
-        end
-        get 'position' do
-          questions = Question.undiscarded
-          questions = questions.where(course_id: params[:course_id]) if params[:course_id]
-          questions = questions.questions_by_state(JSON.parse(params[:state])) if params[:state]
+            questions.count
+          end
 
-          questions.pluck(:id).index(params[:question_id].to_i)
+          desc "Get all questions."
+          params do
+            optional :enrollment_id, type: Integer
+            optional :state, type: Object, coerce_with: ->(val) {
+              Array(JSON.parse(val)).to_json
+            }
+            optional :cursor, type: Integer
+          end
+          get scope: [:instructor] do
+            questions = Question.undiscarded
+            questions = questions.accessible_by(current_ability) if current_user
+            questions = questions.where(course_id: params[:course_id]) if params[:course_id]
+            questions = questions.where(enrollment_id: params[:enrollment_id]) if params[:enrollment_id]
+            questions = questions.questions_by_state(JSON.parse(params[:state])) if params[:state]
+
+            if params[:cursor]
+              questions = questions.order('questions.created_at asc').limit(5) if params[:cursor] == '-1'
+              unless params[:cursor] == '-1'
+                questions = questions.where('questions.id >= ?',
+                                            params[:cursor]).order('questions.created_at asc').limit(5)
+              end
+              offset = questions.offset(5).first
+              return {
+                data: questions.as_json(include: [:question_state, :user, :tags]),
+                cursor: offset
+              }
+            end
+
+            questions.as_json include: [:question_state, :tags, enrollment: { include: :user }]
+          end
+
+          desc "Get the position of a question based on a query."
+          params do
+            optional :course_id, type: Integer
+            optional :state, type: Object, coerce_with: ->(val) {
+              Array(JSON.parse(val)).to_json
+            }
+          end
+          get 'position' do
+            questions = Question.undiscarded
+            questions = questions.where(course_id: params[:course_id]) if params[:course_id]
+            questions = questions.questions_by_state(JSON.parse(params[:state])) if params[:state]
+
+            questions.pluck(:id).index(params[:question_id].to_i)
+          end
+
         end
       end
     end
@@ -70,20 +95,19 @@ module QueueAPI
           question
         end
 
+        desc "Get question states associated with a question."
         get :question_states do
           QuestionState.where(question_id: params[:question_id])
         end
 
+        desc "Get previous questions of a question"
         get :previousQuestions do
           question = Question.find_by(id: params[:question_id])
 
           error!("User not found", :bad_request) and return unless question
 
-
           questions = Question.undiscarded
           questions = questions.accessible_by(current_ability) if current_user
-
-          questions = questions.where(course_id: params[:course_id]) if params[:course_id]
 
           questions = questions.previous_questions(question).order(:created_at)
 
@@ -92,6 +116,7 @@ module QueueAPI
 
       end
 
+      desc "Create a new question"
       params do
         requires :question, type: Hash do
           requires :enrollment_id, type: Integer
@@ -107,7 +132,12 @@ module QueueAPI
       post scopes: [:write] do
         p = declared(params)
         p["question"]["tags"] = p["tags"].collect { |id| Tag.find_by(id: id) }
-        question = Question.create!(p[:question])
+
+        question = Question.new(p[:question])
+
+        authorize! :manage, question
+
+        question.save!
 
         if !question.valid?
           error!(question.errors.messages.to_json)
@@ -118,19 +148,6 @@ module QueueAPI
         question.tags = Tag.find(params[:tags])
 
         question
-      end
-
-
-      get ':question_id/paginatedPreviousQuestions' do
-        question = Question.find(params[:question_id])
-        paginated_previous_questions = Question
-                                         .left_joins(:question_state)
-                                         .where("question_states.state = #{QuestionState.states['resolved']}")
-                                         .where('questions.created_at < ?', question.created_at)
-                                         .where(enrollment_id: question.enrollment_id)
-                                         .where(course_id: question.course_id)
-                                         .order('question_states.created_at DESC')
-                                         .limit(5)
       end
     end
   end

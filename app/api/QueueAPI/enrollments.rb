@@ -7,6 +7,11 @@ module QueueAPI
 
     resource :users do
       route_param :user_id do
+
+        desc "Gets all the courses associated with the current user."
+        params do
+          requires :role, type: String
+        end
         resource :enrollments do
           get do
             courses = current_user.courses.with_role params[:role], current_user if params[:role]
@@ -28,7 +33,9 @@ module QueueAPI
         requires :user_id, type: Integer
       end
       post scopes: [:admin] do
-        user = User.accessible_by(current_ability).find_by(id: params[:user_id])
+        user = User.all
+        user = user.accessible_by(current_ability) if current_user
+        user = user.find_by(id: params[:user_id])
 
         error!("User not found", :bad_request) and return unless user
 
@@ -53,9 +60,12 @@ module QueueAPI
       params do
         optional :user_id, type: Integer
         optional :course_id, type: Integer
+        optional :most_recent, type: Boolean
       end
-      get do
-        enrollments = Enrollment.undiscarded.accessible_by(current_ability)
+      get scopes: [:read] do
+        enrollments = Enrollment.all.undiscarded
+        enrollments = enrollments.accessible_by(current_ability) if current_user
+
         enrollments = enrollments.where(user_id: params[:user_id]) if params[:user_id]
         enrollments = enrollments.joins(:role).where("roles.resource_id": params[:course_id], "roles.resource_type": "Course") if params[:course_id]
         enrollments = enrollments.order(created_at: :desc).first if params[:most_recent]
@@ -63,15 +73,13 @@ module QueueAPI
         enrollments
       end
 
-      get do
-
-      end
-
+      desc "Delete an enrollment"
       route_param :id do
         delete scopes: [:write] do
-          enrollment = Enrollment.find(params[:id])
+          enrollment = Enrollment.find_by(id: params[:id])
 
-          error!("Unauthorized!", :unauthorized) and return unless authorize! :delete, enrollment
+          error!("Enrollment not found", :bad_request) and return unless enrollment
+          authorize! :delete, enrollment
 
           enrollment.discard
         end
