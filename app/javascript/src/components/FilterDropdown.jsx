@@ -29,6 +29,7 @@ export default (props) => {
                     f[first] = {};
                     f[first]["query"] = last;
                     f[first]["value"] = v;
+                    f[first]["type"] = colNames[first]
                 }
             } else {
                 return {};
@@ -51,6 +52,8 @@ export default (props) => {
             })
             .join("&")
     )
+
+    console.log(Object.keys(colNames))
 
     return (
         <div className="card shadow-sm mb-2" style={{ minHeight: '150px'}}>
@@ -82,7 +85,6 @@ export default (props) => {
                                                     setFilters(filters);
                                                 }}
                                             >
-                                                {" "}
                                                 {k}
                                             </option>
                                         ))}
@@ -90,7 +92,7 @@ export default (props) => {
                                 </div>
                                 <div className="d-flex" style={{minWidth: '100px'}}>
                                     <FormInput
-                                        colType={"text"}
+                                        colType={filters[v]["type"]}
                                         className="form-control w-auto me-2"
                                         onInput={(e) => {
                                             let copy = {...filters};
@@ -154,13 +156,13 @@ export default (props) => {
                             className="dropdown-menu"
                             aria-labelledby="dropdownMenuButton"
                         >
-                            {colNames
-                                .concat(
-                                    Object.keys(associations)
-                                        .map((v) => associations[v].map((x) => `${v}_${x}`))
-                                        .flat()
-                                )
-                                .filter((v) => !except.includes(v))
+                            {Object.keys(colNames)
+                                //.concat(
+                                    //Object.keys(associations)
+                                     //   .map((v) => associations[v].map((x) => `${v}_${x}`))
+                                     //   .flat()
+                                //)
+                                //.filter((v) => !except.includes(v))
                                 .map((v) => (
                                     <li key={v}>
                                         <a
@@ -173,6 +175,7 @@ export default (props) => {
                                                 if (!(v in Object.keys(filters))) {
                                                     copy[v] = {};
                                                     copy[v]["query"] = "eq";
+                                                    copy[v]["type"] = colNames[v];
                                                 }
 
                                                 setFilters(copy);

@@ -14,7 +14,7 @@
   base: request.path,
   except: options[:except],
   columns: {
-    root: records.model.column_names,
+    root: records.model.columns.map{|v| { v.name => v.type}}.inject(:merge),
     associations: options[:other_filters]
   }, queries: params[:q],
   reset: session[:default_filter]

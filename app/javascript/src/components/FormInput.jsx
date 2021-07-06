@@ -1,5 +1,8 @@
 import React, { useMemo } from "react";
 
+import DatePicker from "react-datepicker";
+
+
 export default (props) => {
   const { className, style, colType, value, onInput } = props;
 
@@ -9,13 +12,24 @@ export default (props) => {
     if (colType === "text") return "text";
   }, []);
 
-  return (
-    <input
-      value={value}
-      onInput={onInput}
-      style={style}
-      className={className}
-      type={type}
-    />
-  );
+  switch (type) {
+    case "datetime-local":
+      return <DatePicker
+          className={className}
+          selected={new Date}/>
+      break;
+
+    default:
+
+      return (
+          <input
+              value={value}
+              onInput={onInput}
+              style={style}
+              className={className}
+              type={type}
+          />
+      );
+      break;
+  }
 };
