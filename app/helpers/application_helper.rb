@@ -38,8 +38,10 @@ module ApplicationHelper
     def self.fetch_attribute(instance, hash)
       if hash.nil?
         return nil
-      elsif hash.instance_of?(Symbol)
-        instance.send(hash)
+      elsif instance.is_a?(ActiveRecord::Associations::CollectionProxy) && hash.instance_of?(Symbol)
+        return instance.map{|v| v.send(hash)}.join(', ')
+      elsif hash.instance_of? Symbol
+        return instance.send(hash)
       end
 
       k, v = hash.first
@@ -48,7 +50,8 @@ module ApplicationHelper
       when Hash
         fetch_attribute(instance.send(k), v)
       when Symbol
-        instance.send(k).send(v)
+        result = instance.send(k) #.send(v)
+        fetch_attribute(result, v)
       end
     end
 

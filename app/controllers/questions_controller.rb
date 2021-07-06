@@ -65,7 +65,7 @@ class QuestionsController < ApplicationController
   def update
     @question = Question.find(params[:id])
     @question.update(question_params)
-    @question.tags = (Tag.find(params[:question][:tags])) if params.try(:question, :tags)
+    @question.tags = (Tag.find(params[:question][:tags])) if params.dig(:question, :tags)
 
     respond_to do |format|
       format.html { redirect_to course_questions_path(@question.course) }

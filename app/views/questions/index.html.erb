@@ -7,7 +7,7 @@
              course: @course,
              pagy: @pagy,
              options: {
-               extra_columns: [{ user: :given_name},{question_state: :state}],
+               extra_columns: [{ user: :given_name},{question_state: :state}, { tags: :name }],
                except: [:title, :notes, :user_id, :course_id, :discarded_at, :enrollment_id],
                actions: [:download]#s,
                #other_filters: {
