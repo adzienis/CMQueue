@@ -40,6 +40,11 @@
         <% end %>
         </tbody>
       </table>
+      <% if @applications.count == 0 %>
+        <div class="alert alert-warning">
+          No Applications
+        </div>
+      <% end %>
     </div>
   </div>
 </div>
