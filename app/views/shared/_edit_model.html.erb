@@ -1,5 +1,5 @@
 <div class="card mb-3">
   <div id="<%= model_instance.is_a?(Class) ? model_instance.name : dom_id(model_instance) %>" class="card-body">
-    <%= render partial: "shared/form", locals: { model_instance: model_instance } %>
+    <%= render partial: "shared/edit_form", locals: { model_instance: model_instance } %>
   </div>
 </div>

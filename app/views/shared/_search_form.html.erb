@@ -59,7 +59,7 @@
               <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-              <%= render partial: "shared/import_form", locals: { format: options[:format] } %>
+              <%= render partial: "shared/import_form", locals: { format: options[:format], model: records.model } %>
             </div>
           </div>
         </div>

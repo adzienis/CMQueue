@@ -49,7 +49,7 @@ class CoursesController < ApplicationController
   def create
     @course = Course.create(course_params)
 
-    render turbo_stream:  (turbo_stream.update @course,  partial: "shared/form", locals: { model_instance: @course }) and return unless @course.errors.count == 0
+    render turbo_stream:  (turbo_stream.update @course,  partial: "shared/new_form", locals: { model_instance: @course }) and return unless @course.errors.count == 0
 
     redirect_to courses_path
   end
@@ -62,7 +62,7 @@ class CoursesController < ApplicationController
 
     @course.update(course_params)
 
-    render turbo_stream:  (turbo_stream.update @course,  partial: "shared/form", locals: { model_instance: @course }) and return unless @course.errors.count == 0
+    render turbo_stream:  (turbo_stream.update @course,  partial: "shared/edit_form", locals: { model_instance: @course }) and return unless @course.errors.count == 0
 
     redirect_to course_path(@course)
   end

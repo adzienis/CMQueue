@@ -18,6 +18,16 @@ class TagsController < ApplicationController
     end
   end
 
+  def import
+    CSV.foreach(params[:csv_file], headers: true) do |row|
+      tag = Tag.find_or_create_by!(row.to_hash.to_hash.merge({ course_id: params[:course_id]}))
+    end
+
+    SiteNotification.with(type: "Success", body: "Successfully imported file.", title: "Success", delay: 2).deliver(current_user)
+
+    redirect_to request.referer
+  end
+
   def destroy
     tag = Tag.find_by(id: params[:id])
 

@@ -38,8 +38,6 @@ export default (props) => {
         })()
     );
 
-    //const search = window.location.search ? "?" : "?";
-
     const searchValue =  (
         base +
             '?' +
@@ -62,63 +60,66 @@ export default (props) => {
                 </div>
                 <form>
                     {Object.keys(filters).map((v) => (
-                        <div className="filter-row" key={v}>
+                        <div className="filter-row w-100" style={{ maxWidth: '700px'}} key={v}>
                             <div
-                                className="d-flex justify-content-start align-items-center me-1"
+                                className="d-flex justify-content-start align-items-center me-1 mb-1"
                                 style={{minWidth: '100px'}}
                             >
                                 <b>{v}</b>
                             </div>
-                            <div className="w-auto">
-                                <select className="form-select w-auto" style={{minWidth: '100px'}}>
-                                    {options.map(([k, val]) => (
-                                        <option
-                                            key={`${k}${val}`}
-                                            defaultValue={filters[v]["query"] === val}
-                                            value={val}
-                                            onClick={(e) => {
-                                                filters[v] = filters[v] ? filters[v] : {};
-                                                filters[v]["query"] = e.target.value;
-                                                setFilters(filters);
-                                            }}
-                                        >
-                                            {" "}
-                                            {k}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-                            <div className="d-flex" style={{minWidth: '100px'}}>
-                                <FormInput
-                                    colType={"text"}
-                                    className="form-control w-auto me-2"
-                                    onInput={(e) => {
-                                        let copy = {...filters};
-                                        copy[v]["value"] = e.target.value;
-                                        setFilters(copy);
-                                    }}
-                                    value={filters[v]["value"]}
-                                    style={{minWidth: '80px'}}
-                                />
-                                <div
-                                    style={{
-                                        display: "flex",
-                                        justifyContent: "center",
-                                        alignItems: "center",
-                                    }}
-                                >
-                                    <a
-                                        href=""
-                                        onClick={(e) => {
-                                            e.preventDefault();
+                            <div className="mb-0" style={{ flex: 1}}/>
+                            <div className="d-flex">
+                                <div className="w-auto me-3">
+                                    <select className="form-select" style={{minWidth: '100px'}}>
+                                        {options.map(([k, val]) => (
+                                            <option
+                                                key={`${k}${val}`}
+                                                defaultValue={filters[v]["query"] === val}
+                                                value={val}
+                                                onClick={(e) => {
+                                                    filters[v] = filters[v] ? filters[v] : {};
+                                                    filters[v]["query"] = e.target.value;
+                                                    setFilters(filters);
+                                                }}
+                                            >
+                                                {" "}
+                                                {k}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                                <div className="d-flex" style={{minWidth: '100px'}}>
+                                    <FormInput
+                                        colType={"text"}
+                                        className="form-control w-auto me-2"
+                                        onInput={(e) => {
                                             let copy = {...filters};
-                                            delete copy[v];
-
+                                            copy[v]["value"] = e.target.value;
                                             setFilters(copy);
                                         }}
+                                        value={filters[v]["value"]}
+                                        style={{minWidth: '80px'}}
+                                    />
+                                    <div
+                                        style={{
+                                            display: "flex",
+                                            justifyContent: "center",
+                                            alignItems: "center",
+                                        }}
                                     >
-                                        <i className="fas fa-times fa-lg"></i>
-                                    </a>
+                                        <a
+                                            href=""
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                let copy = {...filters};
+                                                delete copy[v];
+
+                                                setFilters(copy);
+                                            }}
+                                        >
+                                            <i className="fas fa-times fa-lg"></i>
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -129,6 +130,15 @@ export default (props) => {
             <div className="card-footer d-flex align-items-center">
 
                 <div className="d-flex">
+                    <div className="me-1">
+                        <a
+                            role="button"
+                            className="btn btn-primary"
+                            href={searchValue}
+                        >
+                            Filter
+                        </a>
+                    </div>
                     <div className="dropdown me-1">
                         <button
                             className="btn btn-secondary dropdown-toggle"
@@ -174,15 +184,6 @@ export default (props) => {
                                 ))}
                         </ul>
                     </div>
-                </div>
-                <div className="me-1">
-                    <a
-                        role="button"
-                        className="btn btn-primary"
-                        href={searchValue}
-                    >
-                        Filter
-                    </a>
                 </div>
                 <div>
                     <a href={base}>

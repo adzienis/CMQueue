@@ -16,8 +16,8 @@
   </thead>
 </table>
 
-<%= form_with url: import_enrollments_url, method: :post do |f| %>
-  <%= f.hidden_field :course_id, value: params[:course_id] %>
+<%= form_with url: polymorphic_url(model, action: :import), method: :post do |f| %>
+  <%= f.hidden_field :course_id, value: params[:course_id]  %>
   <%= f.file_field :csv_file %>
 
   <%= f.submit :Submit %>

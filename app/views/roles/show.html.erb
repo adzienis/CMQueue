@@ -1,2 +1,17 @@
-<h1>Roles#show</h1>
-<p>Find me in app/views/roles/show.html.erb</p>
+
+<%= render partial: "shared/back_navbar" %>
+
+<h2>
+  <b>
+    <%= Role.name.humanize %>
+  </b>
+</h2>
+
+
+<%= render partial: "shared/show_model",
+           locals: {
+             model_instance: @role,
+             options: {
+               except: [:course, :course_id, :resource],
+             }
+           } %>

@@ -19,6 +19,7 @@ Rails.application.routes.draw do
   resources :tags do
     collection do
       get 'download_form', to: "tags#download_form"
+      post 'import', to: "tags#import"
     end
   end
   resources :question_states
@@ -60,7 +61,7 @@ Rails.application.routes.draw do
     resources :tags
   end
 
-  resources :courses do
+  resources :courses, only: [] do
     resources :questions do
       collection do
         get 'count', to: 'questions#count'

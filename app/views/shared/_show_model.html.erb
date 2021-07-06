@@ -105,6 +105,8 @@
         <div>
           <label class="form-label">
             <b>
+              <% puts "-------------------------------------asd" %>
+              <% puts ass.inspect %>
               <% Array(model_instance.send(ass.name.to_sym)).each do |e| %>
                 <%= link_to "View #{ass.name.to_s.humanize}",
                             polymorphic_path(

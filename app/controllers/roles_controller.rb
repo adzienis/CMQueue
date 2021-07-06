@@ -14,5 +14,6 @@ class RolesController < ApplicationController
   end
 
   def show
+    @course = Course.find(params[:course_id]) if params[:course_id]
   end
 end
