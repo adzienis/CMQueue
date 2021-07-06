@@ -2,19 +2,27 @@ import React, {useState} from "react";
 
 import FormInput from "./FormInput";
 
+
+const options = [
+    ["Contains", "cont"],
+    ["Equals", "eq"],
+    ["Less than", "lt"],
+    ["Greater than", "gt"],
+    ["Less than/equal", "lteq"],
+    ["Greater than/equal", "gteq"],
+];
+
+const options_values = options.map(v => v[1])
+
+
+const ransack_options = options_values.concat(["s"])
+
 export default (props) => {
     const {columns, queries, except, base} = props;
 
     const {root: colNames, associations} = columns;
 
-    const options = [
-        ["Contains", "cont"],
-        ["Equals", "eq"],
-        ["Less than", "lt"],
-        ["Greater than", "gt"],
-        ["Less than/equal", "lteq"],
-        ["Greater than/equal", "gteq"],
-    ];
+    const possible_values = Object.keys(colNames).concat(Object.keys(associations))
 
     const [filters, setFilters] = useState(
         (() => {
@@ -24,16 +32,27 @@ export default (props) => {
 
             if (Object.entries(s)?.length > 0) {
                 for (const [k, v] of Object.entries(s)) {
-                    const split = k.split("_");
-                    const last = split.slice(split.length - 1).join("");
-                    const first = split.slice(0, split.length - 1).join("_");
 
-                    if (last === "s") continue;
+                    // sorting parameter
+                    if (k === "s") continue;
 
-                    f[first] = {};
-                    f[first]["query"] = last;
-                    f[first]["value"] = v;
-                    f[first]["type"] = colNames[first]
+                    const query = options_values
+                        .filter(v => k.includes(v))
+                        .reduce((x,y) => x.length > y.length ? x : y, "")
+
+                    const attribute = possible_values
+                        .filter(v => k.includes(v))
+                        .reduce((x,y) => x.length > y.length ? x : y, "")
+
+                    if(query.length > 0 && attribute.length > 0) {
+                        f[attribute] = {};
+                        f[attribute]["query"] = query;
+                        f[attribute]["value"] = v;
+                        f[attribute]["type"] = colNames[attribute];
+                    } else {
+                        continue;
+                    }
+
                 }
             } else {
                 return {};
@@ -42,6 +61,8 @@ export default (props) => {
             return f;
         })()
     );
+
+    console.log(filters, 'filters')
 
     const searchValue =  (
         base +

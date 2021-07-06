@@ -1,5 +1,6 @@
 class Enrollment < ApplicationRecord
   include Discard::Model
+  include RansackableConcern
 
   enum semester: { Su21: "Su21", F21: "F21" }
 
@@ -56,10 +57,6 @@ class Enrollment < ApplicationRecord
     course = Course.find_by(id: course_id)
     return nil unless course
     undiscarded.with_course(course).order(created_at: :desc).first
-  end
-
-  ransacker :created_at do
-    Arel.sql("date(#{table_name}.created_at::timestamptz at time zone 'est')")
   end
 
   private

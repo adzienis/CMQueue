@@ -2,6 +2,7 @@
 
 class Question < ApplicationRecord
   include Discard::Model
+  include RansackableConcern
 
   validates :location, :description, :tried, :course_id, presence: true
   validate :duplicate_question, on: :create
@@ -22,11 +23,6 @@ class Question < ApplicationRecord
     if state.state == "resolving" || state.state == "unresolved" || state.state == "frozen"
       errors.add(:question, "already exists")
     end
-  end
-
-
-  ransacker :created_at do
-    Arel.sql("date(#{table_name}.created_at::timestamptz at time zone 'est')")
   end
 
 
