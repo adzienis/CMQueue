@@ -124,9 +124,8 @@ export default (props) => {
             startTickDate.setSeconds(0);
             const endTickDate = new Date(maxTime);
             endTickDate.setHours(endTickDate.getHours());
-            endTickDate.setMinutes(Math.ceil((startTickDate.getMinutes() + 1) / 15)*15);
+            endTickDate.setMinutes((Math.ceil((endTickDate.getMinutes()+1) / 15))*15);
             endTickDate.setSeconds(0);
-
             const numTicks =
                 (endTickDate.getTime() - startTickDate.getTime()) / 1000 / 60 / 15;
             const ticksMapped = new Array(Math.ceil(numTicks) + 1)

@@ -2,7 +2,6 @@ import React, {useState} from "react";
 
 import FilterRow from "./FilterRow";
 
-
 const options = [
     ["Contains", "cont"],
     ["Equals", "eq"],
@@ -22,6 +21,10 @@ export default (props) => {
     const possible_values = Object.keys(colNames).concat(Object.keys(associations))
 
     const [filters, setFilters] = useState(
+        /**
+         * Here we initialize parameters from the query string,
+         * and do basic validation for options and attributes.
+         */
         (() => {
             let s = queries || {};
 
