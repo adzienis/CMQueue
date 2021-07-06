@@ -2,7 +2,7 @@
 <% options[:extra_columns] ||= [] %>
 <% options[:except] ||= [] %>
 <% options[:actions] ||= [] %>
-<% options[:other_filters] ||= [] %>
+<% options[:other_filters] ||= {} %>
 <% options[:format] ||= [] %>
 
 <% session[:default_filter] ||= '' %>
@@ -15,7 +15,8 @@
   except: options[:except],
   columns: {
     root: records.model.columns.map{|v| { v.name => v.type}}.inject(:merge),
-    associations: options[:other_filters]
+    associations: options[:other_filters].empty? ? {} :
+                    options[:other_filters].keys.map{|e| options[:other_filters][e].map{|ee| { "#{e}_#{ee}" => e.to_s.classify.constantize.columns_hash[ee].type }}}.flatten.inject(&:merge)
   }, queries: params[:q],
   reset: session[:default_filter]
 }.to_json do %>

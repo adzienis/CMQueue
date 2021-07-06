@@ -40,7 +40,7 @@ class QuestionsController < ApplicationController
     @course = Course.find(params[:course_id]) if params[:course_id]
     @question = Question.find(params[:id])
 
-    @questions_ransack = Question.previous_questions(@question).order(:created_at).accessible_by(current_ability).undiscarded
+    @questions_ransack = Question.previous_questions(@question).order(created_at: :desc).accessible_by(current_ability).undiscarded
     @questions_ransack = @questions_ransack.where(course_id: params[:course_id]) if params[:course_id]
     @questions_ransack = @questions_ransack.ransack(params[:q])
 

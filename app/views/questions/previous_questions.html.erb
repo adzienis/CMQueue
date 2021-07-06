@@ -11,12 +11,13 @@
                course: @course,
                pagy: @pagy,
                options: {
-                 extra_columns: [{ user: :given_name},{question_state: :state}],
+                 extra_columns: [{ user: :given_name},{question_state: :state}, {tags: :name}],
                  except: [:title, :notes, :user_id, :course_id, :discarded_at, :enrollment_id],
                  actions: [:download],
                  other_filters: {
                    user: User.column_names.excluding("id", "created_at", "updated_at", "provider", "uid"),
-                   question_state: QuestionState.column_names.excluding("created_at", "updated_at", "id", "question_id", "user_id")
+                   question_state: QuestionState.column_names.excluding("created_at", "updated_at", "id", "question_id", "user_id"),
+                   tags: Tag.column_names.excluding("created_at", "updated_at", "id", "question_id", "user_id")
                  }
                }
              } %>
@@ -30,7 +31,7 @@
              course: @course,
              pagy: @pagy,
              options: {
-               extra_columns: [{ user: :given_name},{question_state: :state}],
+               extra_columns: [{ user: :given_name},{question_state: :state}, { tags: :name}],
                except: [:title, :notes, :user_id, :course_id, :discarded_at, :enrollment_id],
                actions: [:download],
                other_filters: {

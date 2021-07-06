@@ -181,6 +181,7 @@ export default (props) => {
             />
             {taData.map((v) => (
                 <Scatter
+                    key={v}
                     dataKey="firstInit"
                     data={v.data}
                     shape={(pe) => (

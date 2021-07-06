@@ -84,7 +84,7 @@ export default (props) => {
                 </div>
                 <form>
                     {Object.keys(filters).map((v) => (
-                      <FilterRow attribute={v} filters={filters} setFilters={setFilters} options={options}  />
+                      <FilterRow key={v} attribute={v} filters={filters} setFilters={setFilters} options={options}  />
                     ))}
 
                 </form>
@@ -117,6 +117,7 @@ export default (props) => {
                             aria-labelledby="dropdownMenuButton"
                         >
                             {Object.keys(colNames)
+                                .concat(Object.keys(associations))
                                 //.concat(
                                 //Object.keys(associations)
                                 //   .map((v) => associations[v].map((x) => `${v}_${x}`))

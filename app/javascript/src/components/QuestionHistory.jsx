@@ -37,6 +37,7 @@ export default (props) => {
           </div>
         </div>
       </div>
+
       <button type="button" onClick={e => { e.preventDefault(); e.stopPropagation()}} className="btn btn-secondary position-relative" data-bs-toggle="modal" data-bs-target={`#question_history_${question?.id}`}>
         <span>
         Previous Questions
