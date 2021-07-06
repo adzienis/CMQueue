@@ -58,6 +58,10 @@ class Enrollment < ApplicationRecord
     undiscarded.with_course(course).order(created_at: :desc).first
   end
 
+  ransacker :created_at do
+    Arel.sql("date(#{table_name}.created_at::timestamptz at time zone 'est')")
+  end
+
   private
 
   def self.default_semester

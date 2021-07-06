@@ -24,6 +24,12 @@ class Question < ApplicationRecord
     end
   end
 
+
+  ransacker :created_at do
+    Arel.sql("date(#{table_name}.created_at::timestamptz at time zone 'est')")
+  end
+
+
   belongs_to :enrollment
   has_one :course, through: :enrollment
   has_one :user, through: :enrollment

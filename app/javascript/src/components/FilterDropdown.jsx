@@ -53,8 +53,6 @@ export default (props) => {
             .join("&")
     )
 
-    console.log(Object.keys(colNames))
-
     return (
         <div className="card shadow-sm mb-2" style={{ minHeight: '150px'}}>
             <div className="card-body">
@@ -73,17 +71,22 @@ export default (props) => {
                             <div className="mb-0" style={{ flex: 1}}/>
                             <div className="d-flex">
                                 <div className="w-auto me-3">
-                                    <select className="form-select" style={{minWidth: '100px'}}>
+                                    <select
+                                        defaultValue={filters[v]["query"]}
+                                        className="form-select"
+                                        style={{minWidth: '100px'}}
+                                        onInput={(e) => {
+                                            const copy = {...filters}
+                                            copy[v] = copy[v] ? copy[v] : {};
+                                            copy[v]["query"] = e.target.value;
+                                            setFilters(copy);
+                                        }}
+                                    >
                                         {options.map(([k, val]) => (
                                             <option
                                                 key={`${k}${val}`}
                                                 defaultValue={filters[v]["query"] === val}
                                                 value={val}
-                                                onClick={(e) => {
-                                                    filters[v] = filters[v] ? filters[v] : {};
-                                                    filters[v]["query"] = e.target.value;
-                                                    setFilters(filters);
-                                                }}
                                             >
                                                 {k}
                                             </option>
@@ -92,8 +95,11 @@ export default (props) => {
                                 </div>
                                 <div className="d-flex" style={{minWidth: '100px'}}>
                                     <FormInput
+                                        name={v}
                                         colType={filters[v]["type"]}
                                         className="form-control w-auto me-2"
+                                        filters={filters}
+                                        setFilters={setFilters}
                                         onInput={(e) => {
                                             let copy = {...filters};
                                             copy[v]["value"] = e.target.value;
