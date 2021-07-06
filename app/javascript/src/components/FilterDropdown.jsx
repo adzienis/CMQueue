@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 
-import FormInput from "./FormInput";
+import FilterRow from "./FilterRow";
 
 
 const options = [
@@ -13,9 +13,6 @@ const options = [
 ];
 
 const options_values = options.map(v => v[1])
-
-
-const ransack_options = options_values.concat(["s"])
 
 export default (props) => {
     const {columns, queries, except, base} = props;
@@ -38,13 +35,13 @@ export default (props) => {
 
                     const query = options_values
                         .filter(v => k.includes(v))
-                        .reduce((x,y) => x.length > y.length ? x : y, "")
+                        .reduce((x, y) => x.length > y.length ? x : y, "")
 
                     const attribute = possible_values
                         .filter(v => k.includes(v))
-                        .reduce((x,y) => x.length > y.length ? x : y, "")
+                        .reduce((x, y) => x.length > y.length ? x : y, "")
 
-                    if(query.length > 0 && attribute.length > 0) {
+                    if (query.length > 0 && attribute.length > 0) {
                         f[attribute] = {};
                         f[attribute]["query"] = query;
                         f[attribute]["value"] = v;
@@ -62,11 +59,9 @@ export default (props) => {
         })()
     );
 
-    console.log(filters, 'filters')
-
-    const searchValue =  (
+    const searchValue = (
         base +
-            '?' +
+        '?' +
         Object.entries(filters)
             .map(([k, v]) => {
                 return (
@@ -79,84 +74,14 @@ export default (props) => {
     )
 
     return (
-        <div className="card shadow-sm mb-2" style={{ minHeight: '150px'}}>
+        <div className="card shadow-sm mb-2" style={{minHeight: '150px'}}>
             <div className="card-body">
                 <div className="card-title">
                     <h4>Filters</h4>
                 </div>
                 <form>
                     {Object.keys(filters).map((v) => (
-                        <div className="filter-row w-100" style={{ maxWidth: '700px'}} key={v}>
-                            <div
-                                className="d-flex justify-content-start align-items-center me-1 mb-1"
-                                style={{minWidth: '100px'}}
-                            >
-                                <b>{v}</b>
-                            </div>
-                            <div className="mb-0" style={{ flex: 1}}/>
-                            <div className="d-flex">
-                                <div className="w-auto me-3">
-                                    <select
-                                        defaultValue={filters[v]["query"]}
-                                        className="form-select"
-                                        style={{minWidth: '100px'}}
-                                        onInput={(e) => {
-                                            const copy = {...filters}
-                                            copy[v] = copy[v] ? copy[v] : {};
-                                            copy[v]["query"] = e.target.value;
-                                            setFilters(copy);
-                                        }}
-                                    >
-                                        {options.map(([k, val]) => (
-                                            <option
-                                                key={`${k}${val}`}
-                                                defaultValue={filters[v]["query"] === val}
-                                                value={val}
-                                            >
-                                                {k}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </div>
-                                <div className="d-flex" style={{minWidth: '100px'}}>
-                                    <FormInput
-                                        name={v}
-                                        query={filters[v]["query"]}
-                                        colType={filters[v]["type"]}
-                                        className="form-control w-auto me-2"
-                                        filters={filters}
-                                        setFilters={setFilters}
-                                        onInput={(e) => {
-                                            let copy = {...filters};
-                                            copy[v]["value"] = e.target.value;
-                                            setFilters(copy);
-                                        }}
-                                        value={filters[v]["value"]}
-                                        style={{minWidth: '80px'}}
-                                    />
-                                    <div
-                                        style={{
-                                            display: "flex",
-                                            justifyContent: "center",
-                                            alignItems: "center",
-                                        }}
-                                    >
-                                        <a
-                                            href=""
-                                            onClick={(e) => {
-                                                e.preventDefault();
-                                                let copy = {...filters};
-                                                delete copy[v];
-
-                                                setFilters(copy);
-                                            }}
-                                        >
-                                            <i className="fas fa-times fa-lg"></i>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                      <FilterRow attribute={v} filters={filters} setFilters={setFilters} options={options}  />
                     ))}
 
                 </form>
@@ -190,9 +115,9 @@ export default (props) => {
                         >
                             {Object.keys(colNames)
                                 //.concat(
-                                    //Object.keys(associations)
-                                     //   .map((v) => associations[v].map((x) => `${v}_${x}`))
-                                     //   .flat()
+                                //Object.keys(associations)
+                                //   .map((v) => associations[v].map((x) => `${v}_${x}`))
+                                //   .flat()
                                 //)
                                 //.filter((v) => !except.includes(v))
                                 .map((v) => (

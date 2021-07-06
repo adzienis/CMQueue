@@ -2,6 +2,7 @@
 
 class Tag < ApplicationRecord
   include Discard::Model
+  include RansackableConcern
 
   validates :name, uniqueness: true, presence: true
 
