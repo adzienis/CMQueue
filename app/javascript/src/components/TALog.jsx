@@ -123,7 +123,7 @@ export default (props) => {
             startTickDate.setMinutes(Math.floor((startTickDate.getMinutes()-1) / 15)*15);
             startTickDate.setSeconds(0);
             const endTickDate = new Date(maxTime);
-            endTickDate.setHours(endTickDate.getHours()-1);
+            endTickDate.setHours(endTickDate.getHours());
             endTickDate.setMinutes(Math.ceil((startTickDate.getMinutes() + 1) / 15)*15);
             endTickDate.setSeconds(0);
 

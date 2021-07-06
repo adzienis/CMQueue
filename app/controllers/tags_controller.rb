@@ -11,26 +11,27 @@ class TagsController < ApplicationController
 
     @pagy, @records = pagy @tags_ransack.result
 
-
     respond_to do |format|
       format.html
-      format.js { render inline: "window.open('#{URI::HTTP.build(path: "#{request.path}.csv", query: request.query_parameters.to_query, format: :csv)}', '_blank')"}
+      format.js { render inline: "window.open('#{URI::HTTP.build(path: "#{request.path}.csv", query: request.query_parameters.to_query, format: :csv)}', '_blank')" }
       format.csv { send_data helpers.to_csv(params[:tag].to_unsafe_h, @tags_ransack.result, Tag), filename: "test.csv" }
     end
   end
 
   def destroy
-    tag = Tag.find(params[:id])
+    tag = Tag.find_by(id: params[:id])
 
-    tag&.discard
+    render nothing: true, status: :bad_request unless tag
 
-    redirect_to course_tags_path(tag.course)
+    tag.discard
+
+    redirect_to request.referer
   end
 
   def create
     @tag = Tag.create(create_params)
 
-    render turbo_stream:  (turbo_stream.update @tag,  partial: "shared/form", locals: { model_instance: @tag }) and return unless @tag.errors.count == 0
+    render turbo_stream: (turbo_stream.replace @tag, partial: "shared/edit_form", locals: { model_instance: @tag }) and return unless @tag.errors.count == 0
 
     redirect_to course_tags_path(@tag.course)
   end
@@ -39,8 +40,7 @@ class TagsController < ApplicationController
     @tag = Tag.find(params[:id])
     @tag.update(update_params)
 
-
-    render turbo_stream:  (turbo_stream.update @tag,  partial: "shared/form", locals: { model_instance: @tag }) and return unless @tag.errors.count == 0
+    render turbo_stream: (turbo_stream.update @tag, partial: "shared/edit_model", locals: { model_instance: @tag }) and return unless @tag.errors.count == 0
 
     redirect_to course_tag_path(@tag.course)
   end

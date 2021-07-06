@@ -36,7 +36,7 @@ class User < ApplicationRecord
 
   scope :undiscarded_enrollments, -> {joins(:enrollments).merge(Enrollment.undiscarded)}
 
-  scope :with_course, lambda { |course|
+  scope :enrolled_in_course, lambda { |course|
     joins(:roles).where("roles.resource_id": course.id)
   }
 

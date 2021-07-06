@@ -57,7 +57,6 @@ module QueueAPI
     resource :questions do
 
       route_param :question_id do
-
         desc 'Handle the question.'
         params do
           requires :state, type: String
@@ -74,6 +73,23 @@ module QueueAPI
         get :question_states do
           QuestionState.where(question_id: params[:question_id])
         end
+
+        get :previousQuestions do
+          question = Question.find_by(id: params[:question_id])
+
+          error!("User not found", :bad_request) and return unless question
+
+
+          questions = Question.undiscarded
+          questions = questions.accessible_by(current_ability) if current_user
+
+          questions = questions.where(course_id: params[:course_id]) if params[:course_id]
+
+          questions = questions.previous_questions(question).order(:created_at)
+
+          questions
+        end
+
       end
 
       params do
@@ -103,6 +119,7 @@ module QueueAPI
 
         question
       end
+
 
       get ':question_id/paginatedPreviousQuestions' do
         question = Question.find(params[:question_id])

@@ -77,7 +77,7 @@ module QueueAPI
       end
       get ':course_id/activeTAs', scopes: [:public] do
         course = Course.find(params[:course_id])
-        tas = User.with_course(course).with_any_roles :ta, :instructor
+        tas = User.enrolled_in_course(course).with_any_roles :ta, :instructor
         tas = tas.joins(:enrollments, enrollments: :question_state).where('question_states.created_at > ?',
                                                                           15.minutes.ago).distinct
       end

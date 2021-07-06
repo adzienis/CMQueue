@@ -1,0 +1,41 @@
+<% options ||= {} %>
+<% options[:except] ||= [] %>
+
+<%= simple_form_for model_instance, url: params[:course_id] ? polymorphic_url([Course.find(params[:course_id]), model_instance]) : polymorphic_url(model_instance), defaults: {
+  wrapper_html: {
+    class: "mb-2",
+  },
+  input_html: {
+    class: "mb-2" } } do |f| %>
+  <%= f.hidden_field :course_id, value: params[:course_id] if params[:course_id] %>
+  <% model_instance.class.defined_enums.keys.each do |e| %>
+    <%= f.input e.to_sym, collection: model_instance.class.defined_enums[e] %>
+  <% end %>
+  <% model_instance.class.content_columns
+                   .reject { |v| [:id, :created_at, :updated_at, :discarded_at].include? v.name.to_sym }
+                   .reject { |v| model_instance.class.defined_enums.keys.include? v.name }
+                   .each do |col| %>
+    <b>
+      <%= f.input col.name, html5: true %>
+    </b>
+  <% end %>
+
+  <% [:has_many, :belongs_to]
+       .collect { |s| model_instance.class.reflect_on_all_associations(s) }
+       .flatten
+       .reject { |v| options&.dig(:except)&.include? v.name.to_sym }
+       .reject{|v| [:course].include? v.name }
+       .each do |ass| %>
+    <%= f.association ass.name,
+                      value_method: :id,
+                      label_method: ->(v) {
+                        return v[:name] if v[:name]
+                        return "#{v[:given_name]} #{v[:family_name]}" if v[:given_name] && v[:family_name]
+                        return v[:id] if v[:id]
+                      },
+                      collection: (ass.klass.methods.include?(:with_course) ? ass.klass.accessible_by(current_ability).with_course(Course.find(params[:course_id])) : ass.klass.accessible_by(current_ability))
+    %>
+  <% end %>
+
+  <%= f.submit :Create, class: "btn btn-primary", "data-disable-with": false %>
+<% end %>

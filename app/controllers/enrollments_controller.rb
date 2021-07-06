@@ -13,7 +13,7 @@ class EnrollmentsController < ApplicationController
 
     respond_to do |format|
       format.html
-      format.js { render inline: "window.open('#{URI::HTTP.build(path: "#{request.path}.csv", query: request.query_parameters.to_query, format: :csv)}', '_blank')"}
+      format.js { render inline: "window.open('#{URI::HTTP.build(path: "#{request.path}.csv", query: request.query_parameters.to_query, format: :csv)}', '_blank')" }
       format.csv { send_data helpers.to_csv(params[:enrollment].to_unsafe_h, @enrollments_ransack.result, Enrollment), filename: "test.csv" }
     end
   end
@@ -21,8 +21,8 @@ class EnrollmentsController < ApplicationController
   def import
     course = Course.find(params[:course_id])
     CSV.foreach(params[:csv_file], headers: true) do |row|
-      user = User.find_or_create_by!(row.to_hash)
-      user.add_role :student, course
+      user = User.find_or_create_by(row.to_hash)
+      user.add_role :student, course if user
     end
 
     SiteNotification.with(type: "Success", body: "Successfully imported file.", title: "Success", delay: 2).deliver(current_user)
@@ -39,70 +39,36 @@ class EnrollmentsController < ApplicationController
     @enrollment = Enrollment.find(params[:id])
   end
 
+  def new
+    @course = Course.find(params[:course_id]) if params[:course_id]
+    @enrollment = Enrollment.new
+  end
+
   def create
-    if enrollment_params[:code]
-      ta_course = Course.find_by(ta_code: enrollment_params[:code])
-      instructor_course = Course.find_by(instructor_code: enrollment_params[:code])
+    @course = Course.find_by(id: params[:course_id]) if params[:course_id]
+    @enrollment = Enrollment.create(enrollment_params)
 
-      if ta_course
-        # current_user.courses << ta_course
-        current_user.add_role :ta, ta_course
-        current_user.enrollments.create!(
-          semester_id: Semester.find_by(name: Semester.default_semester,
-                                        course_id: ta_course.id).id, role_id: Role.find_by(resource_id: ta_course.id, name: 'ta').id
-        )
-
-        # Enrollment.find_by(user_id: current_user.id, course_id: ta_course.id).update(role_id: Role.find_by(resource_id: ta_course.id, name: :ta).id)
-        @course = ta_course
-      end
-      if instructor_course
-        # current_user.courses << instructor_course
-        current_user.add_role :instructor, instructor_course
-
-        current_user.enrollments.create!(
-          semester_id: Semester.find_by(name: Semester.default_semester,
-                                        course_id: ta_course.id).id, role_id: Role.find_by(resource_id: ta_course.id, name: 'instructor').id
-        )
-        @course = instructor_course
-      end
-
-      respond_to do |format|
-        format.html
-        format.json do
-          if @course
-            render json: @course
-          else
-            render json: { course: ["Can't find course"] }, status: :unprocessable_entity
-          end
-        end
-      end
-      return
+    if @course
+      redirect_to course_enrollments_path(@course) unless @enrollment.errors.count > 0
     else
-      @course = Course.find(enrollment_params[:course_id])
-      # current_user.courses << @course
-      current_user.add_role :student, @course
-
-      current_user.enrollments.create!(
-        semester_id: Semester.find_by(name: Semester.default_semester,
-                                      course_id: ta_course.id).id, role_id: Role.find_by(resource_id: ta_course.id, name: 'student').id
-      )
+      redirect_to enrollments_path unless @enrollment.errors.count > 0
     end
 
-    if @course&.errors&.any?
-      render json: @course.errors.messages.to_json, status: :unprocessable_entity
-      return
-    end
-    render json: {}
+
+    render turbo_stream:  (turbo_stream.replace @enrollment,  partial: "shared/new_form", locals: { model_instance: @enrollment, options:{ except: [:question_states, :questions]}}) and return unless @enrollment.errors.count == 0
+
   end
 
   def destroy
-    @enrollment = current_user.enrollments.undiscarded.joins(:role).find_by("roles.resource_id": Course.find(params[:id])).discard
+    @enrollment = Enrollment.find_by(id: params[:id]).discard
+
+    redirect_to request.referer
 
   end
 
   private
 
   def enrollment_params
-    params.require(:enrollment).permit(:course_id, :code)
+    params.require(:enrollment).permit(:user_id, :role_id, :semester)
   end
 end
