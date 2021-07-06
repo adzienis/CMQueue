@@ -3,9 +3,9 @@ import ReactDOM from "react-dom";
 import { QueryClientProvider, useQuery } from "react-query";
 
 import queryClient from "../utilities/queryClientFile";
-import useWrappedMutation from "./useWrappedMutation";
+import useWrappedMutation from "../hooks/useWrappedMutation";
 import CourseCard from "./CourseCard";
-import register_component from "../utilities/register_component";
+import register_component from "../utilities/registerComponent";
 
 export default (props) => {
   const { userId } = props;

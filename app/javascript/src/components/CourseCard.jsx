@@ -1,4 +1,4 @@
-import useWrappedMutation from "./useWrappedMutation";
+import useWrappedMutation from "../hooks/useWrappedMutation";
 import React from "react";
 import { useQuery } from "react-query";
 

@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from "react";
-import useWrappedMutation from "./useWrappedMutation";
+import useWrappedMutation from "../hooks/useWrappedMutation";
 import DelayedSpinner from "./DelayedSpinner";
 import useAutoFocusModal from "../hooks/useAutoFocusModal";
 

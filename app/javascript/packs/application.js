@@ -10,19 +10,19 @@ import * as ActiveStorage from "@rails/activestorage";
 import "channels";
 import * as Turbo from "@hotwired/turbo"
 import "controllers";
-import "../src/utilities/register_component";
+import "../src/utilities/registerComponent";
 
 
-import SearchModal from "../src/components/search_modal";
+import SearchModal from "../src/components/SearchModal";
 import StudentQueueView from "../src/components/StudentQueueView";
-import AddCourseByCode from "../src/components/addCourseByCode";
+import AddCourseByCode from "../src/components/AddCourseByCode";
 import FilterDropdown from "../src/components/FilterDropdown";
 import queryClient from "../src/utilities/queryClientFile";
 import ReactStudentChannel from "../channels/react_student_channel";
 import CourseStatus from "../src/components/CourseStatus";
 import NotificationFeed from "../src/components/NotificationFeed";
 import Prefetcher from "../src/components/Prefetcher";
-import register_component from "../src/utilities/register_component";
+import register_component from "../src/utilities/registerComponent";
 import QuestionAnswererPage from "../src/components/QuestionAnswererPage";
 import QueueInfoPanel from "../src/components/QueueInfoPanel";
 import TAActionPane from "../src/components/TAActionPane";

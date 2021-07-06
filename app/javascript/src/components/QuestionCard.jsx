@@ -1,5 +1,5 @@
 import React from "react";
-import useWrappedMutation from "./useWrappedMutation";
+import useWrappedMutation from "../hooks/useWrappedMutation";
 import QuestionHistory from "./QuestionHistory";
 import DelayedSpinner from "./DelayedSpinner";
 import {useQuery} from "react-query";

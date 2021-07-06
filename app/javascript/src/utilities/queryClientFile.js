@@ -1,5 +1,5 @@
 import { QueryClient } from "react-query";
-import defaultQueryFn from "../components/defaultFetchFn";
+import defaultQueryFn from "./defaultFetchFn";
 
 const queryClient = new QueryClient({
   defaultOptions: {

@@ -1,7 +1,7 @@
 import React, {useEffect, useMemo} from "react";
 import {useMutation, useQuery} from "react-query";
 import mutationFn from "../utilities/mutationFn";
-import useWrappedMutation from "./useWrappedMutation";
+import useWrappedMutation from "../hooks/useWrappedMutation";
 import Select from "react-select";
 import {Controller, useForm} from "react-hook-form";
 import DelayedSpinner from "./DelayedSpinner";

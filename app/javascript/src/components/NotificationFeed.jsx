@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { QueryClientProvider, useQuery } from "react-query";
 import ReactDOM from "react-dom";
-import useWrappedMutation from "./useWrappedMutation";
+import useWrappedMutation from "../hooks/useWrappedMutation";
 
 export default (props) => {
   const { userId } = props;

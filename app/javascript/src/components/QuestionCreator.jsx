@@ -1,6 +1,6 @@
 import React from "react";
 import { useQuery } from "react-query";
-import useWrappedMutation from "./useWrappedMutation";
+import useWrappedMutation from "../hooks/useWrappedMutation";
 import Select from "react-select";
 import { Controller, useForm } from "react-hook-form";
 import DelayedSpinner from "./DelayedSpinner";

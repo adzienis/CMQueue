@@ -1,11 +1,8 @@
-// Run this example by adding <%= javascript_pack_tag 'hello_react' %> to the head of your layout file,
-// like app/views/layouts/application.html.erb. All it does is render <div>Hello React</div> at the bottom
-// of the page.
 
 import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 import { QueryClientProvider, useQuery } from "react-query";
-import useWrappedMutation from "./useWrappedMutation";
+import useWrappedMutation from "../hooks/useWrappedMutation";
 import CourseCard from "./CourseCard";
 
 export default (props) => {

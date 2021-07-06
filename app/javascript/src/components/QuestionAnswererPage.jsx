@@ -1,7 +1,7 @@
 import QuestionExplainer from "./QuestionExplainer";
 import React, { useRef, useState } from "react";
 import { QueryClientProvider, useQuery } from "react-query";
-import useWrappedMutation from "./useWrappedMutation";
+import useWrappedMutation from "../hooks/useWrappedMutation";
 import ReactDOM from "react-dom";
 
 import modal from "bootstrap/js/dist/modal";

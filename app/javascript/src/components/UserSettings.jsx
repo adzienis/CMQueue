@@ -1,7 +1,7 @@
 import ReactDOM from "react-dom";
 import {QueryClientProvider, useQuery} from "react-query";
 import React, {useEffect} from "react";
-import useWrappedMutation from "./useWrappedMutation";
+import useWrappedMutation from "../hooks/useWrappedMutation";
 
 const wrappedFetch = async (url, options) => {
     const token = document

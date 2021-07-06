@@ -32,7 +32,7 @@ export default (props) => {
               <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"/>
             </div>
             <div className="modal-body">
-              <turbo-frame id="container" src={`/courses/${question?.course_id}/question_states?q[question_id_eq]=${question?.id}`} />
+              <turbo-frame id="container" src={`/questions/${question?.id}/question_states`} />
               </div>
           </div>
         </div>
