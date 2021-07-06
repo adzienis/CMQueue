@@ -10,6 +10,10 @@ export default (props) => {
     const options = [
         ["Contains", "cont"],
         ["Equals", "eq"],
+        ["Less than", "lt"],
+        ["Greater than", "gt"],
+        ["Less than/equal", "lteq"],
+        ["Greater than/equal", "gteq"],
     ];
 
     const [filters, setFilters] = useState(
@@ -96,6 +100,7 @@ export default (props) => {
                                 <div className="d-flex" style={{minWidth: '100px'}}>
                                     <FormInput
                                         name={v}
+                                        query={filters[v]["query"]}
                                         colType={filters[v]["type"]}
                                         className="form-control w-auto me-2"
                                         filters={filters}

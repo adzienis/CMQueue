@@ -1,7 +1,7 @@
 import React, {useEffect, useMemo, useRef, useState} from "react";
 
 import DatePicker from "react-datepicker";
-import { convertToDate } from "../utilities/dateConverter";
+import {convertToDate} from "../utilities/dateConverter";
 
 
 /**
@@ -11,7 +11,7 @@ import { convertToDate } from "../utilities/dateConverter";
  * @returns {JSX.Element}
  */
 export default (props) => {
-    const {className, style, colType, value, onInput, filters, setFilters, name} = props;
+    const {className, style, colType, value, onInput, filters, setFilters, name, query} = props;
 
     const type = useMemo(() => {
         if (colType === "datetime") return "datetime-local";
@@ -28,19 +28,19 @@ export default (props) => {
         if (colType === 'datetime' && value) {
             let copy = {...filters};
             const d = new Date(value);
-            d.setHours(d.getHours() + d.getTimezoneOffset()/60)
+            d.setHours(d.getHours() + d.getTimezoneOffset() / 60)
             copy[name]["value"] = convertToDate(d);
             setFilters(copy);
             const adjusted_time = new Date(value);
-            adjusted_time.setHours(adjusted_time.getHours() + adjusted_time.getTimezoneOffset() /60)
+            adjusted_time.setHours(adjusted_time.getHours() + adjusted_time.getTimezoneOffset() / 60)
             setDate(adjusted_time)
-        } else if(colType === 'datetime') {
+        } else if (colType === 'datetime') {
 
             let copy = {...filters};
             copy[name]["value"] = convertToDate(date);
             setFilters(copy);
             const adjusted_time = new Date(date);
-            adjusted_time.setHours(adjusted_time.getHours() + adjusted_time.getTimezoneOffset() /60)
+            adjusted_time.setHours(adjusted_time.getHours() + adjusted_time.getTimezoneOffset() / 60)
             setDate(adjusted_time)
         }
     }, [])
