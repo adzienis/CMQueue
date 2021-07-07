@@ -2,8 +2,9 @@
 
 class User < ApplicationRecord
   has_many :enrollments, dependent: :destroy
-
   has_many :notifications, as: :recipient, dependent: :destroy
+
+  alias_attribute :current_state, :question_state
 
   #has_many :access_grants,
   #         class_name: 'Doorkeeper::AccessGrant',

@@ -44,13 +44,12 @@ export default (props) => {
                         .filter(v => k.includes(v))
                         .reduce((x, y) => x.length > y.length ? x : y, "")
 
-                    console.log(k)
-
                     if (query.length > 0 && attribute.length > 0) {
                         f[attribute] = {};
                         f[attribute]["query"] = query;
                         f[attribute]["value"] = v;
-                        f[attribute]["type"] = colNames[attribute] || associations[attribute];
+                        f[attribute]["type"] = colNames[attribute]?.type || associations[attribute]?.type;
+                        f[attribute]["label"] = colNames[attribute]?.label || associations[attribute]?.label;
                     } else {
                         continue;
                     }
@@ -63,6 +62,7 @@ export default (props) => {
             return f;
         })()
     );
+
     const searchValue = (
         base +
         '?' +
@@ -116,12 +116,6 @@ export default (props) => {
                         >
                             {Object.keys(colNames)
                                 .concat(Object.keys(associations))
-                                //.concat(
-                                //Object.keys(associations)
-                                //   .map((v) => associations[v].map((x) => `${v}_${x}`))
-                                //   .flat()
-                                //)
-                                //.filter((v) => !except.includes(v))
                                 .map((v) => (
                                     <li key={v}>
                                         <a
@@ -134,13 +128,14 @@ export default (props) => {
                                                 if (!(v in Object.keys(filters))) {
                                                     copy[v] = {};
                                                     copy[v]["query"] = "eq";
-                                                    copy[v]["type"] = colNames[v] || associations[v];
+                                                    copy[v]["type"] = colNames[v]?.type || associations[v]?.type;
+                                                    copy[v]["label"] = colNames[v]?.label || associations[v]?.label;
                                                 }
 
                                                 setFilters(copy);
                                             }}
                                         >
-                                            {v}
+                                            {colNames[v]?.label || associations[v]?.label}
                                         </a>
                                     </li>
                                 ))}

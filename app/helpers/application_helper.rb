@@ -32,6 +32,12 @@ module ApplicationHelper
   include Pagy::Frontend
   extend ActiveModel::Model
 
+  def self.get_associations(model)
+    [:has_many, :belongs_to, :has_one]
+      .collect { |s| model.reflect_on_all_associations(s) }
+      .flatten
+  end
+
   class SearchClass
     include UrlHelpers
 

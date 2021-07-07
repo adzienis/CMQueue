@@ -14,9 +14,15 @@
   base: request.path,
   except: options[:except],
   columns: {
-    root: records.model.columns.map{|v| { v.name => v.type}}.inject(:merge),
+    root: records.model.columns.map{|v| { v.name => {
+      type: v.type,
+      label: v.name.humanize
+    }}}.inject(:merge),
     associations: options[:other_filters].empty? ? {} :
-                    options[:other_filters].keys.map{|e| options[:other_filters][e].map{|ee| { "#{e}_#{ee}" => e.to_s.classify.constantize.columns_hash[ee].type }}}.flatten.inject(&:merge)
+                    options[:other_filters].keys.map{|e| options[:other_filters][e].map{|ee| { "#{e}_#{ee}" => {
+                      type: ApplicationHelper.get_associations(records.model).map{|v| {v.name => v.klass}}.inject(:merge)[e].columns_hash[ee].type,
+                      label: "#{e.to_s.humanize} #{ee.to_s.humanize}"
+                    }}}}.flatten.inject(&:merge)
   }, queries: params[:q],
   reset: session[:default_filter]
 }.to_json do %>

@@ -33,7 +33,10 @@ class Question < ApplicationRecord
   #has_many :notifications, as: :recipient
 
   has_many :question_states, dependent: :destroy
-  has_one :question_state, -> { order('created_at DESC') }, dependent: :destroy
+
+  # this basically alias question_state
+  has_one :current_state, -> { order('created_at DESC') }, class_name: "QuestionState", dependent: :destroy
+  has_one :question_state, -> { order('created_at DESC') }, class_name: "QuestionState", dependent: :destroy
 
   has_and_belongs_to_many :tags, dependent: :destroy
 

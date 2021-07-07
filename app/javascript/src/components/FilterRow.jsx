@@ -14,6 +14,13 @@ function getOptions(type) {
                     ["After/on", "gteq"],
                 ]
             )
+        case "text":
+            return (
+                [
+                    ["Contains", "cont"],
+                    ["Equals", "eq"]
+                ]
+            )
         default:
             return (
                 [
@@ -33,7 +40,7 @@ export default props => {
 
     const {filters, setFilters, attribute} = props;
 
-    const {query, value, type} = filters[attribute];
+    const {query, value, type, label } = filters[attribute];
 
     const options = getOptions(type)
 
@@ -63,7 +70,7 @@ export default props => {
                 className="d-flex justify-content-start align-items-center me-3 mb-0"
                 style={{minWidth: '100px'}}
             >
-                <b>{attribute}</b>
+                <b>{label}</b>
             </div>
             <div className="w-auto me-3 mb-0">
                 <select
