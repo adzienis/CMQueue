@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class QuestionState < ApplicationRecord
+  include RansackableConcern
   belongs_to :question, touch: true, optional: false
   belongs_to :enrollment
 

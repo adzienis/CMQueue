@@ -44,11 +44,13 @@ export default (props) => {
                         .filter(v => k.includes(v))
                         .reduce((x, y) => x.length > y.length ? x : y, "")
 
+                    console.log(k)
+
                     if (query.length > 0 && attribute.length > 0) {
                         f[attribute] = {};
                         f[attribute]["query"] = query;
                         f[attribute]["value"] = v;
-                        f[attribute]["type"] = colNames[attribute];
+                        f[attribute]["type"] = colNames[attribute] || associations[attribute];
                     } else {
                         continue;
                     }
@@ -61,7 +63,6 @@ export default (props) => {
             return f;
         })()
     );
-
     const searchValue = (
         base +
         '?' +
@@ -82,12 +83,9 @@ export default (props) => {
                 <div className="card-title">
                     <h4>Filters</h4>
                 </div>
-                <form>
-                    {Object.keys(filters).map((v) => (
-                      <FilterRow key={v} attribute={v} filters={filters} setFilters={setFilters} options={options}  />
-                    ))}
-
-                </form>
+                {Object.keys(filters).map((v) => (
+                    <FilterRow key={v} attribute={v} filters={filters} setFilters={setFilters} options={options}/>
+                ))}
             </div>
             <div className="card-footer d-flex align-items-center">
 
@@ -136,7 +134,7 @@ export default (props) => {
                                                 if (!(v in Object.keys(filters))) {
                                                     copy[v] = {};
                                                     copy[v]["query"] = "eq";
-                                                    copy[v]["type"] = colNames[v];
+                                                    copy[v]["type"] = colNames[v] || associations[v];
                                                 }
 
                                                 setFilters(copy);

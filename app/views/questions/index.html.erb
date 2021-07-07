@@ -12,7 +12,7 @@
                actions: [:download],
                other_filters: {
                  user: User.column_names.excluding("id", "created_at", "updated_at", "provider", "uid"),
-                 question_state: QuestionState.column_names.excluding("created_at", "updated_at", "id", "question_id", "user_id")
+                 question_state: QuestionState.column_names.excluding("updated_at", "id", "question_id", "user_id")
                }
              }
            } %>

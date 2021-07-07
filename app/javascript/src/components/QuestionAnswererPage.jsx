@@ -2,7 +2,6 @@ import QuestionExplainer from "./QuestionExplainer";
 import React, { useRef, useState } from "react";
 import { QueryClientProvider, useQuery } from "react-query";
 import useWrappedMutation from "../hooks/useWrappedMutation";
-import ReactDOM from "react-dom";
 
 import modal from "bootstrap/js/dist/modal";
 import useOneShot from "../hooks/useOneShot";
@@ -29,12 +28,6 @@ export default (props) => {
           one()
         }
       },
-    }
-  );
-  const { data: paginatedPreviousQuestions } = useQuery(
-    ["questions", topQuestion?.id, "paginatedPreviousQuestions"],
-    {
-      enabled: !!topQuestion,
     }
   );
 

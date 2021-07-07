@@ -21,7 +21,11 @@ export default (props) => {
 
     const ref = useRef()
 
-    const [date, setDate] = useState(new Date)
+    const [date, setDate] = useState((() => {
+        const d = new Date();
+        d.setHours(d.getHours() - d.getTimezoneOffset() / 60)
+        return d
+    })())
 
 
     useEffect(() => {
@@ -49,7 +53,7 @@ export default (props) => {
         case "datetime-local":
             return <DatePicker
                 ref={ref}
-                className={className}
+                className={`${className} filter-input`}
                 selected={date}
                 onChange={e => {
                     let copy = {...filters};
@@ -66,7 +70,10 @@ export default (props) => {
             return (
                 <input
                     value={value}
-                    onInput={onInput}
+                    onInput={e => {
+                        e.preventDefault();
+                        onInput(e)
+                    }}
                     style={style}
                     className={className}
                     type={type}

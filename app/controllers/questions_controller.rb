@@ -10,7 +10,7 @@ class QuestionsController < ApplicationController
     @questions_ransack = @questions_ransack.where(course_id: params[:course_id]) if params[:course_id]
     @questions_ransack = @questions_ransack.ransack(params[:q])
 
-    @pagy, @records = pagy @questions_ransack.result
+    @pagy, @records = pagy @questions_ransack.result.distinct
 
     respond_to do |format|
       format.html
