@@ -13,6 +13,7 @@ default: &default
 development:
   <<: *default
   database: docker #db/development.sqlite3
+  password: docker
   host: localhost
   password: docker
   port: 5433

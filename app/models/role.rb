@@ -17,5 +17,4 @@ class Role < ApplicationRecord
   #scope :undiscarded, ->{joins(:enrollments).merge(Enrollment.undiscarded)}
 
   scopify
-
 end

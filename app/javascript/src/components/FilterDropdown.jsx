@@ -149,8 +149,6 @@ export default (props) => {
                                             onClick={(e) => {
                                                 e.preventDefault();
                                                 let copy = {...filters};
-
-
                                                 const t = {}
                                                 t["query"] = "eq";
                                                 t["type"] = colNames[v]?.type || associations[v]?.type;
