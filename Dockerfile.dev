@@ -13,13 +13,24 @@ RUN npm install -g yarn
 ENV INSTALL_PATH /opt/app
 RUN mkdir -p $INSTALL_PATH
 
-WORKDIR $INSTALL_PATH
-COPY . .
-RUN rm -rf node_modules vendor
+
+RUN mkdir /usr/src/cache
 RUN gem install rails bundler
-RUN bundle install
+
+WORKDIR /usr/src/cache
+
+COPY package.json .
+COPY yarn.lock .
+COPY Gemfile .
+COPY Gemfile.lock .
+RUN bundle install --path vendor
 RUN yarn install
+
+WORKDIR $INSTALL_PATH
 RUN chown -R user:user /opt/app
+RUN chown -R user:user /usr/src/cache
+
+RUN apt-get install rsync  -y
 
 USER $USER_ID
-CMD bundle exec rails 
+CMD bash -c "rsync -a /usr/src/cache/node_modules $INSTALL_PATH && rsync -a /usr/src/cache/vendor $INSTALL_PATH && bundle exec rails"

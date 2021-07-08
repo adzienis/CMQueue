@@ -1,16 +1,8 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
-  get 'roles/index'
-  get 'roles/create'
-  get 'roles/show'
-  get 'authentications/create'
-  get 'oauth_accounts/create_or_update'
-  get 'oauth_accounts/error'
 
-  get '/swagger', to: 'application#swagger'
-
-  get 'courses/search', to: 'courses#search'
+  get '/api/swagger', to: 'application#swagger', as: :swagger
 
   mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
   mount PgHero::Engine, at: 'pghero'

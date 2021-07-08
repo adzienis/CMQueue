@@ -14,7 +14,7 @@ class Role < ApplicationRecord
             inclusion: { in: Rolify.resource_types },
             allow_nil: true
 
-  scope :undiscarded, ->{joins(:enrollments).merge(Enrollment.undiscarded)}
+  #scope :undiscarded, ->{joins(:enrollments).merge(Enrollment.undiscarded)}
 
   scopify
 

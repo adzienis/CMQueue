@@ -9,12 +9,12 @@ default: &default
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
   timeout: 5000
   username: docker
-  password: docker
 
 development:
   <<: *default
   database: docker #db/development.sqlite3
   host: localhost
+  password: docker
   port: 5433
 
 # Warning: The database defined as "test" will be erased and
@@ -23,11 +23,13 @@ development:
 test:
   <<: *default
   database: docker #db/production.sqlite3
+  password: docker
   host: localhost
   port: 5435
 
 production:
   <<: *default
   database: docker #db/production.sqlite3
-  host: localhost
-  port: 5434
+  host: db
+  user: docker
+  db: docker

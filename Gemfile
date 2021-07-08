@@ -77,7 +77,7 @@ gem 'cable_ready', '~> 4.5'
 
 gem 'cancancan', '~> 3.2'
 
-gem 'rolify', '~> 6.0'
+gem 'rolify', '~> 6.0', git: 'https://github.com/adzienis/rolify', branch: "master"
 
 gem 'turbo-rails', '~> 0.5.9', git: "https://github.com/hotwired/turbo-rails", ref: '4fa9ae3'
 
