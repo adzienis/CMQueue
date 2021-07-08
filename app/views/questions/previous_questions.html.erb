@@ -16,8 +16,7 @@
                  actions: [:download],
                  other_filters: {
                    user: User.column_names.excluding("id", "created_at", "updated_at", "provider", "uid"),
-                   question_state: QuestionState.column_names.excluding("created_at", "updated_at", "id", "question_id", "user_id"),
-                   tags: Tag.column_names.excluding("created_at", "updated_at", "id", "question_id", "user_id")
+                   current_state: QuestionState.column_names.excluding("created_at", "updated_at", "id", "question_id", "user_id")
                  }
                }
              } %>
@@ -36,7 +35,7 @@
                actions: [:download],
                other_filters: {
                  user: User.column_names.excluding("id", "created_at", "updated_at", "provider", "uid"),
-                 question_state: QuestionState.column_names.excluding("created_at", "updated_at", "id", "question_id", "user_id")
+                 current_states: QuestionState.column_names.excluding("created_at", "updated_at", "id", "question_id", "user_id")
                }
              }
            } unless request.headers.key? "Turbo-Frame" %>

@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/adzienis/rolify
-  revision: 241ac05eba16ca73f74e19d7745bf9a761c7d46b
+  revision: 05a14f6b5f8325030c375c6afaa45762393192da
   branch: master
   specs:
     rolify (6.0.0)
@@ -308,7 +308,7 @@ GEM
     orm_adapter (0.5.0)
     pagy (4.10.1)
     parallel (1.20.1)
-    parser (3.0.1.1)
+    parser (3.0.2.0)
       ast (~> 2.4.1)
     pg (1.2.3)
     pghero (2.8.1)

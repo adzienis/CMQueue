@@ -13,6 +13,12 @@ const options = [
 
 const options_values = options.map(v => v[1])
 
+/**
+ * This component handles the generation of filters for searching a model.
+ *
+ * @param props
+ * @returns {JSX.Element}
+ */
 export default (props) => {
     const {columns, queries, except, base} = props;
 
@@ -44,12 +50,20 @@ export default (props) => {
                         .filter(v => k.includes(v))
                         .reduce((x, y) => x.length > y.length ? x : y, "")
 
+                    const t = {}
+                    t["query"] = query;
+                    t["value"] = v;
+                    t["type"] = colNames[attribute]?.type || associations[attribute]?.type;
+                    t["label"] = colNames[attribute]?.label || associations[attribute]?.label;
+
                     if (query.length > 0 && attribute.length > 0) {
-                        f[attribute] = {};
-                        f[attribute]["query"] = query;
-                        f[attribute]["value"] = v;
-                        f[attribute]["type"] = colNames[attribute]?.type || associations[attribute]?.type;
-                        f[attribute]["label"] = colNames[attribute]?.label || associations[attribute]?.label;
+                        if (f[attribute] instanceof Array) {
+                            f[attribute].push(t)
+                        } else {
+                            f[attribute] = []
+                            f[attribute].push(t)
+                        }
+
                     } else {
                         continue;
                     }
@@ -68,11 +82,13 @@ export default (props) => {
         '?' +
         Object.entries(filters)
             .map(([k, v]) => {
-                return (
-                    `q[${k + "_" + v["query"]}]` +
-                    "=" +
-                    (v["value"] || "")
-                );
+                return v.map(x => {
+                    return (
+                        `q[${k + "_" + x["query"]}]` +
+                        "=" +
+                        (x["value"] || "")
+                    );
+                }).join('&')
             })
             .join("&")
     )
@@ -83,9 +99,19 @@ export default (props) => {
                 <div className="card-title">
                     <h4>Filters</h4>
                 </div>
-                {Object.keys(filters).map((v) => (
-                    <FilterRow key={v} attribute={v} filters={filters} setFilters={setFilters} options={options}/>
-                ))}
+                {Object.keys(filters).map((v) => {
+                    return filters[v].map((x, i) =>
+                        (
+                            <FilterRow
+                                key={x}
+                                idx={i}
+                                attribute={v}
+                                filters={filters}
+                                setFilters={setFilters}
+                                options={options}/>
+                        )
+                    )
+                })}
             </div>
             <div className="card-footer d-flex align-items-center">
 
@@ -125,11 +151,17 @@ export default (props) => {
                                                 e.preventDefault();
                                                 let copy = {...filters};
 
-                                                if (!(v in Object.keys(filters))) {
-                                                    copy[v] = {};
-                                                    copy[v]["query"] = "eq";
-                                                    copy[v]["type"] = colNames[v]?.type || associations[v]?.type;
-                                                    copy[v]["label"] = colNames[v]?.label || associations[v]?.label;
+
+                                                const t = {}
+                                                t["query"] = "eq";
+                                                t["type"] = colNames[v]?.type || associations[v]?.type;
+                                                t["label"] = colNames[v]?.label || associations[v]?.label;
+
+                                                if(copy[v] instanceof Array) {
+                                                    copy[v].push(t)
+                                                } else {
+                                                    copy[v] = []
+                                                    copy[v].push(t)
                                                 }
 
                                                 setFilters(copy);

@@ -38,9 +38,9 @@ function getOptions(type) {
 
 export default props => {
 
-    const {filters, setFilters, attribute} = props;
+    const {filters, setFilters, attribute, idx } = props;
 
-    const {query, value, type, label } = filters[attribute];
+    const {query, value, type, label } = filters[attribute][idx];
 
     const options = getOptions(type)
 
@@ -59,7 +59,7 @@ export default props => {
                 onClick={(e) => {
                     e.preventDefault();
                     let copy = {...filters};
-                    delete copy[attribute];
+                    delete copy[attribute][idx];
 
                     setFilters(copy);
                 }}
@@ -74,20 +74,20 @@ export default props => {
             </div>
             <div className="w-auto me-3 mb-0">
                 <select
-                    defaultValue={filters[attribute]["query"]}
+                    defaultValue={filters[attribute][idx]["query"]}
                     className="form-select rounded-pill"
                     style={{minWidth: '100px'}}
                     onInput={(e) => {
                         const copy = {...filters}
-                        copy[attribute] = copy[attribute] ? copy[attribute] : {};
-                        copy[attribute]["query"] = e.target.value;
+                        copy[attribute][idx] = copy[attribute][idx] ? copy[attribute][idx] : {};
+                        copy[attribute][idx]["query"] = e.target.value;
                         setFilters(copy);
                     }}
                 >
                     {options.map(([k, val]) => (
                         <option
                             key={`${k}${val}`}
-                            defaultValue={filters[attribute]["query"] === val}
+                            defaultValue={filters[attribute][idx]["query"] === val}
                             value={val}
                         >
                             {k}
@@ -97,18 +97,19 @@ export default props => {
             </div>
             <div className="d-flex mb-0" style={{minWidth: '100px'}}>
                 <FormInput
+                    idx={idx}
                     name={attribute}
-                    query={filters[attribute]["query"]}
-                    colType={filters[attribute]["type"]}
+                    query={filters[attribute][idx]["query"]}
+                    colType={filters[attribute][idx]["type"]}
                     className="form-control me-2"
                     filters={filters}
                     setFilters={setFilters}
                     onInput={(e) => {
                         let copy = {...filters};
-                        copy[attribute]["value"] = e.target.value;
+                        copy[attribute][idx]["value"] = e.target.value;
                         setFilters(copy);
                     }}
-                    value={filters[attribute]["value"]}
+                    value={filters[attribute][idx]["value"]}
                 />
             </div>
         </div>

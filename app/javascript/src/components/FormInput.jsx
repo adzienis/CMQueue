@@ -11,7 +11,7 @@ import {convertToDate} from "../utilities/dateConverter";
  * @returns {JSX.Element}
  */
 export default (props) => {
-    const {className, style, colType, value, onInput, filters, setFilters, name, query} = props;
+    const {className, style, colType, value, onInput, filters, setFilters, name, query, idx} = props;
 
     const type = useMemo(() => {
         if (colType === "datetime") return "datetime-local";
@@ -33,7 +33,7 @@ export default (props) => {
             let copy = {...filters};
             const d = new Date(value);
             d.setHours(d.getHours() + d.getTimezoneOffset() / 60)
-            copy[name]["value"] = convertToDate(d);
+            copy[name][idx]["value"] = convertToDate(d);
             setFilters(copy);
             const adjusted_time = new Date(value);
             adjusted_time.setHours(adjusted_time.getHours() + adjusted_time.getTimezoneOffset() / 60)
@@ -41,7 +41,7 @@ export default (props) => {
         } else if (colType === 'datetime') {
 
             let copy = {...filters};
-            copy[name]["value"] = convertToDate(date);
+            copy[name][idx]["value"] = convertToDate(date);
             setFilters(copy);
             const adjusted_time = new Date(date);
             adjusted_time.setHours(adjusted_time.getHours() + adjusted_time.getTimezoneOffset() / 60)
@@ -57,7 +57,7 @@ export default (props) => {
                 selected={date}
                 onChange={e => {
                     let copy = {...filters};
-                    copy[name]["value"] = convertToDate(e);
+                    copy[name][idx]["value"] = convertToDate(e);
                     setFilters(copy);
                     setDate(e)
                 }
