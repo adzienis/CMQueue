@@ -19,10 +19,10 @@
       label: v.name.humanize
     }}}.inject(:merge),
     associations: options[:other_filters].empty? ? {} :
-                    options[:other_filters].keys.map{|e| options[:other_filters][e].map{|ee| { "#{e}_#{ee}" => {
+                    options[:other_filters].keys.map{|e| {e => options[:other_filters][e].map{|ee| { "#{e}_#{ee}" => {
                       type: ApplicationHelper.get_associations(records.model).map{|v| {v.name => v.klass}}.inject(:merge)[e].columns_hash[ee].type,
-                      label: "#{e.to_s.humanize} #{ee.to_s.humanize}"
-                    }}}}.flatten.inject(&:merge)
+                      label: "#{ee.to_s.humanize}"
+                    }}}}}
   }, queries: params[:q],
   reset: session[:default_filter]
 }.to_json do %>
@@ -59,7 +59,7 @@
       </a>
 
       <div class="modal fade" id="import-modal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
           <div class="modal-content">
             <div class="modal-header">
               <h4 class="modal-title" id="import-modal-label"> Import <%= records.model.name.humanize %></h4>

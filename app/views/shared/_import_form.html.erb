@@ -1,12 +1,12 @@
 <% format ||= [] %>
 
 <h5>
-  Format:
+  <b>Format:</b>
 </h5>
 
-<table class="table">
+<table class="table table-bordered table-responsive mb-4">
   <thead>
-  <tr>
+  <tr class="table-primary">
     <% format.each do |f| %>
       <%= tag.th do %>
         <%= f.to_s %>
@@ -14,11 +14,27 @@
     <% end %>
   </tr>
   </thead>
+  <tbody>
+
+  <tr>
+    <% format.each do |f| %>
+      <%= tag.th do %>
+      ...
+      <% end %>
+    <% end %>
+  </tr>
+  </tbody>
 </table>
+
+<hr>
+
+<h5>
+  <b>Select a File</b>
+</h5>
 
 <%= form_with url: polymorphic_url(model, action: :import), method: :post do |f| %>
   <%= f.hidden_field :course_id, value: params[:course_id]  %>
-  <%= f.file_field :csv_file %>
+  <%= f.file_field :csv_file, required: true, class: "form-control mb-3" %>
 
-  <%= f.submit :Submit %>
+  <%= f.submit :Submit, class: "btn btn-primary" %>
 <% end %>

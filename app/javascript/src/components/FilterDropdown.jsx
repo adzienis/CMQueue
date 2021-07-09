@@ -24,6 +24,8 @@ export default (props) => {
 
     const {root: colNames, associations} = columns;
 
+    console.log(columns)
+
     const possible_values = Object.keys(colNames).concat(Object.keys(associations))
 
     const [filters, setFilters] = useState(
@@ -171,42 +173,61 @@ export default (props) => {
                             <li>
                                 <hr className="dropdown-divider"/>
                             </li>
-                            <div className="dropdown dropend">
-                                <a className="dropdown-item dropdown-toggle" href="#" id="dropdown-layouts"
-                                   data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Layouts</a>
-                                <div className="dropdown-menu" aria-labelledby="dropdown-layouts">
-                                    {Object.keys(associations)
-                                        .map((v) => (
-                                            <li key={v}>
-                                                <a
-                                                    href=""
-                                                    className="dropdown-item"
-                                                    onClick={(e) => {
-                                                        e.preventDefault();
-                                                        let copy = {...filters};
+                            {associations
+                                .map((x, i) => {
+
+                                    const association = Object.keys(associations[i])[0];
+                                    const attributes = associations[i][association]
 
 
-                                                        const t = {}
-                                                        t["query"] = "eq";
-                                                        t["type"] = colNames[v]?.type || associations[v]?.type;
-                                                        t["label"] = colNames[v]?.label || associations[v]?.label;
+                                    return (
+                                        <div className="dropdown dropend">
+                                            <a className="dropdown-item dropdown-toggle" href="#" id="dropdown-layouts"
+                                               data-bs-toggle="dropdown" aria-haspopup="true"
+                                               aria-expanded="false">{association}</a>
+                                            <div className="dropdown-menu" aria-labelledby="dropdown-layouts">
 
-                                                        if (copy[v] instanceof Array) {
-                                                            copy[v].push(t)
-                                                        } else {
-                                                            copy[v] = []
-                                                            copy[v].push(t)
-                                                        }
 
-                                                        setFilters(copy);
-                                                    }}
-                                                >
-                                                    {colNames[v]?.label || associations[v]?.label}
-                                                </a>
-                                            </li>
-                                        ))}
-                                </div>
-                            </div>
+                                                {attributes.map(v => {
+
+                                                    const attr = Object.keys(v)[0];
+                                                    const values = Object.values(v)[0]
+
+                                                    return (
+                                                        <li key={attr}>
+                                                            <a
+                                                                href=""
+                                                                className="dropdown-item"
+                                                                onClick={(e) => {
+                                                                    e.preventDefault();
+                                                                    let copy = {...filters};
+
+                                                                    const t = {}
+                                                                    t["query"] = "eq";
+                                                                    t["type"] = values.type;
+                                                                    t["label"] = values.label;
+
+                                                                    if (copy[attr] instanceof Array) {
+                                                                        copy[attr].push(t)
+                                                                    } else {
+                                                                        copy[attr] = []
+                                                                        copy[attr].push(t)
+                                                                    }
+
+                                                                    setFilters(copy);
+                                                                }}
+                                                            >
+                                                                {values.label}
+                                                            </a>
+                                                        </li>
+                                                    )
+                                                })}
+                                            </div>
+                                        </div>
+                                    )
+
+
+                                })}
                         </ul>
                     </div>
                 </div>
@@ -219,3 +240,12 @@ export default (props) => {
         </div>
     );
 };
+
+/*
+
+
+ */
+
+/*
+
+ */
