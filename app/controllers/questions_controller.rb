@@ -6,11 +6,12 @@ class QuestionsController < ApplicationController
   def index
     @course = Course.find(params[:course_id]) if params[:course_id]
 
-    @questions_ransack = @questions.undiscarded.order(updated_at: :desc)
+    @questions_ransack = @questions.undiscarded.order(created_at: :desc)
     @questions_ransack = @questions_ransack.where(course_id: params[:course_id]) if params[:course_id]
-    @questions_ransack = @questions_ransack.ransack(params[:q])
 
-    @pagy, @records = pagy @questions_ransack.result.distinct
+    @questions_ransack = @questions_ransack.joins(:question_states, :user, :tags).includes(:question_states, :user, :tags).ransack(params[:q])
+
+    @pagy, @records = pagy @questions_ransack.result.merge(QuestionState.where(id: QuestionState.select("max(question_states.id)").joins(:question).group("questions.id")))
 
     respond_to do |format|
       format.html

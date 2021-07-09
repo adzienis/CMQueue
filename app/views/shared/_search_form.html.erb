@@ -136,7 +136,7 @@
                   <i class="fas fa-edit me-1"></i>
                 <% end if options[:actions].include?(:edit) and can? :edit, tag %>
                 <%= link_to "" do %>
-                  <i class="fas fa-times" onclick="event.preventDefault()" data-bs-toggle="modal" data-bs-target=<%= "#modal-instance#{tag.id}" %> style="cursor: pointer"></i>
+                  <i class="fas fa-times" onclick="event.preventDefault()" data-bs-toggle="modal" data-bs-target="<%= "#modal-instance#{tag.id}" %>" style="cursor: pointer"></i>
                 <% end  if options[:actions].include?(:destroy) and can? :delete, tag %>
               <% end unless request.headers.key? "Turbo-Frame" %>
               <% options[:extra_columns].each do |extra| %>

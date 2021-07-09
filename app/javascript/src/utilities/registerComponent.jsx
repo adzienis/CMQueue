@@ -1,4 +1,4 @@
-import { QueryClientProvider } from "react-query";
+import {QueryClientProvider} from "react-query";
 import React from "react"
 import ReactDOM from "react-dom";
 
@@ -7,24 +7,29 @@ export default (Component, selector) => {
     document.addEventListener("turbo:load", (e) => {
         const node = document.querySelectorAll(selector);
         if (node.length > 0) {
-          node.forEach((v) => {
-            const data = JSON.parse(v.getAttribute("data"));
-      
-            ReactDOM.render(
-              <QueryClientProvider client={window.queryClient} contextSharing>
-                <Component {...data} />
-              </QueryClientProvider>,
-              v
-            );
-          });
+            node.forEach((v) => {
+                const data = JSON.parse(v.getAttribute("data"));
+
+                ReactDOM.render(
+                    <QueryClientProvider client={window.queryClient} contextSharing>
+                        <Component {...data} />
+                    </QueryClientProvider>,
+                    v
+                );
+            });
+
+            // emit event for when this component is physically in the DOM tree
+            // TODO: possibly guarantee by searching with query selectors?
+            const turboFrameEvent = new Event('react-component:load')
+            document.dispatchEvent(turboFrameEvent)
         }
-      });
+    });
 
     document.addEventListener("turbo:load", e => {
 
         const turboFrameEvent = new Event('react-component:load')
 
-        const observer = new MutationObserver(function(mutationList, observer) {
+        const observer = new MutationObserver(function (mutationList, observer) {
             document.dispatchEvent(turboFrameEvent)
         })
 
@@ -51,6 +56,11 @@ export default (Component, selector) => {
                     v
                 );
             });
+
+            // emit event for when this component is physically in the DOM tree
+            // possibly guarantee by searching with query selectors?
+            const turboFrameEvent = new Event('react-component:load')
+            document.dispatchEvent(turboFrameEvent)
         }
     });
 } 

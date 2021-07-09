@@ -6,7 +6,7 @@ class TagsController < ApplicationController
   def index
     @course = Course.find(params[:course_id]) if params[:course_id]
 
-    @tags = @tags.undiscarded.order(updated_at: :desc).where(course_id: params[:course_id]) if params[:course_id]
+    @tags = @tags.undiscarded.order(created_at: :desc).where(course_id: params[:course_id]) if params[:course_id]
     @tags_ransack = @tags.ransack(params[:q])
 
     @pagy, @records = pagy @tags_ransack.result

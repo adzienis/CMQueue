@@ -141,7 +141,6 @@ export default (props) => {
                             aria-labelledby="dropdownMenuButton"
                         >
                             {Object.keys(colNames)
-                                .concat(Object.keys(associations))
                                 .map((v) => (
                                     <li key={v}>
                                         <a
@@ -157,7 +156,7 @@ export default (props) => {
                                                 t["type"] = colNames[v]?.type || associations[v]?.type;
                                                 t["label"] = colNames[v]?.label || associations[v]?.label;
 
-                                                if(copy[v] instanceof Array) {
+                                                if (copy[v] instanceof Array) {
                                                     copy[v].push(t)
                                                 } else {
                                                     copy[v] = []
@@ -171,6 +170,45 @@ export default (props) => {
                                         </a>
                                     </li>
                                 ))}
+                            <li>
+                                <hr className="dropdown-divider"/>
+                            </li>
+                            <div className="dropdown dropend">
+                                <a className="dropdown-item dropdown-toggle" href="#" id="dropdown-layouts"
+                                   data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Layouts</a>
+                                <div className="dropdown-menu" aria-labelledby="dropdown-layouts">
+                                    {Object.keys(associations)
+                                        .map((v) => (
+                                            <li key={v}>
+                                                <a
+                                                    href=""
+                                                    className="dropdown-item"
+                                                    onClick={(e) => {
+                                                        e.preventDefault();
+                                                        let copy = {...filters};
+
+
+                                                        const t = {}
+                                                        t["query"] = "eq";
+                                                        t["type"] = colNames[v]?.type || associations[v]?.type;
+                                                        t["label"] = colNames[v]?.label || associations[v]?.label;
+
+                                                        if (copy[v] instanceof Array) {
+                                                            copy[v].push(t)
+                                                        } else {
+                                                            copy[v] = []
+                                                            copy[v].push(t)
+                                                        }
+
+                                                        setFilters(copy);
+                                                    }}
+                                                >
+                                                    {colNames[v]?.label || associations[v]?.label}
+                                                </a>
+                                            </li>
+                                        ))}
+                                </div>
+                            </div>
                         </ul>
                     </div>
                 </div>

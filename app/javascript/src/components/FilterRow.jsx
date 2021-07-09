@@ -95,6 +95,8 @@ export default props => {
                     ))}
                 </select>
             </div>
+
+
             <div className="d-flex mb-0" style={{minWidth: '100px'}}>
                 <FormInput
                     idx={idx}
