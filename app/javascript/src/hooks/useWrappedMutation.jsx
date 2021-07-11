@@ -32,7 +32,7 @@ export default function useWrappedMutation(
 
       if (!resp.ok) {
         const json = await resp.json();
-        throw JSON.stringify(json?.error);
+        throw JSON.stringify(json);
       }
 
       return await resp.json();

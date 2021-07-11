@@ -17,7 +17,7 @@ class Question < ApplicationRecord
   end
 
   def has_at_least_one_tag
-    if question_tags.length == 0
+    if tags.length == 0
       errors.add(:tags, "must have at least one.")
     end
   end
@@ -45,10 +45,7 @@ class Question < ApplicationRecord
   has_one :current_state, -> { order('created_at DESC') }, class_name: "QuestionState", dependent: :destroy
   has_one :question_state, -> { order('created_at DESC') }, class_name: "QuestionState", dependent: :destroy
 
-  has_many :question_tags
-  has_many :tags, dependent: :destroy, through: :question_tags
-
-  accepts_nested_attributes_for :question_tags
+  has_and_belongs_to_many :tags, dependent: :destroy
 
 
   def self.ransackable_scopes(_auth_object = nil)

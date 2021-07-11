@@ -6,7 +6,7 @@ export const SelectField = ({options, field, form, isMulti}) => (
         isMulti={isMulti}
         options={options}
         name={field.name}
-        value={options ? options.find(option => option.value === field.value) : ''}
+        value={isMulti ? options?.filter(option => field?.value?.includes(option.value)) : ''}
         onChange={(option) => form.setFieldValue(field.name, isMulti ? option.map(v => v.value) : option.value)
         }
         onBlur={field.onBlur}

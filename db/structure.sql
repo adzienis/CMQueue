@@ -380,38 +380,6 @@ ALTER SEQUENCE public.question_states_id_seq OWNED BY public.question_states.id;
 
 
 --
--- Name: question_tags; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.question_tags (
-    id bigint NOT NULL,
-    question_id bigint,
-    tag_id bigint,
-    created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
-);
-
-
---
--- Name: question_tags_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.question_tags_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: question_tags_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.question_tags_id_seq OWNED BY public.question_tags.id;
-
-
---
 -- Name: questions; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -447,6 +415,38 @@ CREATE SEQUENCE public.questions_id_seq
 --
 
 ALTER SEQUENCE public.questions_id_seq OWNED BY public.questions.id;
+
+
+--
+-- Name: questions_tags; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.questions_tags (
+    id bigint NOT NULL,
+    question_id bigint,
+    tag_id bigint,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: questions_tags_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.questions_tags_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: questions_tags_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.questions_tags_id_seq OWNED BY public.questions_tags.id;
 
 
 --
@@ -670,17 +670,17 @@ ALTER TABLE ONLY public.question_states ALTER COLUMN id SET DEFAULT nextval('pub
 
 
 --
--- Name: question_tags id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.question_tags ALTER COLUMN id SET DEFAULT nextval('public.question_tags_id_seq'::regclass);
-
-
---
 -- Name: questions id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.questions ALTER COLUMN id SET DEFAULT nextval('public.questions_id_seq'::regclass);
+
+
+--
+-- Name: questions_tags id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.questions_tags ALTER COLUMN id SET DEFAULT nextval('public.questions_tags_id_seq'::regclass);
 
 
 --
@@ -792,19 +792,19 @@ ALTER TABLE ONLY public.question_states
 
 
 --
--- Name: question_tags question_tags_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.question_tags
-    ADD CONSTRAINT question_tags_pkey PRIMARY KEY (id);
-
-
---
 -- Name: questions questions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.questions
     ADD CONSTRAINT questions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: questions_tags questions_tags_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.questions_tags
+    ADD CONSTRAINT questions_tags_pkey PRIMARY KEY (id);
 
 
 --
@@ -988,20 +988,6 @@ CREATE INDEX index_question_states_on_question_id ON public.question_states USIN
 
 
 --
--- Name: index_question_tags_on_question_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_question_tags_on_question_id ON public.question_tags USING btree (question_id);
-
-
---
--- Name: index_question_tags_on_tag_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_question_tags_on_tag_id ON public.question_tags USING btree (tag_id);
-
-
---
 -- Name: index_questions_on_course_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1020,6 +1006,20 @@ CREATE INDEX index_questions_on_discarded_at ON public.questions USING btree (di
 --
 
 CREATE INDEX index_questions_on_enrollment_id ON public.questions USING btree (enrollment_id);
+
+
+--
+-- Name: index_questions_tags_on_question_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_questions_tags_on_question_id ON public.questions_tags USING btree (question_id);
+
+
+--
+-- Name: index_questions_tags_on_tag_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_questions_tags_on_tag_id ON public.questions_tags USING btree (tag_id);
 
 
 --
@@ -1123,11 +1123,11 @@ ALTER TABLE ONLY public.question_states
 
 
 --
--- Name: question_tags fk_rails_38e4cf053b; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: questions_tags fk_rails_3fd077fb33; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.question_tags
-    ADD CONSTRAINT fk_rails_38e4cf053b FOREIGN KEY (tag_id) REFERENCES public.tags(id);
+ALTER TABLE ONLY public.questions_tags
+    ADD CONSTRAINT fk_rails_3fd077fb33 FOREIGN KEY (question_id) REFERENCES public.questions(id);
 
 
 --
@@ -1152,6 +1152,14 @@ ALTER TABLE ONLY public.oauth_access_tokens
 
 ALTER TABLE ONLY public.courses_questions
     ADD CONSTRAINT fk_rails_8afe15e6d2 FOREIGN KEY (question_id) REFERENCES public.questions(id);
+
+
+--
+-- Name: questions_tags fk_rails_98659cdfc1; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.questions_tags
+    ADD CONSTRAINT fk_rails_98659cdfc1 FOREIGN KEY (tag_id) REFERENCES public.tags(id);
 
 
 --
@@ -1184,14 +1192,6 @@ ALTER TABLE ONLY public.questions
 
 ALTER TABLE ONLY public.enrollments
     ADD CONSTRAINT fk_rails_d1e7d10c0a FOREIGN KEY (role_id) REFERENCES public.roles(id);
-
-
---
--- Name: question_tags fk_rails_e6a38f5c87; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.question_tags
-    ADD CONSTRAINT fk_rails_e6a38f5c87 FOREIGN KEY (question_id) REFERENCES public.questions(id);
 
 
 --

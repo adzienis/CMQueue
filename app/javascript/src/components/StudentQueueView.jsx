@@ -46,12 +46,6 @@ export default (props) => {
   }
 
   return (
-    <>
-      {question ? (
-        <QuestionWaitingModal courseId={courseId} userId={userId} enrollmentId={enrollmentId}  />
-      ) : (
         <QuestionCreator courseId={courseId} userId={userId} enrollmentId={enrollmentId} />
-      )}
-    </>
   );
 };

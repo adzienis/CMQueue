@@ -1,11 +1,12 @@
-import React from "react";
-import {useQuery} from "react-query";
+import React, {useRef} from "react";
+import {useMutation, useQuery} from "react-query";
 import useWrappedMutation from "../hooks/useWrappedMutation";
-import Select from "react-select";
-import {Controller, useForm} from "react-hook-form";
-import DelayedSpinner from "./DelayedSpinner";
+import {useForm} from "react-hook-form";
 import {ErrorMessage, Field, Form, Formik} from 'formik';
 import {SelectField} from "./SelectField";
+import mutationFn from "../utilities/mutationFn";
+import DelayedSpinner from "./DelayedSpinner";
+import ServerError from "./ServerError";
 
 export default (props) => {
     const {userId, courseId, enrollmentId} = props;
@@ -15,6 +16,8 @@ export default (props) => {
         parseInt(courseId, 10),
         "tags",
     ]);
+
+    const formRef = useRef()
 
 
     const {
@@ -58,13 +61,47 @@ export default (props) => {
                 location: data.location,
                 enrollment_id: enrollmentId,
                 course_id: courseId,
-                question_tags_attributes: data.tags.map(v => ({
-                    tag_id: v
-                })),
-            }
+            },
+            tags: data.tags
         }),
         "/api/questions"
     );
+
+    const {mutateAsync: updateQuestion, isLoading: updatedLoading} =
+        useWrappedMutation(
+            (data) => ({
+                question: {
+                    description: data.description,
+                    tried: data.tried,
+                    location: data.location,
+                },
+                tags: data.tags,
+            }),
+            `/api/questions/${question?.id}`,
+            {
+                method: "PATCH",
+            }
+        );
+
+    const {mutateAsync: unfreeze} = useWrappedMutation(
+        () => ({
+            question_state: {
+                state: "unresolved",
+                user_id: userId,
+                question_id: question.id,
+            },
+        }),
+        "/api/question_states"
+    );
+
+
+    const {mutateAsync: deleteQuestion, isLoading: deleteLoading} = useMutation(
+        () =>
+            mutationFn(`/questions/${question?.id}`, {
+                method: "DELETE",
+            })
+    );
+
 
     const options = queues
         ?.filter((v) => !v.archived)
@@ -73,15 +110,18 @@ export default (props) => {
             label: v.name,
         }))
 
+    console.log(question)
+
     return (
         <div className="card shadow-sm">
             <div className="card-body">
                 <Formik
+                    innerRef={formRef}
                     initialValues={{
                         description: question?.description,
                         tried: question?.tried,
                         location: question?.location,
-                        tags: question?.tags
+                        tags: question?.tags.map(v => v.id)
                     }}
                     validate={values => {
                         const {description, tried, location, tags} = values;
@@ -100,7 +140,11 @@ export default (props) => {
                     }}
                     onSubmit={async (values, {setSubmitting, setErrors}) => {
                         try {
-                            const out = await createQuestion(values)
+                            if (question) {
+                                const out = await updateQuestion(values)
+                            } else {
+                                const out = await createQuestion(values)
+                            }
                         } catch (e) {
                         }
 
@@ -111,20 +155,14 @@ export default (props) => {
                 >
                     {({isSubmitting}) => (
                         <Form>
-                            <div className="mb-2">
-                                {Object.entries(serverErrors)?.map(([attr, errs]) => (
-                                    <div className="invalid-feedback d-block fw-bold">
-                                        {errs.map(err => `${attr} ${err}`).join(' and ')}
-                                    </div>
-                                ))}
-                            </div>
+                            <ServerError error={serverErrors}/>
                             <ErrorMessage touched name="course" component="div"
                                           className="invalid-feedback d-block fw-bold"/>
                             <div className="mb-1">
                                 <label className="form-label fw-bold">
                                     Description
                                 </label>
-                                <Field type="text" name="description" className="form-control"/>
+                                <Field as="textarea" name="description" className="form-control"/>
                                 <ErrorMessage name="description" component="div"
                                               className="invalid-feedback d-block fw-bold"/>
                             </div>
@@ -132,7 +170,7 @@ export default (props) => {
                                 <label className="form-label fw-bold">
                                     What Have You Tried?
                                 </label>
-                                <Field type="text" name="tried" className="form-control"/>
+                                <Field as="textarea" name="tried" className="form-control"/>
                                 <ErrorMessage name="tried" component="div"
                                               className="invalid-feedback d-block fw-bold"/>
                             </div>
@@ -140,7 +178,7 @@ export default (props) => {
                                 <label className="form-label fw-bold">
                                     Location
                                 </label>
-                                <Field type="text" name="location" className="form-control"/>
+                                <Field as="textarea" name="location" className="form-control"/>
                                 <ErrorMessage name="location" component="div"
                                               className="invalid-feedback d-block fw-bold"/>
                             </div>
@@ -152,9 +190,42 @@ export default (props) => {
                                 <Field name='tags' component={SelectField} options={options} isMulti/>
                                 <ErrorMessage name="tags" component="div" className="invalid-feedback d-block fw-bold"/>
                             </div>
-                            <button type="submit" disabled={isSubmitting} className="btn btn-primary">
-                                Submit
-                            </button>
+                            {
+                                question ? (
+                                    <div>
+                                        <button type="submit"
+                                                disabled={(
+                                                    formRef.current?.values?.tried === question?.tried &&
+                                                    formRef.current?.values?.description === question?.description &&
+                                                    formRef.current?.values?.location === question?.location &&
+                                                    formRef.current?.values?.tags &&
+                                                    formRef.current?.values?.tags?.length === question?.tags.length &&
+                                                    question?.tags
+                                                        ?.map((v) => v.id)
+                                                        .every((v, i) => v === formRef.current?.values?.tags[i]) &&
+                                                    formRef.current?.values?.tags?.every(
+                                                        (v, i) => v === question?.tags?.map((v) => v.id)[i]
+                                                    )
+                                                )}
+                                                className="btn btn-primary me-2">
+                                            Update
+                                        </button>
+                                        <button
+                                            className="btn btn-danger"
+                                            onClick={async (e) => {
+                                                e.preventDefault()
+                                                await deleteQuestion();
+                                            }}
+                                        >
+                                            <DelayedSpinner loading={deleteLoading}>Delete</DelayedSpinner>
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <button type="submit" disabled={isSubmitting} className="btn btn-primary">
+                                        Ask Question
+                                    </button>
+                                )
+                            }
                         </Form>
                     )}
                 </Formik>
