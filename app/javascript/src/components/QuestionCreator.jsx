@@ -1,304 +1,164 @@
 import React from "react";
-import { useQuery } from "react-query";
+import {useQuery} from "react-query";
 import useWrappedMutation from "../hooks/useWrappedMutation";
 import Select from "react-select";
-import { Controller, useForm } from "react-hook-form";
+import {Controller, useForm} from "react-hook-form";
 import DelayedSpinner from "./DelayedSpinner";
+import {ErrorMessage, Field, Form, Formik} from 'formik';
+import {SelectField} from "./SelectField";
 
 export default (props) => {
-  const { userId, courseId, enrollmentId } = props;
+    const {userId, courseId, enrollmentId} = props;
 
-  const { data: queues } = useQuery([
-    "courses",
-    parseInt(courseId, 10),
-    "tags",
-  ]);
+    const {data: queues} = useQuery([
+        "courses",
+        parseInt(courseId, 10),
+        "tags",
+    ]);
 
-  const { data: openStatus } = useQuery([
-    "courses",
-    parseInt(courseId, 10),
-    "open_status",
-  ]);
 
-  const {
-    register,
-    handleSubmit,
-    control,
-    formState: { errors: formErrors },
-  } = useForm();
+    const {
+        data: [question],
+    } = useQuery(
+        [
+            "courses",
+            parseInt(courseId, 10),
+            "questions",
+            "?",
+            `enrollment_id=${enrollmentId}`,
+            'state=["unresolved", "frozen", "resolving"]',
+        ],
+        {
+            placeholderData: [null],
+        }
+    );
 
-  const {
-    mutateAsync: createQuestion,
-    isLoading,
-    errors,
-  } = useWrappedMutation(
-    (data) => ({
-      question: {
-        description: data.description,
-        tried: data.tried,
-        location: data.location,
-        enrollment_id: enrollmentId,
-        course_id: courseId,
-        tags: data.queues.map((v) => v.value),
-      },
-      tags: data.queues.map((v) => v.value),
-    }),
-    "/api/questions"
-  );
+    const {data: openStatus} = useQuery([
+        "courses",
+        parseInt(courseId, 10),
+        "open_status",
+    ]);
 
-  return (
-    <div>
-      <div>
-        {(() => {
-          if (errors?.error) {
-            try {
-              const json = JSON.parse(errors.error);
+    const {
+        register,
+        handleSubmit,
+        control,
+        formState: {errors: formErrors},
+    } = useForm();
 
-              return Object.entries(json).map((v) => (
-                <div className="alert alert-danger">{`${v[0]} ${v[1]}`}</div>
-              ));
-            } catch (e) {
-              console.log(errors?.error);
+    const {
+        mutateAsync: createQuestion,
+        isLoading,
+        errors: serverErrors,
+    } = useWrappedMutation(
+        (data) => ({
+            question: {
+                description: data.description,
+                tried: data.tried,
+                location: data.location,
+                enrollment_id: enrollmentId,
+                course_id: courseId,
+                question_tags_attributes: data.tags.map(v => ({
+                    tag_id: v
+                })),
             }
-          }
-        })()}
-      </div>
-      {!openStatus ? (
-        <>
-          <div className="position-relative">
-            <div className="position-absolute w-100 h-100 d-flex justify-content-center align-items-center">
-              <h1 className="text-danger"></h1>
-            </div>
+        }),
+        "/api/questions"
+    );
 
-            <div className="card shadow-sm" style={{ height: "620px" }}>
-              <div
-                className="card-body"
-                style={{ opacity: 0.3, pointerEvents: "none" }}
-              >
-                <h1>Ask a Question</h1>
-                <form>
-                  <div className="mb-2">
-                    <label className="form-label fw-bold"> Queue </label>
-                    <Controller
-                      name="queues"
-                      control={control}
-                      render={({ field }) => {
-                        return (
-                          <Select
-                            className={formErrors?.queues ? "err" : ""}
-                            {...field}
-                            isMulti
-                            options={queues
-                              ?.filter((v) => !v.archived)
-                              .map((v) => ({
-                                value: v.id,
-                                label: v.name,
-                              }))}
-                          />
-                        );
-                      }}
-                      rules={{
-                        minLength: 3,
-                        validate: {
-                          checkLength: (v) =>
-                            typeof v !== "undefined" && v.length > 0,
-                        },
-                      }}
-                    />
-                    {formErrors?.queues?.type === "checkLength" && (
-                      <span className="invalid-feedback d-block">
-                        "Select at least one queue"
-                      </span>
+    const options = queues
+        ?.filter((v) => !v.archived)
+        .map((v) => ({
+            value: v.id,
+            label: v.name,
+        }))
+
+    return (
+        <div className="card shadow-sm">
+            <div className="card-body">
+                <Formik
+                    initialValues={{
+                        description: question?.description,
+                        tried: question?.tried,
+                        location: question?.location,
+                        tags: question?.tags
+                    }}
+                    validate={values => {
+                        const {description, tried, location, tags} = values;
+                        const errors = {};
+                        if (!description) {
+                            errors.description = 'Required';
+                        } else if (!tried) {
+                            errors.tried = 'Required';
+                        } else if (!location) {
+                            errors.location = 'Required';
+                        } else if (!tags || tags?.length < 1) {
+                            errors.tags = 'Select at least 1 tag.';
+                        }
+
+                        return errors;
+                    }}
+                    onSubmit={async (values, {setSubmitting, setErrors}) => {
+                        try {
+                            const out = await createQuestion(values)
+                        } catch (e) {
+                        }
+
+                        setTimeout(() => {
+                            setSubmitting(false);
+                        }, 400);
+                    }}
+                >
+                    {({isSubmitting}) => (
+                        <Form>
+                            <div className="mb-2">
+                                {Object.entries(serverErrors)?.map(([attr, errs]) => (
+                                    <div className="invalid-feedback d-block fw-bold">
+                                        {errs.map(err => `${attr} ${err}`).join(' and ')}
+                                    </div>
+                                ))}
+                            </div>
+                            <ErrorMessage touched name="course" component="div"
+                                          className="invalid-feedback d-block fw-bold"/>
+                            <div className="mb-1">
+                                <label className="form-label fw-bold">
+                                    Description
+                                </label>
+                                <Field type="text" name="description" className="form-control"/>
+                                <ErrorMessage name="description" component="div"
+                                              className="invalid-feedback d-block fw-bold"/>
+                            </div>
+                            <div className="mb-1">
+                                <label className="form-label fw-bold">
+                                    What Have You Tried?
+                                </label>
+                                <Field type="text" name="tried" className="form-control"/>
+                                <ErrorMessage name="tried" component="div"
+                                              className="invalid-feedback d-block fw-bold"/>
+                            </div>
+                            <div className="mb-1">
+                                <label className="form-label fw-bold">
+                                    Location
+                                </label>
+                                <Field type="text" name="location" className="form-control"/>
+                                <ErrorMessage name="location" component="div"
+                                              className="invalid-feedback d-block fw-bold"/>
+                            </div>
+
+                            <div className="mb-3">
+                                <label className="form-label fw-bold">
+                                    Tags
+                                </label>
+                                <Field name='tags' component={SelectField} options={options} isMulti/>
+                                <ErrorMessage name="tags" component="div" className="invalid-feedback d-block fw-bold"/>
+                            </div>
+                            <button type="submit" disabled={isSubmitting} className="btn btn-primary">
+                                Submit
+                            </button>
+                        </Form>
                     )}
-                  </div>
-                  <div className="mb-2">
-                    <label className="form-label fw-bold"> Description </label>
-                    <textarea
-                      rows={3}
-                      className={`form-control ${
-                        formErrors.description ? "is-invalid" : ""
-                      }`}
-                      {...register("description", {
-                        required: {
-                          value: true,
-                          message: "Description is required.",
-                        },
-                      })}
-                    />
-                    {
-                      <span className="invalid-feedback d-block">
-                        {formErrors?.description?.message}
-                      </span>
-                    }
-                  </div>
-                  <div className="mb-2">
-                    <label className="form-label fw-bold"> Tried </label>
-                    <textarea
-                      className={`form-control ${
-                        formErrors.tried ? "is-invalid" : ""
-                      }`}
-                      {...register("tried", {
-                        required: {
-                          value: true,
-                          message: "What you tried is required.",
-                        },
-                      })}
-                      rows={3}
-                    />
-                    {formErrors.tried && (
-                      <span className="invalid-feedback d-block">
-                        {formErrors?.tried?.message}
-                      </span>
-                    )}
-                  </div>
-                  <div className="mb-3">
-                    <label className="form-label fw-bold"> Location </label>
-                    <textarea
-                      rows={3}
-                      className={`form-control ${
-                        formErrors.location ? "is-invalid" : ""
-                      }`}
-                      {...register("location", {
-                        required: {
-                          value: true,
-                          message: "Location is required.",
-                        },
-                      })}
-                    />
-                    {formErrors.location && (
-                      <span className="invalid-feedback d-block">
-                        {formErrors?.location?.message}
-                      </span>
-                    )}
-                  </div>
-                  <button
-                    className="btn btn-primary"
-                    onClick={handleSubmit((data) => {
-                      try {
-                        createQuestion(data);
-                      } catch (e) {}
-                    })}
-                  >
-                    <DelayedSpinner loading={isLoading}>Submit</DelayedSpinner>
-                  </button>
-                </form>
-              </div>
+                </Formik>
             </div>
-          </div>
-        </>
-      ) : (
-        <div className="card shadow-sm" style={{ height: "620px" }}>
-          <div className="card-body">
-            <h1>Ask a Question</h1>
-            <form>
-              <div className="mb-2">
-                <label className="form-label fw-bold"> Queue </label>
-                <Controller
-                  name="queues"
-                  control={control}
-                  render={({ field }) => {
-                    return (
-                      <Select
-                        className={formErrors?.queues ? "err" : ""}
-                        {...field}
-                        isMulti
-                        options={queues
-                          ?.filter((v) => !v.archived)
-                          .map((v) => ({
-                            value: v.id,
-                            label: v.name,
-                          }))}
-                      />
-                    );
-                  }}
-                  rules={{
-                    minLength: 3,
-                    validate: {
-                      checkLength: (v) =>
-                        typeof v !== "undefined" && v.length > 0,
-                    },
-                  }}
-                />
-                {formErrors?.queues?.type === "checkLength" && (
-                  <span className="invalid-feedback d-block">
-                    "Select at least one queue"
-                  </span>
-                )}
-              </div>
-              <div className="mb-2">
-                <label className="form-label fw-bold"> Description </label>
-                <textarea
-                  rows={3}
-                  className={`form-control ${
-                    formErrors.description ? "is-invalid" : ""
-                  }`}
-                  {...register("description", {
-                    required: {
-                      value: true,
-                      message: "Description is required.",
-                    },
-                  })}
-                />
-                {
-                  <span className="invalid-feedback d-block">
-                    {formErrors?.description?.message}
-                  </span>
-                }
-              </div>
-              <div className="mb-2">
-                <label className="form-label fw-bold"> Tried </label>
-                <textarea
-                  rows={3}
-                  className={`form-control ${
-                    formErrors.tried ? "is-invalid" : ""
-                  }`}
-                  {...register("tried", {
-                    required: {
-                      value: true,
-                      message: "What you tried is required.",
-                    },
-                  })}
-                />
-                {formErrors.tried && (
-                  <span className="invalid-feedback d-block">
-                    {formErrors?.tried?.message}
-                  </span>
-                )}
-              </div>
-              <div className="mb-3">
-                <label className="form-label fw-bold"> Location </label>
-                <textarea
-                  rows={3}
-                  className={`form-control ${
-                    formErrors.location ? "is-invalid" : ""
-                  }`}
-                  {...register("location", {
-                    required: {
-                      value: true,
-                      message: "Location is required.",
-                    },
-                  })}
-                />
-                {formErrors.location && (
-                  <span className="invalid-feedback d-block">
-                    {formErrors?.location?.message}
-                  </span>
-                )}
-              </div>
-              <button
-                className="btn btn-primary"
-                onClick={handleSubmit((data) => {
-                  try {
-                    createQuestion(data);
-                  } catch (e) {}
-                })}
-              >
-                <DelayedSpinner loading={isLoading}>Submit</DelayedSpinner>
-              </button>
-            </form>
-          </div>
         </div>
-      )}
-    </div>
-  );
+    )
 };

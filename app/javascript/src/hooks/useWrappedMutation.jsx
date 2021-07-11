@@ -32,7 +32,7 @@ export default function useWrappedMutation(
 
       if (!resp.ok) {
         const json = await resp.json();
-        throw JSON.stringify(json);
+        throw JSON.stringify(json?.error);
       }
 
       return await resp.json();
@@ -41,6 +41,8 @@ export default function useWrappedMutation(
       onError: (err) => {
         const errors = JSON.parse(err);
         setErrors(errors);
+
+        return errors;
       },
       retry: false,
       ...mutationOptions,

@@ -125,27 +125,25 @@ module QueueAPI
           requires :tried, type: String
           requires :location, type: String
           optional :title, type: String
-          requires :tags, type: Array
+          requires :question_tags_attributes, type: Array do
+            requires :tag_id, type: Integer
+          end
         end
-        requires :tags, type: Array
       end
       post scopes: [:write] do
-        p = declared(params)
-        p["question"]["tags"] = p["tags"].collect { |id| Tag.find_by(id: id) }
-
-        question = Question.new(p[:question])
+        question = Question.new(params[:question])
 
         authorize! :manage, question
 
         question.save!
+
+
 
         if !question.valid?
           error!(question.errors.messages.to_json)
           question.errors.clear
           return
         end
-
-        question.tags = Tag.find(params[:tags])
 
         question
       end

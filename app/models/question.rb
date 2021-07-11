@@ -4,14 +4,21 @@ class Question < ApplicationRecord
   include Discard::Model
   include RansackableConcern
 
+
   validates :location, :description, :tried, :course_id, presence: true
   validate :duplicate_question, on: :create
-
   validate :has_at_least_one_tag, on: :create
+  validate :course_queue_open, on: :create
+
+  def course_queue_open
+    return unless course_id
+
+    errors.add(:course, "is closed.") if !course.open
+  end
 
   def has_at_least_one_tag
-    if tags.length == 0
-      errors.add(:tags, "must have at least one")
+    if question_tags.length == 0
+      errors.add(:tags, "must have at least one.")
     end
   end
 
@@ -21,7 +28,7 @@ class Question < ApplicationRecord
     return unless state
 
     if state.state == "resolving" || state.state == "unresolved" || state.state == "frozen"
-      errors.add(:question, "already exists")
+      errors.add(:question, "already exists.")
     end
   end
 
@@ -38,7 +45,11 @@ class Question < ApplicationRecord
   has_one :current_state, -> { order('created_at DESC') }, class_name: "QuestionState", dependent: :destroy
   has_one :question_state, -> { order('created_at DESC') }, class_name: "QuestionState", dependent: :destroy
 
-  has_and_belongs_to_many :tags, dependent: :destroy
+  has_many :question_tags
+  has_many :tags, dependent: :destroy, through: :question_tags
+
+  accepts_nested_attributes_for :question_tags
+
 
   def self.ransackable_scopes(_auth_object = nil)
     %i[previous_questions]

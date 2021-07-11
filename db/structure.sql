@@ -380,6 +380,38 @@ ALTER SEQUENCE public.question_states_id_seq OWNED BY public.question_states.id;
 
 
 --
+-- Name: question_tags; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.question_tags (
+    id bigint NOT NULL,
+    question_id bigint,
+    tag_id bigint,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: question_tags_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.question_tags_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: question_tags_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.question_tags_id_seq OWNED BY public.question_tags.id;
+
+
+--
 -- Name: questions; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -426,47 +458,6 @@ CREATE TABLE public.roles (
     name character varying,
     resource_type character varying,
     resource_id bigint,
-    created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
-);
-
-
---
--- Name: questions_per_ta; Type: VIEW; Schema: public; Owner: -
---
-
-CREATE VIEW public.questions_per_ta AS
- SELECT enrollments.id AS enrollment_id,
-    questions.id AS question_id,
-    avg((( SELECT question_states_1.created_at
-           FROM public.question_states question_states_1
-          WHERE (question_states_1.id IN ( SELECT max(question_states_2.id) AS max
-                   FROM public.question_states question_states_2
-                  WHERE ((question_states_2.question_id = questions.id) AND (question_states_2.enrollment_id = enrollments.id) AND (question_states_2.state = 2))))) - ( SELECT question_states_1.created_at
-           FROM public.question_states question_states_1
-          WHERE (question_states_1.id IN ( SELECT min(question_states_2.id) AS min
-                   FROM public.question_states question_states_2
-                  WHERE ((question_states_2.question_id = questions.id) AND (question_states_2.enrollment_id = enrollments.id) AND (question_states_2.state = 1))))))) AS avg
-   FROM (((public.enrollments
-     JOIN public.roles ON ((roles.id = enrollments.role_id)))
-     JOIN public.question_states ON ((question_states.enrollment_id = enrollments.id)))
-     JOIN public.questions ON ((questions.id = question_states.question_id)))
-  WHERE ((enrollments.discarded_at IS NULL) AND ((roles.name)::text = ANY ((ARRAY['instructor'::character varying, 'ta'::character varying])::text[])) AND ((roles.resource_type)::text = 'Course'::text) AND (questions.id IN ( SELECT questions_1.id
-           FROM (public.questions questions_1
-             JOIN public.question_states question_states_1 ON ((question_states_1.question_id = questions_1.id)))
-          WHERE ((question_states_1.id = ( SELECT max(question_states_2.id) AS max
-                   FROM public.question_states question_states_2
-                  WHERE (question_states_2.question_id = questions_1.id))) AND (question_states_1.state = 2) AND ((questions_1.created_at >= '2021-07-10 00:00:00'::timestamp without time zone) AND (questions_1.created_at <= '2021-07-10 23:59:59.999999'::timestamp without time zone))))))
-  GROUP BY enrollments.id, questions.id;
-
-
---
--- Name: questions_tags; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.questions_tags (
-    tag_id bigint,
-    question_id bigint,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
 );
@@ -679,6 +670,13 @@ ALTER TABLE ONLY public.question_states ALTER COLUMN id SET DEFAULT nextval('pub
 
 
 --
+-- Name: question_tags id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.question_tags ALTER COLUMN id SET DEFAULT nextval('public.question_tags_id_seq'::regclass);
+
+
+--
 -- Name: questions id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -791,6 +789,14 @@ ALTER TABLE ONLY public.question_queues
 
 ALTER TABLE ONLY public.question_states
     ADD CONSTRAINT question_states_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: question_tags question_tags_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.question_tags
+    ADD CONSTRAINT question_tags_pkey PRIMARY KEY (id);
 
 
 --
@@ -982,6 +988,20 @@ CREATE INDEX index_question_states_on_question_id ON public.question_states USIN
 
 
 --
+-- Name: index_question_tags_on_question_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_question_tags_on_question_id ON public.question_tags USING btree (question_id);
+
+
+--
+-- Name: index_question_tags_on_tag_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_question_tags_on_tag_id ON public.question_tags USING btree (tag_id);
+
+
+--
 -- Name: index_questions_on_course_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1000,20 +1020,6 @@ CREATE INDEX index_questions_on_discarded_at ON public.questions USING btree (di
 --
 
 CREATE INDEX index_questions_on_enrollment_id ON public.questions USING btree (enrollment_id);
-
-
---
--- Name: index_questions_tags_on_question_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_questions_tags_on_question_id ON public.questions_tags USING btree (question_id);
-
-
---
--- Name: index_questions_tags_on_tag_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_questions_tags_on_tag_id ON public.questions_tags USING btree (tag_id);
 
 
 --
@@ -1117,11 +1123,11 @@ ALTER TABLE ONLY public.question_states
 
 
 --
--- Name: questions_tags fk_rails_3fd077fb33; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: question_tags fk_rails_38e4cf053b; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.questions_tags
-    ADD CONSTRAINT fk_rails_3fd077fb33 FOREIGN KEY (question_id) REFERENCES public.questions(id);
+ALTER TABLE ONLY public.question_tags
+    ADD CONSTRAINT fk_rails_38e4cf053b FOREIGN KEY (tag_id) REFERENCES public.tags(id);
 
 
 --
@@ -1146,14 +1152,6 @@ ALTER TABLE ONLY public.oauth_access_tokens
 
 ALTER TABLE ONLY public.courses_questions
     ADD CONSTRAINT fk_rails_8afe15e6d2 FOREIGN KEY (question_id) REFERENCES public.questions(id);
-
-
---
--- Name: questions_tags fk_rails_98659cdfc1; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.questions_tags
-    ADD CONSTRAINT fk_rails_98659cdfc1 FOREIGN KEY (tag_id) REFERENCES public.tags(id);
 
 
 --
@@ -1189,6 +1187,14 @@ ALTER TABLE ONLY public.enrollments
 
 
 --
+-- Name: question_tags fk_rails_e6a38f5c87; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.question_tags
+    ADD CONSTRAINT fk_rails_e6a38f5c87 FOREIGN KEY (question_id) REFERENCES public.questions(id);
+
+
+--
 -- Name: enrollments fk_rails_e860e0e46b; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1219,7 +1225,6 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20210414234259'),
 ('20210415165206'),
 ('20210415171742'),
-('20210415174313'),
 ('20210429033320'),
 ('20210429173311'),
 ('20210523033554'),
@@ -1235,7 +1240,6 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20210701224331'),
 ('20210701224457'),
 ('20210703035725'),
-('20210710175436'),
-('20210710183953');
+('20210711051202');
 
 

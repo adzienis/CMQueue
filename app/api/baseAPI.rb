@@ -8,7 +8,19 @@ class BaseAPI < Grape::API
 
     subclass.class_eval do
 
+      rescue_from Grape::Exceptions::ValidationErrors do |e|
+        error!(e, 400)
+      end
+
       rescue_from :all
+
+      rescue_from ActiveRecord::RecordInvalid do |e|
+        error!(e.record.errors, 400)
+      end
+
+      rescue_from ActiveModel::ValidationError do |e|
+        error!(e, 400)
+      end
 
       rescue_from NoMethodError do |e|
         error!(e, 400)
