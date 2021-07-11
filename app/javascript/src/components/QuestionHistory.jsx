@@ -1,5 +1,6 @@
 import React from "react";
 import {useQuery} from "react-query";
+import TurboFrame from "./TurboFrame";
 
 export default (props) => {
   const { question } = props;
@@ -60,7 +61,7 @@ export default (props) => {
               <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"/>
             </div>
             <div className="modal-body">
-              <turbo-frame id="container" src={`/questions/${question?.id}/previousQuestions`}/>
+              <TurboFrame id="container" src={`/questions/${question?.id}/previousQuestions`} />
             </div>
           </div>
         </div>

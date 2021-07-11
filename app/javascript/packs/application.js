@@ -111,6 +111,9 @@ document.addEventListener("turbo:load", event => {
 })
 
 
+
+
+
 import SearchModal from "../src/components/SearchModal";
 import StudentQueueView from "../src/components/StudentQueueView";
 import AddCourseByCode from "../src/components/AddCourseByCode";
@@ -120,27 +123,36 @@ import ReactStudentChannel from "../channels/react_student_channel";
 import CourseStatus from "../src/components/CourseStatus";
 import NotificationFeed from "../src/components/NotificationFeed";
 import Prefetcher from "../src/components/Prefetcher";
-import register_component from "../src/utilities/registerComponent";
 import QuestionAnswererPage from "../src/components/QuestionAnswererPage";
 import QueueInfoPanel from "../src/components/QueueInfoPanel";
 import TAActionPane from "../src/components/TAActionPane";
 import TALog from "../src/components/TALog";
 import TAQueueView from "../src/components/TAQueueView";
 import UserSettings from "../src/components/UserSettings";
+import TATimePerQuestion from "../src/components/TATimePerQuestion";
 
-register_component(AddCourseByCode, "#add-course-by-code");
-register_component(CourseStatus, "#course-status");
-register_component(FilterDropdown, "#dropdown-filter");
-register_component(NotificationFeed, "#notification-feed");
-register_component(Prefetcher, "#prefetcher");
-register_component(QuestionAnswererPage, "#question-answerer");
-register_component(QueueInfoPanel, "#queue-info-panel");
-register_component(SearchModal, "#hello-react");
-register_component(StudentQueueView, "#student-queue-view");
-register_component(TAActionPane, "#ta-action-pane");
-register_component(TALog, "#ta-chart");
-register_component(TAQueueView, "#ta-queue-view");
-register_component(UserSettings, "#user-settings");
+import attachTurboEvents from "../src/utilities/turboExtraEvents";
+import registerManager from "../src/utilities/registerComponent";
+registerManager.register_component(AddCourseByCode, "#add-course-by-code");
+registerManager.register_component(CourseStatus, "#course-status");
+registerManager.register_component(FilterDropdown, "#dropdown-filter");
+registerManager.register_component(NotificationFeed, "#notification-feed");
+registerManager.register_component(Prefetcher, "#prefetcher");
+registerManager.register_component(QuestionAnswererPage, "#question-answerer");
+registerManager.register_component(QueueInfoPanel, "#queue-info-panel");
+registerManager.register_component(SearchModal, "#hello-react");
+registerManager.register_component(StudentQueueView, "#student-queue-view");
+registerManager.register_component(TAActionPane, "#ta-action-pane");
+registerManager.register_component(TALog, "#ta-chart");
+registerManager.register_component(TAQueueView, "#ta-queue-view");
+registerManager.register_component(UserSettings, "#user-settings");
+registerManager.register_component(TATimePerQuestion, "#time");
+
+attachTurboEvents();
+
+registerManager.render_components();
+registerManager.register_hooks();
+
 
 window.Turbo = Turbo;
 window.queryClient = queryClient;
@@ -155,34 +167,4 @@ ReactStudentChannel.received = async (data) => {
 
 Rails.start();
 ActiveStorage.start();
-
-document.addEventListener("turbo:before-cache", () => {
-  const nodes = document.querySelectorAll(".collapse");
-
-  for (const node of nodes) {
-    node.classList.remove("show");
-  }
-});
-
-
-window.addEventListener('load', function() { initializeTurboFrameEvent() })
-document.addEventListener('turbo:load', function() { initializeTurboFrameEvent() } )
-document.addEventListener('react-component:load', function() { initializeTurboFrameEvent() } )
-
-function initializeTurboFrameEvent() {
-  const turboFrameEvent = new Event('not-turbo:frame-loaded')
-
-  const observer = new MutationObserver(function(mutationList, observer) {
-    document.dispatchEvent(turboFrameEvent)
-  })
-
-  const targetNodes = document.querySelectorAll("turbo-frame")
-  const observerOptions = {
-    childList: true,
-    attributes: false,
-    subtree: true
-  }
-
-  targetNodes.forEach(targetNode => observer.observe(targetNode, observerOptions))
-}
 
