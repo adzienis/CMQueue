@@ -9,8 +9,7 @@
 
   <%= content_tag :div, id: "queue-info-panel", class: 'w-100', data: {
     courseId: @course.id, userId: current_user.id, enrollment: @enrollment.as_json(include: :role)
-  }.to_json do %>
-  <% end %>
+  }.to_json do %><% end %>
 
 
   <% if current_user.has_role? :student, @course %>
@@ -19,8 +18,7 @@
     <%= content_tag :div, id: "student-queue-view", data: {
       courseId: @course.id, userId: current_user.id,
       enrollmentId: current_user.enrollments.most_recent_enrollment_by_course(@course.id).id
-    }.to_json, class: 'w-100' do %>
-    <% end %>
+    }.to_json, class: 'w-100' do %><% end %>
 
 
   <% elsif current_user.has_any_role?({ name: :ta, resource: @course }, { name: :instructor, resource: @course }) %>
@@ -28,8 +26,7 @@
     <%= content_tag :div, id: "ta-action-pane", data: {
       courseId: @course.id, userId: current_user.id,
       enrollmentId: current_user.enrollments.most_recent_enrollment_by_course(@course.id).id
-    }.to_json, class: 'w-100' do %>
-    <% end %>
+    }.to_json, class: 'w-100' do %><% end %>
 
     <hr class="w-100">
   <% end %>
@@ -39,8 +36,7 @@
     <%= content_tag :div, id: "ta-queue-view", data: {
       courseId: @course.id, userId: current_user.id,
       enrollmentId: current_user.enrollments.most_recent_enrollment_by_course(@course.id).id
-    }.to_json, class: 'w-100' do %>
-    <% end %>
+    }.to_json, class: 'w-100' do %><% end %>
 
   <% end %>
 

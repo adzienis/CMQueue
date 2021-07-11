@@ -35,6 +35,8 @@ class RegisterComponentManager {
 
             if (node.length > 0) {
                 node.forEach((v) => {
+                    if(v.childNodes.length > 0) return;
+
                     const data = JSON.parse(v.getAttribute("data"));
 
                     const reference = ReactDOM.render(
@@ -42,6 +44,9 @@ class RegisterComponentManager {
                             <Component {...data} />
                         </QueryClientProvider>,
                         v, () => {
+                            console.log('loaded')
+                            const turboFrameEvent = new Event('react-component:load')
+                            document.dispatchEvent(turboFrameEvent)
                         }
                     );
                 });
