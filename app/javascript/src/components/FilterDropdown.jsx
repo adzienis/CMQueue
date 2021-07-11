@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 
 import FilterRow from "./FilterRow";
 
@@ -23,8 +23,6 @@ export default (props) => {
     const {columns, queries, except, base} = props;
 
     const {root: colNames, associations} = columns;
-
-    console.log(columns)
 
     const possible_values = Object.keys(colNames).concat(Object.keys(associations))
 
@@ -170,11 +168,13 @@ export default (props) => {
                                         </a>
                                     </li>
                                 ))}
-                            <li>
-                                <hr className="dropdown-divider"/>
-                            </li>
+                            {associations?.length > 0 ? (
+                                <li>
+                                    <hr className="dropdown-divider"/>
+                                </li>
+                            ) : null}
                             {associations
-                                .map((x, i) => {
+                                ?.map((x, i) => {
 
                                     const association = Object.keys(associations[i])[0];
                                     const attributes = associations[i][association]

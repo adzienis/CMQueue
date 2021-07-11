@@ -35,6 +35,8 @@ class Enrollment < ApplicationRecord
 
   scope :with_course, ->(course) { joins(:role).where("roles.resource_id": course.id) }
 
+  scope :with_course_roles, ->(*roles){ joins(:role).where("roles.name": roles, "roles.resource_type": "Course") }
+
   after_create do
     ActionCable.server.broadcast 'react-students', {
       invalidate: ['users', user.id, 'enrollments']

@@ -6,6 +6,8 @@ import TALog from "./TALog";
 export default (props) => {
     const {courseId, userId, enrollment} = props;
 
+    const {data: d} = useQuery(['courses', parseInt(courseId, 10), 'answer_time'])
+
     const {
         data: [question],
         isLoading,

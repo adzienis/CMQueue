@@ -146,7 +146,7 @@ registerManager.register_component(TAActionPane, "#ta-action-pane");
 registerManager.register_component(TALog, "#ta-chart");
 registerManager.register_component(TAQueueView, "#ta-queue-view");
 registerManager.register_component(UserSettings, "#user-settings");
-registerManager.register_component(TATimePerQuestion, "#time");
+//registerManager.register_component(TATimePerQuestion, "#time");
 
 attachTurboEvents();
 

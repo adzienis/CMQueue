@@ -32,6 +32,24 @@ module ApplicationHelper
   include Pagy::Frontend
   extend ActiveModel::Model
 
+  def self.QuestionsPerTa
+
+    query = ->(state) do
+      QuestionState.where("question_id = questions.id")
+                   .where("enrollment_id = enrollments.id")
+                   .where(state: state)
+    end
+
+    Enrollment.undiscarded.with_course_roles(:instructor, :ta).joins(:question_states, question_states: :question)
+              .merge(Question.where(id: Question.questions_by_state(:resolved).with_today))
+              .group(["enrollments.id", "questions.id"])
+              .select("enrollments.id as enrollment_id, questions.id as question_id, avg((#{QuestionState
+                                                                                              .where(id: query.call("resolved").select("max(question_states.id)"))
+                                                                                              .select(:created_at).to_sql})
+                                - (#{QuestionState.where(id: query.call("resolving").select("min(question_states.id)"))
+                                                  .select(:created_at).to_sql}))")
+  end
+
   def self.get_associations(model)
     [:has_many, :belongs_to, :has_one]
       .collect { |s| model.reflect_on_all_associations(s) }
@@ -45,7 +63,7 @@ module ApplicationHelper
       if hash.nil?
         return nil
       elsif instance.is_a?(ActiveRecord::Associations::CollectionProxy) && hash.instance_of?(Symbol)
-        return instance.map{|v| v.send(hash)}.join(', ')
+        return instance.map { |v| v.send(hash) }.join(', ')
       elsif hash.instance_of? Symbol
         return instance.send(hash)
       end

@@ -1,8 +1,15 @@
 
 
-window.addEventListener('load', function() { initializeTurboFrameEvent() })
-document.addEventListener('turbo:load', function() { initializeTurboFrameEvent() } )
-document.addEventListener('react-component:load', function() { initializeTurboFrameEvent() } )
+export default function attachTurboEvents() {
+    window.addEventListener('load', function() { initializeTurboFrameEvent() })
+    document.addEventListener('turbo:load', function() { initializeTurboFrameEvent() } )
+
+    document.addEventListener('react-component:load', function() { initializeTurboFrameEvent() } )
+}
+
+
+
+
 
 function initializeTurboFrameEvent() {
     const turboFrameEvent = new Event('not-turbo:frame-loaded')

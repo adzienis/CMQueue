@@ -5,28 +5,7 @@
 <% options[:other_filters] ||= {} %>
 <% options[:format] ||= [] %>
 
-<% session[:default_filter] ||= '' %>
-
-<% session[:default_filter] = request.fullpath unless request.referer.nil? || (URI(request.referer).path == polymorphic_path([@course, records.model])) %>
-
-
-<%= content_tag :div, id: "dropdown-filter", data: {
-  base: request.path,
-  except: options[:except],
-  columns: {
-    root: records.model.columns.map{|v| { v.name => {
-      type: v.type,
-      label: v.name.humanize
-    }}}.inject(:merge),
-    associations: options[:other_filters].empty? ? {} :
-                    options[:other_filters].keys.map{|e| {e => options[:other_filters][e].map{|ee| { "#{e}_#{ee}" => {
-                      type: ApplicationHelper.get_associations(records.model).map{|v| {v.name => v.klass}}.inject(:merge)[e].columns_hash[ee].type,
-                      label: "#{ee.to_s.humanize}"
-                    }}}}}
-  }, queries: params[:q],
-  reset: session[:default_filter]
-}.to_json do %>
-<% end %>
+<%= filter_dropdown(options, records.model) %>
 
 <ul class="nav nav-tabs mt-4 overflow-x-scroll">
   <li class="nav-item">

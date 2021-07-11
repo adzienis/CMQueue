@@ -1,14 +1,13 @@
 import React, {useEffect, useMemo, useState} from "react";
-import {QueryClientProvider, useQuery, useQueryClient} from "react-query";
+import {useQuery, useQueryClient} from "react-query";
 import {CartesianGrid, Legend, ResponsiveContainer, Scatter, ScatterChart, Tooltip, XAxis, YAxis,} from "recharts";
-import ReactDOM from "react-dom";
 
 import Popover from 'bootstrap/js/dist/popover'
 
 import "react-datepicker/dist/react-datepicker.css";
 
 export default (props) => {
-    const {selectedQueueId, courseId, height=470, limited=false} = props;
+    const {selectedQueueId, courseId, height = 470, limited = false} = props;
 
     const queryClient = useQueryClient();
 
@@ -38,9 +37,9 @@ export default (props) => {
         {
             placeholderData: [],
             select: d => {
-                if(d) {
-                    if(limited) {
-                        return d.filter(x => ((new Date) - new Date(x.created_at) < 60*60*1000*2))
+                if (d) {
+                    if (limited) {
+                        return d.filter(x => ((new Date) - new Date(x.created_at) < 60 * 60 * 1000 * 2))
                     } else {
                         return d;
                     }
@@ -48,27 +47,6 @@ export default (props) => {
             }
         }
     );
-
-    const startDate = useMemo(() => {
-        if (date) {
-            const d = new Date(date);
-            d.setHours(0, 0, 0, 0);
-
-            return d;
-        }
-
-        return null;
-    }, [date]);
-
-    const endDate = useMemo(() => {
-        if (date) {
-            const d = new Date(date);
-            d.setHours(23, 59, 59, 59);
-
-            return d;
-        }
-        return null;
-    }, [date]);
 
     const taData = useMemo(() => {
         const uniqueTAs = new Set(question_states.map((v) => v.user_id));
@@ -92,39 +70,22 @@ export default (props) => {
         return taGroupedQuestions;
     }, [question_states]);
 
-    const getRandomColor = function () {
-        const r = Math.random() * ((1 << 8) - 1);
-        const g = Math.random() * ((1 << 8) - 1);
-        const b = Math.random() * ((1 << 8) - 1);
-
-        const rClamped = Math.min(120, r);
-        const gClamped = Math.min(120, g);
-        const bClamped = Math.min(120, b);
-
-        const color =
-            "#" +
-            rClamped.toString(16).split(".")[0].padStart(2, "0") +
-            gClamped.toString(16).split(".")[0].padStart(2, "0") +
-            bClamped.toString(16).split(".")[0].padStart(2, "0");
-        return color;
-    };
-
     const ticks = useMemo(() => {
-        if ( question_states.length > 0) {
+        if (question_states.length > 0) {
             const mapped = question_states
-                .filter(x => ((new Date) - new Date(x.created_at) < 60*60*1000*2) || !limited).map((v) =>
-                new Date(v.created_at).getTime()
-            );
+                .filter(x => ((new Date) - new Date(x.created_at) < 60 * 60 * 1000 * 2) || !limited).map((v) =>
+                    new Date(v.created_at).getTime()
+                );
             const minTime = mapped.reduce((prev, cur) => Math.min(prev, cur));
             const maxTime = mapped.reduce((prev, cur) => Math.max(prev, cur));
 
             const startTickDate = new Date(minTime);
             startTickDate.setHours(startTickDate.getHours());
-            startTickDate.setMinutes(Math.floor((startTickDate.getMinutes()-1) / 15)*15);
+            startTickDate.setMinutes(Math.floor((startTickDate.getMinutes() - 1) / 15) * 15);
             startTickDate.setSeconds(0);
             const endTickDate = new Date(maxTime);
             endTickDate.setHours(endTickDate.getHours());
-            endTickDate.setMinutes((Math.ceil((endTickDate.getMinutes()+1) / 15))*15);
+            endTickDate.setMinutes((Math.ceil((endTickDate.getMinutes() + 1) / 15)) * 15);
             endTickDate.setSeconds(0);
             const numTicks =
                 (endTickDate.getTime() - startTickDate.getTime()) / 1000 / 60 / 15;
@@ -166,7 +127,7 @@ export default (props) => {
                 type="category"
                 dataKey="firstInit"
                 allowDuplicatedCategory={false}
-                style={{ fill: 'black' }}
+                style={{fill: 'black'}}
             />
             <Tooltip
                 labelFormatter={() => undefined}
@@ -174,6 +135,7 @@ export default (props) => {
                     if (name === "firstInit") {
                         return [undefined, undefined];
                     }
+
                     const val = [new Date(value).toLocaleTimeString(), props.payload.state];
 
                     return val;
@@ -232,7 +194,7 @@ export default (props) => {
             </a>
             {isLoading || isFetching ? (
                 <div
-                    style={{height }}
+                    style={{height}}
                     className="d-flex justify-content-center align-items-center w-100 bg-white"
                 >
                     <div className="spinner-border" role="status">

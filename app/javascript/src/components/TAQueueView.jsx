@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, {useEffect, useMemo} from "react";
 import ReactDOM from "react-dom";
 import { QueryClientProvider, useInfiniteQuery } from "react-query";
 import QuestionCard from "./QuestionCard";
@@ -36,6 +36,7 @@ export default (props) => {
   const flattenedQuestions = useMemo(() => {
     return data?.pages.map((v) => v.data).flat();
   }, [data]);
+
 
   return (
     <div>

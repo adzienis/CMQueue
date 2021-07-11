@@ -15,7 +15,7 @@ export default function useWrappedMutation(
 
   const handle = useMutation(
     async (args) => {
-      //setErrors({})
+      setErrors({})
 
       const { url: urlBody, ...body } = extractor(args);
 

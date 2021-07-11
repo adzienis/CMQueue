@@ -6,6 +6,30 @@ module QueueAPI
     helpers Doorkeeper::Grape::Helpers
 
     resource :courses do
+
+      route_param :course_id do
+
+        get "answer_time" do
+          query = ->(state) do
+            QuestionState.where("question_id = questions.id")
+                         .where("enrollment_id = enrollments.id")
+                         .where(state: state)
+          end
+
+          grouped = Enrollment.undiscarded.with_course_roles(:instructor, :ta).joins(:question_states, question_states: :question)
+                              .merge(Question.where(id: Question.questions_by_state(:resolved).with_today))
+                              .group(["enrollments.id", "questions.id"])
+                              .calculate(:average, "(#{QuestionState
+                                                         .where(id: query.call("resolved").select("max(question_states.id)"))
+                                                         .select(:created_at).to_sql})
+                                - (#{QuestionState.where(id: query.call("resolving").select("min(question_states.id)"))
+                                                  .select(:created_at).to_sql})")
+
+          grouped
+        end
+
+      end
+
       desc 'Handle the topmost question in the course, by default all tags.'
       params do
         optional :tags, type: Array[Integer]
@@ -29,7 +53,7 @@ module QueueAPI
                          .first
 
         state = top_question.question_states.create(state: params[:state],
-                                            enrollment_id: params[:enrollment_id])
+                                                    enrollment_id: params[:enrollment_id])
 
         error!("Unable to handle question.", :bad_request) and return if state.errors.any?
 
@@ -91,7 +115,6 @@ module QueueAPI
       end
       get ':course_id/topQuestion', scopes: [:public] do
         question_state = User.find(params[:user_id]).question_state
-
 
         top_question = Question.joins(:question_state).where("question_states.id": question_state&.id).undiscarded.first
 

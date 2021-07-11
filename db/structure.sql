@@ -418,18 +418,6 @@ ALTER SEQUENCE public.questions_id_seq OWNED BY public.questions.id;
 
 
 --
--- Name: questions_tags; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.questions_tags (
-    tag_id bigint,
-    question_id bigint,
-    created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
-);
-
-
---
 -- Name: roles; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -438,6 +426,47 @@ CREATE TABLE public.roles (
     name character varying,
     resource_type character varying,
     resource_id bigint,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: questions_per_ta; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW public.questions_per_ta AS
+ SELECT enrollments.id AS enrollment_id,
+    questions.id AS question_id,
+    avg((( SELECT question_states_1.created_at
+           FROM public.question_states question_states_1
+          WHERE (question_states_1.id IN ( SELECT max(question_states_2.id) AS max
+                   FROM public.question_states question_states_2
+                  WHERE ((question_states_2.question_id = questions.id) AND (question_states_2.enrollment_id = enrollments.id) AND (question_states_2.state = 2))))) - ( SELECT question_states_1.created_at
+           FROM public.question_states question_states_1
+          WHERE (question_states_1.id IN ( SELECT min(question_states_2.id) AS min
+                   FROM public.question_states question_states_2
+                  WHERE ((question_states_2.question_id = questions.id) AND (question_states_2.enrollment_id = enrollments.id) AND (question_states_2.state = 1))))))) AS avg
+   FROM (((public.enrollments
+     JOIN public.roles ON ((roles.id = enrollments.role_id)))
+     JOIN public.question_states ON ((question_states.enrollment_id = enrollments.id)))
+     JOIN public.questions ON ((questions.id = question_states.question_id)))
+  WHERE ((enrollments.discarded_at IS NULL) AND ((roles.name)::text = ANY ((ARRAY['instructor'::character varying, 'ta'::character varying])::text[])) AND ((roles.resource_type)::text = 'Course'::text) AND (questions.id IN ( SELECT questions_1.id
+           FROM (public.questions questions_1
+             JOIN public.question_states question_states_1 ON ((question_states_1.question_id = questions_1.id)))
+          WHERE ((question_states_1.id = ( SELECT max(question_states_2.id) AS max
+                   FROM public.question_states question_states_2
+                  WHERE (question_states_2.question_id = questions_1.id))) AND (question_states_1.state = 2) AND ((questions_1.created_at >= '2021-07-10 00:00:00'::timestamp without time zone) AND (questions_1.created_at <= '2021-07-10 23:59:59.999999'::timestamp without time zone))))))
+  GROUP BY enrollments.id, questions.id;
+
+
+--
+-- Name: questions_tags; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.questions_tags (
+    tag_id bigint,
+    question_id bigint,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
 );
@@ -1205,6 +1234,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20210627202209'),
 ('20210701224331'),
 ('20210701224457'),
-('20210703035725');
+('20210703035725'),
+('20210710175436'),
+('20210710183953');
 
 

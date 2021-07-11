@@ -46,7 +46,7 @@ class Question < ApplicationRecord
 
   scope :with_course, ->(course) { where(course_id: course.id) }
 
-  scope :questions_by_state, lambda { |states|
+  scope :questions_by_state, lambda { |*states|
     joins(:question_state)
       .where('question_states.id = (SELECT MAX(question_states.id)
                                         FROM question_states where question_states.question_id = questions.id)')
@@ -61,6 +61,14 @@ class Question < ApplicationRecord
       .where('questions.created_at < ?', q.created_at)
       .where("enrollments.user_id": q.enrollment.user_id)
       .where(course_id: q.course_id)
+  }
+
+  scope :with_today, -> {
+    where(created_at: Date.today.all_day)
+  }
+
+  scope :with_user, ->(user_id) {
+    joins(:question_states, :enrollment).where("enrollments.user_id": user_id)
   }
 
   after_update do
