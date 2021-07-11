@@ -32,5 +32,23 @@ module QueueAPI
       end
 
     end
+
+    resource :question_states do
+
+      desc "Create a question state."
+      params do
+        requires :question_state, type: Hash do
+          requires :enrollment_id, type: Integer
+          requires :state, type: String
+          requires :question_id, type: Integer
+        end
+      end
+      post do
+
+        question_state = QuestionState.create!(declared(params)[:question_state])
+
+      end
+
+    end
   end
 end

@@ -87,7 +87,7 @@ export default (props) => {
         () => ({
             question_state: {
                 state: "unresolved",
-                user_id: userId,
+                enrollment_id: enrollmentId,
                 question_id: question.id,
             },
         }),
@@ -109,8 +109,6 @@ export default (props) => {
             value: v.id,
             label: v.name,
         }))
-
-    console.log(question)
 
     return (
         <div className="card shadow-sm">
@@ -210,6 +208,22 @@ export default (props) => {
                                                 className="btn btn-primary me-2">
                                             Update
                                         </button>
+                                        {
+                                            question.question_state.state === "frozen" ? (
+
+                                                <button
+                                                    className="btn btn-primary me-2"
+                                                    onClick={(e) => {
+                                                        try {
+                                                            unfreeze();
+                                                        } catch (e) {
+                                                        }
+                                                    }}
+                                                >
+                                                    Unfreeze
+                                                </button>
+                                            ) : null
+                                        }
                                         <button
                                             className="btn btn-danger"
                                             onClick={async (e) => {

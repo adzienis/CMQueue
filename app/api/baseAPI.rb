@@ -9,7 +9,7 @@ class BaseAPI < Grape::API
     subclass.class_eval do
 
       rescue_from Grape::Exceptions::ValidationErrors do |e|
-        error!(e, 400)
+        error!({ error: e.full_messages }, 400)
       end
 
       rescue_from :all
