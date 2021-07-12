@@ -30,7 +30,9 @@ export default (props) => {
     return <div className="d-none"/>;
 
   return (
-    <div className="toast-container position-fixed top-0 end-0 mt-3 me-3">
+    <div
+        className="toast-container position-fixed top-0 end-0 mt-3 me-3"
+    >
       {
         notifications?.length > 0 ? (
             <div

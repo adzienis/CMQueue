@@ -29,10 +29,44 @@
             </h5>
           </div>
           <div class="modal-body">
-            <%= current_user.unacknowledged_kicked_question.question_state.description %>
+            <%= question.user.unacknowledged_kicked_question.question_state.description %>
           </div>
           <div class="modal-footer">
-            <%= button_to "Acknowledge Question", acknowledge_question_path(current_user.unacknowledged_kicked_question) %>
+            <%= button_to "Acknowledge Question",
+                          acknowledge_question_path(question.user.unacknowledged_kicked_question),
+                          class: "btn btn-success"
+            %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<% elsif question.frozen? %>
+  <div data-controller="modal">
+    <div data-modal-target="modal" class="modal fade" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">
+              You have been frozen because...
+            </h5>
+          </div>
+          <div class="modal-body">
+            <%= question.question_state.description %>
+          </div>
+          <div class="modal-footer">
+
+            <%= form_with url: update_state_question_path(question), id: "unfreeze", local: false do |f| %>
+              <%= f.hidden_field :course_id, value: question.course.id, autocomplete: "off" %>
+              <%= f.hidden_field :state, value: "unresolved" %>
+              <%= tag.button :Unfreeze,
+                             type: "submit",
+                             form: "unfreeze",
+                             class: "btn btn-primary",
+                             data: { "disable-with": "Loading",
+                             } %>
+            <% end if !question.new_record? %>
           </div>
         </div>
       </div>
