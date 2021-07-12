@@ -76,7 +76,7 @@ class User < ApplicationRecord
   }
 
   scope :with_any_roles, lambda { |*names|
-    joins(:roles).where('roles.name IN (?)', names)
+    where(id: joins(:roles).where('roles.name IN (?)', names).merge(Role.undiscarded))
   }
 
   scope :active_tas_by_date, lambda { |states, date, course|

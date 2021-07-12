@@ -32,6 +32,8 @@ class CoursesController < ApplicationController
 
   def show
     @course = Course.accessible_by(current_ability).select(current_ability.permitted_attributes(:read, @course)).find(params[:course_id])
+
+    raise CanCan::AccessDenied and return unless current_user.has_any_role?({ name: :ta, resource: @course}, {name: :instructor, resource: @course})
   end
 
   def answer_page
