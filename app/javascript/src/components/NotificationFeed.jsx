@@ -24,11 +24,40 @@ export default (props) => {
     },
   });
 
+  if(!settings) return <div className="d-none"/>;;
+
   if (settings?.find((v) => v.key === "Site Notifications").value === "false")
-    return null;
+    return <div className="d-none"/>;
 
   return (
     <div className="toast-container position-fixed top-0 end-0 mt-3 me-3">
+      {
+        notifications?.length > 0 ? (
+            <div
+                className="toast show"
+                role="alert"
+                aria-live="assertive"
+                aria-atomic="true"
+            >
+              <div className={`toast-header`}>
+                <strong className="me-auto">
+                  Clear All Notifications
+                </strong>
+                <button
+                    type="button"
+                    className={`btn-close`}
+                    data-bs-dismiss="toast"
+                    aria-label="Close"
+                    onClick={(e) => {
+                      try {
+                        notifications?.map(v => markAsRead(v.id))
+                      } catch (e) {}
+                    }}
+                />
+              </div>
+            </div>
+        ) : null
+      }
       {notifications?.map((v) => {
         let title = null;
         let body = null;

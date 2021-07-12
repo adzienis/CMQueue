@@ -15,7 +15,7 @@ export default consumer.subscriptions.create("Noticed::NotificationChannel", {
 
         console.log('window sett', window.settings, data)
 
-        if (("Notification" in window) && Notification.permission === "granted" && window.settings.find(v => v.key === "Desktop_Notifications")?.value === "true") {
+        if (("Notification" in window) && Notification.permission === "granted" && window.settings?.find(v => v.key === "Desktop_Notifications")?.value === "true") {
             switch (data.params?.type) {
                 case "QuestionState":
                     var notification = new Notification(`CMQueue: ${data.params.title}`, {

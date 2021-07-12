@@ -1,0 +1,3 @@
+
+<%= turbo_stream_from current_user, :question_creator %>
+<%= render partial: "questions/question_creator", locals: { question: @question, available_tags: @available_tags}  %>

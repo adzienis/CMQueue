@@ -1,18 +1,17 @@
 
 
-<div style="display: flex; justify-content: center" class="container mt-4">
+<div class="d-flex justify-content-center container mt-4">
 
-  <div style="display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  <div
+    style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     grid-column-gap: 5%;
     justify-items: center;"
-       class="w-100"
+       class="d-grid w-100"
   >
     <div class="w-100 mb-3">
-      <h1 class="mb-3">
+      <h1 class="mb-3 text-nowrap">
         Student Courses
       </h1>
-
       <div id='enrollment-cards'>
 
         <%= content_tag :div, id: "hello-react", data: {
@@ -21,7 +20,7 @@
       </div>
     </div>
     <div class="w-100">
-      <h1 class="mb-3">
+      <h1 class="mb-3 text-nowrap">
         Instructor Courses
       </h1>
 

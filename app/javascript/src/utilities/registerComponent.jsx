@@ -3,15 +3,29 @@ import React from "react"
 import ReactDOM from "react-dom";
 
 
-
-
+/**
+ * Singleton React component manager to handle rendering of React components
+ *
+ * Keeps track of components to be rendered, and attaches to events to determine
+ * whether to render a registered component.
+ *
+ * Every time there is a "turbo:load" (when turbo loads, or renders the page), or
+ * we detect a turbo frame has been updated "not-turbo:frame-loaded" has been fired,
+ * then we iterate through the registered React components, and determine whether to render
+ * them.
+ *
+ * A component is rendered if the target anchor tag has no child nodes (if there are any,
+ * then that must mean a ReactDOM.render occurred at that node.
+ *
+ * When a component is rendered, we fire another event "react-component:load".
+ */
 class RegisterComponentManager {
     constructor() {
         this.registered_components = {};
     }
 
     register_component(Component, selector) {
-        if(selector in this.registered_components) return false;
+        if (selector in this.registered_components) return false;
 
         this.registered_components[selector] = {
             instance: null,
@@ -21,21 +35,18 @@ class RegisterComponentManager {
 
     register_hooks() {
         document.addEventListener("turbo:load", e => this.render_components(e));
-        document.addEventListener("not-turbo:frame-loaded", e => {
-            this.render_components(e)
-        });
+        document.addEventListener("not-turbo:frame-loaded", e => this.render_components(e));
     }
 
     render_components(event) {
         Object.entries(this.registered_components).forEach(([selector, componentWrapper]) => {
-            const { Component, instance } = componentWrapper;
-
+            const {Component, instance} = componentWrapper;
 
             const node = document.querySelectorAll(selector);
 
             if (node.length > 0) {
                 node.forEach((v) => {
-                    if(v.childNodes.length > 0) return;
+                    if (v.childNodes.length > 0) return;
 
                     const data = JSON.parse(v.getAttribute("data"));
 
@@ -44,9 +55,7 @@ class RegisterComponentManager {
                             <Component {...data} />
                         </QueryClientProvider>,
                         v, () => {
-                            console.log('loaded')
-                            const turboFrameEvent = new Event('react-component:load')
-                            document.dispatchEvent(turboFrameEvent)
+                            document.dispatchEvent(new Event('react-component:load'))
                         }
                     );
                 });
@@ -56,75 +65,6 @@ class RegisterComponentManager {
     }
 }
 
-``
-
-
-
 const registerManager = new RegisterComponentManager();
 
 export default registerManager;
-
-
-/*
-export default (Component, selector) => {
-    document.addEventListener("turbo:load", (e) => {
-        const node = document.querySelectorAll(selector);
-        if (node.length > 0) {
-            node.forEach((v) => {
-                const data = JSON.parse(v.getAttribute("data"));
-
-                ReactDOM.render(
-                    <QueryClientProvider client={window.queryClient} contextSharing>
-                        <Component {...data} />
-                    </QueryClientProvider>,
-                    v
-                );
-            });
-
-            // emit event for when this component is physically in the DOM tree
-            // TODO: possibly guarantee by searching with query selectors?
-            const turboFrameEvent = new Event('react-component:load')
-            console.log('loaded')
-            document.dispatchEvent(turboFrameEvent)
-        }
-    });
-
-    document.addEventListener("turbo:load", e => {
-
-        const turboFrameEvent = new Event('react-component:load')
-
-        const observer = new MutationObserver(function (mutationList, observer) {
-            document.dispatchEvent(turboFrameEvent)
-        })
-
-        const targetNodes = document.querySelectorAll(selector)
-        const observerOptions = {
-            childList: true,
-            attributes: false,
-            subtree: true
-        }
-
-        targetNodes.forEach(targetNode => observer.observe(targetNode, observerOptions))
-    })
-
-    document.addEventListener("not-turbo:frame-loaded", (e) => {
-        const node = document.querySelectorAll(selector);
-        if (node.length > 0) {
-            node.forEach((v) => {
-                const data = JSON.parse(v.getAttribute("data"));
-
-                ReactDOM.render(
-                    <QueryClientProvider client={window.queryClient} contextSharing>
-                        <Component {...data} />
-                    </QueryClientProvider>,
-                    v
-                );
-            });
-
-            // emit event for when this component is physically in the DOM tree
-            // possibly guarantee by searching with query selectors?
-            const turboFrameEvent = new Event('react-component:load')
-            document.dispatchEvent(turboFrameEvent)
-        }
-    });
-} */

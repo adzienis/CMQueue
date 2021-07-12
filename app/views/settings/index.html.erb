@@ -1,7 +1,3 @@
-<h1>Settings#index</h1>
-<p>Find me in app/views/settings/index.html.erb</p>
-
-
 <%= form_with url: user_settings_path(current_user), method: :patch do |f| %>
 
   <ul class="list-group">
@@ -9,8 +5,8 @@
     <% case setting.setting_type %>
     <% when "boolean" %>
         <li class="list-group-item d-flex justify-content-between align-items-center mb-2">
-          <%= f.label setting.key, class: "form-check-label" %>
-          <%= f.check_box setting.key, {checked: setting.value == "true", class: "form-check-control" }%>
+          <%= f.label setting.id, class: "form-check-label d-block" %>
+          <%= f.check_box setting.id, {checked: setting.value == "true", html: {class: "form-check-control d-block" }}%>
         </li>
     <% end %>
   <% end %>

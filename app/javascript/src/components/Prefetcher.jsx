@@ -134,5 +134,6 @@ export default (props) => {
     });
   }, [instructorCourses]);
 
-  return null;
+  // Must do this to prevent infinite renderings because of the registerManager
+  return <div className="d-none"/>;
 };

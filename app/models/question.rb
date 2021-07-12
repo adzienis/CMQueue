@@ -5,13 +5,16 @@ class Question < ApplicationRecord
   include RansackableConcern
 
 
-  validates :location, :description, :tried, :course_id, presence: true
+
+  validates :location, :description, :tried, :course_id, :tags, presence: true
+
   validate :duplicate_question, on: :create
-  validate :has_at_least_one_tag, on: :create
+  validate :has_at_least_one_tag, on: [:create, :update]
   validate :course_queue_open, on: :create
 
   def course_queue_open
-    return unless course_id
+    course = Course.find_by(id: course_id)
+    return unless course
 
     errors.add(:course, "is closed.") if !course.open
   end
@@ -23,14 +26,61 @@ class Question < ApplicationRecord
   end
 
   def duplicate_question
-    state = question_state
+    return unless question_state
 
-    return unless state
-
-    if state.state == "resolving" || state.state == "unresolved" || state.state == "frozen"
+    if question_state.state == "resolving" ||
+      question_state.state == "unresolved" ||
+      question_state.state == "frozen"
       errors.add(:question, "already exists.")
     end
   end
+
+  def resolved?
+    question_state&.state == "resolved"
+  end
+  def frozen?
+    question_state&.state == "frozen"
+  end
+  def unresolved?
+    question_state&.state == "unresolved"
+  end
+  def resolving?
+    question_state&.state == "resolving"
+  end
+  def kicked?
+    question_state&.state == "kicked"
+  end
+
+  scope :acknowledged, ->{ where(id: joins(:question_states).where.not("question_states.acknowledged_at": nil))}
+  scope :unacknowledged, ->{ where(id: joins(:question_states).where("question_states.acknowledged_at": nil))}
+
+
+  def unfreeze(enrollment_id)
+    question_states.create(enrollment_id: enrollment_id, state: "unresolved")
+  end
+
+
+  ######### Handle at least one tag with '='
+  # We have to manually override the assignment since we don't have callbacks
+  # that accurately represent the count of the number of tags before we destroy
+  # them (using '=').
+  attr_accessor :tags_validator
+  validate :check_for_tags_validator, on: [:create, :update]
+
+  def check_for_tags_validator
+    errors.add(:tags, "at least one") if self.tags_validator
+  end
+
+
+  def tags=(value)
+    if value.empty?
+      self.tags_validator = true
+      self.valid?
+    else
+      super(value)
+    end
+  end
+
 
 
   belongs_to :enrollment
@@ -42,10 +92,10 @@ class Question < ApplicationRecord
   has_many :question_states, dependent: :destroy
 
   # this basically alias question_state
-  has_one :current_state, -> { order('created_at DESC') }, class_name: "QuestionState", dependent: :destroy
   has_one :question_state, -> { order('created_at DESC') }, class_name: "QuestionState", dependent: :destroy
+  singleton_class.send(:alias_attribute, :current_state, :question_state)
 
-  has_and_belongs_to_many :tags, dependent: :destroy
+  has_and_belongs_to_many :tags, dependent: :destroy, autosave: true
 
 
   def self.ransackable_scopes(_auth_object = nil)
@@ -54,12 +104,14 @@ class Question < ApplicationRecord
 
   scope :with_course, ->(course) { where(course_id: course.id) }
 
-  scope :questions_by_state, lambda { |*states|
+  scope :by_state, lambda { |*states|
     joins(:question_state)
       .where('question_states.id = (SELECT MAX(question_states.id)
                                         FROM question_states where question_states.question_id = questions.id)')
       .where("question_states.state": states)
   }
+
+  singleton_class.send(:alias_method, :questions_by_state, :by_state)
 
   scope :previous_questions, lambda { |question = nil|
     q = Question.find_by(id: question)

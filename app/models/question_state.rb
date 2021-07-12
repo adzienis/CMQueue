@@ -2,6 +2,7 @@
 
 class QuestionState < ApplicationRecord
   include RansackableConcern
+  include Turbo::Broadcastable
   belongs_to :question, touch: true, optional: false
   belongs_to :enrollment
 
@@ -29,7 +30,6 @@ class QuestionState < ApplicationRecord
     errors.add(:user, "already handling another question.") if user.question_state.state == "resolving" && question.id != user.question_state.question.id
   end
 
-
   enum state: { unresolved: 0, resolving: 1, resolved: 2, frozen: 3, kicked: 4 }, _default: :unresolved
 
   scope :with_course, ->(course) { joins(:question).where("questions.course_id": course.id) }
@@ -56,6 +56,12 @@ class QuestionState < ApplicationRecord
   }
 
   after_create_commit do
+
+    broadcast_action_later_to [question.user, :question_creator],
+                              action: :replace,
+                              target: "question-creator-container",
+                              partial: "questions/question_creator",
+                              locals: { question: question, available_tags: course.available_tags.to_a }
 
     QueueChannel.broadcast_to course, {
       invalidate: ['courses', question.course.id, 'activeTAs']
@@ -85,7 +91,6 @@ class QuestionState < ApplicationRecord
       invalidate: ['courses', question.course_id, 'paginatedPastQuestions']
     }
 
-
     ActionCable.server.broadcast "#{course.id}#instructor", {
       invalidate: ['courses', question.course_id, 'paginatedPastQuestions']
     }
@@ -96,8 +101,6 @@ class QuestionState < ApplicationRecord
     when "kicked"
       SiteNotification.with(type: "QuestionState", why: description, title: "Question Kicked").deliver(question.enrollment.user)
     end
-
-
 
   end
 end

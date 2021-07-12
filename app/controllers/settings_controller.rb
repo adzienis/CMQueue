@@ -16,13 +16,7 @@ class SettingsController < ApplicationController
   end
 
   def update
-
-    Setting.update(settings_params.keys, settings_params.values.map{|v| { value: v } })
-
-    respond_to do |format|
-      format.json { render json: nil }
-      format.html { redirect_to user_settings_path(params[:user_id]) }
-    end
+    @settings = Setting.update(settings_params.keys, settings_params.values.map{|v| { value: v } })
   end
 
   def delete

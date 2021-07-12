@@ -22,6 +22,10 @@ class Ability
         user.id == u.id
       end
 
+      can :manage, Notification, Notification.where(recipient_type: "User", recipient_id: user.id) do |notification|
+        notification.recipient_type == "User" && notification.recipient_id == user.id
+      end
+
       can :manage, Setting, Setting.where(resource_id: user.id, resource_type: "User")
                                    .or(Setting.where(resource_id: Course.find_roles([:ta, :instructor], user).pluck(:resource_id), resource_type: "Course")) do |setting|
         (user.id == setting.resource_id && setting.resource_type == "User") or
@@ -99,7 +103,7 @@ class Ability
         .where(course_id: Course.where(id: Course.find_roles([:ta, :instructor], user)
                                                                     .pluck(:resource_id))
                                                    .pluck(:id)).or(Question.where("enrollments.user_id": user.id)) do |question|
-        user.has_any_role?({ name: :ta, resource: question.course}, {name: :instructor, resource: question.course}) || question.user.id == user.id
+        user.has_any_role?({ name: :ta, resource: question.course}, {name: :instructor, resource: question.course}) || question.user&.id == user.id || question.new_record?
       end
 
     end

@@ -1,0 +1,6 @@
+<%= content_tag :div, id: "queue-info-panel", class: 'w-100', data: {
+  courseId: @course.id, userId: current_user.id, enrollment: @enrollment.as_json(include: :role)
+}.to_json do %><% end %>
+
+<%= render partial: "turbo_question_creator", locals: { question: @question, available_tags: @available_tags}  %>
+

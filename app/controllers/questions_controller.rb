@@ -3,6 +3,18 @@
 class QuestionsController < ApplicationController
   load_and_authorize_resource
 
+  before_action do
+    @course = Course.find_by(id: params[:course_id]) if params[:course_id]
+    @enrollment = Enrollment.undiscarded.joins(:role).find_by(user_id: current_user.id, "roles.resource_id": @course.id) if params[:course_id]
+  end
+
+  def new
+    redirect_to queue_course_path(current_user.active_question.course) if current_user.active_question?
+
+    @question = Question.new(enrollment: @enrollment)
+    @available_tags = @course.available_tags
+  end
+
   def index
     @course = Course.find(params[:course_id]) if params[:course_id]
 
@@ -37,9 +49,16 @@ class QuestionsController < ApplicationController
     end
   end
 
+  def acknowledge
+    @question = Question.find(params[:question_id])
+
+    @question.question_state.update(acknowledged_at: DateTime.now)
+
+    redirect_to queue_course_path(@question.course)
+  end
+
   def previous_questions
-    @course = Course.find(params[:course_id]) if params[:course_id]
-    @question = Question.find(params[:id])
+    @question = Question.find(params[:question_id])
 
     @questions_ransack = Question.previous_questions(@question).order(created_at: :desc).accessible_by(current_ability).undiscarded
     @questions_ransack = @questions_ransack.where(course_id: params[:course_id]) if params[:course_id]
@@ -50,28 +69,47 @@ class QuestionsController < ApplicationController
 
   def edit
     @question = Question.find(params[:id])
-    @course = Course.find(params[:course_id]) if params[:course_id]
   end
 
   def show
-    @course = Course.find(params[:course_id]) if params[:course_id]
     @question = Question.find(params[:id])
   end
 
-  def create; end
+  def create
+    @question = Question.new(question_params)
+    tags = Tag.where(id: params[:question][:tags])
+    @question.tags = tags
+
+    @available_tags = @question.course.available_tags
+
+    @question.save
+
+    render turbo_stream: (turbo_stream.replace @question, partial: "form", locals: { question: @question, available_tags: @available_tags}) and return unless @question.errors.count == 0
+
+    redirect_to queue_course_path(@question.course)
+  end
+
+  def update_state
+    @question = Question.find(params[:question_id])
+    @enrollment = current_user.enrollment_with_course(params[:course_id])
+
+    @question.unfreeze(@enrollment.id)
+  end
 
   def download_form
   end
 
   def update
-    @question = Question.find(params[:id])
+    @question = Question.find(params[:question_id])
+    @available_tags = Tag.undiscarded.unarchived.with_course(@question.course)
     @question.update(question_params)
-    @question.tags = (Tag.find(params[:question][:tags])) if params.dig(:question, :tags)
 
-    respond_to do |format|
-      format.html { redirect_to course_questions_path(@question.course) }
-      format.json { render json: @question }
-    end
+    tags = Tag.where(id: params[:question][:tags])
+    @question.tags = tags
+
+    render turbo_stream: (turbo_stream.replace @question, partial: "form", locals: { question: @question, available_tags: @available_tags}) and return unless @question.errors.count == 0
+
+    redirect_to request.referer
   end
 
   def paginated_previous_questions
@@ -91,12 +129,15 @@ class QuestionsController < ApplicationController
   end
 
   def destroy
-    Question.find(params[:id]).discard
+    question = Question.find(params[:question_id])
+    question.discard
+
+    redirect_to new_course_question_path(question.course, question)
   end
 
   private
 
   def question_params
-    params.require(:question).permit(:course_id, :description, :tried, :location, :user_id, :title)
+    params.require(:question).permit(:course_id, :description, :tried, :location, :user_id, :title, :enrollment_id)
   end
 end

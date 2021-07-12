@@ -35,6 +35,11 @@ class Course < ApplicationRecord
     self.instructor_code = SecureRandom.urlsafe_base64(6) unless instructor_code
   end
 
+
+  def available_tags
+    tags.undiscarded.unarchived
+  end
+
   after_update do
     QueueChannel.broadcast_to self, {
       invalidate: ['courses', id, 'open_status']

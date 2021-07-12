@@ -1015,6 +1015,14 @@
   resolved "https://registry.yarnpkg.com/@emotion/weak-memoize/-/weak-memoize-0.2.5.tgz#8eed982e2ee6f7f4e44c253e12962980791efd46"
   integrity sha512-6U71C2Wp7r5XtFtQzYrW5iKFT67OixrSxjI4MptCHzdSVlgabczzqLe0ZSgnub/5Kp4hSbpDB1tMytZY9pwxxA==
 
+"@hotwired/turbo-rails@^7.0.0-beta.8":
+  version "7.0.0-beta.8"
+  resolved "https://registry.yarnpkg.com/@hotwired/turbo-rails/-/turbo-rails-7.0.0-beta.8.tgz#609eccfdc636c40e34244333f0fe947e573b4b8f"
+  integrity sha512-Azs1UevWbGLCFfcf0ymz/uZlvQR3nuc/ymT4+XTMpsiAIVjq1Y3FJw5gseXpumzz+r3U6sLWIPa+c1Acd5Zofw==
+  dependencies:
+    "@hotwired/turbo" "^7.0.0-beta.8"
+    "@rails/actioncable" "^6.0.0"
+
 "@hotwired/turbo@^7.0.0-beta.8":
   version "7.0.0-beta.8"
   resolved "https://registry.yarnpkg.com/@hotwired/turbo/-/turbo-7.0.0-beta.8.tgz#133630eabbd3c26183efcfb6dea2db5dd172e8da"

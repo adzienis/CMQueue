@@ -26,10 +26,12 @@ Rails.application.routes.draw do
     end
   end
   resources :roles
-  resources :questions do
+  resources :questions, param: :question_id do
     member do
       get 'paginatedPreviousQuestions', to: 'questions#paginated_previous_questions'
       get 'previousQuestions', to: 'questions#previous_questions'
+      post 'acknowledge', to: 'questions#acknowledge'
+      post 'update_state', to: 'questions#update_state'
     end
 
     collection do

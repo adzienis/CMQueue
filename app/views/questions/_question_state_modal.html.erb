@@ -1,0 +1,41 @@
+<% if question.resolving? %>
+  <div data-controller="modal">
+    <div data-modal-target="modal" class="modal fade" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">
+              <b><%= "#{question.question_state.user.given_name} #{question.question_state.user.family_name}" %></b>
+              is answering your question.
+            </h5>
+          </div>
+          <div class="modal-body">
+            ...
+          </div>
+          <div class="modal-footer">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<% elsif question.user.unacknowledged_kicked_question? %>
+  <div data-controller="modal">
+    <div data-modal-target="modal" class="modal fade" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">
+              You have been kicked because...
+            </h5>
+          </div>
+          <div class="modal-body">
+            <%= current_user.unacknowledged_kicked_question.question_state.description %>
+          </div>
+          <div class="modal-footer">
+            <%= button_to "Acknowledge Question", acknowledge_question_path(current_user.unacknowledged_kicked_question) %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>

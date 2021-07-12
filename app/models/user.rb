@@ -15,6 +15,9 @@ class User < ApplicationRecord
   #         foreign_key: :resource_owner_id,
   #         dependent: :delete_all
 
+
+  has_many :active_questions, -> { undiscarded.questions_by_state("unresolved", "frozen", "resolving").or(undiscarded.by_state("kicked").unacknowledged)}, through: :enrollments, source: :questions
+
   has_many :courses, through: :enrollments
 
   has_many :questions, dependent: :destroy, through: :enrollments
@@ -25,10 +28,28 @@ class User < ApplicationRecord
 
   #has_many :oauth_applications, as: :owner
 
-  #has_one :question_state, -> { order('question_states.id DESC') }, through: :enrollments
+  def unacknowledged_kicked_question?
+    !unacknowledged_kicked_question.nil?
+  end
+
+  def unacknowledged_kicked_question
+    questions.by_state("kicked").unacknowledged.first
+  end
+
+  def active_question?
+    !active_question.nil?
+  end
+
+  def active_question
+    active_questions.first
+  end
+
+  def enrollment_with_course(course_id)
+    enrollments.undiscarded.joins(:role).find_by("roles.resource_type": "Course", "roles.resource_id": course_id)
+  end
 
   def question_state
-    QuestionState.joins(:enrollment).where("enrollments.user_id": id).order('question_states.id DESC').first
+    question_states.order('question_states.id DESC').first
   end
 
   def self.ransackable_scopes(_auth_object = nil)

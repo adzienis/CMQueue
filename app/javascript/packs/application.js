@@ -1,5 +1,6 @@
 import Rails from "rails-ujs";
 import "@hotwired/turbo";
+import "@hotwired/turbo-rails"
 import * as ActiveStorage from "@rails/activestorage";
 import "channels";
 import * as Turbo from "@hotwired/turbo"
@@ -116,3 +117,11 @@ ReactStudentChannel.received = async (data) => {
 Rails.start();
 ActiveStorage.start();
 
+
+Rails.delegate(document, Rails.linkDisableSelector,   "turbo:before-cache", Rails.enableElement)
+Rails.delegate(document, Rails.buttonDisableSelector, "turbo:before-cache", Rails.enableElement)
+Rails.delegate(document, Rails.buttonDisableSelector, "turbo:submit-end", Rails.enableElement)
+
+Rails.delegate(document, Rails.formSubmitSelector, "turbo:submit-start", Rails.disableElement)
+Rails.delegate(document, Rails.formSubmitSelector, "turbo:submit-end", Rails.enableElement)
+Rails.delegate(document, Rails.formSubmitSelector, "turbo:before-cache", Rails.enableElement)

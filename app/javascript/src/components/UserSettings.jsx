@@ -117,11 +117,13 @@ export default props => {
             if (v.key === "Desktop_Notifications") {
                 return (
                     <li className="list-group-item d-flex justify-content-between align-items-center">
-                        <div className="form-check form-switch" key={v.id}>
-                            <label className="form-check-label"> Desktop Notifications </label>
+                        <div className="d-flex form-check form-switch w-100 ps-5 pe-5" key={v.id}>
+                            <label className="d-block form-check-label"> Desktop Notifications </label>
+                            <div className="flex-1" />
                             <input
                                 type="checkbox"
-                                className="form-check-input"
+                                className="form-check-input d-block ms-0"
+                                style={{ float: 'inherit'}}
                                 checked={v.value === "true"}
                                 onClick={async e => {
                                     await handle_permission(v.id, e.target.checked)
@@ -142,11 +144,13 @@ export default props => {
                 case "boolean":
                     return (
                         <li className="list-group-item d-flex justify-content-between align-items-center">
-                            <div className="form-check form-switch" key={v.id}>
+                            <div className="d-flex form-check form-switch w-100 ps-5 pe-5" key={v.id}>
                                 <label className="form-check-label"> {v.key} </label>
+                                <div className="flex-1" />
                                 <input
                                     type="checkbox"
-                                    className="form-check-input"
+                                    className="form-check-input d-block ms-0"
+                                    style={{ float: 'inherit'}}
                                     onClick={e => {
                                         try {
                                             changeSetting({id: v.id, value: `${e.target.checked}`})

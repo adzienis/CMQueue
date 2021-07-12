@@ -356,7 +356,8 @@ CREATE TABLE public.question_states (
     updated_at timestamp(6) without time zone NOT NULL,
     description text,
     state integer NOT NULL,
-    enrollment_id bigint NOT NULL
+    enrollment_id bigint NOT NULL,
+    acknowledged_at timestamp without time zone
 );
 
 
@@ -1240,6 +1241,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20210701224331'),
 ('20210701224457'),
 ('20210703035725'),
-('20210711051202');
+('20210711051202'),
+('20210712150707');
 
 

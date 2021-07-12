@@ -19,6 +19,8 @@ module CMQueue
     config.assets.paths << Rails.root.join('app', 'assets', 'fonts')
     config.autoload_paths << "#{Rails.root}/lib/search"
     config.action_view.raise_on_missing_translations = false
+    config.active_model.i18n_customize_full_message = true
+    Rack::MiniProfiler.config.enabled = false
     config.active_record.schema_format = :sql
     config.to_prepare do
       # Only Applications list
