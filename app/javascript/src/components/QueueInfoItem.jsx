@@ -19,7 +19,7 @@ export default (props) => {
           <>
             {icon}
             <div>
-              <div className="card-title mb-1">
+              <div className="card-title mb-1 text-nowrap">
                 <b>{title}</b>
               </div>
               <div className="card-text">

@@ -65,89 +65,104 @@ export default (props) => {
 
 
     return (
-        <div className="mt-3 mb-4 w-100">
-            <div
-                className="mb-2"
-                style={{
-                    display: "grid",
-                    gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-                    gridGap: "10px",
-                }}
-            >
-                <QueueInfoItem
-                    title={"Queue Status"}
-                    icon={
-                        <div className="me-3 d-flex justify-content-center align-items-center">
-                            <i className="fas fa-question fa-3x"></i>
+        <div className="accordion mt-3 mb-4 w-100">
+            <div className="accordion-item">
+                <h2 className="accordion-header">
+                    <button className="accordion-button" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#info-collapse">
+                        <b>Queue Information</b>
+                    </button>
+                </h2>
+                <div id="info-collapse" className="accordion-collapse collapse show">
+                    <div className="accordion-body">
+                        <div
+                            className="mb-2"
+                            style={{
+                                display: "grid",
+                                gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
+                                gridGap: "10px",
+                            }}
+                        >
+                            <QueueInfoItem
+                                title={"Queue Status"}
+                                icon={
+                                    <div className="me-3 d-flex justify-content-center align-items-center">
+                                        <i className="fas fa-question fa-2x"/>
+                                    </div>
+                                }
+                                loading={openLoading}
+                                value={
+                                    openStatus ? (
+                                        <span className="text-success"> Open </span>
+                                    ) : (
+                                        <span className="text-danger"> Closed </span>
+                                    )
+                                }
+                            />
+                            <QueueInfoItem
+                                title={"Unresolved Questions"}
+                                icon={
+                                    <div className="me-3 d-flex justify-content-center align-items-center">
+                                        <i className="fas fa-question fa-2x"/>
+                                    </div>
+                                }
+                                loading={countLoading}
+                                value={count}
+                            />
+                            {enrollment?.role.name === "student" ? (
+                                <QueueInfoItem
+                                    title={"Your Position on Queue"}
+                                    loading={positionLoading}
+                                    icon={
+                                        <div className="me-3 d-flex justify-content-center align-items-center">
+                                            <i className="fas fa-map-marker-alt fa-2x"/>
+                                        </div>
+                                    }
+                                    value={
+                                        position === 0
+                                            ? "Next"
+                                            : typeof position === "undefined" || position === null
+                                            ? "N/A"
+                                            : position
+                                    }
+                                />
+                            ) : null}
                         </div>
-                    }
-                    loading={openLoading}
-                    value={
-                        openStatus ? (
-                            <span className="text-success"> Open </span>
-                        ) : (
-                            <span className="text-danger"> Closed </span>
-                        )
-                    }
-                />
-                <QueueInfoItem
-                    title={"Number of Unresolved Questions"}
-                    icon={
-                        <div className="me-3 d-flex justify-content-center align-items-center">
-                            <i className="fas fa-question fa-3x"></i>
-                        </div>
-                    }
-                    loading={countLoading}
-                    value={count}
-                />
-                {enrollment?.role.name === "student" ? (
-                    <QueueInfoItem
-                        title={"Your Position on Queue"}
-                        loading={positionLoading}
-                        icon={
-                            <div className="me-3 d-flex justify-content-center align-items-center">
-                                <i className="fas fa-map-marker-alt fa-3x"></i>
-                            </div>
-                        }
-                        value={
-                            position === 0
-                                ? "Next"
-                                : typeof position === "undefined" || position === null
-                                ? "N/A"
-                                : position
-                        }
-                    />
-                ) : null}
-            </div>
-            <QueueInfoItem
-                title={"Active TA's"}
-                loading={activeLoading}
-                icon={
-                    <div className="me-3 d-flex justify-content-center align-items-center">
-                        <i className="fas fa-users fa-3x"></i>
-                    </div>
-                }
-                value={activeTas?.map((v) => v.given_name).join(",")}
-            />
-            {enrollment?.role.name !== "student" ? (
+                        <QueueInfoItem
+                            title={"Active TA's"}
+                            loading={activeLoading}
+                            icon={
+                                <div className="me-3 d-flex justify-content-center align-items-center">
+                                    <i className="fas fa-users fa-3x"/>
+                                </div>
+                            }
+                            value={activeTas?.map((v) => v.given_name).join(",")}
+                        />
+                        {enrollment?.role.name !== "student" ? (
 
-                <div className="accordion mt-3" id="accordion-ta-log">
-                    <div className="accordion-item">
-                        <h2 className="accordion-header">
-                            <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                    data-bs-target="#collapse-ta-log">
-                                <b>TA Log</b>
-                            </button>
-                        </h2>
-                        <div id="collapse-ta-log" className="accordion-collapse collapse"
-                             data-bs-parent="#accordion-ta-log">
-                            <div className="accordion-body p-0">
-                                <TALog height={300} limited courseId={courseId}/>
+                            <div className="accordion mt-3" id="accordion-ta-log">
+                                <div className="accordion-item">
+                                    <h2 className="accordion-header">
+                                        <button className="accordion-button collapsed" type="button"
+                                                data-bs-toggle="collapse"
+                                                data-bs-target="#collapse-ta-log">
+                                            <b>TA Log</b>
+                                        </button>
+                                    </h2>
+                                    <div id="collapse-ta-log" className="accordion-collapse collapse"
+                                         data-bs-parent="#accordion-ta-log">
+                                        <div className="accordion-body p-0">
+                                            <TALog height={300} limited courseId={courseId}/>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
+                        ) : null}
                     </div>
                 </div>
-            ) : null}
+            </div>
+
+
         </div>
     );
 };
