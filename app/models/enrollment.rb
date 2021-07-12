@@ -63,6 +63,30 @@ class Enrollment < ApplicationRecord
 
   private
 
+  def self.default_semester_full
+    time = Time.now
+
+    if time.month < 5
+      "Spring #{time.strftime("%Y")}"
+    elsif time.month == 5
+      if time.day <= 19
+        "Spring #{time.strftime("%Y")}"
+      else
+        "Summer #{time.strftime("%Y")}"
+      end
+    elsif time.month < 9
+      "Summer #{time.strftime("%Y")}"
+    elsif time.month == 9
+      if time.day <= 19
+        "Summer #{time.strftime("%Y")}"
+      else
+        "Fall #{time.strftime("%Y")}"
+      end
+    else
+      "Fall #{time.strftime("%Y")}"
+    end
+  end
+
   def self.default_semester
     time = Time.now
 

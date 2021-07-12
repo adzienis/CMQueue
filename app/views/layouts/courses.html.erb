@@ -30,7 +30,19 @@
       }
   </script>
   <div style="display: flex; flex-direction: row; ">
+
     <% if current_user.has_any_role?({ name: :ta, resource: @course}, {name: :instructor, resource: @course}) %>
+
+      <%= content_for :nav_content do %>
+        <div class="dropdown">
+          <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <%= session[:current_semester].nil? ? Enrollment.default_semester_full : session[:current_semester] %>
+          </button>
+          <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+          </ul>
+        </div>
+      <% end %>
+
       <%= render partial: "shared/course_sidebar" %>
       <button class="btn btn-outline-secondary sidebar-opener" onclick="event.preventDefault(); toggle()">
         <i class="fas fa-chevron-right"></i>
