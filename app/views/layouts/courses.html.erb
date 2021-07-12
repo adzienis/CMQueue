@@ -39,6 +39,7 @@
             <%= session[:current_semester].nil? ? Enrollment.default_semester_full : session[:current_semester] %>
           </button>
           <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+            <!-- Add options for semesters to filter -->
           </ul>
         </div>
       <% end %>

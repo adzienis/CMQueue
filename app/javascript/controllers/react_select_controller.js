@@ -3,11 +3,26 @@ import React from 'react'
 import Select from 'react-select'
 import ReactDOM from 'react-dom'
 
+
+function getSelectValues(select) {
+    var result = [];
+    var options = select && select.options;
+    var opt;
+
+    for (var i = 0, iLen = options.length; i < iLen; i++) {
+        opt = options[i];
+
+        if (opt.selected) {
+            result.push(opt.value || opt.text);
+        }
+    }
+    return result;
+}
+
 export default class extends Controller {
 
     initialize() {
         this.init()
-        console.log('initing')
     }
     init() {
         const select = this.element.querySelector("select");
@@ -20,6 +35,7 @@ export default class extends Controller {
 
         const isMulti = select.getAttribute("multiple") != null;
 
+
         const onChange = value => {
             if (!Array.isArray(value)) {
                 // Just set the value if this is a single select
@@ -29,9 +45,9 @@ export default class extends Controller {
                 const selected = value.map(opt => opt.value);
                 for (const opt of select.options) {
                     if (selected.includes(opt.value)) {
-                        opt.setAttribute("selected", "selected");
+                        opt.selected = true
                     } else {
-                        opt.removeAttribute("selected");
+                        opt.selected = false
                     }
                 }
             }
