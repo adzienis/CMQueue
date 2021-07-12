@@ -3,7 +3,8 @@
 <%= simple_form_for question,
                     html: {
                       class: "w-100", id: dom_id(question),
-                      data: { controller: "form" }
+                      data: { controller: "form" },
+                      autocomplete: "off"
                     },
                     defaults: {
                       wrapper_html: { class: "mb-2" },
@@ -16,13 +17,12 @@
   <%= f.input :location, label: "Zoom Link" %>
 
   <div data-controller="react-select" class="mb-3">
-    <%= f.input :tags,
+    <%= f.association :tags,
                 as: :select,
                 label: "Tags",
                 selected: question.tags.map(&:id),
                 input_html: {
-                  class: "invisible", multiple: true,
-                  value: question.tags.map(&:id)
+                  class: "invisible form-control", multiple: true
                 },
                 collection: available_tags %>
   </div>

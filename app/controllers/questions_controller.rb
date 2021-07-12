@@ -2,12 +2,6 @@
 
 class QuestionsController < ApplicationController
   load_and_authorize_resource
-
-  before_action do
-    @course = Course.find_by(id: params[:course_id]) if params[:course_id]
-    @enrollment = Enrollment.undiscarded.joins(:role).find_by(user_id: current_user.id, "roles.resource_id": @course.id) if params[:course_id]
-  end
-
   def new
     redirect_to queue_course_path(current_user.active_question.course) if current_user.active_question?
 
@@ -77,7 +71,8 @@ class QuestionsController < ApplicationController
 
   def create
     @question = Question.new(question_params)
-    tags = Tag.where(id: params[:question][:tags])
+    tags = Tag.where(id: params[:question][:tag_ids])
+
     @question.tags = tags
 
     @available_tags = @question.course.available_tags
@@ -104,7 +99,7 @@ class QuestionsController < ApplicationController
     @available_tags = Tag.undiscarded.unarchived.with_course(@question.course)
     @question.update(question_params)
 
-    tags = Tag.where(id: params[:question][:tags])
+    tags = Tag.where(id: params[:question][:tag_ids])
     @question.tags = tags
 
     render turbo_stream: (turbo_stream.replace @question, partial: "form", locals: { question: @question, available_tags: @available_tags}) and return unless @question.errors.count == 0

@@ -4,12 +4,6 @@ class CoursesController < ApplicationController
 
   load_and_authorize_resource id_param: :course_id
 
-  before_action :set_course
-
-  def set_course
-    @course = Course.find_by(id: params[:course_id])
-  end
-
   def edit
   end
 

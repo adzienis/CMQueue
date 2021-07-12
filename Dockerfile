@@ -8,10 +8,14 @@ RUN apt-get install -y nodejs
 RUN npm install -g yarn
 WORKDIR $INSTALL_PATH
 
-COPY . .
+COPY package.json .
+COPY yarn.lock .
+COPY Gemfile .
+COPY Gemfile.lock .
 RUN rm -rf node_modules vendor
 RUN yarn install
 RUN gem install rails bundler
 RUN bundle install
+COPY . .
 RUN ./bin/webpack --mode production
 CMD  RAILS_ENV=production bundle exec db:migrate && RAILS_SERVE_STATIC_FILES=true bundle exec rails s -e production --log-to-stdout

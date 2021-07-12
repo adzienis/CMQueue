@@ -44,11 +44,7 @@ export default class extends Controller {
                 // Update out native select option by option
                 const selected = value.map(opt => opt.value);
                 for (const opt of select.options) {
-                    if (selected.includes(opt.value)) {
-                        opt.selected = true
-                    } else {
-                        opt.selected = false
-                    }
+                    opt.selected = !!selected.includes(opt.value);
                 }
             }
 

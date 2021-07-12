@@ -102,6 +102,7 @@ Rails.application.configure do
   config.hosts << 'localhost'
   config.hosts << '127.0.0.1'
   config.hosts << "gardenzone.xyz"
+  config.hosts << "cmqueue.xyz"
 
   Rails.application.config.action_cable.allowed_request_origins = ['https://localhost', 'http://gardenzone.xyz:8020', 'https://gardenzone.xyz']
 

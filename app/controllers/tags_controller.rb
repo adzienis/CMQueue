@@ -3,8 +3,21 @@
 class TagsController < ApplicationController
   load_and_authorize_resource
 
-  def index
+  before_action do
     @course = Course.find(params[:course_id]) if params[:course_id]
+
+    respond_to do |format|
+      format.html {
+        helpers.deny_unless_staff!(@course)
+      }
+    end
+  end
+
+  def download
+    @course = Course.find(params[:course_id])
+  end
+
+  def index
 
     @tags = @tags.undiscarded.order(created_at: :desc).where(course_id: params[:course_id]) if params[:course_id]
     @tags_ransack = @tags.ransack(params[:q])

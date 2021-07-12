@@ -56,7 +56,7 @@ Authorization is done using `CanCanCan`, with roles for courses powered by `Roli
 
 The REST API is used for both the the various React components scattered about,
 as well as for applications authorized by the course. The endpoints are documented
-at the `/swagger` endpoint.
+at the `/api/swagger` endpoint.
 
 The REST API is built using `Grape`, with authorization through either `Devise`
 when a request comes from a signed in user, and with `Doorkeeper` when done with
@@ -73,6 +73,32 @@ authentication for REST API. The instructor of a course can create a new
 authorization for an application. The instructor can then use the corresponding
 secret and uid to allow another application to use the OAuth 2.0 credentials
 based authentication flow to gain access.
+
+Ideally, this would be used by slackbots/hooks/smaller pieces of
+functionality.
+
+## Adding an application
+
+An instructor will have access to an applications section, where they
+can create new ones. A client UID and secret, will be created, and one
+can create a POST with the following form to `/oauth/token` to
+get a bearer token;
+
+```
+{
+   "grant_type": "string",
+   "client_id": "string",
+   "client_secret": "string",
+   "scope": {
+      "type": "array",
+      "items": {
+         "type": "number"
+      }
+   }
+}
+```
+
+`grant_type` should be set to `client_credentials`.
 
 ### Course Management
 

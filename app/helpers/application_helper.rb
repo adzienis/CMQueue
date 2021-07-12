@@ -2,6 +2,15 @@
 
 require 'action_view'
 
+module ApplicationHelper
+
+  def deny_unless_staff!(course)
+    raise CanCan::AccessDenied unless current_user
+                                        .has_any_role?({ name: :ta, resource: course},
+                                                       {name: :instructor, resource: course})
+  end
+end
+
 module UrlHelpers
   extend ActiveSupport::Concern
 

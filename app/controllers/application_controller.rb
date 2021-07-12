@@ -3,7 +3,15 @@
 class ApplicationController < ActionController::Base
   include Pagy::Backend
 
-  before_action :authenticate_user!
+  before_action :set_course, :authenticate_user!
+
+  def set_course
+      @course = Course.accessible_by(current_ability).find(params[:course_id]) if params[:course_id]
+      @enrollment = Enrollment.undiscarded.joins(:role)
+                              .find_by(user_id: current_user.id, "roles.resource_id": @course.id) if params[:course_id]
+  end
+
+
 
   def new_session_path(_scope)
     new_user_session_path

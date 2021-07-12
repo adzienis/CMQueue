@@ -22,6 +22,8 @@ class Ability
         user.id == u.id
       end
 
+      cannot :download, Tag
+
       can :manage, Notification, Notification.where(recipient_type: "User", recipient_id: user.id) do |notification|
         notification.recipient_type == "User" && notification.recipient_id == user.id
       end
@@ -32,11 +34,11 @@ class Ability
           (setting.resource_type == "Course" && (user.has_any_role?({name: :instructor, resource: enrollment.course })))
       end
 
-      can :read, Enrollment, Enrollment.joins(:role)
-                                          .where("roles.resource_id": Course
-                                                                          .where("courses.id": Course.find_roles([:ta], user)
-                                                                                                     .pluck(:resource_id))
-                                                                          .pluck(:id))
+      #can :read, Enrollment, Enrollment.joins(:role)
+      #                                    .where("roles.resource_id": Course
+      #                                                                    .where("courses.id": Course.find_roles([:ta], user)
+      #                                                                                               .pluck(:resource_id))
+      #                                                                    .pluck(:id))
 
       can :manage, Enrollment, Enrollment.joins(:role)
                                        .where("roles.resource_id": Course

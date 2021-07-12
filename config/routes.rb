@@ -10,7 +10,7 @@ Rails.application.routes.draw do
 
   resources :tags do
     collection do
-      get 'download_form', to: "tags#download_form"
+      get 'download', to: "tags#download_form"
       post 'import', to: "tags#import"
     end
   end
@@ -21,7 +21,7 @@ Rails.application.routes.draw do
   resources :settings
   resources :enrollments do
     collection do
-      get 'download_form', to: "enrollments#download_form"
+      get 'download', to: "enrollments#download_form"
       post 'import', to: "enrollments#import"
     end
   end
@@ -35,7 +35,7 @@ Rails.application.routes.draw do
     end
 
     collection do
-      get 'download_form', to: "questions#download_form"
+      get 'download', to: "questions#download_form"
     end
   end
   resources :courses, param: :course_id
@@ -60,16 +60,30 @@ Rails.application.routes.draw do
     resources :questions do
       collection do
         get 'count', to: 'questions#count'
+        get 'download', to: "questions#download_form"
       end
     end
-    resources :tags
+    resources :tags do
+      collection do
+        get 'download', to: "tags#download_form"
+      end
+    end
     resources :users, param: :user_id
     resources :question_states
     resources :messages
-    resources :enrollments
+    resources :enrollments do
+      collection do
+        get 'download', to: "enrollments#download_form"
+      end
+    end
     resources :applications
     resources :semesters
     resources :roles
+  end
+
+
+  use_doorkeeper do
+    controllers applications: "oauth/applications"
   end
 
   resources :courses, only: [], param: :course_id do

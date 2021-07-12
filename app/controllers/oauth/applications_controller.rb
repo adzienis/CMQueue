@@ -10,6 +10,7 @@ class Oauth::ApplicationsController < Doorkeeper::ApplicationsController
     @application = Doorkeeper::Application.new(application_params)
     @application.owner = current_user unless params[:course_id]
     @application.owner = Course.find(params[:course_id]) if params[:course_id]
+
     if @application.save
       redirect_to oauth_application_url(Course.find(params[:course_id]),@application)
     else

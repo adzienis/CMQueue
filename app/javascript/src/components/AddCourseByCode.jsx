@@ -5,8 +5,12 @@ import useWrappedMutation from "../hooks/useWrappedMutation";
 import CourseCard from "./CourseCard";
 
 
-/*
-
+/**
+ * Add a course by role code.
+ *
+ * Requires a valid TA or instructor code.
+ * @param props
+ * @returns {JSX.Element}
  */
 export default (props) => {
     const {userId} = props;
@@ -39,9 +43,6 @@ export default (props) => {
         }
     );
     const [code, setCode] = useState("");
-
-    console.log(Object.values(errors).flat())
-
     return (
         <>
             <div className="modal fade" id="course-code-modal">
