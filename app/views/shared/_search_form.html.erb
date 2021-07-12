@@ -20,7 +20,7 @@
 
       <%= link_to new_polymorphic_path([@course, records.model]), class: "nav-link" do %>
         <i class="fas fa-plus fa-lg me-2"></i>
-        <span> Add a new <%= records.model.name.humanize %> </span>
+        <span> Add a new <%= records.model.name.titleize %> </span>
       <% end %>
     <% end if options[:actions].include? :new %>
 
@@ -41,7 +41,7 @@
         <div class="modal-dialog modal-dialog-centered modal-lg">
           <div class="modal-content">
             <div class="modal-header">
-              <h4 class="modal-title" id="import-modal-label"> Import <%= records.model.name.humanize %></h4>
+              <h4 class="modal-title" id="import-modal-label"> Import <%= records.model.name.titleize %></h4>
               <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
@@ -70,7 +70,7 @@
               <th style="min-width: 125px">
                 <% if extra.instance_of? Hash %>
                   <%= sort_link(ransack, extra.flatten.join('_')) do %>
-                    <%= "#{flatten_hash(extra)[-2].to_s.humanize} #{flatten_hash(extra)[-1].to_s.humanize}" %>
+                    <%= "#{flatten_hash(extra)[-2].to_s.titleize} #{flatten_hash(extra)[-1].to_s.titleize}" %>
                   <% end %>
                 <% else %>
                   <%= sort_link(ransack, extra.to_s) %>

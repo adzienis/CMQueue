@@ -10,12 +10,12 @@
              course: @course,
              pagy: @pagy,
              options: {
-               extra_columns: [{ user: :given_name},{current_state: :state}, { tags: :name }],
+               extra_columns: [{ user: :given_name},{question_state: :state}, { tags: :name }],
                except: [:title, :notes, :user_id, :course_id, :discarded_at, :enrollment_id],
                actions: [:download],
                other_filters: {
                  user: User.column_names.excluding("id", "created_at", "updated_at", "provider", "uid"),
-                 current_state: QuestionState.column_names.excluding("updated_at", "id", "question_id", "user_id")
+                 question_state: QuestionState.column_names.excluding("updated_at", "id", "question_id", "user_id")
                }
              }
            } %>
