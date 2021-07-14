@@ -1,3 +1,4 @@
-
 <%= turbo_stream_from current_user, :question_creator %>
-<%= render partial: "questions/question_creator", locals: { question: @question, available_tags: @available_tags}  %>
+<%= turbo_frame_tag "question-creator-container", class: "w-100" do %>
+  <%= render partial: "questions/question_creator", locals: { question: @question, available_tags: @available_tags } %>
+<% end %>

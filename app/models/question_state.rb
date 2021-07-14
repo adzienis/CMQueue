@@ -58,7 +58,7 @@ class QuestionState < ApplicationRecord
   after_create_commit do
 
     broadcast_action_later_to [question.user, :question_creator],
-                              action: :replace,
+                              action: :update,
                               target: "question-creator-container",
                               partial: "questions/question_creator",
                               locals: { question: question, available_tags: course.available_tags.to_a }

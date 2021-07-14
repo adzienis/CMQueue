@@ -30,13 +30,14 @@ export default props => {
     },[question])
 
     if (!question || question.question_state.state !== "resolving" ||
-        typeof time === "undefined") return null;
+        typeof time === "undefined") {
+        return null
+    }
 
     return (
         <div className="d-flex justify-content-center align-items-center flex-column">
             <h2>
                 {Math.floor(time / 60)}:{(time % 60).toString().padStart(2, '0')}
-
             </h2>
             <h5 className="text-black-50">
                 <small>

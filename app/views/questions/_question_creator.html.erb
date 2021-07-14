@@ -1,27 +1,23 @@
+<%= render partial: "questions/question_state_modal", locals: { question: question } %>
 
-<%= turbo_frame_tag "question-creator-container", class: "w-100" do %>
-
-  <%= render partial: "questions/question_state_modal", locals: { question: question } %>
-
-  <%= tag.div class: "card w-100 shadow-sm #{ question.frozen? ? "frozen-card" : ""}" do %>
-    <div class="card-body">
-      <div class="card-title">
+<%= tag.div class: "card w-100 shadow-sm #{ question.frozen? ? "frozen-card" : ""}" do %>
+  <div class="card-body">
+    <div class="card-title">
+      <%= tag.h1 do %>
+        <%= tag.span class: "badge bg-primary" do %>
+          Frozen
+        <% end %>
+        <hr>
+      <% end if question.frozen? %>
+      <%= tag.div do %>
         <%= tag.h1 do %>
-          <%= tag.span class: "badge bg-primary" do %>
-            Frozen
+          <%= "#{question.question_state.user.given_name} is answering your question." %>
+          <%= tag.span class: "badge bg-success" do %> Resolving
           <% end %>
           <hr>
-        <% end if question.frozen? %>
-        <%= tag.div do %>
-          <%= tag.h1 do %>
-            <%= "#{question.question_state.user.given_name} is answering your question." %>
-            <%= tag.span class: "badge bg-success" do %> Resolving <% end %>
-            <hr>
-          <% end %>
-        <% end if question.resolving? %>
-      </div>
-      <%= render partial: "questions/form", locals: { question: question, available_tags: available_tags } %>
+        <% end %>
+      <% end if question.resolving? %>
     </div>
-  <% end %>
-
+    <%= render partial: "questions/form", locals: { question: question, available_tags: available_tags } %>
+  </div>
 <% end %>
