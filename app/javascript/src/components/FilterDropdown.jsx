@@ -24,7 +24,7 @@ export default (props) => {
 
     const {root: colNames, associations} = columns;
 
-    const possible_values = Object.keys(colNames).concat(Object.keys(associations))
+    const possible_values = Object.keys(colNames).concat(associations.map(v => Object.keys(v)[0]).flat())
 
 
     const [filters, setFilters] = useState(
