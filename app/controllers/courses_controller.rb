@@ -42,6 +42,12 @@ class CoursesController < ApplicationController
   def index
   end
 
+  def semester
+    session[:semester] = params[:semester]
+
+    redirect_to request.referer
+  end
+
   def create
     @course = Course.create(course_params)
 

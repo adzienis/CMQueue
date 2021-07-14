@@ -38,8 +38,8 @@
               <div style="width: 16px" class="d-flex justify-content-center">
                 <i class="fas fa-bowling-ball"></i>
               </div>
-              <%= button_to "Applications", oauth_applications_path(@course),
-                            class: "btn text-decoration-none #{(request.path == oauth_applications_path(@course)) ?
+              <%= button_to "Applications", course_applications_path,
+                            class: "btn text-decoration-none #{(request.path == course_applications_path(@course)) ?
                                                                  "active-link" : ""}", method: :get %>
             </li>
             <% end %>
