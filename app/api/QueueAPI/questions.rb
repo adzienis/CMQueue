@@ -95,6 +95,13 @@ module QueueAPI
           question
         end
 
+        desc 'Gets the question'
+        get scopes: [:admin] do
+          question = Question.find(params[:question_id])
+
+          question.as_json include: [:question_state]
+        end
+
         desc "Get question states associated with a question."
         get :question_states do
           QuestionState.where(question_id: params[:question_id])
@@ -115,7 +122,6 @@ module QueueAPI
         end
 
       end
-
 
       route_param :question_id do
 

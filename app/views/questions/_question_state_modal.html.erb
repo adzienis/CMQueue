@@ -10,7 +10,11 @@
             </h5>
           </div>
           <div class="modal-body">
-            ...
+            <div class="d-flex justify-content-center align-items-center w-100">
+              <%= content_tag :div, id: "question-time", data: {
+                questionId: question.id
+              }.to_json do %><% end %>
+            </div>
           </div>
           <div class="modal-footer">
           </div>

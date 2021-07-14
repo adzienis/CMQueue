@@ -8,61 +8,6 @@ import "controllers";
 
 import bootstrap from 'bootstrap/dist/js/bootstrap'
 
-document.addEventListener("react-component:load", event => {
-  (function($bs) {
-    const CLASS_NAME = 'has-child-dropdown-show';
-    $bs.Dropdown.prototype.toggle = function(_orginal) {
-      return function() {
-        document.querySelectorAll('.' + CLASS_NAME).forEach(function(e) {
-          e.classList.remove(CLASS_NAME);
-        });
-        let dd = this._element.closest('.dropdown').parentNode.closest('.dropdown');
-        for (; dd && dd !== document; dd = dd.parentNode.closest('.dropdown')) {
-          dd.classList.add(CLASS_NAME);
-        }
-        return _orginal.call(this);
-      }
-    }($bs.Dropdown.prototype.toggle);
-
-    document.querySelectorAll('.dropdown').forEach(function(dd) {
-      dd.addEventListener('hide.bs.dropdown', function(e) {
-        if (this.classList.contains(CLASS_NAME)) {
-          this.classList.remove(CLASS_NAME);
-          e.preventDefault();
-        }
-        if(e.clickEvent && e.clickEvent.composedPath().some(el=>el.classList && el.classList.contains('dropdown-toggle'))){
-          e.preventDefault();
-        }
-        e.stopPropagation(); // do not need pop in multi level mode
-      });
-    });
-
-    // for hover
-    function getDropdown(element) {
-      return $bs.Dropdown.getInstance(element) || new $bs.Dropdown(element);
-    }
-
-    document.querySelectorAll('.dropdown-hover, .dropdown-hover-all .dropdown').forEach(function(dd) {
-      dd.addEventListener('mouseenter', function(e) {
-        let toggle = e.target.querySelector(':scope>[data-bs-toggle="dropdown"]');
-        if (!toggle.classList.contains('show')) {
-          getDropdown(toggle).toggle();
-        }
-      });
-      dd.addEventListener('mouseleave', function(e) {
-        let toggle = e.target.querySelector(':scope>[data-bs-toggle="dropdown"]');
-        if (toggle.classList.contains('show')) {
-          getDropdown(toggle).toggle();
-        }
-      });
-    });
-  })(bootstrap);
-})
-
-
-
-
-
 import SearchModal from "../src/components/SearchModal";
 import StudentQueueView from "../src/components/StudentQueueView";
 import AddCourseByCode from "../src/components/AddCourseByCode";
@@ -79,9 +24,11 @@ import TALog from "../src/components/TALog";
 import TAQueueView from "../src/components/TAQueueView";
 import UserSettings from "../src/components/UserSettings";
 import TATimePerQuestion from "../src/components/TATimePerQuestion";
+import nestedDropdownListeners from "../src/utilities/nestedDropdownListeners";
 
 import attachTurboEvents from "../src/utilities/turboExtraEvents";
 import registerManager from "../src/utilities/registerComponent";
+import QuestionAnsweringTime from "../src/components/QuestionAnsweringTime";
 registerManager.register_component(AddCourseByCode, "#add-course-by-code");
 registerManager.register_component(CourseStatus, "#course-status");
 registerManager.register_component(FilterDropdown, "#dropdown-filter");
@@ -95,8 +42,10 @@ registerManager.register_component(TAActionPane, "#ta-action-pane");
 registerManager.register_component(TALog, "#ta-chart");
 registerManager.register_component(TAQueueView, "#ta-queue-view");
 registerManager.register_component(UserSettings, "#user-settings");
+registerManager.register_component(QuestionAnsweringTime, "#question-time");
 //registerManager.register_component(TATimePerQuestion, "#time");
 
+nestedDropdownListeners();
 attachTurboEvents();
 
 registerManager.render_components();

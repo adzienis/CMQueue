@@ -5,9 +5,7 @@ export default props => {
 
     const {children, id, src } = props;
 
-
     useEffect(() => {
-        console.log('dispatching')
         const turboFrameEvent = new Event('react-component:load')
         document.dispatchEvent(turboFrameEvent)
     }, [])
