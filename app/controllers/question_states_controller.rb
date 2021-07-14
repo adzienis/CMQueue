@@ -19,11 +19,6 @@ class QuestionStatesController < ApplicationController
 
   def create
     @question_state = QuestionState.create!(create_params)
-
-    respond_to do |format|
-      format.html
-      format.json { render json: @question_state }
-    end
   end
 
   def show

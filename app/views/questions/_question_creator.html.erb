@@ -1,3 +1,7 @@
+<% question ||= Question.new %>
+<% available_tags ||= [] %>
+
+
 <%= render partial: "questions/question_state_modal", locals: { question: question } %>
 
 <%= tag.div class: "card w-100 shadow-sm #{ question.frozen? ? "frozen-card" : ""}" do %>

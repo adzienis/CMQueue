@@ -1,6 +1,14 @@
 import React, {useEffect, useState} from 'react';
 import {useQuery} from "react-query";
 
+/**
+ * Renders the total amount of time spent "resolving" the question.
+ * Updates every second.
+ *
+ *
+ * @param props
+ * @returns {JSX.Element|null}
+ */
 export default props => {
 
     const { questionId } = props;

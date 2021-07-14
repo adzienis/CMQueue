@@ -22,7 +22,29 @@
       </div>
     </div>
   </div>
-<% elsif question.user.unacknowledged_kicked_question? %>
+<% elsif question.resolved? %>
+  <div data-controller="modal">
+    <div data-modal-target="modal" class="modal fade" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">
+              Question Answered
+            </h5>
+          </div>
+          <div class="modal-body">
+            <div class="d-flex justify-content-center align-items-center w-100">
+              <%= button_to "New Question", new_course_question_path(question.course), method: :get, class: "btn btn-primary" %>
+            </div>
+          </div>
+          <div class="modal-footer">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<% elsif question.user&.unacknowledged_kicked_question? %>
   <div data-controller="modal">
     <div data-modal-target="modal" class="modal fade" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered modal-lg">
