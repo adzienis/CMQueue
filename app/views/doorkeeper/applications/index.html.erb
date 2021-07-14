@@ -5,7 +5,7 @@
 <div class="card shadow-sm">
   <div class="card-body">
 
-    <p><%= link_to t('.new'), new_oauth_application_path(Course.find(params[:course_id])), class: 'btn btn-success' %></p>
+    <p><%= link_to t('.new'), new_oauth_course_application_path(@course), class: 'btn btn-success' %></p>
 
     <div class="table-responsive">
       <table class="table table-striped">
@@ -22,7 +22,7 @@
         <% @applications.each do |application| %>
           <tr id="application_<%= application.id %>">
             <td class="align-middle">
-              <%= link_to application.name, oauth_application_path(Course.find(params[:course_id]),application) %>
+              <%= link_to application.name, oauth_course_application_path(@course, application) %>
             </td>
             <td class="align-middle">
               <%= simple_format(application.redirect_uri) %>
@@ -31,7 +31,7 @@
               <%= application.confidential? ? t('doorkeeper.applications.index.confidentiality.yes') : t('doorkeeper.applications.index.confidentiality.no') %>
             </td>
             <td class="align-middle">
-              <%= link_to t('doorkeeper.applications.buttons.edit'), edit_oauth_application_path(Course.find(params[:course_id]),application), class: 'btn btn-link' %>
+              <%= link_to t('doorkeeper.applications.buttons.edit'), edit_oauth_course_application_path(@course, application), class: 'btn btn-link' %>
             </td>
             <td class="align-middle">
               <%= render 'delete_form', application: application %>
@@ -40,7 +40,7 @@
         <% end %>
         </tbody>
       </table>
-      <% if @applications.count == 0 %>
+      <% if @applications.empty? %>
         <div class="alert alert-warning">
           No Applications
         </div>

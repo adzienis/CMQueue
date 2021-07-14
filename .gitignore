@@ -44,3 +44,5 @@ yarn-debug.log*
 vendor/*
 
 .idea
+
+config/credentials.yml.enc

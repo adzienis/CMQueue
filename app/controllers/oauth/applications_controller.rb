@@ -1,7 +1,11 @@
 # app/controllers/oauth/applications_controller.rb
 class Oauth::ApplicationsController < Doorkeeper::ApplicationsController
+  before_action do
+    @course = Course.find(params[:course_id]) if params[:course_id]
+  end
+
   def index
-    @applications = current_user.oauth_applications unless params[:course_id]
+    @applications = current_user.applications unless params[:course_id]
     @applications = OauthApplication.where(owner_id: params[:course_id], owner_type: "Course") if params[:course_id]
   end
 
@@ -12,7 +16,7 @@ class Oauth::ApplicationsController < Doorkeeper::ApplicationsController
     @application.owner = Course.find(params[:course_id]) if params[:course_id]
 
     if @application.save
-      redirect_to oauth_application_url(Course.find(params[:course_id]),@application)
+      redirect_to oauth_course_application_url(Course.find(params[:course_id]),@application)
     else
       render :new
     end
@@ -41,7 +45,7 @@ class Oauth::ApplicationsController < Doorkeeper::ApplicationsController
   private
 
   def set_application
-    @application = current_user.oauth_applications.find(params[:id]) unless params[:course_id]
+    @application = current_user.applications.find(params[:id]) unless params[:course_id]
     @application = OauthApplication.where(owner_id: params[:course_id], owner_type: "Course").find(params[:id]) if params[:course_id]
   end
 

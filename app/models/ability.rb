@@ -17,6 +17,7 @@ class Ability
 
       can [:active_tas, :open_status, :read, :search], Course
       can :read, User
+      can :semester, Course
 
       can :enroll_user, User do |u|
         user.id == u.id

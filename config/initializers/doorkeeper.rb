@@ -41,10 +41,10 @@ Doorkeeper.configure do
   # every time somebody will try to access the admin web interface.
   #
   admin_authenticator do
-    if current_user&.has_role?(:admin) || (params.has_key?(:course_id) && current_user&.has_role?(:instructor, Course.find(params[:course_id])))
-    else
-      redirect_to root_path
-    end
+
+    redirect_to root_path unless current_user&.has_any_role?(:admin, {name: :instructor, resource: :any}) ||
+                                (params.has_key?(:course_id) && current_user&.has_role?(:instructor, Course.find(params[:course_id])))
+
   end
 
   # You can use your own model classes if you need to extend (or even override) default

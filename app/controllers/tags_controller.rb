@@ -5,12 +5,6 @@ class TagsController < ApplicationController
 
   before_action do
     @course = Course.find(params[:course_id]) if params[:course_id]
-
-    respond_to do |format|
-      format.html {
-        helpers.deny_unless_staff!(@course)
-      }
-    end
   end
 
   def download

@@ -26,6 +26,9 @@ class User < ApplicationRecord
 
   has_many :settings, as: :resource, dependent: :destroy
 
+  # add scopes for course
+  has_many :applications, class_name: "Doorkeeper::Application", as: :owner
+
   #has_many :oauth_applications, as: :owner
 
   def unacknowledged_kicked_question?
