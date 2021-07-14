@@ -3,7 +3,7 @@ import {useMutation, useQuery} from "react-query";
 import useWrappedMutation from "../hooks/useWrappedMutation";
 import {useForm} from "react-hook-form";
 import {ErrorMessage, Field, Form, Formik} from 'formik';
-import {SelectField} from "./SelectField";
+import {SelectField} from "./forms/SelectField";
 import mutationFn from "../utilities/mutationFn";
 import DelayedSpinner from "./DelayedSpinner";
 import ServerError from "./ServerError";

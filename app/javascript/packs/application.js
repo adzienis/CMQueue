@@ -66,7 +66,7 @@ document.addEventListener("react-component:load", event => {
 import SearchModal from "../src/components/SearchModal";
 import StudentQueueView from "../src/components/StudentQueueView";
 import AddCourseByCode from "../src/components/AddCourseByCode";
-import FilterDropdown from "../src/components/FilterDropdown";
+import FilterDropdown from "../src/components/search/FilterDropdown";
 import queryClient from "../src/utilities/queryClientFile";
 import ReactStudentChannel from "../channels/react_student_channel";
 import CourseStatus from "../src/components/CourseStatus";

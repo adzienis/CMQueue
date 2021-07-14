@@ -1,7 +1,7 @@
 import React, {useEffect, useMemo, useRef, useState} from "react";
 
 import DatePicker from "react-datepicker";
-import {convertToDate} from "../utilities/dateConverter";
+import {convertToDate} from "../../utilities/dateConverter";
 
 
 /**
