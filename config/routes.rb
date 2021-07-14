@@ -16,8 +16,6 @@ Rails.application.routes.draw do
   end
   resources :question_states
   resources :messages
-  resources :applications
-  resources :semesters
   resources :settings
   resources :enrollments do
     collection do
@@ -76,8 +74,6 @@ Rails.application.routes.draw do
         get 'download', to: "enrollments#download_form"
       end
     end
-    resources :applications
-    resources :semesters
     resources :roles
   end
 
@@ -86,15 +82,24 @@ Rails.application.routes.draw do
     controllers applications: "oauth/applications"
   end
 
-  resources :courses, only: [], param: :course_id do
-    member do
-      use_doorkeeper do
-        controllers applications: "oauth/applications"
-      end
+
+  resources :courses, only: [] do
+    use_doorkeeper do
+      controllers applications: "oauth/applications"
+    end
+  end
+
+  resources :courses, only: [] do
+    scope 'oauth' do
+      resources :applications
     end
   end
 
   resources :courses, param: :course_id do
+    collection do
+
+      post 'semester'
+    end
     member do
       get 'roster', to: 'courses#roster'
       get 'queue', to: 'courses#queue'
