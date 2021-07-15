@@ -13,23 +13,6 @@ export default (props) => {
 
   useAutoFocusModal('#explanationModal', '#explanation')
 
-  const { mutateAsync: createMessage, isLoading } = useWrappedMutation(
-    () => ({
-      message: {
-        question_state_id: refq.current,
-        user_id: userId,
-        description,
-      },
-    }),
-    `/messages`,
-    {},
-    {
-      onSuccess: (data) => {
-        setOpen(false);
-      },
-    }
-  );
-
   return (
     <>
       <div
@@ -73,11 +56,10 @@ export default (props) => {
                   try {
                     newState = await callback(description);
                     refq.current = newState?.id;
-                    createMessage();
                   } catch (err) {}
                 }}
               >
-                <DelayedSpinner loading={isLoading}>Submit</DelayedSpinner>
+                <DelayedSpinner>Submit</DelayedSpinner>
               </button>
             </div>
           </div>

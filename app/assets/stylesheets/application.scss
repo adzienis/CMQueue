@@ -33,6 +33,10 @@ $toast-background-color: rgba($white, 1.0);
 @import url('https://fonts.googleapis.com/css2?family=Arimo:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&display=swap');
 @import "font-awesome";
 
+.dropdown-menu {
+  min-width: 100%
+}
+
 .filter-input {
   max-width: 120px;
   width: 100%;
@@ -56,7 +60,7 @@ $toast-background-color: rgba($white, 1.0);
 :root {
   --frozen: #2185D0;
   --resolved: #197754;
-  --unresolved: rgb(70,70,70);
+  --unresolved: rgb(70, 70, 70);
 }
 
 .bg-frozen {
@@ -81,7 +85,7 @@ $toast-background-color: rgba($white, 1.0);
   border-style: solid;
 }
 
-html, body{
+html, body {
   height: initial !important;
   scroll-behavior: auto !important;
 }
@@ -89,7 +93,7 @@ html, body{
 .sidebar-opener {
   z-index: 10;
   display: none;
-  position:fixed;
+  position: fixed;
   left: 0px;
   margin-left: 0px;
   transition: left .5s ease, margin-left .5s ease;
@@ -146,7 +150,7 @@ html, body{
   }
 
   .sidebar-opener.open {
-    left:200px;
+    left: 200px;
   }
   .sidebar {
     left: -200px;

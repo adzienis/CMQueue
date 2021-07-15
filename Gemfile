@@ -71,7 +71,6 @@ gem 'font-awesome-rails', '~> 4.7'
 gem 'rack-cors', '~> 1.1'
 
 gem 'mini_racer', platforms: :ruby
-gem 'react_on_rails', '~> 12.2'
 
 gem 'cable_ready', '~> 4.5'
 
@@ -91,7 +90,6 @@ gem 'pagy'
 
 gem 'ransack', '~> 2.4'
 
-gem 'activeadmin', '~> 2.9'
 
 gem 'rails_admin_import', '~> 2.2'
 

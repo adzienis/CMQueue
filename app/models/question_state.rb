@@ -57,11 +57,10 @@ class QuestionState < ApplicationRecord
 
   after_create_commit do
 
-    broadcast_action_later_to [question.user, :question_creator],
-                              action: :update,
+    broadcast_action_later_to :question_creator, question.user,
+                              action: :refresh,
                               target: "question-creator-container",
-                              partial: "questions/question_creator",
-                              locals: { question: question, available_tags: course.available_tags.to_a }
+                              partial: "shared/reload_turbo"
 
     QueueChannel.broadcast_to course, {
       invalidate: ['courses', question.course.id, 'activeTAs']

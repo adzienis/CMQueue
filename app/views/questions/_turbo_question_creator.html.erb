@@ -1,7 +1,8 @@
 <% question ||= Question.new %>
 <% available_tags ||= [] %>
 
-<%= turbo_stream_from current_user, :question_creator %>
-<%= turbo_frame_tag "question-creator-container", class: "w-100" do %>
+<%= turbo_stream_from :question_creator, current_user %>
+
+<%= turbo_frame_tag "question-creator-container", src: request.path, class: "w-100" do %>
   <%= render partial: "questions/question_creator", locals: { question: question, available_tags: available_tags } %>
 <% end %>

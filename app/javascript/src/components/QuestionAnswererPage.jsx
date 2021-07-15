@@ -41,7 +41,7 @@ export default (props) => {
           description
         },
       }),
-      "/question_states", {}, {
+      "/api/question_states", {}, {
         onSuccess: d => {
           if (d) {
           }

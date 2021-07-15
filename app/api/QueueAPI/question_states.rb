@@ -44,9 +44,7 @@ module QueueAPI
         end
       end
       post do
-
         question_state = QuestionState.create!(declared(params)[:question_state])
-
       end
 
     end

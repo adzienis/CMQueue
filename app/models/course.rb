@@ -35,12 +35,16 @@ class Course < ApplicationRecord
     self.instructor_code = SecureRandom.urlsafe_base64(6) unless instructor_code
   end
 
-
   def available_tags
     tags.undiscarded.unarchived
   end
 
   after_update do
+    broadcast_action_later_to :question_creator,
+                              action: :refresh,
+                              target: "question-creator-container",
+                              template: nil
+
     QueueChannel.broadcast_to self, {
       invalidate: ['courses', id, 'open_status']
     }
