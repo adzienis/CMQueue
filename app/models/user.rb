@@ -93,6 +93,10 @@ class User < ApplicationRecord
       .distinct('users.id')
   }
 
+  def full_name
+    "#{given_name} #{family_name}"
+  end
+
   def self.from_omniauth(auth)
     find_or_create_by(email: auth.extra.id_info.email) do |user|
       user.given_name = auth.extra.id_info.given_name

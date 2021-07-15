@@ -41,6 +41,7 @@ module QueueAPI
           requires :enrollment_id, type: Integer
           requires :state, type: String
           requires :question_id, type: Integer
+          optional :description, type: String
         end
       end
       post do

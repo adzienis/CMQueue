@@ -10,6 +10,8 @@
                       wrapper_html: { class: "mb-2" },
                       label_html: { class: "fw-bold" }
                     } do |f| %>
+  <%= f.full_error :course, class: "invalid-feedback d-block fw-bold", style: "font-size: 1rem" %>
+  <%= f.full_error :enrollment, class: "invalid-feedback d-block fw-bold", style: "font-size: 1rem"  %>
   <%= f.hidden_field :enrollment_id, value: question.enrollment.id %>
   <%= f.hidden_field :course_id, value: question.course.id %>
   <%= f.input :tried, label: "What have you tried?", input_html: { value: question.tried } %>
