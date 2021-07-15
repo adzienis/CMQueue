@@ -66,6 +66,7 @@ module QueueAPI
             optional :state, type: Object, coerce_with: ->(val) {
               Array(JSON.parse(val)).to_json
             }
+            requires :question_id, type: Integer
           end
           get 'position' do
             questions = Question.undiscarded
