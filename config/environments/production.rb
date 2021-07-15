@@ -99,12 +99,11 @@ Rails.application.configure do
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
 
-  config.hosts << 'localhost'
-  config.hosts << '127.0.0.1'
-  config.hosts << "gardenzone.xyz"
-  config.hosts << "cmqueue.xyz"
 
-  Rails.application.config.action_cable.allowed_request_origins = ['https://localhost', 'http://gardenzone.xyz:8020', 'https://gardenzone.xyz']
+  # configured the allowed hosts for the server and action cable.
+  config.hosts << "cmqueue.xyz"
+  Rails.application.config.action_cable.allowed_request_origins = ['http://cmqueue.xyz']
+
 
   # Inserts middleware to perform automatic connection switching.
   # The `database_selector` hash is used to pass options to the DatabaseSelector

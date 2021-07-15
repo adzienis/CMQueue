@@ -8,14 +8,12 @@ default: &default
   adapter: postgresql
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
   timeout: 5000
-  username: docker
 
 development:
   <<: *default
-  database: docker #db/development.sqlite3
-  password: docker
+  database: development
   host: localhost
-  password: docker
+  username: development
   port: 5433
 
 # Warning: The database defined as "test" will be erased and
@@ -23,14 +21,13 @@ development:
 # Do not set this db to the same as development or production.
 test:
   <<: *default
-  database: docker #db/production.sqlite3
-  password: docker
+  database: test
+  username: test
   host: localhost
   port: 5435
 
 production:
   <<: *default
-  database: docker #db/production.sqlite3
+  username: production
+  database: production
   host: db
-  user: docker
-  db: docker

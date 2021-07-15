@@ -113,23 +113,3 @@ problems with joins over models.
 ### Models
 
 There is an included entity relation diagram that helps clear up the relations.
-
-
-# Commands
-
-## Development
-
-Run `make run_dev` to run the development environment. This uses docker compose
-under the hood, which sets up Postgres and Redis. Run `make stop_dev` to stop
-the containers. Run `make down_dev` to bring it down. 
-To run the server, `cd` into the server folder, and run `bundle exec rails s`.
-
-## Production
-
-Run `make run_prod`. Run `make stop_prod` to stop the containers. 
-Run `make down_prod` to bring it down.
-
-## Tests
-
-Run `make run_test`. Run `make stop_test` to stop the containers.
-Run `make down_test` to bring it down.
