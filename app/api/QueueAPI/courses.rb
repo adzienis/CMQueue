@@ -35,7 +35,7 @@ module QueueAPI
           requires :enrollment_id, type: Integer
           requires :course_id, type: Integer
         end
-        post 'handleQuestion', scopes: [:admin] do
+        post 'handle_question', scopes: [:admin] do
 
           top_question = Question.undiscarded
           top_question = Question

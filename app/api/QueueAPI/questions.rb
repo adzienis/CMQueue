@@ -87,12 +87,14 @@ module QueueAPI
         params do
           requires :state, type: String
           requires :enrollment_id, type: Integer
+          optional :description, type: String
         end
-        post 'handleQuestion', scopes: [:admin] do
+        post 'handle_question', scopes: [:admin] do
           question = Question.find(params[:question_id])
 
           question.question_states.create(state: params[:state],
-                                          enrollment_id: params[:enrollment_id])
+                                          enrollment_id: params[:enrollment_id],
+                                          description: params[:description])
           question
         end
 

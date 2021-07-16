@@ -2,6 +2,7 @@ import React from "react";
 import {useQuery} from "react-query";
 import QueueInfoItem from "./QueueInfoItem";
 import TALog from "./TALog";
+import QuestionPosition from "./QuestionPosition";
 
 export default (props) => {
     const {courseId, userId, enrollment} = props;
@@ -33,20 +34,6 @@ export default (props) => {
         "open_status",
     ]);
 
-    const {data: position, isLoading: positionLoading} = useQuery(
-        [
-            "courses",
-            parseInt(courseId, 10),
-            "questions",
-            "position",
-            "?",
-            `question_id=${question?.id}`,
-            `state=["unresolved", "frozen"]`,
-        ],
-        {
-            enabled: !!question,
-        }
-    );
 
     const {data: count, isLoading: countLoading} = useQuery([
         "courses",
@@ -109,23 +96,8 @@ export default (props) => {
                                 loading={countLoading}
                                 value={count}
                             />
-                            {enrollment?.role.name === "student" ? (
-                                <QueueInfoItem
-                                    title={"Your Position on Queue"}
-                                    loading={positionLoading}
-                                    icon={
-                                        <div className="me-3 d-flex justify-content-center align-items-center">
-                                            <i className="fas fa-map-marker-alt fa-2x"/>
-                                        </div>
-                                    }
-                                    value={
-                                        position === 0
-                                            ? "Next"
-                                            : typeof position === "undefined" || position === null
-                                            ? "N/A"
-                                            : position
-                                    }
-                                />
+                            {((enrollment?.role.name === "student") && question) ? (
+                                <QuestionPosition question={question} courseId={courseId}/>
                             ) : null}
                         </div>
                         <QueueInfoItem
@@ -137,27 +109,27 @@ export default (props) => {
                                 </div>
                             }
                             value={activeTas?.map((v) => v.given_name).join(",")}
-                        />
-                        {enrollment?.role.name !== "student" ? (
-
-                            <div className="accordion mt-3" id="accordion-ta-log">
-                                <div className="accordion-item">
-                                    <h2 className="accordion-header">
-                                        <button className="accordion-button collapsed" type="button"
-                                                data-bs-toggle="collapse"
-                                                data-bs-target="#collapse-ta-log">
-                                            <b>TA Log</b>
-                                        </button>
-                                    </h2>
-                                    <div id="collapse-ta-log" className="accordion-collapse collapse"
-                                         data-bs-parent="#accordion-ta-log">
-                                        <div className="accordion-body p-0">
-                                            <TALog height={300} limited courseId={courseId}/>
+                            footer={enrollment?.role.name !== "student" ? (
+                                <div className="accordion" id="accordion-ta-log">
+                                    <div className="accordion-item">
+                                        <h2 className="accordion-header">
+                                            <button className="accordion-button collapsed" type="button"
+                                                    data-bs-toggle="collapse"
+                                                    data-bs-target="#collapse-ta-log">
+                                                <b>TA Log</b>
+                                            </button>
+                                        </h2>
+                                        <div id="collapse-ta-log" className="accordion-collapse collapse"
+                                             data-bs-parent="#accordion-ta-log">
+                                            <div className="accordion-body p-0">
+                                                <TALog height={300} limited courseId={courseId}/>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        ) : null}
+                            ) : null}
+                        />
+
                     </div>
                 </div>
             </div>

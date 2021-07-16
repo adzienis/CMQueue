@@ -1,12 +1,11 @@
 import React from "react";
 
 export default (props) => {
-  const { title, value, icon, loading } = props;
+  const { title, value, icon, loading, footer } = props;
 
   return (
     <div
       className="card bg-white"
-      style={{ height: "120px", maxHeight: "120px" }}
     >
       <div className="card-body d-flex flex-row">
         {loading ? (
@@ -28,6 +27,9 @@ export default (props) => {
             </div>
           </>
         )}
+      </div>
+      <div className="card-footer p-0">
+        {footer}
       </div>
     </div>
   );

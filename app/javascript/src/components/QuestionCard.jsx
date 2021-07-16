@@ -35,7 +35,7 @@ export default (props) => {
             state: "resolving",
             enrollment_id: enrollmentId,
         }),
-        `/api/questions/${question?.id}/handleQuestion`
+        `/api/questions/${question?.id}/handle_question`
     );
 
     let statusText = "";

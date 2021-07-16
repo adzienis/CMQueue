@@ -34,14 +34,12 @@ export default (props) => {
   const { mutateAsync: handleQuestion, isLoading: handleLoading } =
     useWrappedMutation(
       ({ state,description }) => ({
-        question_state: {
           state,
           enrollment_id: enrollmentId,
           question_id: topQuestion.id,
           description
-        },
       }),
-      "/api/question_states", {}, {
+        `/api/questions/${topQuestion?.id}/handle_question`, {}, {
         onSuccess: d => {
           if (d) {
           }

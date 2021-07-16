@@ -40,7 +40,7 @@ export default (props) => {
             state: "resolving",
             enrollment_id: enrollmentId,
         }),
-        `/api/courses/${courseId}/handleQuestion`,
+        `/api/courses/${courseId}/handle_question`,
         {},
         {
             onSuccess: async (d) => {
