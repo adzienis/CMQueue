@@ -3,7 +3,11 @@
 class ApplicationController < ActionController::Base
   include Pagy::Backend
 
-  before_action :set_course, :authenticate_user!
+  before_action :set_course, :set_user, :authenticate_user!
+
+  def set_user
+    @user = User.accessible_by(current_ability).find(params[:user_id]) if params[:user_id]
+  end
 
   def set_course
       @course = Course.accessible_by(current_ability).find(params[:course_id]) if params[:course_id]

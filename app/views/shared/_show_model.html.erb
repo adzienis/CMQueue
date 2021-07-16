@@ -26,10 +26,10 @@
               <% if model_instance.class.columns_hash[col].type == :datetime %>
                 <input type="text" class="form-control" value="<%= "#{model_instance.send(col)&.to_formatted_s(:short)}" %>">
 
-                <% else %>
+              <% else %>
                 <input type="text" class="form-control" value="<%= "#{model_instance.send(col)}" %>">
 
-                <% end %>
+              <% end %>
             </div>
           <% end %>
         </div>
@@ -46,18 +46,19 @@
              .flatten
              .reject { |v| options&.dig(:except)&.include? v.name.to_sym }
              .each do |ass| %>
-
-          <div>
-            <label class="form-label">
-              <b>
+          <% begin %>
+            <div>
+              <label class="form-label">
                 <%= link_to "View #{ass.name.to_s.humanize}", polymorphic_path(params[:course_id] ? [Course.find(params[:course_id]), ass.name] : [ass.name],
                                                                                {
                                                                                  "q[#{ass.options.dig(:through) ? ass.options.dig(:through).to_s + '_' : ''}" +
                                                                                    "#{model_instance.class.name.underscore}_id_eq]" => model_instance.id })
                 %>
-              </b>
-            </label>
-          </div>
+
+              </label>
+            </div>
+          <% rescue NoMethodError %>
+          <% end %>
         <% end %>
       <% end %>
 
@@ -67,17 +68,21 @@
            .flatten
            .reject { |v| options&.dig(:except)&.include? v.name.to_sym }
            .each do |ass| %>
-        <div>
-          <label class="form-label">
-            <b>
+        <% begin %>
+          <div>
+            <label class="form-label">
+
               <%= link_to "View #{ass.name.to_s.humanize}", polymorphic_path(params[:course_id] ? [Course.find(params[:course_id]), ass.name] : [ass.name],
                                                                              {
                                                                                "q[#{ass.options.dig(:through) ? ass.options.dig(:through).to_s + '_' : ''}" +
                                                                                  "#{model_instance.class.name.to_s.pluralize.underscore}_id_eq]" => model_instance.id })
               %>
-            </b>
-          </label>
-        </div>
+
+            </label>
+          </div>
+        <% rescue NoMethodError %>
+
+        <% end %>
       <% end %>
 
       <% [:has_one]
@@ -85,26 +90,31 @@
            .flatten
            .reject { |v| options&.dig(:except)&.include? v.name.to_sym }
            .each do |ass| %>
-        <div>
-          <label class="form-label">
-            <b>
+        <% begin %>
+          <div>
+            <label class="form-label">
+
               <% Array(model_instance.send(ass.name.to_sym)).each do |e| %>
                 <%= link_to "View #{ass.name.to_s.humanize}",
                             polymorphic_path(
                               params[:course_id] ? [Course.find(params[:course_id]), e] : [e]) %>
               <% end %>
-            </b>
-          </label>
-        </div>
+
+            </label>
+          </div>
+        <% rescue NoMethodError %>
+
+        <% end %>
       <% end %>
       <% [:belongs_to]
            .collect { |s| model_instance.class.reflect_on_all_associations(s) }
            .flatten
            .reject { |v| options&.dig(:except)&.include? v.name.to_sym }
            .each do |ass| %>
-        <div>
-          <label class="form-label">
-            <b>
+        <% begin %>
+          <div>
+            <label class="form-label">
+
               <% puts "-------------------------------------asd" %>
               <% puts ass.inspect %>
               <% Array(model_instance.send(ass.name.to_sym)).each do |e| %>
@@ -112,9 +122,12 @@
                             polymorphic_path(
                               params[:course_id] ? [Course.find(params[:course_id]), e] : [e]) %>
               <% end %>
-            </b>
-          </label>
-        </div>
+
+            </label>
+          </div>
+        <% rescue NoMethodError %>
+
+        <% end %>
       <% end %>
     <% end %>
   </div>

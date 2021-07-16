@@ -1,0 +1,34 @@
+<script>
+    function toggle() {
+        if (document.querySelector('.sidebar').classList.contains('open')) {
+            document.querySelector('.sidebar').classList.remove('open')
+        } else {
+            document.querySelector('.sidebar').classList.add('open')
+        }
+
+        if (document.querySelector('.sidebar-opener').classList.contains('open')) {
+            document.querySelector('.sidebar-opener').classList.remove('open')
+            document.querySelector('.sidebar-opener').innerHTML = ''
+            let i = document.createElement("i");
+            i.classList.add("fas", "fa-chevron-right")
+            document.querySelector('.sidebar-opener').appendChild(i)
+
+        } else {
+            document.querySelector('.sidebar-opener').classList.add('open')
+            document.querySelector('.sidebar-opener').innerHTML = ''
+            let i = document.createElement("i");
+            i.classList.add("fas", "fa-chevron-left")
+            document.querySelector('.sidebar-opener').appendChild(i)
+        }
+    }
+</script>
+
+<div class="d-flex flex-column p-3 bg-white border-right sidebar" style="box-shadow: 0 0px 2px -0px #00000077;">
+  <h4 class="mb-0">
+    Navigation
+  </h4>
+  <hr>
+  <ul class="list-unstyled">
+    <%= yield %>
+  </ul>
+</div>

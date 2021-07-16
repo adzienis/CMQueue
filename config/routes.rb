@@ -43,16 +43,16 @@ Rails.application.routes.draw do
     resources :question_states
   end
 
-  resources :users do
+  resources :users, only: [], shallow: true do
+    resources :questions
+    resources :tags
     resource :settings do
       get 'notifications', to: "settings#notifications"
     end
   end
 
-  resources :users, only: [], shallow: true do
-    resources :questions
-    resources :tags
-  end
+
+  resources :users, param: :user_id
 
   resources :courses, only: [] do
     resources :questions do

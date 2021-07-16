@@ -1,44 +1,38 @@
-<div class="d-flex flex-column p-3 bg-white border-right sidebar" style="box-shadow: 0 0px 2px -0px #00000077;">
-  <h4 class="mb-0">
-    Navigation
-  </h4>
-  <hr>
-  <ul class="list-unstyled">
-    <li class="mb-1">
-      <div class=" d-flex align-items-center">
-        <div style="width: 16px" class="d-flex justify-content-center">
-          <i class="fas fa-info"></i>
-        </div>
-        <%= button_tag class: "btn btn-toggle align-items-center text-decoration-none
-                            #{(request.path == (@user) ||
-          request.path == user_questions_path(@user)) ? 'active-link' : ''}",
-                       data: { "bs-toggle": "collapse", "bs-target": "#course-info-collapse" } do %>
-          Information
-        <% end %>
+
+
+<%= render layout: "shared/sidebar" do %>
+  <li class="d-flex align-items-center">
+    <div style="width: 16px" class="d-flex justify-content-center">
+      <i class="fas fa-question"></i>
+    </div>
+    <%= button_to "General Information", user_path(@user),
+                  class: "btn text-decoration-none #{(request.path == user_path(@user)) ?
+                                                       "active-link" : ""}", method: :get %>
+  </li>
+  <li class="mb-1">
+    <div class=" d-flex align-items-center">
+      <div style="width: 16px" class="d-flex justify-content-center">
+        <i class="fas fa-info"></i>
       </div>
-      <%= content_tag :div, id: "course-info-collapse",
-                      class: "collapse show" do %>
-        <ul class="navbar-toggler list-unstyled pb-1 small">
-
-          <li class="d-flex align-items-center">
-            <div style="width: 16px" class="d-flex justify-content-center">
-              <i class="fas fa-question"></i>
-            </div>
-            <%= button_to "Questions", user_questions_path(@user),
-                          class: "btn text-decoration-none #{(request.path == user_questions_path(@user)) ?
-                                                               "active-link" : ""}", method: :get %>
-          </li>
-
-          <li class="d-flex align-items-center">
-            <div style="width: 16px" class="d-flex justify-content-center">
-              <i class="fas fa-user"></i>
-            </div>
-            <%= button_to "Roster", user_enrollments_path(@user),
-                          class: "btn text-decoration-none #{(request.path == user_enrollments_path(@user)) ?
-                                                               "active-link" : ""}", method: :get %>
-          </li>
-        </ul>
+      <%= button_tag class: "btn btn-toggle align-items-center text-decoration-none
+                            #{(request.path == (@user) ||
+        request.path == user_questions_path(@user)) ? 'active-link' : ''}",
+                     data: { "bs-toggle": "collapse", "bs-target": "#course-info-collapse" } do %>
+        Information
       <% end %>
-    </li>
-  </ul>
-</div>
+    </div>
+    <%= content_tag :div, id: "course-info-collapse",
+                    class: "collapse show" do %>
+      <ul class="navbar-toggler list-unstyled pb-1 small">
+        <li class="d-flex align-items-center">
+          <div style="width: 16px" class="d-flex justify-content-center">
+            <i class="fas fa-question"></i>
+          </div>
+          <%= button_to "Questions", user_questions_path(@user),
+                        class: "btn text-decoration-none #{(request.path == user_questions_path(@user)) ?
+                                                             "active-link" : ""}", method: :get %>
+        </li>
+      </ul>
+    <% end %>
+  </li>
+<% end %>

@@ -1,34 +1,12 @@
 <% content_for :content do %>
 
+  <%= turbo_stream_from @course %>
+
   <%= tag.div id: "course-status", data: {
     courseId: @course.id
-  }.to_json do %>
-  <% end if current_user.has_any_role?({ name: :ta, resource: @course}, {name: :instructor, resource: @course}) %>
+  }.to_json do %><% end if current_user.has_any_role?({ name: :ta, resource: @course}, {name: :instructor, resource: @course}) %>
 
-  <script>
-      function toggle() {
-          if (document.querySelector('.sidebar').classList.contains('open')) {
-              document.querySelector('.sidebar').classList.remove('open')
-          } else {
-              document.querySelector('.sidebar').classList.add('open')
-          }
 
-          if (document.querySelector('.sidebar-opener').classList.contains('open')) {
-              document.querySelector('.sidebar-opener').classList.remove('open')
-              document.querySelector('.sidebar-opener').innerHTML = ''
-              let i = document.createElement("i");
-              i.classList.add("fas", "fa-chevron-right")
-              document.querySelector('.sidebar-opener').appendChild(i)
-
-          } else {
-              document.querySelector('.sidebar-opener').classList.add('open')
-              document.querySelector('.sidebar-opener').innerHTML = ''
-              let i = document.createElement("i");
-              i.classList.add("fas", "fa-chevron-left")
-              document.querySelector('.sidebar-opener').appendChild(i)
-          }
-      }
-  </script>
   <div style="display: flex; flex-direction: row; ">
 
     <% if current_user.has_any_role?({ name: :ta, resource: @course}, {name: :instructor, resource: @course}) %>

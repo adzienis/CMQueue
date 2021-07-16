@@ -8,11 +8,11 @@ class QuestionStatesController < ApplicationController
 
     @question_states = @question_states.where(question_id: params[:question_id]) if params[:question_id]
 
-    @question_states = @question_states.order(updated_at: :desc).joins(:question).where("questions.course_id": params[:course_id]) if params[:course_id]
+    @question_states = @question_states.order("question_states.created_at": :desc).joins(:question).where("questions.course_id": params[:course_id]) if params[:course_id]
 
     @question_states_ransack = @question_states.ransack(params[:q])
 
-    @pagy, @records = pagy @question_states_ransack.result
+    @pagy, @records = pagy @question_states_ransack.result.distinct
   end
 
   def edit; end

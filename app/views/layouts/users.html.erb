@@ -6,31 +6,6 @@
 <% elsif params[:user_id] %>
 
   <% content_for :content do %>
-
-    <script>
-        function toggle() {
-            if (document.querySelector('.sidebar').classList.contains('open')) {
-                document.querySelector('.sidebar').classList.remove('open')
-            } else {
-                document.querySelector('.sidebar').classList.add('open')
-            }
-
-            if (document.querySelector('.sidebar-opener').classList.contains('open')) {
-                document.querySelector('.sidebar-opener').classList.remove('open')
-                document.querySelector('.sidebar-opener').innerHTML = ''
-                let i = document.createElement("i");
-                i.classList.add("fas", "fa-chevron-right")
-                document.querySelector('.sidebar-opener').appendChild(i)
-
-            } else {
-                document.querySelector('.sidebar-opener').classList.add('open')
-                document.querySelector('.sidebar-opener').innerHTML = ''
-                let i = document.createElement("i");
-                i.classList.add("fas", "fa-chevron-left")
-                document.querySelector('.sidebar-opener').appendChild(i)
-            }
-        }
-    </script>
     <div style="display: flex; flex-direction: row; ">
       <%= render partial: "shared/user_sidebar" %>
       <button class="btn btn-outline-secondary sidebar-opener" onclick="event.preventDefault(); toggle()">

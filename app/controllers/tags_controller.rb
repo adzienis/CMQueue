@@ -13,10 +13,10 @@ class TagsController < ApplicationController
 
   def index
 
-    @tags = @tags.undiscarded.order(created_at: :desc).where(course_id: params[:course_id]) if params[:course_id]
+    @tags = @tags.undiscarded.order("tags.created_at": :desc).where(course_id: params[:course_id]) if params[:course_id]
     @tags_ransack = @tags.ransack(params[:q])
 
-    @pagy, @records = pagy @tags_ransack.result
+    @pagy, @records = pagy @tags_ransack.result.distinct
 
     respond_to do |format|
       format.html

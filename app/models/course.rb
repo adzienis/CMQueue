@@ -14,6 +14,10 @@ class Course < ApplicationRecord
   has_many :enrollments
   has_many :users, through: :enrollments
   has_many :questions
+  has_many :unresolved_questions, -> { }
+  has_many :active_questions, -> { undiscarded
+                                     .questions_by_state("unresolved", "frozen", "resolving")
+                                     .or(undiscarded.by_state("kicked").unacknowledged)}, class_name: "Question"
   has_many :tags
   #has_many :announcements
 
@@ -21,6 +25,7 @@ class Course < ApplicationRecord
            class_name: 'Doorkeeper::AccessGrant',
            foreign_key: :resource_owner_id,
            dependent: :delete_all
+
   has_many :access_tokens,
            class_name: 'Doorkeeper::AccessToken',
            foreign_key: :resource_owner_id,
@@ -40,7 +45,7 @@ class Course < ApplicationRecord
   end
 
   after_update do
-    broadcast_action_later_to :question_creator,
+    broadcast_action_later_to self,
                               action: :refresh,
                               target: "question-creator-container",
                               template: nil

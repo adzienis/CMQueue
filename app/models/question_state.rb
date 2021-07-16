@@ -57,7 +57,7 @@ class QuestionState < ApplicationRecord
 
   after_create_commit do
 
-    broadcast_action_later_to :question_creator, question.user,
+    broadcast_action_later_to question.user,
                               action: :refresh,
                               target: "question-creator-container",
                               partial: "shared/reload_turbo"
