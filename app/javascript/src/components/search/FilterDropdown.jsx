@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 
 import FilterRow from "./FilterRow";
 
@@ -12,6 +12,18 @@ const options = [
 ];
 
 const options_values = options.map(v => v[1])
+
+
+const get_association = (full_query, ass, acc = "") => {
+
+    if(ass instanceof Array) return ass[0];
+
+    const key = Object.keys(ass).find(k => full_query.includes(k))
+
+    const remainder = full_query.slice(full_query.indexOf(key) + key.length + 1)
+
+    return get_association(remainder, ass[key])
+}
 
 /**
  * This component handles the generation of filters for searching a model.
@@ -51,18 +63,23 @@ export default (props) => {
                         .filter(v => k.includes(v))
                         .reduce((x, y) => x.length > y.length ? x : y, "")
 
+                    const asses = get_association(k, associations.reduce((acc, cur) =>( {...acc, ...cur}), {}))
+
+                    const full_ass_key = Object.keys(asses)[0]
+                    const full_ass_values = Object.values(asses)[0]
+
                     const t = {}
                     t["query"] = query;
                     t["value"] = v;
-                    t["type"] = colNames[attribute]?.type || associations[attribute]?.type;
-                    t["label"] = colNames[attribute]?.label || associations[attribute]?.label;
+                    t["type"] = colNames[attribute]?.type || full_ass_values?.type;
+                    t["label"] = colNames[attribute]?.label || full_ass_values?.label;
 
                     if (query.length > 0 && attribute.length > 0) {
-                        if (f[attribute] instanceof Array) {
-                            f[attribute].push(t)
+                        if (f[full_ass_key] instanceof Array) {
+                            f[full_ass_key].push(t)
                         } else {
-                            f[attribute] = []
-                            f[attribute].push(t)
+                            f[full_ass_key] = []
+                            f[full_ass_key].push(t)
                         }
 
                     } else {
