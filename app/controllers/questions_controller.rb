@@ -14,8 +14,12 @@ class QuestionsController < ApplicationController
 
     @questions_ransack = @questions.undiscarded.order("questions.created_at": :desc)
     @questions_ransack = @questions_ransack.where(course_id: params[:course_id]) if params[:course_id]
+    @questions_ransack = @questions_ransack.with_user(params[:user_id]) if params[:user_id]
 
-    @questions_ransack = @questions_ransack.joins(:question_states, :user, :tags).ransack(params[:q])
+    @questions_ransack = @questions_ransack
+                           .joins(:question_states, :user, :tags)
+                           .includes(:question_states, :user, :tags)
+                           .ransack(params[:q])
 
     @pagy, @records = pagy @questions_ransack.result.distinct
 
@@ -62,11 +66,11 @@ class QuestionsController < ApplicationController
   end
 
   def edit
-    @question = Question.find(params[:id])
+    @question = Question.find(params[:question_id])
   end
 
   def show
-    @question = Question.find(params[:id])
+    @question = Question.find(params[:question_id])
   end
 
   def create

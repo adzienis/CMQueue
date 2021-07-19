@@ -6,7 +6,8 @@
       <i class="fas fa-question"></i>
     </div>
     <%= button_to "General Information", user_path(@user),
-                  class: "btn text-decoration-none #{(request.path == user_path(@user)) ?
+                  class: "btn text-decoration-none #{(request.path == user_path(@user) ||
+                    request.path == user_questions_path(@user) || request.path == user_settings_path(@user)) ?
                                                        "active-link" : ""}", method: :get %>
   </li>
   <li class="mb-1">
@@ -32,7 +33,22 @@
                         class: "btn text-decoration-none #{(request.path == user_questions_path(@user)) ?
                                                              "active-link" : ""}", method: :get %>
         </li>
+        <li class="d-flex align-items-center">
+          <div style="width: 16px" class="d-flex justify-content-center">
+            <i class="fas fa-bowling-ball"></i>
+          </div>
+          <%= button_to "Settings", user_settings_path(@user),
+                        class: "btn text-decoration-none #{(request.path == user_settings_path(@user)) ?
+                                                             "active-link" : ""}", method: :get %>
+        </li>
+        <li class="d-flex align-items-center">
+          <div style="width: 16px" class="d-flex justify-content-center">
+            <i class="fas fa-bowling-ball"></i>
+          </div>
+          <%= button_to "Enrollments", user_enrollments_path(@user),
+                        class: "btn text-decoration-none #{(request.path == user_enrollments_path(@user)) ?
+                                                             "active-link" : ""}", method: :get %>
+        </li>
       </ul>
     <% end %>
-  </li>
 <% end %>

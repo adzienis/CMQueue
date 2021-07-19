@@ -6,7 +6,7 @@ class UsersController < ApplicationController
   def index
     @course = Course.find(params[:course_id]) if params[:course_id]
 
-    @users_ransack = @users.joins(:enrollments).where("enrollments.course_id": params[:course_id]) if params[:course_id]
+    @users_ransack = @users.with_course(params[:course_id]) if params[:course_id]
 
     @users_ransack = @users_ransack.ransack(params[:q])
 

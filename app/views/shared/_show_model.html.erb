@@ -1,5 +1,6 @@
-<% options = {} if local_assigns[:options].nil? %>
-<% options[:actions] ||= [] %>
+<% presenter = Shared::ShowModelHelper::ShowModelPresenter.new(model_instance, local_assigns[:options], params) %>
+
+
 <div class="card mb-3">
   <div class="card-body">
     <%= simple_form_for model_instance,
@@ -39,27 +40,13 @@
         Associations
       </h3>
 
-
-      <%= tag.div class: "accordion", id: "accordion-#{dom_id(model_instance)}" do %>
-        <% [:has_many]
-             .collect { |s| model_instance.class.reflect_on_all_associations(s) }
-             .flatten
-             .reject { |v| options&.dig(:except)&.include? v.name.to_sym }
-             .each do |ass| %>
-          <% begin %>
-            <div>
-              <label class="form-label">
-                <%= link_to "View #{ass.name.to_s.humanize}", polymorphic_path(params[:course_id] ? [Course.find(params[:course_id]), ass.name] : [ass.name],
-                                                                               {
-                                                                                 "q[#{ass.options.dig(:through) ? ass.options.dig(:through).to_s + '_' : ''}" +
-                                                                                   "#{model_instance.class.name.underscore}_id_eq]" => model_instance.id })
-                %>
-
-              </label>
-            </div>
-          <% rescue NoMethodError %>
-          <% end %>
-        <% end %>
+      <% presenter.models_from_has_many
+                  .each do |ass| %>
+        <%= tag.div do %>
+          <label class="form-label">
+            <%= presenter.link(ass) %>
+          </label>
+        <% end if presenter.path(ass) %>
       <% end %>
 
 
@@ -69,17 +56,11 @@
            .reject { |v| options&.dig(:except)&.include? v.name.to_sym }
            .each do |ass| %>
         <% begin %>
-          <div>
+          <%= tag.div do %>
             <label class="form-label">
-
-              <%= link_to "View #{ass.name.to_s.humanize}", polymorphic_path(params[:course_id] ? [Course.find(params[:course_id]), ass.name] : [ass.name],
-                                                                             {
-                                                                               "q[#{ass.options.dig(:through) ? ass.options.dig(:through).to_s + '_' : ''}" +
-                                                                                 "#{model_instance.class.name.to_s.pluralize.underscore}_id_eq]" => model_instance.id })
-              %>
-
+              <%= presenter.link(ass) %>
             </label>
-          </div>
+          <% end if presenter.path(ass) %>
         <% rescue NoMethodError %>
 
         <% end %>
@@ -114,9 +95,6 @@
         <% begin %>
           <div>
             <label class="form-label">
-
-              <% puts "-------------------------------------asd" %>
-              <% puts ass.inspect %>
               <% Array(model_instance.send(ass.name.to_sym)).each do |e| %>
                 <%= link_to "View #{ass.name.to_s.humanize}",
                             polymorphic_path(

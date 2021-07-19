@@ -12,6 +12,9 @@
                  actions: [],
                  except: [:user_id, :question_id, :id, :updated_at, :enrollment_id],
                  extra_columns: [{ user: :given_name }],
+                 other_filters: {
+                   question: Question.column_names.excluding("id", "created_at", "updated_at", "provider", "uid"),
+                 }
                }
              } %>
 <% end if request.headers.key? "Turbo-Frame"  %>
@@ -26,6 +29,9 @@
                actions: [],
                except: [:user_id, :question_id, :id, :updated_at, :enrollment_id],
                extra_columns: [{ user: :given_name}, {enrollment: { role: :name} }],
+               other_filters: {
+                 question: Question.column_names.excluding("id", "created_at", "updated_at", "provider", "uid"),
+               }
              }
            } unless request.headers.key? "Turbo-Frame" %>
 

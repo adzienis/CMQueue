@@ -17,7 +17,7 @@
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0 d-flex flex-grow-1">
           <li class="nav-item">
-            <%= link_to "Enrollments", user_enrollments_url, class: "nav-link #{request.path == user_enrollments_path ? 'active' : ''}" %>
+            <%= link_to "Enrollments", current_user_enrollments_url, class: "nav-link #{request.path == current_user_enrollments_path ? 'active' : ''}" %>
           </li>
           <li class="nav-item">
             <%= link_to "Account", user_path(current_user), class: "nav-link #{request.path == user_path(current_user) ? 'active' : ''}"  %>

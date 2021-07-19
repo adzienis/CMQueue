@@ -47,6 +47,7 @@ class User < ApplicationRecord
     active_questions.first
   end
 
+
   def enrollment_with_course(course_id)
     enrollments.undiscarded.joins(:role).find_by("roles.resource_type": "Course", "roles.resource_id": course_id)
   end
@@ -58,6 +59,8 @@ class User < ApplicationRecord
   def self.ransackable_scopes(_auth_object = nil)
     %i[with_role_ransack]
   end
+
+  scope :with_course, ->(course_id) {joins(:enrollments, enrollments: :role).where("roles.resource_id": course_id, "roles.resource_type": "Course")}
 
   scope :undiscarded_enrollments, -> {joins(:enrollments).merge(Enrollment.undiscarded)}
 

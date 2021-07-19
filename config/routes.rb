@@ -45,17 +45,19 @@ Rails.application.routes.draw do
 
   resources :users, only: [], shallow: true do
     resources :questions
+    resources :enrollments
     resources :tags
     resource :settings do
       get 'notifications', to: "settings#notifications"
     end
   end
-
-
   resources :users, param: :user_id
+  resource :user, shallow: true, only: [], as: :current_user do
+    resources :enrollments, controller: 'users/enrollments'
+  end
 
   resources :courses, only: [] do
-    resources :questions do
+    resources :questions, param: :question_id do
       collection do
         get 'count', to: 'questions#count'
         get 'download', to: "questions#download_form"
@@ -77,11 +79,9 @@ Rails.application.routes.draw do
     resources :roles
   end
 
-
   use_doorkeeper do
     controllers applications: "oauth/applications"
   end
-
 
   resources :courses, only: [] do
     use_doorkeeper do
@@ -121,9 +121,6 @@ Rails.application.routes.draw do
       get 'open', to: 'courses#open_status'
       post 'open', to: 'courses#open'
     end
-  end
-  resource :user, shallow: true do
-    resources :enrollments, controller: 'users/enrollments'
   end
 
   get 'landing/', to: 'landing#index'

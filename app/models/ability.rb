@@ -23,7 +23,7 @@ class Ability
         user.id == u.id
       end
 
-      cannot :download, Tag
+      # cannot :download, Tag
 
       can :manage, Notification, Notification.where(recipient_type: "User", recipient_id: user.id) do |notification|
         notification.recipient_type == "User" && notification.recipient_id == user.id

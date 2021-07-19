@@ -10,12 +10,10 @@ class ApplicationController < ActionController::Base
   end
 
   def set_course
-      @course = Course.accessible_by(current_ability).find(params[:course_id]) if params[:course_id]
-      @enrollment = Enrollment.undiscarded.joins(:role)
-                              .find_by(user_id: current_user.id, "roles.resource_id": @course.id) if params[:course_id]
+    @course = Course.accessible_by(current_ability).find(params[:course_id]) if params[:course_id]
+    @enrollment = Enrollment.undiscarded.joins(:role)
+                            .find_by(user_id: current_user.id, "roles.resource_id": @course.id) if params[:course_id]
   end
-
-
 
   def new_session_path(_scope)
     new_user_session_path
@@ -26,7 +24,7 @@ class ApplicationController < ActionController::Base
   end
 
   def after_sign_in_path_for(resource_or_scope)
-    stored_location_for(resource_or_scope) || user_enrollments_path
+    stored_location_for(resource_or_scope) || current_user_enrollments_path
   end
 
   def swagger; end

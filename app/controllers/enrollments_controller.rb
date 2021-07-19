@@ -6,8 +6,15 @@ class EnrollmentsController < ApplicationController
   def index
     @course = Course.find(params[:course_id]) if params[:course_id]
 
-    @enrollments_ransack = Enrollment.undiscarded.order("enrollments.created_at": :desc)
-    @enrollments_ransack = @enrollments_ransack.joins(:role).where("roles.resource_id": params[:course_id]) if params[:course_id]
+    @enrollments_ransack = Enrollment
+                             .undiscarded
+                             .joins(:user, :role)
+                             .includes(:user, :role)
+                             .order("enrollments.created_at": :desc)
+    @enrollments_ransack = @enrollments_ransack
+                             .joins(:role)
+                             .where("roles.resource_id": params[:course_id]) if params[:course_id]
+    @enrollments_ransack = @enrollments_ransack.where(user_id: params[:user_id]) if params[:user_id]
 
     @enrollments_ransack = @enrollments_ransack.ransack(params[:q])
 

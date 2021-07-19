@@ -12,6 +12,9 @@
                actions: [:edit, :new, :destroy, :download, :import],
                except: [:course_id, :course, :discarded_at],
                format: [:name, :description],
+               other_filters: {
+                 course: Course.column_names.excluding("id", "created_at", "updated_at", "provider", "uid"),
+               }
              }
            } %>
 
