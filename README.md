@@ -1,41 +1,6 @@
-# Summary
 
-This is a Ruby on Rails powered office hours queue. The website allows multiple
-courses to create and manage their office hours queues. The main motivation of this
-project is to allow better insight and transparency with the analysis of office
-hours. To that end, the "queue" is built with many features in order to better
-track and augment office hours.
 
-# Features
-
-1. A traditional office hours queue, where students can ask questions, and TA's
-   can answer them.
-
-2. Tracking entire life cycle of question (when it was created, when/why was it
-   frozen, split/categorize questions based on content).
-
-3. Summarize data from across entire semesters/multiple courses.
-
-4. REST based API to allow course authorized applications to access data to enable
-   further, independent features.
-
-5. Course management of semesters, roles, rosters, tags, and questions.
-
-6. Importing and exporting data from CSV files.
-
-## Motivation
-
-The goal is to have a website, that doesn't necessarily do everything, but has
-enough features for us to pull out information to summarize office hours
-performance (and hopefully try to make 90 student long office hours not so
-unbearable for everyone). The website has some basic course management, with an
-emphasis on being able to export the data through the REST API or manually, to
-perform more analytics somewhere else.
-
-Currently, very general insight on course performance comes from an integration
-with Metabase, which gives a pretty good "no-code" solution to interpreting the
-data, but it is still general, and its probably better to get more specific
-information.
+# Development
 
 ### Views
 
@@ -81,7 +46,7 @@ functionality.
 
 An instructor will have access to an applications section, where they
 can create new ones. A client UID and secret, will be created, and one
-can create a POST with the following form to `/oauth/token` to
+can create a POST with the following format to `/oauth/token` to
 get a bearer token;
 
 ```
@@ -98,11 +63,14 @@ get a bearer token;
 }
 ```
 
-`grant_type` should be set to `client_credentials`.
+`grant_type` should be set to `client_credentials`. 
+
+It is important to add an appropriate set of scopes (`public` by default).
 
 ### Course Management
 
-The course can be managed directly from the course settings.
+The course can be managed directly from the course page. It is possible to import/export a variety
+models associated with the course such as questions, tags, and enrollments. 
 
 ### Site Management
 
@@ -112,4 +80,4 @@ problems with joins over models.
 
 ### Models
 
-There is an included entity relation diagram that helps clear up the relations.
+There is an included entity relation diagram [erd.pdf](./erd.pdf) that helps clear up the relations.
