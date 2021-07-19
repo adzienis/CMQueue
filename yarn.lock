@@ -1023,10 +1023,9 @@
     "@hotwired/turbo" "^7.0.0-beta.8"
     "@rails/actioncable" "^6.0.0"
 
-"@hotwired/turbo@^7.0.0-beta.8":
+"@hotwired/turbo@^7.0.0-beta.8", "@hotwired/turbo@adzienis/turbo#build":
   version "7.0.0-beta.8"
-  resolved "https://registry.yarnpkg.com/@hotwired/turbo/-/turbo-7.0.0-beta.8.tgz#133630eabbd3c26183efcfb6dea2db5dd172e8da"
-  integrity sha512-3HfWoxtGGQOxaXo2bh2tvEBFAV4oSSIA/BFnMvIfY5D4HbEKYpPH2Q3Roa707/E9LtnIgyN/RibDY6dszCwPuw==
+  resolved "https://codeload.github.com/adzienis/turbo/tar.gz/38daac1ee867319a87b0c3480e39da2b267e27cd"
 
 "@kyleshockey/object-assign-deep@^0.4.2":
   version "0.4.2"
