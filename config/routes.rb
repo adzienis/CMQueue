@@ -12,23 +12,28 @@ Rails.application.routes.draw do
     resources :enrollments, controller: 'users/enrollments'
   end
 
-
   resources :tags do
     collection do
       get 'download', to: "tags#download_form"
       post 'import', to: "tags#import"
     end
   end
+
   resources :question_states
+
   resources :messages
+
   resources :settings
+
   resources :enrollments do
     collection do
       get 'download', to: "enrollments#download_form"
       post 'import', to: "enrollments#import"
     end
   end
+
   resources :roles
+
   resources :questions, param: :question_id do
     member do
       get 'paginatedPreviousQuestions', to: 'questions#paginated_previous_questions'
@@ -41,6 +46,7 @@ Rails.application.routes.draw do
       get 'download', to: "questions#download_form"
     end
   end
+
   resources :courses, param: :course_id
 
   resources :questions, shallow: true do
@@ -57,9 +63,6 @@ Rails.application.routes.draw do
     end
   end
   resources :users, param: :user_id
-  #resource :user, shallow: true, only: [], as: :current_user do
-  #  resources :enrollments, controller: 'users/enrollments'
-  #end
 
   resources :courses, only: [] do
     resources :questions, param: :question_id do
@@ -68,38 +71,36 @@ Rails.application.routes.draw do
         get 'download', to: "questions#download_form"
       end
     end
+
     resources :tags do
       collection do
         get 'download', to: "tags#download_form"
       end
     end
+
     resources :users, param: :user_id
-    resources :question_states
+
+    resources :question_states, param: :question_state_id
+
     resources :messages
+
     resources :settings
+
     resources :enrollments do
       collection do
         get 'download', to: "enrollments#download_form"
       end
     end
     resources :roles
-  end
 
-  use_doorkeeper do
-    controllers applications: "oauth/applications"
-  end
-
-  resources :courses, only: [] do
     use_doorkeeper do
       controllers applications: "oauth/applications"
     end
   end
 
-  resources :courses, only: [] do
-    scope 'oauth' do
-      resources :applications
-    end
-  end
+  #use_doorkeeper do
+  #  controllers applications: "oauth/applications"
+  #end
 
   resources :courses, param: :course_id do
     member do
@@ -143,7 +144,6 @@ Rails.application.routes.draw do
     get 'sign_in', to: 'landing#index', as: :new_user_session
     get 'sign_out', to: 'devise/sessions#destroy', as: :destroy_user_session
   end
-
-  # devise_for :users, skip: :all
+  =
   devise_for :users, controllers: { omniauth_callbacks: 'users/omniauth_callbacks' }
 end
