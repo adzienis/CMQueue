@@ -19,9 +19,9 @@ class QuestionsController < ApplicationController
     @questions_ransack = @questions_ransack
                            .joins(:question_states, :user, :tags)
                            .includes(:question_states, :user, :tags)
-                           .ransack(params[:q])
+    @questions_ransack = @questions_ransack.ransack(params[:q])
 
-    @pagy, @records = pagy @questions_ransack.result.distinct
+    @pagy, @records = pagy @questions_ransack.result
 
     respond_to do |format|
       format.html

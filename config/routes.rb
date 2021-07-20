@@ -8,6 +8,11 @@ Rails.application.routes.draw do
   mount PgHero::Engine, at: 'pghero'
   mount API => '/'
 
+  resource :user, as: :current_user, user_scope: true do
+    resources :enrollments, controller: 'users/enrollments'
+  end
+
+
   resources :tags do
     collection do
       get 'download', to: "tags#download_form"
@@ -43,18 +48,18 @@ Rails.application.routes.draw do
     resources :question_states
   end
 
-  resources :users, only: [], shallow: true do
-    resources :questions
-    resources :enrollments
-    resources :tags
+  resources :users, only: [] do
+    resources :questions, param: :question_id
+    resources :enrollments, param: :enrollment_id
+    resources :tags, param: :tag_id
     resource :settings do
       get 'notifications', to: "settings#notifications"
     end
   end
   resources :users, param: :user_id
-  resource :user, shallow: true, only: [], as: :current_user do
-    resources :enrollments, controller: 'users/enrollments'
-  end
+  #resource :user, shallow: true, only: [], as: :current_user do
+  #  resources :enrollments, controller: 'users/enrollments'
+  #end
 
   resources :courses, only: [] do
     resources :questions, param: :question_id do
@@ -71,6 +76,7 @@ Rails.application.routes.draw do
     resources :users, param: :user_id
     resources :question_states
     resources :messages
+    resources :settings
     resources :enrollments do
       collection do
         get 'download', to: "enrollments#download_form"
@@ -96,11 +102,8 @@ Rails.application.routes.draw do
   end
 
   resources :courses, param: :course_id do
-    collection do
-
-      post 'semester'
-    end
     member do
+      post 'semester'
       get 'roster', to: 'courses#roster'
       get 'queue', to: 'courses#queue'
       get 'settings/queues', to: 'courses#queues'

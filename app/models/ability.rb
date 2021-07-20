@@ -30,16 +30,18 @@ class Ability
       end
 
       can :manage, Setting, Setting.where(resource_id: user.id, resource_type: "User")
-                                   .or(Setting.where(resource_id: Course.find_roles([:ta, :instructor], user).pluck(:resource_id), resource_type: "Course")) do |setting|
-        (user.id == setting.resource_id && setting.resource_type == "User") or
+                                   .or(Setting.where(resource_id: Course.find_roles([:instructor], user).pluck(:resource_id), resource_type: "Course")) do |setting|
+        (user.id == setting.resource_id && setting.resource_type == "User") ||
           (setting.resource_type == "Course" && (user.has_any_role?({name: :instructor, resource: enrollment.course })))
       end
 
-      #can :read, Enrollment, Enrollment.joins(:role)
-      #                                    .where("roles.resource_id": Course
-      #                                                                    .where("courses.id": Course.find_roles([:ta], user)
-      #                                                                                               .pluck(:resource_id))
-      #                                                                    .pluck(:id))
+      can :read, Enrollment, Enrollment.joins(:role)
+                                          .where("roles.resource_id": Course
+                                                                          .where("courses.id": Course.find_roles([:ta], user)
+                                                                                                     .pluck(:resource_id))
+                                                                          .pluck(:id)) do |enrollment|
+        false
+      end
 
       can :manage, Enrollment, Enrollment.joins(:role)
                                        .where("roles.resource_id": Course
@@ -56,8 +58,6 @@ class Ability
       #                                                                                         .pluck(:resource_id))
       #                                                              .pluck(:id))
       #                                .or(Message.where(user_id: user.id))
-
-
 
       cannot :read, Course, [:instructor_code] do |course|
         !user.has_role?(:instructor, course)

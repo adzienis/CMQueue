@@ -6,7 +6,7 @@ class Oauth::ApplicationsController < Doorkeeper::ApplicationsController
 
   def index
     @applications = current_user.applications unless params[:course_id]
-    @applications = OauthApplication.where(owner_id: params[:course_id], owner_type: "Course") if params[:course_id]
+    @applications = Doorkeeper::Application.where(owner_id: params[:course_id], owner_type: "Course") if params[:course_id]
   end
 
   # only needed if each application must have some owner
@@ -42,11 +42,20 @@ class Oauth::ApplicationsController < Doorkeeper::ApplicationsController
     end
   end
 
+  def destroy
+    flash[:notice] = I18n.t(:notice, scope: i18n_scope(:destroy)) if @application.destroy
+
+    respond_to do |format|
+      format.html { redirect_to oauth_course_applications_url(@course) }
+      format.json { head :no_content }
+    end
+  end
+
   private
 
   def set_application
-    @application = current_user.applications.find(params[:id]) unless params[:course_id]
-    @application = OauthApplication.where(owner_id: params[:course_id], owner_type: "Course").find(params[:id]) if params[:course_id]
+    @application = current_user.applications.find_by(id: params[:id]) unless params[:course_id]
+    @application = Doorkeeper::Application.where(owner_id: params[:course_id], owner_type: "Course").find(params[:id]) if params[:course_id]
   end
 
 end

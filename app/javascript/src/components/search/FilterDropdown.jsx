@@ -15,10 +15,11 @@ const options_values = options.map(v => v[1])
 
 
 const get_association = (full_query, ass, acc = "") => {
-
     if(ass instanceof Array) return ass[0];
 
     const key = Object.keys(ass).find(k => full_query.includes(k))
+
+    if(typeof key === "undefined") return null;
 
     const remainder = full_query.slice(full_query.indexOf(key) + key.length + 1)
 
@@ -64,6 +65,8 @@ export default (props) => {
                         .reduce((x, y) => x.length > y.length ? x : y, "")
 
                     const asses = get_association(k, associations.reduce((acc, cur) =>( {...acc, ...cur}), {}))
+
+                    if(asses === null) continue;
 
                     const full_ass_key = Object.keys(asses)[0]
                     const full_ass_values = Object.values(asses)[0]

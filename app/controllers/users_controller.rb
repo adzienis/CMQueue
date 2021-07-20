@@ -17,7 +17,6 @@ class UsersController < ApplicationController
 
   def show
     @course = Course.find(params[:course_id]) if params[:course_id]
-    @user = User.find(params[:user_id])
 
     if params[:course_id] && @user.has_role?(:ta, @course)
       @questions = QuestionState.left_joins(:user).where("users.id": @user.id).includes(:question).where("question_states.state": 'resolved')

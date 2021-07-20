@@ -1,2 +1,0 @@
-class OauthAccessToken < ApplicationRecord
-end

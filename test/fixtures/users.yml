@@ -9,12 +9,8 @@ arthur:
   given_name: Arthur
   family_name: Doe
   email: arthur@gmail.com
-  provider: ""
-  uid: ""
 
 jason:
   given_name: Jason
   family_name: Bourne
   email: jason@gmail.com
-  provider: ""
-  uid: ""

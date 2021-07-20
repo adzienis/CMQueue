@@ -65,7 +65,7 @@ module Shared
         [relation]
           .collect { |s| @model.class.reflect_on_all_associations(s) }
           .flatten
-        #.reject { |v| options&.dig(:except)&.include? v.name.to_sym }
+          .reject { |v| @options&.dig(:except)&.include? v.name.to_sym }
       end
 
     end

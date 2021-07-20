@@ -1,5 +1,5 @@
 <%- submit_btn_css ||= 'btn btn-link' %>
-<%= form_tag oauth_application_path(Course.find(params[:course_id]), application), method: :delete do %>
+<%= form_tag oauth_course_application_path(Course.find(params[:course_id]), application), method: :delete do %>
   <%= submit_tag "Delete",
                  onclick: "return confirm('#{ t('doorkeeper.applications.confirmations.destroy') }')",
                  class: submit_btn_css %>

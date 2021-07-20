@@ -7,8 +7,6 @@ class QuestionTest < ActiveSupport::TestCase
      assert_raises do
        Question.create!(description: "foo", location: "foo", tried: "test", enrollment_id: enrollments(:student_418).id)
      end
-
-     puts Question.all
    end
 
    test "can't create duplicate question for same enrollment" do

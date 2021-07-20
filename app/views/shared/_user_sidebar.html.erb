@@ -5,9 +5,16 @@
     <div style="width: 16px" class="d-flex justify-content-center">
       <i class="fas fa-question"></i>
     </div>
-    <%= button_to "General Information", user_path(@user),
-                  class: "btn text-decoration-none #{(request.path == user_path(@user) ||
-                    request.path == user_questions_path(@user) || request.path == user_settings_path(@user)) ?
+    <%= button_to "User", user_path(@user),
+                  class: "btn text-decoration-none #{(request.path == user_path(@user)) ?
+                                                       "active-link" : ""}", method: :get %>
+  </li>
+  <li class="d-flex align-items-center">
+    <div style="width: 16px" class="d-flex justify-content-center">
+      <i class="fas fa-cog"></i>
+    </div>
+    <%= button_to "Settings", user_settings_path(@user),
+                  class: "btn text-decoration-none #{(request.path == user_settings_path(@user)) ?
                                                        "active-link" : ""}", method: :get %>
   </li>
   <li class="mb-1">
@@ -17,7 +24,8 @@
       </div>
       <%= button_tag class: "btn btn-toggle align-items-center text-decoration-none
                             #{(request.path == (@user) ||
-        request.path == user_questions_path(@user)) ? 'active-link' : ''}",
+        request.path == user_questions_path(@user)||
+        request.path == user_enrollments_path(@user)) ? 'active-link' : ''}",
                      data: { "bs-toggle": "collapse", "bs-target": "#course-info-collapse" } do %>
         Information
       <% end %>
@@ -33,17 +41,10 @@
                         class: "btn text-decoration-none #{(request.path == user_questions_path(@user)) ?
                                                              "active-link" : ""}", method: :get %>
         </li>
+
         <li class="d-flex align-items-center">
           <div style="width: 16px" class="d-flex justify-content-center">
-            <i class="fas fa-bowling-ball"></i>
-          </div>
-          <%= button_to "Settings", user_settings_path(@user),
-                        class: "btn text-decoration-none #{(request.path == user_settings_path(@user)) ?
-                                                             "active-link" : ""}", method: :get %>
-        </li>
-        <li class="d-flex align-items-center">
-          <div style="width: 16px" class="d-flex justify-content-center">
-            <i class="fas fa-bowling-ball"></i>
+            <i class="fas fa-user"></i>
           </div>
           <%= button_to "Enrollments", user_enrollments_path(@user),
                         class: "btn text-decoration-none #{(request.path == user_enrollments_path(@user)) ?

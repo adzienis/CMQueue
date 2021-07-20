@@ -31,6 +31,10 @@ class User < ApplicationRecord
 
   #has_many :oauth_applications, as: :owner
 
+  def enrolled_in_course?(course_id)
+    enrollments.undiscarded.joins(:role).where("roles.resource_id": course_id, "roles.resource_type": "Course").any?
+  end
+
   def unacknowledged_kicked_question?
     !unacknowledged_kicked_question.nil?
   end
@@ -45,6 +49,11 @@ class User < ApplicationRecord
 
   def active_question
     active_questions.first
+  end
+
+  def is_staff_in_course?(course_id)
+    course = Course.find(course_id)
+    has_any_role?({ name: :ta, resource: course}, {name: :instructor, resource: course})
   end
 
 

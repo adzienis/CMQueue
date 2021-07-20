@@ -72,7 +72,8 @@
       </ul>
     <% end %>
   </li>
-  <li class="mb-1">
+
+  <% tag.li class: "mb-1" do %>
     <div class="d-flex align-items-center" style="width:16px">
       <i class="fas fa-chart-bar"></i>
       <%= button_tag class: "btn btn-toggle align-items-center text-decoration-none
@@ -99,5 +100,16 @@
         </li>
       </ul>
     <% end %>
-  </li>
+  <% end %>
+
+  <% tag.li class:"d-flex align-items-center" do %>
+
+    <div style="width: 16px" class="d-flex justify-content-center">
+      <i class="fas fa-user"></i>
+    </div>
+    <%= button_to "Settings", course_settings_path(@course),
+                  class: "btn text-decoration-none #{(request.path == course_settings_path(@course)) ?
+                                                       "active-link" : ""}", method: :get %>
+  <% end %>
+
 <% end %>

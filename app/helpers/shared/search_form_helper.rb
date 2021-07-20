@@ -1,5 +1,38 @@
 module Shared
   module SearchFormHelper
+    class SearchFormPresenter
+      include Rails.application.routes.url_helpers
+      include ActionView::Helpers::UrlHelper
+
+      def initialize(current_user, model, options, params)
+        @course = Course.find_by(id: params[:course_id])
+        @model = model
+        @options = options
+        @current_user = current_user
+      end
+
+      def info_link(result)
+        if @course
+          polymorphic_path([@course, result])
+        else
+          polymorphic_path([@current_user, result])
+        end
+      end
+
+      def can_import?
+        if @course
+          @options[:actions].include?(:import) &&
+            @current_user.has_any_role?({ name: :instructor, resource: @course })
+        else
+          false
+        end
+      end
+
+      def can_create?
+        @options[:actions].include?(:new) && @current_user.has_role?(:instructor, @course)
+      end
+
+    end
 
     def filter_dropdown(options, model)
 
@@ -27,12 +60,11 @@ module Shared
       other_filters = options[:other_filters]
 
       other_filters.empty? ? [] :
-                       other_filters.keys.map { |e| { e => other_filters[e].map { |ee| { "#{e}_#{ee}" => {
-                         type: ApplicationHelper.get_associations(model).map { |v| { v.name => v.klass } }.inject(:merge)[e].columns_hash[ee].type,
-                         label: "#{ee.to_s.humanize}"
-                       } } } } }
+        other_filters.keys.map { |e| { e => other_filters[e].map { |ee| { "#{e}_#{ee}" => {
+          type: ApplicationHelper.get_associations(model).map { |v| { v.name => v.klass } }.inject(:merge)[e].columns_hash[ee].type,
+          label: "#{ee.to_s.humanize}"
+        } } } } }
     end
-
 
   end
 end

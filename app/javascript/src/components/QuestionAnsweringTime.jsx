@@ -11,15 +11,14 @@ import {useQuery} from "react-query";
  */
 export default props => {
 
-    const { questionId } = props;
+    const {questionId} = props;
 
     const [time, setTime] = useState()
 
-    const { data: question } = useQuery(['questions', parseInt(questionId, 10)])
-
+    const {data: question} = useQuery(['questions', parseInt(questionId, 10)])
 
     useEffect(() => {
-        if(question) {
+        if (question) {
             const startedAnswering = new Date(question.question_state.created_at)
             const minutesAnswering = Math.floor((new Date - startedAnswering) / 1000)
 
@@ -35,7 +34,7 @@ export default props => {
             return () => clearTimeout(timeout)
         }
         return () => null
-    },[question])
+    }, [question])
 
     if (!question || question.question_state.state !== "resolving" ||
         typeof time === "undefined") {

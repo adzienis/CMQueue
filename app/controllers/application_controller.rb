@@ -3,10 +3,19 @@
 class ApplicationController < ActionController::Base
   include Pagy::Backend
 
-  before_action :set_course, :set_user, :authenticate_user!
+  before_action :set_course, :set_user, :authenticate_user!, :restrict_routes
+
 
   def set_user
     @user = User.accessible_by(current_ability).find(params[:user_id]) if params[:user_id]
+  end
+
+  def restrict_routes
+    if request.path.include?('users/')
+      raise CanCan::AccessDenied unless current_user.id == params[:user_id].to_i
+    elsif request.path.include?('courses/')
+      raise CanCan::AccessDenied unless current_user.enrolled_in_course?(params[:course_id])
+    end
   end
 
   def set_course

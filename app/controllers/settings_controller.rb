@@ -1,5 +1,19 @@
 class SettingsController < ApplicationController
+  load_and_authorize_resource
+
+  before_action :restrict_routes
+
+  def restrict_routes
+    if @course
+      raise CanCan::AccessDenied unless current_user.has_any_role?({name: :instructor, resource: @course})
+    elsif @user
+      raise CanCan::AccessDenied unless @user.id == current_user.id
+    end
+  end
+
   def index
+    @settings = @settings.where(resource_id: current_user.id, resource_type: "User") if @user
+    @settings = @settings.where(resource_id: @course.id, resource_type: "Course") if @course
   end
 
   def create

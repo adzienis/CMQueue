@@ -2,6 +2,12 @@
 
 # Development
 
+### How to Run
+
+Run: `bundle exec rails s` to run the server. Since this project uses Postgres and Redis,
+make sure that there is a Postgres instance running at port 5433, and Redis instance running
+at 6380.
+
 ### Views
 
 The website mainly consists of traditional server side templates, but some components
@@ -81,3 +87,10 @@ problems with joins over models.
 ### Models
 
 There is an included entity relation diagram [erd.pdf](./erd.pdf) that helps clear up the relations.
+
+
+### Testing
+
+Since development and production both use Postgres, and there is SQL written in the migrations,
+such as for triggers, the test database also uses Postgres. Make sure that the test database
+is up.
