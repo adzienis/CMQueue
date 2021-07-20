@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class CoursesController < ApplicationController
-
   load_and_authorize_resource id_param: :course_id
 
   def edit

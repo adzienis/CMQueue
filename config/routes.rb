@@ -55,9 +55,9 @@ Rails.application.routes.draw do
   end
 
   resources :users, only: [] do
-    resources :questions, param: :question_id
-    resources :enrollments, param: :enrollment_id
-    resources :tags, param: :tag_id
+    resources :questions
+    resources :enrollments
+    resources :tags
     resource :settings do
       get 'notifications', to: "settings#notifications"
     end
@@ -65,7 +65,7 @@ Rails.application.routes.draw do
   resources :users, param: :user_id
 
   resources :courses, only: [] do
-    resources :questions, param: :question_id do
+    resources :questions do
       collection do
         get 'count', to: 'questions#count'
         get 'download', to: "questions#download_form"
@@ -80,7 +80,7 @@ Rails.application.routes.draw do
 
     resources :users, param: :user_id
 
-    resources :question_states, param: :question_state_id
+    resources :question_states
 
     resources :messages
 
@@ -144,6 +144,5 @@ Rails.application.routes.draw do
     get 'sign_in', to: 'landing#index', as: :new_user_session
     get 'sign_out', to: 'devise/sessions#destroy', as: :destroy_user_session
   end
-  =
   devise_for :users, controllers: { omniauth_callbacks: 'users/omniauth_callbacks' }
 end

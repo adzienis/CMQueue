@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 class QuestionsController < ApplicationController
-  load_and_authorize_resource
+  load_and_authorize_resource id_param: :question_id
+
   def new
     redirect_to queue_course_path(current_user.active_question.course) if current_user.active_question?
 
@@ -10,7 +11,6 @@ class QuestionsController < ApplicationController
   end
 
   def index
-    @course = Course.find(params[:course_id]) if params[:course_id]
 
     @questions_ransack = @questions.undiscarded.order("questions.created_at": :desc)
     @questions_ransack = @questions_ransack.where(course_id: params[:course_id]) if params[:course_id]
@@ -27,12 +27,14 @@ class QuestionsController < ApplicationController
       format.html
       # to download file with form submit
       format.js { render inline: "window.open('#{URI::HTTP.build(path: "#{request.path}.csv", query: request.query_parameters.to_query, format: :csv)}', '_blank')"}
-      format.csv { send_data helpers.to_csv(params[:question].to_unsafe_h, @questions_ransack.result, Question), filename: "test.csv" }
+      format.csv {
+        send_data helpers.to_csv(params[:question].to_unsafe_h, @questions_ransack.result, Question),
+                  filename: helpers.csv_download_name(controller_name.classify.constantize)
+      }
     end
   end
 
   def count
-    @course = Course.find(params[:course_id]) if params[:course_id]
 
     @questions = Question.joins(:user, :question_state, :tags)
     @questions = @questions.where(course_id: params[:course_id]) if params[:course_id]
@@ -48,8 +50,6 @@ class QuestionsController < ApplicationController
   end
 
   def acknowledge
-    @question = Question.find(params[:question_id])
-
     @question.question_state.update(acknowledged_at: DateTime.now)
 
     redirect_to queue_course_path(@question.course)
@@ -128,10 +128,9 @@ class QuestionsController < ApplicationController
   end
 
   def destroy
-    question = Question.find(params[:question_id])
-    question.discard
+    @question.discard
 
-    redirect_to new_course_question_path(question.course, question)
+    redirect_to new_course_question_path(@question.course, @question)
   end
 
   private

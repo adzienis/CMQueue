@@ -4,6 +4,10 @@ require 'action_view'
 
 module ApplicationHelper
 
+  def csv_download_name(model)
+    "#{model.model_name.plural}_#{DateTime.now.localtime.strftime("%r %d-%m-%Y")}.csv"
+  end
+
   def deny_unless_staff!(course)
     raise CanCan::AccessDenied unless current_user
                                         .has_any_role?({ name: :ta, resource: course},

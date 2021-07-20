@@ -14,25 +14,18 @@ Doorkeeper.configure do
       if params[:scope].present?
         case params[:scope]
         when 'user'
-          redirect_to routes.root_path
+          redirect_to routes.root_path and return
           #current_user # || warden.authenticate!(scope: :user)
         when 'course'
           course = Course.find(params[:course_id])
           if params[:course_id].present? && current_user.has_role?(:ta, course)
-            course
-          else
-            redirect_to routes.root_path
+            return course
           end
-        else
-          redirect_to routes.root_path
         end
-      else
-        redirect_to routes.root_path
       end
-    else
-      redirect_to request.referer
-      redirect_to routes.root_path
     end
+
+    raise CanCan::AccessDenied
   end
 
   # If you didn't skip applications controller from Doorkeeper routes in your application routes.rb
@@ -41,8 +34,7 @@ Doorkeeper.configure do
   # every time somebody will try to access the admin web interface.
   #
   admin_authenticator do
-
-    redirect_to root_path unless current_user&.has_any_role?(:admin, {name: :instructor, resource: :any}) ||
+    raise CanCan::AccessDenied unless current_user&.has_any_role?(:admin, {name: :instructor, resource: :any}) ||
                                 (params.has_key?(:course_id) && current_user&.has_role?(:instructor, Course.find(params[:course_id])))
 
   end

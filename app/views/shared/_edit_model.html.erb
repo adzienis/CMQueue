@@ -1,3 +1,7 @@
+<h2>
+  <%= model_instance.model_name.human %>
+</h2>
+
 <div class="card mb-3">
   <div id="<%= model_instance.is_a?(Class) ? model_instance.name : dom_id(model_instance) %>" class="card-body">
     <%= render partial: "shared/edit_form", locals: { model_instance: model_instance } %>

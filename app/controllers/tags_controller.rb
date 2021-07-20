@@ -3,10 +3,6 @@
 class TagsController < ApplicationController
   load_and_authorize_resource
 
-  before_action do
-    @course = Course.find(params[:course_id]) if params[:course_id]
-  end
-
   def download
     @course = Course.find(params[:course_id])
   end
@@ -17,17 +13,19 @@ class TagsController < ApplicationController
     @tags_ransack = @tags.ransack(params[:q])
 
     @pagy, @records = pagy @tags_ransack.result.distinct
-
     respond_to do |format|
       format.html
       format.js { render inline: "window.open('#{URI::HTTP.build(path: "#{request.path}.csv", query: request.query_parameters.to_query, format: :csv)}', '_blank')" }
-      format.csv { send_data helpers.to_csv(params[:tag].to_unsafe_h, @tags_ransack.result, Tag), filename: "test.csv" }
+      format.csv {
+        send_data helpers.to_csv(params[:tag].to_unsafe_h, @tags_ransack.result, Tag),
+                  filename: helpers.csv_download_name(controller_name.classify.constantize)
+      }
     end
   end
 
   def import
     CSV.foreach(params[:csv_file], headers: true) do |row|
-      tag = Tag.find_or_create_by!(row.to_hash.to_hash.merge({ course_id: params[:course_id]}))
+      tag = Tag.find_or_create_by!(row.to_hash.to_hash.merge({ course_id: params[:course_id] }))
     end
 
     SiteNotification.with(type: "Success", body: "Successfully imported file.", title: "Success", delay: 2).deliver(current_user)
@@ -36,7 +34,7 @@ class TagsController < ApplicationController
   end
 
   def destroy
-    tag = Tag.find_by(id: params[:id])
+    tag = Tag.find(params[:id])
 
     render nothing: true, status: :bad_request unless tag
 

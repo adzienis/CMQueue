@@ -1,11 +1,9 @@
 # frozen_string_literal: true
 
 class UsersController < ApplicationController
-  load_and_authorize_resource
+  load_and_authorize_resource id_param: :user_id
 
   def index
-    @course = Course.find(params[:course_id]) if params[:course_id]
-
     @users_ransack = @users.with_course(params[:course_id]) if params[:course_id]
 
     @users_ransack = @users_ransack.ransack(params[:q])
@@ -16,9 +14,7 @@ class UsersController < ApplicationController
   def enrollments; end
 
   def show
-    @course = Course.find(params[:course_id]) if params[:course_id]
-
-    if params[:course_id] && @user.has_role?(:ta, @course)
+    if @course && @user.has_role?(:ta, @course)
       @questions = QuestionState.left_joins(:user).where("users.id": @user.id).includes(:question).where("question_states.state": 'resolved')
     else
       @questions = QuestionState
@@ -27,8 +23,6 @@ class UsersController < ApplicationController
                    .where('users.id = ?', @user.id)
                    .where('question_states.id = (select max(question_states.id) from question_states where question_states.question_id = questions.id)')
       @unique_questions = @questions
-
-      #@unique_questions_count = @questions.select('distinct questions.id').count
     end
   end
 end
