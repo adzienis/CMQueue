@@ -8,6 +8,31 @@ Run: `bundle exec rails s` to run the server. Since this project uses Postgres a
 make sure that there is a Postgres instance running at port 5433, and Redis instance running
 at 6380.
 
+### Initialization/Authentication
+
+The server uses OAuth2.0 through Google in order to authenticate users.
+Therefore, this application requires secrets to be defined for the Google
+credentials, among others.
+
+Make sure to generate the `config/master.key`. Secrets are stored in
+`config/credentials.yml.enc`. Secrets that must be defined to run are:
+
+```
+google:
+  secret: "fill in"
+  client_id: "fill in"
+devise:
+  secret: "fill in"
+```
+
+The `google[:secret]` is the app's secret as defined in Google's API
+credentials. `google[:client_id]` is the app's client id, and isn't
+really secret (in there to keep the two together).
+
+`devise[:secret]` is Devise's base key, and needs to be defined to maintain
+the session.
+
+
 ### Views
 
 The website mainly consists of traditional server side templates, but some components
