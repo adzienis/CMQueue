@@ -124,7 +124,7 @@ module ApplicationHelper
   def to_csv(hash, records, model)
     asses = hash.keys.filter { |v| hash[v].is_a? Hash }
     full_asses = asses.collect { |u| { u => hash[u].keys.filter { |x| hash[u][x] == "1" } } }.flatten
-    attribs = hash.keys.filter { |v| !hash[v].is_a?(Hash) && hash[v] == "1" }
+    attribs = hash.keys.filter { |v| !hash[v].is_a?(Hash) && hash[v] == "1" }.sort
 
     names = attribs + (full_asses.collect { |x| x.values.first.collect { |v| "#{x.keys.first}_#{v}" } }.flatten)
 
@@ -140,16 +140,26 @@ module ApplicationHelper
                      .collect(&:name)
                      .map { |s| { s => { only: full_asses_dict[s.to_s] } } }
         ).each do |x|
-        attrib_values = x.values_at(*attribs)
+        attrib_values = x.values_at(*(attribs.sort))
 
         ass_values = full_asses.map do |z|
           k = z.keys.first
-
-          if x[k].is_a? Array
-            injected = x[k].flat_map(&:entries).group_by(&:first).map { |k, v| Hash[k, v.map(&:last)] }
-            injected.map { |v| v.values.join(',') }.flatten
+          if x.key? k
+            if x[k].is_a? Array
+              entries = x[k].flat_map(&:entries).sort{|a,b| a[0] <=> b[0]}
+              injected = entries.group_by(&:first).map { |k, v| Hash[k, v.map(&:last)] }
+              injected.map { |v| v.values.join(',') }.flatten
+            else
+              values = x[k].sort.to_h.values
+            end
           else
-            values = x[k].values
+            if full_asses_dict[k].is_a? Array
+              entries = full_asses_dict[k].sort{|a,b| a[0] <=> b[0]}
+              injected = entries.group_by(&:first).map { |k, v| Hash[k, v.map(&:last)] }
+              injected.map { |v| v.values.join(',') }.flatten
+            else
+              values = full_asses_dict[k].sort.to_h.values
+            end
           end
         end.flatten
 
