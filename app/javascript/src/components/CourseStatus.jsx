@@ -1,6 +1,5 @@
-import React, { useEffect, useLayoutEffect } from "react";
-import ReactDOM from "react-dom";
-import { QueryClientProvider, useQuery } from "react-query";
+import React, { useLayoutEffect } from "react";
+import { useQuery } from "react-query";
 
 export default (props) => {
   const { courseId } = props;

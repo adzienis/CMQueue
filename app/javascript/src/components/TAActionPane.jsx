@@ -1,7 +1,4 @@
-
-import React, { useMemo } from "react";
-import ReactDOM from "react-dom";
-import { QueryClientProvider, useInfiniteQuery } from "react-query";
+import React from "react";
 import QuestionAnswerer from "./QuestionAnswererButton";
 import QueueOpener from "./QueueOpener";
 
@@ -18,7 +15,11 @@ export default (props) => {
             gridGap: "10px",
           }}
         >
-          <QuestionAnswerer userId={userId} courseId={courseId} enrollmentId={enrollmentId} />
+          <QuestionAnswerer
+            userId={userId}
+            courseId={courseId}
+            enrollmentId={enrollmentId}
+          />
           <QueueOpener userId={userId} courseId={courseId} />
         </div>
       </div>

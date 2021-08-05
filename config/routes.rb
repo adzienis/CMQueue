@@ -34,6 +34,11 @@ Rails.application.routes.draw do
 
   resources :roles
 
+  resources :questions, shallow: true, only: [] do
+    resources :messages
+    resources :question_states
+  end
+
   resources :questions, param: :question_id do
     member do
       get 'paginatedPreviousQuestions', to: 'questions#paginated_previous_questions'
@@ -49,10 +54,6 @@ Rails.application.routes.draw do
 
   resources :courses, param: :course_id
 
-  resources :questions, shallow: true do
-    resources :messages
-    resources :question_states
-  end
 
   resources :users, only: [] do
     resources :questions
@@ -65,7 +66,7 @@ Rails.application.routes.draw do
   resources :users, param: :user_id
 
   resources :courses, only: [] do
-    resources :questions do
+    resources :questions, param: :question_id do
       collection do
         get 'count', to: 'questions#count'
         get 'download', to: "questions#download_form"
@@ -140,6 +141,7 @@ Rails.application.routes.draw do
 
   devise_scope :user do
     get 'auth/google_oauth2/callback', to: 'users/omniauth_callbacks#google_oauth2'
+    get 'auth/test/callback', to: 'users/omniauth_callbacks#test'
     get 'auth/failure', to: 'users/omniauth_callbacks#failure'
     get 'sign_in', to: 'landing#index', as: :new_user_session
     get 'sign_out', to: 'devise/sessions#destroy', as: :destroy_user_session

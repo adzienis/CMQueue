@@ -21,7 +21,10 @@ export default (props) => {
     }
   }, [loading]);
   return spin ? (
-    <div className={`spinner-border ${small ? 'spinner-border-sm' : ''}`} role="status">
+    <div
+      className={`spinner-border ${small ? "spinner-border-sm" : ""}`}
+      role="status"
+    >
       <span className="visually-hidden">Loading...</span>
     </div>
   ) : (

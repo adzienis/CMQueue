@@ -21,6 +21,9 @@ module CMQueue
     config.action_view.raise_on_missing_translations = false
     config.active_model.i18n_customize_full_message = true
     config.active_record.schema_format = :sql
+
+    config.hosts << "cmqueue.xyz"
+    Rails.application.config.action_cable.allowed_request_origins = ['http://cmqueue.xyz', 'https://cmqueue.xyz']
     config.to_prepare do
       # Only Applications list
       Doorkeeper::ApplicationsController.layout 'layouts/doorkeeper/application'

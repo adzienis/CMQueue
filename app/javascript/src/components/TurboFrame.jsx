@@ -1,19 +1,16 @@
-import React from 'react'
-import {useEffect} from "react";
+import React, { useEffect } from "react";
 
-export default props => {
+export default (props) => {
+  const { children, id, src } = props;
 
-    const {children, id, src } = props;
+  useEffect(() => {
+    const turboFrameEvent = new Event("react-component:load");
+    document.dispatchEvent(turboFrameEvent);
+  }, []);
 
-    useEffect(() => {
-        const turboFrameEvent = new Event('react-component:load')
-        document.dispatchEvent(turboFrameEvent)
-    }, [])
-
-
-    return (
-        <turbo-frame id={id} src={src}>
-            {children}
-        </turbo-frame>
-    );
-}
+  return (
+    <turbo-frame id={id} src={src}>
+      {children}
+    </turbo-frame>
+  );
+};

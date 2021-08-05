@@ -19,7 +19,7 @@
 
 # Learn more: http://github.com/javan/whenever
 
-job_type :runner,  "cd :path && bundle exec rails runner -e :environment ':task' :output"
+job_type :runner, "cd :path && bundle exec rails runner -e :environment ':task' :output"
 
 every :day, at: '11:59pm' do
   runner "ClearNotificationsJob.new.perform_now"

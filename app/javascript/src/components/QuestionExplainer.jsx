@@ -1,5 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
-import useWrappedMutation from "../hooks/useWrappedMutation";
+import React, { useRef, useState } from "react";
 import DelayedSpinner from "./DelayedSpinner";
 import useAutoFocusModal from "../hooks/useAutoFocusModal";
 
@@ -11,22 +10,15 @@ export default (props) => {
 
   const refq = useRef();
 
-  useAutoFocusModal('#explanationModal', '#explanation')
+  useAutoFocusModal("#explanationModal", "#explanation");
 
   return (
     <>
-      <div
-        className="modal fade"
-        id="explanationModal"
-        tabIndex="-1"
-      >
+      <div className="modal fade" id="explanationModal" tabIndex="-1">
         <div className="modal-dialog modal-dialog-centered modal-lg">
           <div className="modal-content">
             <div className="modal-header">
-              <h5 className="modal-title">
-                {" "}
-                Explanation{" "}
-              </h5>
+              <h5 className="modal-title"> Explanation </h5>
               <button
                 type="button"
                 className="btn-close"
@@ -41,7 +33,7 @@ export default (props) => {
                     <b>Description</b>{" "}
                   </label>
                   <textarea
-                      id="explanation"
+                    id="explanation"
                     rows={3}
                     className="form-control"
                     onChange={(e) => setDescription(e.target.value)}

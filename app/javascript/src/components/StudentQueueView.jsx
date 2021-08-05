@@ -3,9 +3,7 @@
 // of the page.
 
 import React from "react";
-import ReactDOM from "react-dom";
-import { QueryClientProvider, useQuery } from "react-query";
-import QuestionWaitingModal from "./QuestionWaitingModal";
+import { useQuery } from "react-query";
 import QuestionCreator from "./QuestionCreator";
 
 export default (props) => {
@@ -46,6 +44,10 @@ export default (props) => {
   }
 
   return (
-        <QuestionCreator courseId={courseId} userId={userId} enrollmentId={enrollmentId} />
+    <QuestionCreator
+      courseId={courseId}
+      userId={userId}
+      enrollmentId={enrollmentId}
+    />
   );
 };

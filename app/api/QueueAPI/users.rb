@@ -5,6 +5,10 @@ module QueueAPI
   class Users < BaseAPI
     helpers Doorkeeper::Grape::Helpers
 
+    get :authenticated do
+      current_user
+    end
+
     desc 'Get users'
     params do
       optional :course_id, type: Integer

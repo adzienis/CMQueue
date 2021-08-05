@@ -4,9 +4,7 @@ export default (props) => {
   const { title, value, icon, loading, footer } = props;
 
   return (
-    <div
-      className="card bg-white"
-    >
+    <div className="card bg-white">
       <div className="card-body d-flex flex-row">
         {loading ? (
           <div className="d-flex justify-content-center align-items-center w-100">
@@ -28,9 +26,7 @@ export default (props) => {
           </>
         )}
       </div>
-      <div className="card-footer p-0">
-        {footer}
-      </div>
+      <div className="card-footer p-0">{footer}</div>
     </div>
   );
 };

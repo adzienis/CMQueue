@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
-import ReactDOM from "react-dom";
-import { QueryClientProvider, useQuery, useQueryClient } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 
 export default (props) => {
   const { userId } = props;
@@ -135,5 +134,5 @@ export default (props) => {
   }, [instructorCourses]);
 
   // Must do this to prevent infinite renderings because of the registerManager
-  return <div className="d-none"/>;
+  return <div className="d-none" />;
 };

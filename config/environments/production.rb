@@ -101,8 +101,6 @@ Rails.application.configure do
 
 
   # configured the allowed hosts for the server and action cable.
-  config.hosts << "cmqueue.xyz"
-  Rails.application.config.action_cable.allowed_request_origins = ['http://cmqueue.xyz', 'https://cmqueue.xyz']
 
 
   # Inserts middleware to perform automatic connection switching.

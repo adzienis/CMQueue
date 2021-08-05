@@ -8,17 +8,18 @@ class EnrollmentsController < ApplicationController
 
     @enrollments_ransack = Enrollment
                              .undiscarded
-                             .joins(:user, :role)
-                             .includes(:user, :role)
+                             .joins(:user, :role, :course)
                              .order("enrollments.created_at": :desc)
-    @enrollments_ransack = @enrollments_ransack
-                             .joins(:role)
-                             .where("roles.resource_id": params[:course_id]) if params[:course_id]
+    if params[:course_id]
+      @enrollments_ransack = @enrollments_ransack
+                               .joins(:role)
+                               .where("roles.resource_id": params[:course_id])
+    end
     @enrollments_ransack = @enrollments_ransack.where(user_id: params[:user_id]) if params[:user_id]
 
     @enrollments_ransack = @enrollments_ransack.ransack(params[:q])
 
-    @pagy, @records = pagy @enrollments_ransack.result.distinct
+    @pagy, @records = pagy @enrollments_ransack.result
 
     respond_to do |format|
       format.html
@@ -66,8 +67,7 @@ class EnrollmentsController < ApplicationController
       redirect_to enrollments_path unless @enrollment.errors.count > 0
     end
 
-
-    render turbo_stream:  (turbo_stream.replace @enrollment,  partial: "shared/new_form", locals: { model_instance: @enrollment, options:{ except: [:question_states, :questions]}}) and return unless @enrollment.errors.count == 0
+    render turbo_stream: (turbo_stream.replace @enrollment, partial: "shared/new_form", locals: { model_instance: @enrollment, options: { except: [:question_states, :questions] } }) and return unless @enrollment.errors.count == 0
 
   end
 

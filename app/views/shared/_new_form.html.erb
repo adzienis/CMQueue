@@ -24,7 +24,7 @@
        .collect { |s| model_instance.class.reflect_on_all_associations(s) }
        .flatten
        .reject { |v| options&.dig(:except)&.include? v.name.to_sym }
-       .reject{|v| [:course].include? v.name }
+       .reject { |v| [:course].include? v.name }
        .each do |ass| %>
     <%= f.association ass.name,
                       value_method: :id,
@@ -33,7 +33,7 @@
                         return "#{v[:given_name]} #{v[:family_name]}" if v[:given_name] && v[:family_name]
                         return v[:id] if v[:id]
                       },
-                      collection: (ass.klass.methods.include?(:with_course) ? ass.klass.accessible_by(current_ability).with_course(Course.find(params[:course_id])) : ass.klass.accessible_by(current_ability))
+                      collection: (ass.klass.methods.include?(:with_course) ? ass.klass.accessible_by(current_ability).with_course(Course.find(params[:course_id])).distinct : ass.klass.accessible_by(current_ability).distinct)
     %>
   <% end %>
 

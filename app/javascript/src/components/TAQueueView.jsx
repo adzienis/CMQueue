@@ -1,6 +1,5 @@
-import React, {useEffect, useMemo} from "react";
-import ReactDOM from "react-dom";
-import { QueryClientProvider, useInfiniteQuery } from "react-query";
+import React, { useMemo } from "react";
+import { useInfiniteQuery } from "react-query";
 import QuestionCard from "./QuestionCard";
 
 export default (props) => {
@@ -37,7 +36,6 @@ export default (props) => {
     return data?.pages.map((v) => v.data).flat();
   }, [data]);
 
-
   return (
     <div>
       <div className="mb-4">
@@ -45,7 +43,7 @@ export default (props) => {
         {flattenedQuestions?.length > 0 ? (
           flattenedQuestions?.map((v) => (
             <QuestionCard
-                enrollmentId={enrollmentId}
+              enrollmentId={enrollmentId}
               key={v.id}
               question={v}
               userId={userId}

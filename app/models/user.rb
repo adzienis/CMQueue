@@ -5,6 +5,7 @@ class User < ApplicationRecord
   has_many :notifications, as: :recipient, dependent: :destroy
 
   alias_attribute :current_state, :question_state
+  attr_accessor :question_state
 
   #has_many :access_grants,
   #         class_name: 'Doorkeeper::AccessGrant',
@@ -110,10 +111,18 @@ class User < ApplicationRecord
   end
 
   def self.from_omniauth(auth)
-    find_or_create_by(email: auth.extra.id_info.email) do |user|
+    find_or_create_by(email: auth.extra&.id_info.email) do |user|
       user.given_name = auth.extra.id_info.given_name
       user.family_name = auth.extra.id_info.family_name
       user.email = auth.extra.id_info.email
+    end
+  end
+
+  def self.from_hash(auth)
+    find_or_create_by(email: auth[:email]) do |user|
+      user.given_name = auth["given_name"]
+      user.family_name = auth["family_name"]
+      user.email = auth["email"]
     end
   end
 

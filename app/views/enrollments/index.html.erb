@@ -10,7 +10,7 @@
              options: {
                actions: [:download, :import, :new, :destroy],
                except: [:course_id, :user_id, :role_id, :semester_id, :discarded_at],
-               extra_columns: [{ user: :given_name }, { user: :family_name }, { role: :name }],
+               extra_columns: [{ user: :given_name }, { user: :family_name }, { role: :name }, { course: :name }],
                other_filters: {
                  role: Role.column_names.excluding("id", "resource_type", "resource_id", "created_at", "updated_at"),
                  user: User.column_names.excluding("id", "created_at", "updated_at", "provider", "uid")

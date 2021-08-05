@@ -1,7 +1,5 @@
-
 import React, { useEffect, useState } from "react";
-import ReactDOM from "react-dom";
-import { QueryClientProvider, useQuery } from "react-query";
+import { useQuery } from "react-query";
 import useWrappedMutation from "../hooks/useWrappedMutation";
 import CourseCard from "./CourseCard";
 
@@ -34,7 +32,7 @@ export default (props) => {
   } = useWrappedMutation(
     (course_id) => ({
       course_id,
-      user_id: userId
+      user_id: userId,
     }),
     "/api/enrollments",
     {}
@@ -139,25 +137,26 @@ export default (props) => {
                           className="list-group border"
                           style={{ maxHeight: "300px", overflowY: "scroll" }}
                         >
-                          {typeof allCourses === "undefined" || allCourses.length === 0 ? (
-                              <div className="alert alert-warning h-100 mb-0">
-                                No courses
-                              </div>
+                          {typeof allCourses === "undefined" ||
+                          allCourses.length === 0 ? (
+                            <div className="alert alert-warning h-100 mb-0">
+                              No courses
+                            </div>
                           ) : (
-                              allCourses?.map((v) => (
-                                  <a
-                                      href=""
-                                      className="list-group-item"
-                                      onClick={(e) => {
-                                        e.preventDefault();
-                                        try {
-                                          addCourse(v.id);
-                                        } catch (e) {}
-                                      }}
-                                  >
-                                    Enroll in <b>{v.name}</b>
-                                  </a>
-                              ))
+                            allCourses?.map((v) => (
+                              <a
+                                href=""
+                                className="list-group-item"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  try {
+                                    addCourse(v.id);
+                                  } catch (e) {}
+                                }}
+                              >
+                                Enroll in <b>{v.name}</b>
+                              </a>
+                            ))
                           )}
                         </ul>
                       </div>

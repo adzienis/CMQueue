@@ -1,7 +1,6 @@
-import {QueryClientProvider} from "react-query";
-import React from "react"
+import { QueryClientProvider } from "react-query";
+import React from "react";
 import ReactDOM from "react-dom";
-
 
 /**
  * Singleton React component manager to handle rendering of React components
@@ -20,49 +19,53 @@ import ReactDOM from "react-dom";
  * When a component is rendered, we fire another event "react-component:load".
  */
 class RegisterComponentManager {
-    constructor() {
-        this.registered_components = {};
-    }
+  constructor() {
+    this.registered_components = {};
+  }
 
-    register_component(Component, selector) {
-        if (selector in this.registered_components) return false;
+  register_component(Component, selector) {
+    if (selector in this.registered_components) return false;
 
-        this.registered_components[selector] = {
-            instance: null,
-            Component
-        };
-    }
+    this.registered_components[selector] = {
+      instance: null,
+      Component,
+    };
+  }
 
-    register_hooks() {
-        document.addEventListener("turbo:load", e => this.render_components(e));
-        document.addEventListener("not-turbo:frame-loaded", e => this.render_components(e));
-    }
+  register_hooks() {
+    document.addEventListener("turbo:load", (e) => this.render_components(e));
+    document.addEventListener("not-turbo:frame-loaded", (e) =>
+      this.render_components(e)
+    );
+  }
 
-    render_components(event) {
-        Object.entries(this.registered_components).forEach(([selector, componentWrapper]) => {
-            const {Component, instance} = componentWrapper;
+  render_components(event) {
+    Object.entries(this.registered_components).forEach(
+      ([selector, componentWrapper]) => {
+        const { Component, instance } = componentWrapper;
 
-            const node = document.querySelectorAll(selector);
+        const node = document.querySelectorAll(selector);
 
-            if (node.length > 0) {
-                node.forEach((v) => {
-                    if (v.childNodes.length > 0) return;
+        if (node.length > 0) {
+          node.forEach((v) => {
+            if (v.childNodes.length > 0) return;
 
-                    const data = JSON.parse(v.getAttribute("data"));
+            const data = JSON.parse(v.getAttribute("data"));
 
-                    const reference = ReactDOM.render(
-                        <QueryClientProvider client={window.queryClient} contextSharing>
-                            <Component {...data} />
-                        </QueryClientProvider>,
-                        v, () => {
-                            document.dispatchEvent(new Event('react-component:load'))
-                        }
-                    );
-                });
-            }
-
-        })
-    }
+            const reference = ReactDOM.render(
+              <QueryClientProvider client={window.queryClient} contextSharing>
+                <Component {...data} />
+              </QueryClientProvider>,
+              v,
+              () => {
+                document.dispatchEvent(new Event("react-component:load"));
+              }
+            );
+          });
+        }
+      }
+    );
+  }
 }
 
 const registerManager = new RegisterComponentManager();
