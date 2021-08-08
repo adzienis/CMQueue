@@ -7,7 +7,7 @@
 
 <% presenter = Shared::SearchFormHelper::SearchFormPresenter.new(current_user, records.model, options, params) %>
 
-<%= filter_dropdown(options, records.model) %>
+<%= render partial: "shared/filter_dropdown", locals: {options: options, model: records.model} %>
 
 <ul class="nav nav-tabs mt-4 overflow-x-scroll">
   <li class="nav-item">
@@ -134,7 +134,7 @@
                     -webkit-box-orient: vertical;
                     overflow: hidden">
                     <% if records.model.column_for_attribute(k).type.to_s == "datetime" %>
-                      <%= tag.try(k.to_sym)&.localtime&.to_formatted_s(:short) %>
+                      <%= tag.try(k.to_sym)&.localtime&.to_formatted_s(:american_short) %>
                     <% else %>
                       <%= tag.send(k.to_sym) %>
                     <% end %>

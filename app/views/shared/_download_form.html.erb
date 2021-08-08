@@ -9,6 +9,12 @@
   <div class="card-body">
     <%= form_with model: model, url: polymorphic_url([course, model], **request.query_parameters), method: :get, local: false do |f| %>
 
+      <%= fields_for :q do |q| %>
+        <% params[:q].each do |param| %>
+          <%= q.hidden_field param[0], value: param[1] %>
+        <% end %>
+      <% end %>
+
       <div class="mb-2">
         <%= tag.label "All", class: "form-check-label fw-bold", id: "check-label" %>
         <%= tag.input id: "check", type: "checkbox", onclick: "document.querySelectorAll('input').forEach(v => v.checked=event.target.checked);", class: "form-check-control checkbox-1x" %>

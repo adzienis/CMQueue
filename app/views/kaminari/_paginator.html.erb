@@ -8,7 +8,7 @@
 -%>
 <%= paginator.render do -%>
   <nav role="navigation" aria-label="pager">
-    <ul class="pagination" style="display: flex; justify-content: center">
+    <ul class="pagination" style="display: grid; justify-content: center; column-gap: 5px; grid-auto-flow: column">
       <%= first_page_tag unless current_page.first? %>
       <%= prev_page_tag unless current_page.first? %>
       <% each_page do |page| -%>

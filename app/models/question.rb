@@ -3,6 +3,7 @@
 class Question < ApplicationRecord
   include Discard::Model
   include RansackableConcern
+  include ExportableConcern
 
   belongs_to :enrollment
   has_one :course, through: :enrollment
@@ -121,32 +122,6 @@ class Question < ApplicationRecord
       super(value)
     end
   end
-
-  def self.to_csv(results)
-    attributes = %w{id user_id course_id created_at updated_at tried description location}
-
-    case results
-    when Array
-      CSV.generate(headers: true) do |csv|
-        csv << attributes
-
-        results.each do |user|
-          csv << attributes.map { |attr| user.send(attr) }
-        end
-      end
-    when self
-      CSV.generate(headers: true) do |csv|
-        csv << attributes
-
-        self.each do |user|
-          csv << attributes.map { |attr| user.send(attr) }
-        end
-      end
-    else
-      puts "failed"
-    end
-  end
-
 
   after_update do
     QueueChannel.broadcast_to user, {

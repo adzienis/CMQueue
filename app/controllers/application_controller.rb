@@ -5,6 +5,10 @@ class ApplicationController < ActionController::Base
 
   before_action :set_course, :set_user, :authenticate_user!, :restrict_routes
 
+  def current_ability
+    @current_ability ||= Ability.new(current_user, params)
+  end
+
   def set_user
     @user = User.accessible_by(current_ability).find(params[:user_id]) if params[:user_id]
   end

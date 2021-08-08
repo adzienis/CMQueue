@@ -120,3 +120,7 @@ gem "sidekiq", "~> 6.2"
 gem "solargraph", "~> 0.42.3"
 
 gem "whenever", "~> 1.0"
+
+gem "administrate", "~> 0.16.0"
+
+gem "administrate_exportable", "~> 0.5.0"

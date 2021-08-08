@@ -28,7 +28,7 @@ class QuestionsController < ApplicationController
       # to download file with form submit
       format.js { render inline: "window.open('#{URI::HTTP.build(path: "#{request.path}.csv", query: request.query_parameters.to_query, format: :csv)}', '_blank')"}
       format.csv {
-        send_data helpers.to_csv(params[:question].to_unsafe_h, @questions_ransack.result, Question),
+        send_data Question.to_csv(params[:question].to_unsafe_h, @questions_ransack.result),
                   filename: helpers.csv_download_name(controller_name.classify.constantize)
       }
     end

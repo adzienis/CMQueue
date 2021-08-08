@@ -1,0 +1,15 @@
+<%=
+  tag.div id: "dropdown-filter", data: {
+  base: request.path,
+  except: options[:except],
+  columns: {
+    root: model.columns.map { |v| { v.name => {
+      type: v.type,
+      label: v.name.humanize
+    } } }.inject(:merge),
+    associations: gen_associations(options, model)
+  }, queries: params[:q],
+  reset: request.path
+}.to_json do
+end
+%>

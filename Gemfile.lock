@@ -81,6 +81,21 @@ GEM
       zeitwerk (~> 2.3)
     addressable (2.8.0)
       public_suffix (>= 2.0.2, < 5.0)
+    administrate (0.16.0)
+      actionpack (>= 5.0)
+      actionview (>= 5.0)
+      activerecord (>= 5.0)
+      datetime_picker_rails (~> 0.0.7)
+      jquery-rails (>= 4.0)
+      kaminari (>= 1.0)
+      momentjs-rails (~> 2.8)
+      sassc-rails (~> 2.1)
+      selectize-rails (~> 0.6)
+    administrate_exportable (0.5.0)
+      actionview (>= 5.2.2.1)
+      administrate (>= 0.13.0)
+      rails (>= 4.2)
+      railties (>= 5.2.2.1)
     ast (2.4.2)
     autoprefixer-rails (10.2.5.1)
       execjs (> 0)
@@ -115,6 +130,8 @@ GEM
     concurrent-ruby (1.1.9)
     connection_pool (2.2.5)
     crass (1.0.6)
+    datetime_picker_rails (0.0.7)
+      momentjs-rails (>= 2.8.1)
     devise (4.8.0)
       bcrypt (~> 3.0)
       orm_adapter (~> 0.1)
@@ -246,6 +263,8 @@ GEM
     mini_racer (0.4.0)
       libv8-node (~> 15.14.0.0)
     minitest (5.14.4)
+    momentjs-rails (2.20.1)
+      railties (>= 3.1)
     msgpack (1.4.2)
     multi_json (1.15.0)
     multi_xml (0.6.0)
@@ -409,6 +428,7 @@ GEM
       sprockets (> 3.0)
       sprockets-rails
       tilt
+    selectize-rails (0.12.6)
     selenium-webdriver (3.142.7)
       childprocess (>= 0.5, < 4.0)
       rubyzip (>= 1.2.2)
@@ -493,6 +513,8 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
+  administrate (~> 0.16.0)
+  administrate_exportable (~> 0.5.0)
   bootsnap (>= 1.4.4)
   bootstrap (= 5.0.1)
   byebug

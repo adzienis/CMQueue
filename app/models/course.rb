@@ -11,14 +11,14 @@ class Course < ApplicationRecord
   # Not required for now
   # validates :course_code, presence: true, uniqueness: true
 
-  has_many :enrollments
+  has_many :enrollments, through: :roles
   has_many :users, through: :enrollments
   has_many :questions
   has_many :unresolved_questions, -> { undiscarded
-                                         .questions_by_state("unresolved")}, class_name: "Question"
+                                         .questions_by_state("unresolved") }, class_name: "Question"
   has_many :active_questions, -> { undiscarded
                                      .questions_by_state("unresolved", "frozen", "resolving")
-                                     .or(undiscarded.by_state("kicked").unacknowledged)}, class_name: "Question"
+                                     .or(undiscarded.by_state("kicked").unacknowledged) }, class_name: "Question"
   has_many :tags
   #has_many :announcements
 
@@ -31,7 +31,6 @@ class Course < ApplicationRecord
            class_name: 'Doorkeeper::AccessToken',
            foreign_key: :resource_owner_id,
            dependent: :delete_all
-
 
   has_many :applications, class_name: "Doorkeeper::Application", as: :owner
 

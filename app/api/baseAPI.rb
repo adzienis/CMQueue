@@ -39,11 +39,11 @@ class BaseAPI < Grape::API
         def authorize_route_for_current_user(action, resource = nil) end
 
         def authorize!(*args)
-          ::Ability.new(current_user).authorize!(*args)
+          ::Ability.new(current_user, params).authorize!(*args)
         end
 
         def current_ability
-          current_ability ||= Ability.new(current_user)
+          current_ability ||= Ability.new(current_user, params)
           current_ability
         end
 

@@ -10,6 +10,8 @@ class RolesController < ApplicationController
     @pagy, @records = pagy @roles_ransack.result
   end
 
+
+
   def create
   end
 

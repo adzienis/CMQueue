@@ -2,9 +2,33 @@
 
 Rails.application.routes.draw do
 
+  namespace :admin do
+    namespace :doorkeeper do
+      resources :access_grants
+      resources :access_tokens
+      resources :applications
+    end
+      resources :users
+      resources :roles do
+        get :export, on: :collection
+      end
+      resources :enrollments
+      resources :announcements
+      resources :question_states
+      resources :question_tags
+      resources :settings
+      resources :notifications
+      resources :questions
+      resources :tags
+      resources :courses
+
+      root to: "users#index"
+  end
+
+
   get '/api/swagger', to: 'application#swagger', as: :swagger
 
-  mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
+  #mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
   mount PgHero::Engine, at: 'pghero'
   mount API => '/'
 
