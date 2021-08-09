@@ -1015,18 +1015,12 @@
   resolved "https://registry.yarnpkg.com/@emotion/weak-memoize/-/weak-memoize-0.2.5.tgz#8eed982e2ee6f7f4e44c253e12962980791efd46"
   integrity sha512-6U71C2Wp7r5XtFtQzYrW5iKFT67OixrSxjI4MptCHzdSVlgabczzqLe0ZSgnub/5Kp4hSbpDB1tMytZY9pwxxA==
 
-"@hotwired/turbo-rails@^7.0.0-rc.1":
-  version "7.0.0-rc.1"
-  resolved "https://registry.yarnpkg.com/@hotwired/turbo-rails/-/turbo-rails-7.0.0-rc.1.tgz#68cc07b2a1e7d9b29240c525c657722b3f0c3842"
-  integrity sha512-LLOgtHWb/cnz0bXlfJ9khWHapQuCOuUI48yiSVgL3veklvbX1vyQlk/ALn35Z6nHTi7Bf+MHMS9H5W2c/vwKuw==
+"@hotwired/turbo-rails@adzienis/turbo-rails":
+  version "7.0.0-beta.8"
+  resolved "https://codeload.github.com/adzienis/turbo-rails/tar.gz/ce327f846e995a54e4346e78b79b01edbfeb31da"
   dependencies:
-    "@hotwired/turbo" "^7.0.0-rc.1"
+    "@hotwired/turbo" adzienis/turbo#build
     "@rails/actioncable" "^6.0.0"
-
-"@hotwired/turbo@^7.0.0-rc.1":
-  version "7.0.0-rc.1"
-  resolved "https://registry.yarnpkg.com/@hotwired/turbo/-/turbo-7.0.0-rc.1.tgz#a5c1be86def1cc39b3011c935c5734b8632af5c3"
-  integrity sha512-niNA68ku4TZYbV3biwTPf1L5CidP50S2xfeb5rGQfodvPB9UAtkqKFFRIA0LL8y0DG4MGIZ/QFlbvlmFea5p4w==
 
 "@hotwired/turbo@adzienis/turbo#build":
   version "7.0.0-beta.8"
@@ -2080,7 +2074,7 @@ boolbase@^1.0.0, boolbase@~1.0.0:
   resolved "https://registry.yarnpkg.com/boolbase/-/boolbase-1.0.0.tgz#68dff5fbe60c51eb37725ea9e3ed310dcc1e776e"
   integrity sha1-aN/1++YMUes3cl6p4+0xDcwed24=
 
-bootstrap@^5.0.1:
+bootstrap@^5.1.0:
   version "5.1.0"
   resolved "https://registry.yarnpkg.com/bootstrap/-/bootstrap-5.1.0.tgz#543ef8f44f4b9af67b0230f19508542fec38ef55"
   integrity sha512-bs74WNI9BgBo3cEovmdMHikSKoXnDgA6VQjJ7TyTotU6L7d41ZyCEEelPwkYEzsG/Zjv3ie9IE3EMAje0W9Xew==

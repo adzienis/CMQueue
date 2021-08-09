@@ -4,7 +4,7 @@
   "dependencies": {
     "@babel/preset-react": "^7.13.13",
     "@hotwired/turbo": "adzienis/turbo#build",
-    "@hotwired/turbo-rails": "^7.0.0-rc.1",
+    "@hotwired/turbo-rails": "adzienis/turbo-rails",
     "@popperjs/core": "^2.9.2",
     "@rails/actioncable": "^6.0.0",
     "@rails/activestorage": "^6.0.0",
@@ -13,7 +13,7 @@
     "@types/react-select": "^4.0.15",
     "@types/semantic-ui": "^2.2.7",
     "babel-plugin-transform-react-remove-prop-types": "^0.4.24",
-    "bootstrap": "^5.0.1",
+    "bootstrap": "^5.1.0",
     "cable_ready": "^4.5.0",
     "chart.js": "^3.4.1",
     "cookie": "^0.4.1",
