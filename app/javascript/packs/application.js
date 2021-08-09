@@ -1,6 +1,6 @@
 import Rails from "rails-ujs";
-import "@hotwired/turbo";
 import { cable } from "@hotwired/turbo-rails";
+import "@hotwired/turbo";
 import * as ActiveStorage from "@rails/activestorage";
 import "channels";
 import "controllers";

@@ -1030,7 +1030,7 @@
 
 "@hotwired/turbo@adzienis/turbo#build":
   version "7.0.0-beta.8"
-  resolved "https://codeload.github.com/adzienis/turbo/tar.gz/38daac1ee867319a87b0c3480e39da2b267e27cd"
+  resolved "https://codeload.github.com/adzienis/turbo/tar.gz/48d1c75ac1c4443f55b2a202dc09068a0ed4d6ba"
 
 "@npmcli/move-file@^1.0.1":
   version "1.1.2"
