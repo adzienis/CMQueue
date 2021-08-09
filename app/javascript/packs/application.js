@@ -1,9 +1,7 @@
 import Rails from "rails-ujs";
-import "@hotwired/turbo";
 import "@hotwired/turbo-rails"
 import * as ActiveStorage from "@rails/activestorage";
 import "channels";
-import * as Turbo from "@hotwired/turbo"
 import "controllers";
 
 import bootstrap from 'bootstrap/dist/js/bootstrap'
