@@ -51,7 +51,6 @@ registerManager.render_components();
 registerManager.register_hooks();
 
 
-window.Turbo = Turbo;
 window.queryClient = queryClient;
 
 ReactStudentChannel.received = async (data) => {
