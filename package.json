@@ -39,5 +39,8 @@
   "devDependencies": {
     "webpack-bundle-analyzer": "^4.4.2",
     "webpack-dev-server": "^3.11.2"
+  },
+  "engines": {
+    "node": "13.x"
   }
 }
