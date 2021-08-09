@@ -16,12 +16,14 @@
     "bootstrap": "^5.0.1",
     "cable_ready": "^4.5.0",
     "chart.js": "^3.4.1",
+    "cookie": "^0.4.1",
     "formik": "^2.2.9",
     "jquery": "^3.6.0",
     "node-sass": "^6.0.0",
     "popper.js": "^1.16.1",
     "prettier": "^2.3.2",
     "prop-types": "^15.7.2",
+    "qs": "^6.10.1",
     "rails-ujs": "^5.2.6",
     "react": "^17.0.2",
     "react-datepicker": "^4.1.1",
@@ -33,14 +35,11 @@
     "recharts": "^2.0.9",
     "stimulus": "^2.0.0",
     "stimulus_reflex": "3.4.1",
-    "swagger-ui-react": "^3.50.0"
+    "swagger-ui-react": "^4.0.0-beta.2"
   },
   "version": "0.1.0",
   "devDependencies": {
     "webpack-bundle-analyzer": "^4.4.2",
     "webpack-dev-server": "^3.11.2"
-  },
-  "engines": {
-    "node": "13.x"
   }
 }
