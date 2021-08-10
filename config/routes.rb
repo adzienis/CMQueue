@@ -152,7 +152,8 @@ Rails.application.routes.draw do
     end
   end
 
-  get 'landing/', to: 'landing#index'
+  get 'landing', to: 'landing#index'
+  get 'about', to: 'landing#about'
 
   get '/users/auth/google_oauth2/callback', to: 'oauth_accounts#create_or_update', constraints: lambda { |req|
     req.env['omniauth.origin'] !~ /login/
@@ -160,8 +161,6 @@ Rails.application.routes.draw do
   get '/users/auth/failure', to: 'oauth_accounts#error', constraints: lambda { |req|
     req.env['omniauth.origin'] !~ /login/
   }
-
-  root to: 'landing#index'
 
   devise_scope :user do
     get 'auth/google_oauth2/callback', to: 'users/omniauth_callbacks#google_oauth2'
@@ -171,4 +170,6 @@ Rails.application.routes.draw do
     get 'sign_out', to: 'devise/sessions#destroy', as: :destroy_user_session
   end
   devise_for :users, controllers: { omniauth_callbacks: 'users/omniauth_callbacks' }
+
+  root to: 'landing#index'
 end

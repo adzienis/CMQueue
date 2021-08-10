@@ -10,12 +10,14 @@
 
 case Rails.env
 when 'development'
-  @course0 = Course.create! name: 'course0',
-                            ta_code: SecureRandom.urlsafe_base64(6),
-                            instructor_code: SecureRandom.urlsafe_base64(6),
-                            student_code: SecureRandom.urlsafe_base64(6)
+  5.times do |v|
+    @course0 = Course.create! name: "course_#{v}",
+                              ta_code: SecureRandom.urlsafe_base64(6),
+                              instructor_code: SecureRandom.urlsafe_base64(6),
+                              student_code: SecureRandom.urlsafe_base64(6)
+  end
 
-  2.times do |v|
+  5.times do |v|
     tag = @course0.tags.create! id: v, course_id: @course0.id,
                                 name: SecureRandom.urlsafe_base64(10),
                                 description: SecureRandom.urlsafe_base64(30)
@@ -28,16 +30,18 @@ when 'development'
       email: "arthur_#{v}@gmail.com",
     )
 
-    user.add_role :student, @course0
+    Course.all.each do |course|
+      user.add_role :student, course
 
-    Question.create!(
-      description: 'foo',
-      location: 'foo',
-      tried: 'test',
-      enrollment_id: user.enrollments.most_recent_enrollment_by_course(@course0.id).id,
-      course_id: @course0.id,
-      tags: [Tag.find(1)]
-    )
+      Question.create!(
+        description: SecureRandom.urlsafe_base64(30),
+        location: SecureRandom.urlsafe_base64(30),
+        tried: SecureRandom.urlsafe_base64(30),
+        enrollment_id: user.enrollments.most_recent_enrollment_by_course(course.id).id,
+        course_id: course.id,
+        tags: [Tag.find(1)]
+      )
+    end
   end
 
 when 'production'

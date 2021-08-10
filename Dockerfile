@@ -1,4 +1,4 @@
-FROM ruby
+FROM ruby:3.0.1
 
 ENV INSTALL_PATH /opt/app
 RUN mkdir -p $INSTALL_PATH

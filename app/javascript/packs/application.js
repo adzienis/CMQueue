@@ -1,10 +1,10 @@
 import Rails from "rails-ujs";
-import "@hotwired/turbo-rails"
+import "@hotwired/turbo-rails";
 import * as ActiveStorage from "@rails/activestorage";
 import "channels";
 import "controllers";
 
-import bootstrap from 'bootstrap/dist/js/bootstrap'
+import bootstrap from "bootstrap/dist/js/bootstrap";
 
 import SearchModal from "../src/components/SearchModal";
 import StudentQueueView from "../src/components/StudentQueueView";
@@ -49,7 +49,6 @@ attachTurboEvents();
 registerManager.render_components();
 registerManager.register_hooks();
 
-
 window.queryClient = queryClient;
 
 ReactStudentChannel.received = async (data) => {
@@ -63,11 +62,40 @@ ReactStudentChannel.received = async (data) => {
 Rails.start();
 ActiveStorage.start();
 
+Rails.delegate(
+  document,
+  Rails.linkDisableSelector,
+  "turbo:before-cache",
+  Rails.enableElement
+);
+Rails.delegate(
+  document,
+  Rails.buttonDisableSelector,
+  "turbo:before-cache",
+  Rails.enableElement
+);
+Rails.delegate(
+  document,
+  Rails.buttonDisableSelector,
+  "turbo:submit-end",
+  Rails.enableElement
+);
 
-Rails.delegate(document, Rails.linkDisableSelector,   "turbo:before-cache", Rails.enableElement)
-Rails.delegate(document, Rails.buttonDisableSelector, "turbo:before-cache", Rails.enableElement)
-Rails.delegate(document, Rails.buttonDisableSelector, "turbo:submit-end", Rails.enableElement)
-
-Rails.delegate(document, Rails.formSubmitSelector, "turbo:submit-start", Rails.disableElement)
-Rails.delegate(document, Rails.formSubmitSelector, "turbo:submit-end", Rails.enableElement)
-Rails.delegate(document, Rails.formSubmitSelector, "turbo:before-cache", Rails.enableElement)
+Rails.delegate(
+  document,
+  Rails.formSubmitSelector,
+  "turbo:submit-start",
+  Rails.disableElement
+);
+Rails.delegate(
+  document,
+  Rails.formSubmitSelector,
+  "turbo:submit-end",
+  Rails.enableElement
+);
+Rails.delegate(
+  document,
+  Rails.formSubmitSelector,
+  "turbo:before-cache",
+  Rails.enableElement
+);
