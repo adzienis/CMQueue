@@ -6,4 +6,8 @@ class LandingController < ApplicationController
   def index
     redirect_to current_user_enrollments_path if current_user && user_signed_in?
   end
+
+  def about
+    redirect_to current_user_enrollments_path if current_user && user_signed_in?
+  end
 end

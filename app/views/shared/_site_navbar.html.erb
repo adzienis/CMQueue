@@ -20,7 +20,7 @@
             <%= link_to "Enrollments", current_user_enrollments_url, class: "nav-link #{request.path == current_user_enrollments_path ? 'active' : ''}" %>
           </li>
           <li class="nav-item">
-            <%= link_to "Account", user_path(current_user), class: "nav-link #{request.path.include?("users/#{current_user.id}") ? 'active' : ''}"  %>
+            <%= link_to "Account", user_path(current_user), class: "nav-link #{request.path.include?("users/#{current_user.id}") ? 'active' : ''}" %>
           </li>
           <li class="nav-item">
             <%= link_to "Sign out", destroy_user_session_path, class: "nav-link" %>
@@ -29,7 +29,7 @@
             <%= link_to "Admin Dashboard", "/admin", class: "nav-link", data: { turbo: "false" } if current_user.has_role? :admin %>
           </li>
           <li class="nav-item flex-grow-1 justify-content-center d-flex">
-              <%= yield :nav_content %>
+            <%= yield :nav_content %>
           </li>
 
           <li class="nav-item">
@@ -43,4 +43,38 @@
       </div>
     </div>
   </nav>
+<% else %>
+
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary" style="box-shadow: 0 0px 4px -0px #00000077; z-index: 1000">
+    <div class="container-fluid">
+      <a class="navbar-brand" href=<%= root_path %>>CMQueue</a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        href="#navbarSupportedContent"
+        data-bs-toggle="collapse"
+        data-bs-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0 d-flex flex-grow-1">
+          <li class="nav-item">
+            <%= link_to "Demo", "/demo", class: "nav-link" %>
+          </li>
+          <li class="nav-item">
+            <%= link_to "About", about_path, class: "nav-link" %>
+          </li>
+          <li class="nav-item flex-grow-1 justify-content-center d-flex">
+            <%= yield :nav_content %>
+          </li>
+
+        </ul>
+      </div>
+    </div>
+  </nav>
+
 <% end %>
