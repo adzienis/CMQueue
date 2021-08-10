@@ -28,6 +28,10 @@ module Shared
         end
       end
 
+      def can_download?
+        @options[:actions].include? :download
+      end
+
       def can_create?
         @options[:actions].include?(:new) && @current_user.has_role?(:instructor, @course)
       end
