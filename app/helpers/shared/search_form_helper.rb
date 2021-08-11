@@ -65,7 +65,7 @@ module Shared
 
       other_filters.empty? ? [] :
         other_filters.keys.map { |e| { e => other_filters[e].map { |ee| { "#{ee}" => {
-          type: ApplicationHelper.get_associations(model).map { |v| { v.name => v.klass } }.inject(:merge)[e].columns_hash[ee].type,
+          type: get_associations(model).map { |v| { v.name => v.klass } }.inject(:merge)[e].columns_hash[ee].type,
           label: "#{ee.to_s.humanize}",
           ass: e
         } } } } }

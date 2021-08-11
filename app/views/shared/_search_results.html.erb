@@ -59,7 +59,7 @@
           <% options[:extra_columns].each do |extra| %>
             <td>
               <% if extra.instance_of? Hash %>
-                <%= ApplicationHelper::SearchClass.fetch_attribute(tag, extra) %>
+                <%= fetch_attribute(tag, extra) %>
               <% else %>
                 <%= tag.send(extra) %>
               <% end %>
@@ -91,13 +91,13 @@
       <%= "#{pagy.count} #{records.model.model_name.human.pluralize}" %>
     <% end %>
   </div>
+
+  <div class="w-100 d-flex justify-content-center">
+    <%== render partial: "pagy/nav.html.erb", locals: { pagy: pagy } %>
+  </div>
 <% else %>
   <div class="alert alert-warning shadow-sm">
     Empty
   </div>
   <%= "#{pagy.count} #{records.model_name.human.pluralize}" %>
 <% end %>
-
-<div class="w-100 d-flex justify-content-center">
-  <%== render partial: "pagy/nav.html.erb", locals: { pagy: pagy } %>
-</div>

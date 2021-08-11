@@ -18,10 +18,11 @@ test:
   database: test
   username: test
   host: localhost
-  port: 5435
+  port: 5432
 
 production:
   <<: *default
   username: production
   database: production
   host: db
+  port: 5432

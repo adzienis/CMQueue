@@ -3,6 +3,8 @@
 require 'action_view'
 
 module ApplicationHelper
+
+  include Pagy::Frontend
   def csv_download_name(model)
     "#{model.model_name.plural}_#{DateTime.now.localtime.strftime("%r %d-%m-%Y")}.csv"
   end
