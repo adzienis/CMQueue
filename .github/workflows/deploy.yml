@@ -3,10 +3,10 @@ on:
     branches:
       - production
 jobs:
-  deploy:
+  deploy_server:
     runs-on: ubuntu-latest
     steps:
-    - name: executing remote ssh commands using password
+    - name: deploy to production server
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.HOST }}
@@ -19,3 +19,11 @@ jobs:
           git pull --rebase origin production
           RAILS_ENV=production rails db:migrate
           RAILS_ENV=production rails restart
+    - uses: actions/checkout@v2
+    - uses: akhileshns/heroku-deploy@v3.12.12
+      with:
+        heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+        heroku_app_name: cmqueue-demo
+        heroku_email: arthurdzieniszewski@gmail.com
+        branch: "production"
+
