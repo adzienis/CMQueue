@@ -27,6 +27,7 @@ Rails.application.routes.draw do
 
 
   get '/api/swagger', to: 'application#swagger', as: :swagger
+  get '/demo', to: redirect("https://cmqueue-demo.herokuapp.com/"), as: :demo
 
   #mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
   mount PgHero::Engine, at: 'pghero'
