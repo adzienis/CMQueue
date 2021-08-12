@@ -17,4 +17,5 @@ jobs:
           cd ${{ github.event.repository.name }}
           git checkout production
           git pull --rebase origin production
+          bundle exec rails restart
 
