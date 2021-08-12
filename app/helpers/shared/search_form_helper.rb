@@ -4,15 +4,16 @@ module Shared
       include Rails.application.routes.url_helpers
       include ActionView::Helpers::UrlHelper
 
-      def initialize(current_user, model, options, params)
+      def initialize(current_user, records, model, options, params)
         @course = Course.find_by(id: params[:course_id])
         @model = model
+        @records = records
         @options = options
         @current_user = current_user
       end
 
       def info_link(result)
-        if @course
+        if @course && @records.count > 0
           polymorphic_path([@course, result])
         else
           polymorphic_path([@current_user, result])
@@ -20,7 +21,7 @@ module Shared
       end
 
       def can_import?
-        if @course
+        if @course && @records.count > 0
           @options[:actions].include?(:import) &&
             @current_user.has_any_role?({ name: :instructor, resource: @course })
         else
@@ -29,11 +30,13 @@ module Shared
       end
 
       def can_download?
-        @options[:actions].include? :download
+        @options[:actions].include?(:download) && @records.count > 0
       end
 
       def can_create?
-        @options[:actions].include?(:new) && @current_user.has_role?(:instructor, @course)
+        @options[:actions].include?(:new) &&
+          @current_user.has_role?(:instructor, @course) &&
+          @records.count > 0
       end
 
     end

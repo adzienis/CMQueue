@@ -5,7 +5,7 @@
 <% options[:other_filters] ||= {} %>
 <% options[:format] ||= [] %>
 
-<% presenter = Shared::SearchFormHelper::SearchFormPresenter.new(current_user, records.model, options, params) %>
+<% presenter = Shared::SearchFormHelper::SearchFormPresenter.new(current_user, records, records.model, options, params) %>
 
 <%= render partial: "shared/filter_dropdown", locals: { options: options, model: records.model } %>
 
