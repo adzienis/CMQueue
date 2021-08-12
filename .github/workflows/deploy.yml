@@ -16,5 +16,5 @@ jobs:
         script: |
           cd ${{ github.event.repository.name }}
           git checkout production
-          git pull --rebase
+          git pull --rebase origin production
 
