@@ -2,11 +2,11 @@ default: &default
   adapter: postgresql
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
   timeout: 5000
+  host: localhost
 
 development:
   <<: *default
   database: development
-  host: localhost
   username: development
   port: 5432
 
@@ -17,12 +17,10 @@ test:
   <<: *default
   database: test
   username: test
-  host: localhost
   port: 5432
 
 production:
   <<: *default
   username: production
   database: production
-  host: db
   port: 5432
