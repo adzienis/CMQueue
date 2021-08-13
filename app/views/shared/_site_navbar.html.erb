@@ -66,7 +66,7 @@
             <%= link_to "Demo", "/demo", class: "nav-link", "data-turbo": false %>
           </li>
           <li class="nav-item">
-            <%= link_to "About", about_path, class: "nav-link" %>
+            <% link_to "About", about_path, class: "nav-link" %>
           </li>
           <li class="nav-item flex-grow-1 justify-content-center d-flex">
             <%= yield :nav_content %>
