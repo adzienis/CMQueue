@@ -118,7 +118,7 @@ export default (props) => {
               />
             </div>
             <div className="modal-body">
-              <TurboFrame
+              <turbo-frame
                 id="container"
                 src={`/questions/${question?.id}/previousQuestions`}
               />
