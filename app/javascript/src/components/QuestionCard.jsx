@@ -16,7 +16,6 @@ export default (props) => {
     "?",
     `user_id=${userId}`,
   ]);
-
   const { mutateAsync: unfreeze, isLoading: frozenLoading } =
     useWrappedMutation(
       () => ({

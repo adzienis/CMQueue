@@ -10,7 +10,6 @@ export default (props) => {
   const [loading, setLoading] = useState(false);
 
   const one = useOneShot(() => Turbo.visit(`/courses/${courseId}/answer`));
-
   const { data: topQuestion } = useQuery(
     [
       "courses",

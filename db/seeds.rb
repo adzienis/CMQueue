@@ -9,6 +9,7 @@
 #   Character.create(name: 'Luke', movie: movies.first)
   5.times do |v|
     @course0 = Course.create! name: "course_#{v}",
+                              open: true,
                               ta_code: SecureRandom.urlsafe_base64(6),
                               instructor_code: SecureRandom.urlsafe_base64(6),
                               student_code: SecureRandom.urlsafe_base64(6)
@@ -20,7 +21,7 @@
                                 description: SecureRandom.urlsafe_base64(30)
   end
 
-  20.times do |v|
+  10.times do |v|
     user = User.create(
       given_name: "arthur_#{v}",
       family_name: "family_#{v}",

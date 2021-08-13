@@ -4,6 +4,7 @@ import QueueOpener from "./QueueOpener";
 
 export default (props) => {
   const { courseId, userId, enrollmentId } = props;
+
   return (
     <div className="mb-4">
       <div className="d-flex">
