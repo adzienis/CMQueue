@@ -41,7 +41,7 @@ class Course < ApplicationRecord
   end
 
   def available_tags
-    tags.undiscarded.unarchived
+    tags.undiscarded.unarchived.distinct
   end
 
   after_update do
