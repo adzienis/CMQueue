@@ -7,9 +7,6 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
-
-case Rails.env
-when 'development'
   5.times do |v|
     @course0 = Course.create! name: "course_#{v}",
                               ta_code: SecureRandom.urlsafe_base64(6),
@@ -43,6 +40,3 @@ when 'development'
       )
     end
   end
-
-when 'production'
-end
