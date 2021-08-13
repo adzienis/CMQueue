@@ -8,10 +8,6 @@ export default function attachTurboEvents() {
   document.addEventListener("turbo:before-stream-render", function () {
     initializeTurboFrameEvent();
   });
-
-  document.addEventListener("react-component:load", function () {
-    initializeTurboFrameEvent();
-  });
 }
 
 function initializeTurboFrameEvent() {
