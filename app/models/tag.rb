@@ -4,7 +4,7 @@ class Tag < ApplicationRecord
   include Discard::Model
   include RansackableConcern
 
-  validates :name, uniqueness: true, presence: true
+  validates :name, presence: true
   validates_associated :questions
 
   scope :with_course, ->(course) do
