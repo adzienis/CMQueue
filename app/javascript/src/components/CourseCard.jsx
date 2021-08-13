@@ -3,12 +3,12 @@ import React from "react";
 import { useQuery } from "react-query";
 
 export default (props) => {
-  const { course } = props;
+  const { enrollment } = props;
 
   // should just reference course above to enrollment so no n+1
   const {
     data: [enrollment_data],
-  } = useQuery(["enrollments", "?", `course_id=${course?.id}`], {
+  } = useQuery(["enrollments", "?", `course_id=${enrollment?.course.id}`], {
     placeholderData: [undefined],
   });
   const { mutateAsync: deleteEnrollment } = useWrappedMutation(
@@ -21,7 +21,7 @@ export default (props) => {
 
   return (
     <a
-      href={`/courses/${course?.id}/queue`}
+      href={`/courses/${enrollment?.course.id}/queue`}
       className="card shadow-sm text-decoration-none hover-container"
       style={{ color: "inherit" }}
     >
@@ -29,7 +29,7 @@ export default (props) => {
         <div className="card-title">
           <div style={{ display: "flex" }}>
             <h5 style={{ flex: 1 }}>
-              Go to <b>{course?.name}</b>
+              Go to <b>{enrollment?.course.name}</b>
             </h5>
             <i
               className="fas fa-times fa-lg"
@@ -41,6 +41,9 @@ export default (props) => {
               }}
             />
           </div>
+        </div>
+        <div>
+          Role: <b>{enrollment?.role.name.toUpperCase()}</b>
         </div>
       </div>
     </a>

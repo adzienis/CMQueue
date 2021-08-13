@@ -12,12 +12,26 @@ module QueueAPI
         params do
           requires :role, type: String
         end
+        resource :courses do
+          get do
+            courses = current_user.courses.with_role params[:role], current_user if params[:role]
+            courses = current_user unless params[:role]
+
+            courses
+          end
+        end
+
+        desc "Gets all the enrollments associated with the current user."
+        params do
+          requires :role, type: String
+        end
         resource :enrollments do
           get do
             courses = current_user.courses.with_role params[:role], current_user if params[:role]
-            courses = current_user.courses unless params[:role]
+            courses = current_user unless params[:role]
 
-            courses
+            enrollments = current_user.enrollments.joins(:role).where("roles.resource_id": courses.pluck(:id), "roles.resource_type": "Course")
+            enrollments.as_json include: [:course, :role]
           end
         end
       end

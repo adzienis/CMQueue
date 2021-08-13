@@ -14,7 +14,7 @@ import CourseCard from "./CourseCard";
 export default (props) => {
   const { userId } = props;
 
-  const { data: courses } = useQuery([
+  const { data: enrollments } = useQuery([
     "users",
     parseInt(userId, 10),
     "enrollments",
@@ -22,7 +22,7 @@ export default (props) => {
     "role=ta",
   ]);
 
-  const { data: instructor_courses } = useQuery([
+  const { data: instructor_enrollments } = useQuery([
     "users",
     parseInt(userId, 10),
     "enrollments",
@@ -104,10 +104,10 @@ export default (props) => {
             <i className="fas fa-plus fa-2x" />
           </div>
         </a>
-        {courses && instructor_courses
-          ? courses
-              .concat(instructor_courses)
-              .map((v) => <CourseCard course={v} />)
+        {enrollments && instructor_enrollments
+          ? enrollments
+              .concat(instructor_enrollments)
+              .map((v) => <CourseCard enrollment={v} />)
           : null}
       </div>
     </>

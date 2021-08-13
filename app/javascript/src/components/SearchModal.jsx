@@ -17,7 +17,7 @@ export default (props) => {
 
   const { data: allCourses } = useQuery(["courses", "search"]);
 
-  const { data: courses } = useQuery([
+  const { data: enrollments } = useQuery([
     "users",
     parseInt(userId, 10),
     "enrollments",
@@ -185,8 +185,8 @@ export default (props) => {
             <i className="fas fa-plus fa-2x" />
           </div>
         </a>
-        {courses?.map((v) => (
-          <CourseCard course={v} />
+        {enrollments?.map((v) => (
+          <CourseCard enrollment={v} />
         ))}
       </div>
     </>

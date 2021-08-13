@@ -34,7 +34,7 @@ module Shared
       end
 
       def can_create?
-        @options[:actions].include?(:new)
+        @options[:actions].include?(:new) && @current_user.has_role?(:instructor, @course)
       end
 
     end
