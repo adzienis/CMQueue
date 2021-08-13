@@ -23,9 +23,11 @@ consumer.subscriptions.create("QueueChannel", {
   },
 
   update_course_channel() {
-    const exp = /courses\/(\d).*/;
+    const exp = /courses\/(\d+)/;
 
     const match = location.pathname.match(exp);
+
+    console.log(match);
 
     if (match) {
       const room_jsons = consumer.subscriptions.subscriptions.map(
