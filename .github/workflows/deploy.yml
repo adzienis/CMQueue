@@ -6,8 +6,7 @@ jobs:
   deploy_server:
     runs-on: ubuntu-latest
     steps:
-    - name: deploy to production server
-      uses: appleboy/ssh-action@master
+    - uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USERNAME }}
@@ -19,6 +18,9 @@ jobs:
           git pull --rebase origin production
           RAILS_ENV=production rails db:migrate
           RAILS_ENV=production rails restart
+  deploy_heroku:
+    runs-on: ubuntu-latest
+    steps:
     - uses: actions/checkout@v2
     - uses: akhileshns/heroku-deploy@v3.12.12
       with:
