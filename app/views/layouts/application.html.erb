@@ -45,9 +45,11 @@
 <% if content_for?(:content) %>
   <%= yield(:content) %>
 <% else %>
-  <div class="container w-100 mt-4 mb-5" style="height: 100vh">
+  <div class="container w-100 mt-4 mb-5" style="height: 90vh">
     <%= yield %>
   </div>
 <% end %>
+<% render partial: "shared/footer" %>
 </body>
+
 </html>

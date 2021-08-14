@@ -1,11 +1,12 @@
-<div class="container px-4 py-5">
-  <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
+<div class="container px-4 py-5" style="height: 80vh">
+  <div class="row flex-lg-row-reverse justify-content-center align-items-center g-5">
     <div class="col-10 col-sm-8 col-lg-6 d-flex justify-content-center align-items-center">
-      <%= image_tag 'worm.png', width: "400px", style: "border-radius: 50%", class: "shadow-lg" %>
+      <%= image_tag 'logo.png', width: "300px", class: "shadow-lg" %>
+      <% image_tag 'worm.png', width: "300px", style: "border-radius: 50%", class: "shadow-lg" %>
     </div>
     <div class="col-lg-6">
       <h1 class="display-5 fw-bold lh-1 mb-3">
-        Advanced insights into the performance of office hours.
+        Advanced insights of your office hours.
       </h1>
       <p class="lead">
         Augmenting what office hours traditionally are, CMQueue allows instructors to obtain key insights
@@ -24,6 +25,53 @@
     </div>
   </div>
 </div>
+
+<hr>
+
+<div class="container px-4 py-5" id="hanging-icons">
+  <h2 class="pb-2 border-bottom">Features</h2>
+  <div class="row g-4 py-5 row-cols-1 row-cols-lg-3">
+    <div class="col d-flex align-items-start">
+      <div class="icon-square bg-light text-dark flex-shrink-0">
+        <svg class="bi" width="1em" height="1em"><use xlink:href="#toggles2"/></svg>
+      </div>
+      <div>
+        <h2>Office Hours</h2>
+        <p>
+          Obtain the full context of each and every question prior to answering.
+          Quickly view previous questions as well as the entire life cycle of a question
+          from creation to resolution.
+        </p>
+      </div>
+    </div>
+    <div class="col d-flex align-items-start">
+      <div class="icon-square bg-light text-dark flex-shrink-0">
+        <svg class="bi" width="1em" height="1em"><use xlink:href="#cpu-fill"/></svg>
+      </div>
+      <div>
+        <h2>Management</h2>
+        <p>
+          Keep track of users and questions across multiple courses, and semesters.
+          Use the REST API to further extend what office hours are capable of.
+        </p>
+      </div>
+    </div>
+    <div class="col d-flex align-items-start">
+      <div class="icon-square bg-light text-dark flex-shrink-0">
+        <svg class="bi" width="1em" height="1em"><use xlink:href="#tools"/></svg>
+      </div>
+      <div>
+        <h2>Analytics</h2>
+        <p>
+          Gain insights into how your students utilize office hours.
+          Use summarizing analyses in order to precisely identify when peak load occurs,
+          as well as for student feedback on how office hours have been.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 <% tag.div class: "d-flex justify-content-center h-100" do %>
   <div style="display: flex;flex-direction: column; height: 80%; align-items: center; justify-content: center">
