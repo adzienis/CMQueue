@@ -1,7 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>CMQueue</title>
+  <title>
+    <% if ENV['demo'] %>
+      CMQueue (DEMO)
+    <% else %>
+      CMQueue
+    <% end %>
+  </title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="turbo-cache-control" content="no-cache">
   <%= csrf_meta_tags %>
@@ -10,6 +16,7 @@
   <%= stylesheet_link_tag 'application', media: 'all' %>
   <%= javascript_pack_tag 'application' %>
   <%= javascript_include_tag 'application' %>
+  <%= favicon_link_tag asset_path("books.png") %>
 
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.3/css/all.css">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.3/css/v4-shims.css">
