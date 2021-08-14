@@ -59,7 +59,16 @@ export default (props) => {
             <div className="modal-body">
               <form>
                 <div className="mb-3">
-                  <label className="form-label"> Role Code </label>
+                  <div className="mb-2">
+                    <label className="form-label fw-bold mb-0">
+                      {" "}
+                      Role Code{" "}
+                    </label>
+                    <div className="text-muted">
+                      Enter the specific course role code given to you by an
+                      instructor.
+                    </div>
+                  </div>
                   <input
                     className="form-control"
                     value={code}

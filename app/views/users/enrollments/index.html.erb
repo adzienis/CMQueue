@@ -9,9 +9,14 @@
        class="d-grid w-100"
   >
     <div class="w-100 mb-3">
-      <h1 class="mb-3 text-nowrap">
-        Student Courses
-      </h1>
+      <div class="mb-3">
+        <h1 class="mb-0 text-nowrap">
+          Student Courses
+        </h1>
+        <div class="text-muted">
+          All the courses in which you are currently enrolled as a student.
+        </div>
+      </div>
       <div id='enrollment-cards'>
 
         <%= content_tag :div, id: "hello-react", data: {
@@ -20,9 +25,14 @@
       </div>
     </div>
     <div class="w-100">
-      <h1 class="mb-3 text-nowrap">
-        Instructor Courses
-      </h1>
+      <div class="mb-3">
+        <h1 class="mb-0 text-nowrap">
+          Instructor Courses
+        </h1>
+        <div class="text-muted">
+          All the courses in which you are currently enrolled as a TA or instructor.
+        </div>
+      </div>
 
       <%= content_tag :div, id: "add-course-by-code", data: {
         userId: current_user.id,
