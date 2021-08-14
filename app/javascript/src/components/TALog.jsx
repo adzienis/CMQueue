@@ -11,8 +11,6 @@ import {
   YAxis,
 } from "recharts";
 
-import Popover from "bootstrap/js/dist/popover";
-
 import "react-datepicker/dist/react-datepicker.css";
 
 export default (props) => {
@@ -21,15 +19,6 @@ export default (props) => {
   const queryClient = useQueryClient();
 
   const [date, setDate] = useState(new Date());
-
-  useEffect(() => {
-    var popoverTriggerList = [].slice.call(
-      document.querySelectorAll('[data-bs-toggle="popover"]')
-    );
-    var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
-      return new Popover(popoverTriggerEl);
-    });
-  }, []);
 
   const {
     data: question_states,

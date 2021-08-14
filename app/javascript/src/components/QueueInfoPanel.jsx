@@ -56,15 +56,28 @@ export default (props) => {
   return (
     <div className="accordion mt-3 mb-4 w-100">
       <div className="accordion-item">
-        <h2 className="accordion-header">
+        <h2 className="accordion-header d-flex posi">
           <button
             className="accordion-button"
             type="button"
             data-bs-toggle="collapse"
             data-bs-target="#info-collapse"
           >
-            <b>Queue Information</b>
+            <div>
+              <b>Queue Information</b>
+            </div>
           </button>
+          <a
+            href="#"
+            data-bs-toggle="popover"
+            title="Information"
+            data-bs-content="Logs what action each TA has taken on a question within around 2 hours."
+            onClick={(e) => {
+              e.preventDefault();
+            }}
+          >
+            <i className="fas fa-info-circle"></i>
+          </a>
         </h2>
         <div id="info-collapse" className="accordion-collapse collapse show">
           <div className="accordion-body">

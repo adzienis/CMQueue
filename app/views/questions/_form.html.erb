@@ -1,5 +1,6 @@
 
 
+
 <%= simple_form_for question,
                     html: {
                       class: "w-100", id: dom_id(question),
@@ -14,9 +15,18 @@
   <%= f.full_error :enrollment, class: "invalid-feedback d-block fw-bold", style: "font-size: 1rem"  %>
   <%= f.hidden_field :enrollment_id, value: question.enrollment.id %>
   <%= f.hidden_field :course_id, value: question.course.id %>
-  <%= f.input :tried, label: "What have you tried?", input_html: { value: question.tried } %>
-  <%= f.input :description, label: "Description" %>
-  <%= f.input :location, label: "Zoom Link" %>
+  <%= f.input :tried, label: "What have you tried?",
+              input_html: { value: question.tried },
+              placeholder: 'Describe what steps you have taken so far to solve your question.'
+  %>
+  <%= f.input :description,
+              label: "Description",
+              placeholder: "Describe your current problem that you are trying to solve, as well as the context."
+  %>
+  <%= f.input :location,
+              label: "Zoom Link",
+              placeholder: "Use the short zoom link."
+  %>
 
   <div data-controller="react-select" class="mb-3">
     <%= f.association :tags,
@@ -26,7 +36,8 @@
                 input_html: {
                   class: "invisible form-control", multiple: true
                 },
-                collection: available_tags %>
+                collection: available_tags
+    %>
   </div>
 
 
