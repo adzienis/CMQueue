@@ -62,16 +62,18 @@ class Course < ApplicationRecord
   end
 
   after_create_commit do
-    Postgres::Views::Course::create(id)
-    Postgres::Views::Question::create(id)
-    Postgres::Views::Tag::create(id)
-    Postgres::Views::Enrollment::create(id)
+    Postgres::Views::Course.create(id)
+    Postgres::Views::Question.create(id)
+    Postgres::Views::Tag.create(id)
+    Postgres::Views::Enrollment.create(id)
   end
 
   after_destroy_commit do
-    Postgres::Views::Course::destroy(id)
-    Postgres::Views::Question::destroy(id)
-    Postgres::Views::Tag::destroy(id)
-    Postgres::Views::Enrollment::destroy(id)
+    Postgres::Views::Course.destroy(id)
+    Postgres::Views::Question.destroy(id)
+    Postgres::Views::Tag.destroy(id)
+    Postgres::Views::Enrollment.destroy(id)
+
+    Postgres::Views.destroy_user(id)
   end
 end
