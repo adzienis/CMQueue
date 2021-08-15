@@ -1,4 +1,5 @@
 <%= render layout: "shared/sidebar" do %>
+
   <li class="mb-1 d-flex align-items-center">
     <div style="width: 16px" class="d-flex justify-content-center">
       <i class="fas fa-chalkboard-teacher"></i>
@@ -67,6 +68,14 @@
           </div>
           <%= button_to "Enrollments", course_enrollments_path(@course),
                         class: "btn text-decoration-none #{(request.path == course_enrollments_path(@course)) ?
+                                                             "active-link" : ""}", method: :get %>
+        </li>
+        <li class="d-flex align-items-center">
+          <div style="width: 16px" class="d-flex justify-content-center">
+            <i class="fas fa-database"></i>
+          </div>
+          <%= button_to "Database", database_course_path(@course),
+                        class: "btn text-decoration-none #{(request.path == database_course_path(@course)) ?
                                                              "active-link" : ""}", method: :get %>
         </li>
       </ul>

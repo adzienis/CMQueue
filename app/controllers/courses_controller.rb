@@ -6,6 +6,10 @@ class CoursesController < ApplicationController
   def edit
   end
 
+  def database
+
+  end
+
   def queue
     redirect_to user_enrollments_path and return unless @course
     redirect_to new_course_question_path(@course) if current_user.active_question.nil? && current_user.has_role?(:student, @course)

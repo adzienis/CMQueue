@@ -1,0 +1,36 @@
+<div class="card card-body">
+  <div class="card-title">
+    <h2>
+      Database
+    </h2>
+  </div>
+  <div>
+    <h4>
+      Connecting
+    </h4>
+    <p>
+      It is currently possible to directly access all data related to your course by directly interfacing with the
+      backing PostgreSQL database using TLS. Please utilize this <a href="https://blog.crunchydata.com/blog/ssl-certificate-authentication-postgresql-docker-containers">resource</a> to learn more about connecting to the database
+      using TLS. Specifically, refer to Section 5 in order to generally understand how to connect, but you will most likely want to refer to
+      resources more specific to your use case. For example, you can utilize <a href="https://node-postgres.com/features/ssl">node-postgres</a>
+      to handle connecting to the store with Node.js.
+    </p>
+  </div>
+  <div>
+    <h4>
+      Features
+    </h4>
+    <p>
+      When your course was created, an associated Postgres user was also created. In addition, your data will be available
+      through <a href="https://www.postgresql.org/docs/12/tutorial-views.html"> views </a> reflecting the tables. Currently, these are normal views,
+      although we will switch to <a href="https://www.postgresql.org/docs/9.3/rules-materializedviews.html"> materialized views </a> in the future.
+      This will not affect correctness, although it will just mean that the data will delayed by some period of time; ideally < 24 hours.
+      Each of these views is further associated with a schema corresponding to your course. Your user will only have permission to access the schema and tables
+      of your course. In addition, you will only have read access to the store.
+    </p>
+    <p>
+      Using this resource, you should be able to directly hook into the database to utilize whatever third party applications you require
+      to perform further analysis.
+    </p>
+  </div>
+</div>

@@ -56,18 +56,15 @@ export default (props) => {
   return (
     <div className="accordion mt-3 mb-4 w-100">
       <div className="accordion-item">
-        <h2 className="accordion-header d-flex posi">
+        <h2 className="accordion-header d-flex">
           <button
             className="accordion-button"
             type="button"
             data-bs-toggle="collapse"
             data-bs-target="#info-collapse"
           >
-            <div>
-              <b>Queue Information</b>
-            </div>
+            <b>Queue Information</b>
           </button>
-          `
         </h2>
         <div id="info-collapse" className="accordion-collapse collapse show">
           <div className="accordion-body">

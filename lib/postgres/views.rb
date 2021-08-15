@@ -21,7 +21,8 @@ module Postgres
           end if;
         end $$;
         DROP ROLE IF EXISTS course_#{course_id}_user;
-        CREATE USER course_#{course_id}_user
+        CREATE USER course_#{course_id}_user;
+        ALTER USER course_#{course_id}_user PASSWORD '#{SecureRandom.urlsafe_base64(10)}';
       SQL
       )
     end

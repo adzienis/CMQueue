@@ -150,6 +150,7 @@ Rails.application.routes.draw do
       get 'topQuestion', to: 'courses#top_question'
       get 'open', to: 'courses#open_status'
       post 'open', to: 'courses#open'
+      get 'database', to: "courses#database", as: :database
     end
   end
 
