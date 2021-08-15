@@ -16,6 +16,7 @@ module Postgres
         <<-SQL
         do $$ begin
           if exists (SELECT usename FROM pg_user WHERE usename = 'course_#{course_id}_user') then
+            REVOKE ALL ON SCHEMA course_#{course_id} FROM course_#{course_id}_user;
             REVOKE ALL ON ALL TABLES IN SCHEMA course_#{course_id} FROM course_#{course_id}_user;
           end if;
         end $$;
@@ -30,6 +31,7 @@ module Postgres
         <<-SQL
         do $$ begin
           if exists (SELECT usename FROM pg_user WHERE usename = 'course_#{course_id}_user') then
+            REVOKE ALL ON SCHEMA course_#{course_id} FROM course_#{course_id}_user;
             REVOKE ALL ON ALL TABLES IN SCHEMA course_#{course_id} FROM course_#{course_id}_user;
           end if;
         end $$;
@@ -41,6 +43,7 @@ module Postgres
     def self.grant_privileges(course_id)
       ActiveRecord::Base.connection.execute(
         <<-SQL
+        GRANT ALL ON SCHEMA course_#{course_id} TO GROUP course_#{course_id}_user;
         GRANT SELECT ON ALL TABLES IN SCHEMA course_#{course_id} to course_#{course_id}_user
       SQL
       )
