@@ -59,7 +59,7 @@ class Question < ApplicationRecord
 
   scope :acknowledged, -> { where(id: joins(:question_states).where.not("question_states.acknowledged_at": nil)) }
   scope :unacknowledged, -> { where(id: joins(:question_states).where("question_states.acknowledged_at": nil)) }
-  scope :with_course, ->(course) { where(course_id: course.id) }
+  scope :with_course, ->(course_id) { joins(enrollment: :role).merge(Role.with_course(course_id)) }
 
   scope :by_state, lambda { |*states|
     joins(:question_state)

@@ -7,8 +7,8 @@ class Tag < ApplicationRecord
   validates :name, presence: true
   validates_associated :questions
 
-  scope :with_course, ->(course) do
-    where(course_id: course.id)
+  scope :with_course, ->(course_id) do
+    where(course_id: course)
   end
   scope :archived, -> { where(archived: true) }
   scope :unarchived, -> { where(archived: false) }

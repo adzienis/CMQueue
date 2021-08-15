@@ -1,5 +1,11 @@
 # frozen_string_literal: true
 
+require './lib/postgres/views/course'
+require './lib/postgres/views/question'
+require './lib/postgres/views/tag'
+require './lib/postgres/views/enrollment'
+require './lib/postgres/views'
+
 class Course < ApplicationRecord
   resourcify
 
@@ -53,5 +59,19 @@ class Course < ApplicationRecord
     QueueChannel.broadcast_to self, {
       invalidate: ['courses', id, 'open_status']
     }
+  end
+
+  after_create_commit do
+    Postgres::Views::Course::create(id)
+    Postgres::Views::Question::create(id)
+    Postgres::Views::Tag::create(id)
+    Postgres::Views::Enrollment::create(id)
+  end
+
+  after_destroy_commit do
+    Postgres::Views::Course::destroy(id)
+    Postgres::Views::Question::destroy(id)
+    Postgres::Views::Tag::destroy(id)
+    Postgres::Views::Enrollment::destroy(id)
   end
 end
