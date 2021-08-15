@@ -27,8 +27,6 @@ consumer.subscriptions.create("QueueChannel", {
 
     const match = location.pathname.match(exp);
 
-    console.log(match);
-
     if (match) {
       const room_jsons = consumer.subscriptions.subscriptions.map(
         (v) => JSON.parse(v.identifier).room
