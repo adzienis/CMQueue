@@ -245,6 +245,10 @@ GEM
       rexml
     kramdown-parser-gfm (1.1.0)
       kramdown (~> 2.0)
+    launchy (2.5.0)
+      addressable (~> 2.7)
+    letter_opener (1.7.0)
+      launchy (~> 2.2)
     libv8-node (15.14.0.1-x86_64-linux)
     listen (3.6.0)
       rb-fsevent (~> 0.10, >= 0.10.3)
@@ -523,6 +527,7 @@ DEPENDENCIES
   irb
   jbuilder (~> 2.7)
   kaminari (~> 1.2)
+  letter_opener (~> 1.7)
   listen (~> 3.3)
   mini_racer
   noticed (~> 1.4)
