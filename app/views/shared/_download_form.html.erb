@@ -10,7 +10,7 @@
     <%= form_with model: model, url: polymorphic_url([course, model], **request.query_parameters), method: :get, local: false do |f| %>
 
       <%= fields_for :q do |q| %>
-        <% params[:q].each do |param| %>
+        <% params[:q]&.each do |param| %>
           <%= q.hidden_field param[0], value: param[1] %>
         <% end %>
       <% end %>

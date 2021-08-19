@@ -1,6 +1,7 @@
 class Enrollment < ApplicationRecord
   include Discard::Model
   include RansackableConcern
+  include ExportableConcern
 
   enum semester: { Su21: "Su21", F21: "F21" }
 

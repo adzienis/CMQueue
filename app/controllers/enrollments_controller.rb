@@ -25,7 +25,7 @@ class EnrollmentsController < ApplicationController
       format.html
       format.js { render inline: "window.open('#{URI::HTTP.build(path: "#{request.path}.csv", query: request.query_parameters.to_query, format: :csv)}', '_blank')" }
       format.csv {
-        send_data helpers.to_csv(params[:enrollment].to_unsafe_h, @enrollments_ransack.result, Enrollment),
+        send_data Enrollment.to_csv(params[:enrollment].to_unsafe_h, @enrollments_ransack.result),
                   filename: helpers.csv_download_name(controller_name.classify.constantize)
       }
     end
