@@ -112,6 +112,12 @@ Rails.application.routes.draw do
 
     resources :settings
 
+    resources :certificates do
+      collection do
+        get 'download', to: "certificates#download"
+      end
+    end
+
     resources :enrollments do
       collection do
         get 'download', to: "enrollments#download_form"
@@ -127,6 +133,8 @@ Rails.application.routes.draw do
   #use_doorkeeper do
   #  controllers applications: "oauth/applications"
   #end
+
+  resources :certificates
 
   resources :courses, param: :course_id do
     member do

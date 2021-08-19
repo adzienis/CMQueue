@@ -7,7 +7,6 @@ class CoursesController < ApplicationController
   end
 
   def database
-
   end
 
   def queue

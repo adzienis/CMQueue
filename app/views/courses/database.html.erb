@@ -33,4 +33,45 @@
       to perform further analysis.
     </p>
   </div>
+
+  <div>
+    <h4>
+      Resources
+    </h4>
+
+    <p>
+      In order to connect to the database, you will need a public client certificate; a private client key; and
+      the public key of the certificate authority (CA). These are generated for you to download.
+
+      Please keep these safe. Specifically, keep the private client key safe, as ownership of this allows you (or others)
+      to read your data.
+
+      <b>
+        <%= button_to "Download Certificates",
+                      download_course_certificates_path(@course),
+                      method: :get,
+                      remote: true,
+                      class: "btn btn-primary"
+
+        %>
+      </b>
+    </p>
+  </div>
+  <div>
+    <h4>
+      Revocation
+    </h4>
+    <p>
+      In case you want to regenerate or invalidate all existing certificates, you can do so.
+    </p>
+
+    <b>
+      <%= button_to "Revoke All Certificates",
+                    download_course_certificates_path(@course),
+                    method: :get,
+                    remote: true,
+                    class: "btn btn-primary"
+      %>
+    </b>
+  </div>
 </div>
