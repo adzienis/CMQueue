@@ -1,0 +1,18 @@
+version: "3"
+services:
+  db:
+    image: postgres
+    environment:
+      - POSTGRES_USER=production
+      - POSTGRES_DATABASE=production
+  redis:
+    image: redis
+  nginx:
+    build: 
+      context: ./nginx
+      dockerfile: Dockerfile.nginx
+    environment:
+      - PRIVATE_KEY_PASS=${PRIVATE_KEY_PASS}
+    ports:
+      - '80:80'
+      - '443:443'

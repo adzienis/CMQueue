@@ -1,0 +1,9 @@
+FROM nginx:latest
+WORKDIR /etc/nginx
+COPY startup.sh .
+COPY reverse-proxy.conf conf.d/reverse-proxy.conf
+ADD private.key.enc .
+ADD public.crt .
+STOPSIGNAL SIGTERM
+RUN chmod +x startup.sh
+CMD bash -c "./startup.sh"

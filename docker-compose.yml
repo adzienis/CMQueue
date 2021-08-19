@@ -1,0 +1,48 @@
+version: "3"
+services:
+  db:
+    image: postgres
+    networks:
+      - development
+    environment:
+      - POSTGRES_USER=development
+      - POSTGRES_DATABASE=development
+      - POSTGRES_HOST_AUTH_METHOD=trust
+    volumes:
+      - $PWD/postgres-config/postgresql.conf:/etc/postgresql/postgresql.conf
+      - $PWD/postgres-config/pg_hba.conf:/conf/pg_hba.conf
+      - $PWD/pgconf:/pgconf
+    command: -c 'config_file=/etc/postgresql/postgresql.conf'
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - "5432:5432"
+  redis:
+    networks:
+      - development
+    image: redis
+    ports:
+      - "6379:6379"
+  nginx:
+    networks:
+      - development
+    build: 
+      context: ./nginx
+      dockerfile: Dockerfile.nginx
+    environment:
+      - PRIVATE_KEY_PASS=${PRIVATE_KEY_PASS}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - '3004:80'
+      - '443:443'
+    volumes:
+      - $PWD/nginx/reverse-proxy.conf:/etc/nginx/nginx.conf
+networks:
+    development:
+        driver: bridge
+        ipam:
+            driver: default
+            config:
+                - subnet: 172.16.230.0/24
+                  gateway: 172.16.230.1
