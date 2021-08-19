@@ -2,7 +2,6 @@ module Postgres
   module Views
     module Tag
       def self.create(course_id)
-        Postgres::Views::create_views_schema(course_id)
 
         ActiveRecord::Base.connection.execute(
           <<-SQL

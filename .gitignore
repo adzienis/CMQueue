@@ -48,3 +48,4 @@ pgconf/*
 scripts/certs
 scripts/keys
 !pgconf/.keep
+.env
