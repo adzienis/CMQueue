@@ -49,3 +49,6 @@ scripts/certs
 scripts/keys
 !pgconf/.keep
 .env
+.env.prod
+.env.dev
+.env.test
