@@ -86,6 +86,38 @@ CREATE TABLE public.ar_internal_metadata (
 
 
 --
+-- Name: certificates; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.certificates (
+    id bigint NOT NULL,
+    course_id bigint NOT NULL,
+    data bytea,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: certificates_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.certificates_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: certificates_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.certificates_id_seq OWNED BY public.certificates.id;
+
+
+--
 -- Name: courses; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -615,6 +647,13 @@ ALTER TABLE ONLY public.announcements ALTER COLUMN id SET DEFAULT nextval('publi
 
 
 --
+-- Name: certificates id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.certificates ALTER COLUMN id SET DEFAULT nextval('public.certificates_id_seq'::regclass);
+
+
+--
 -- Name: courses id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -726,6 +765,14 @@ ALTER TABLE ONLY public.announcements
 
 ALTER TABLE ONLY public.ar_internal_metadata
     ADD CONSTRAINT ar_internal_metadata_pkey PRIMARY KEY (key);
+
+
+--
+-- Name: certificates certificates_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.certificates
+    ADD CONSTRAINT certificates_pkey PRIMARY KEY (id);
 
 
 --
@@ -846,6 +893,13 @@ ALTER TABLE ONLY public.tags
 
 ALTER TABLE ONLY public.users
     ADD CONSTRAINT users_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: index_certificates_on_course_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_certificates_on_course_id ON public.certificates USING btree (course_id);
 
 
 --
@@ -1132,6 +1186,14 @@ ALTER TABLE ONLY public.questions_tags
 
 
 --
+-- Name: certificates fk_rails_4affdaec3e; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.certificates
+    ADD CONSTRAINT fk_rails_4affdaec3e FOREIGN KEY (course_id) REFERENCES public.courses(id);
+
+
+--
 -- Name: question_states fk_rails_70d06a7903; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1242,6 +1304,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20210701224457'),
 ('20210703035725'),
 ('20210711051202'),
-('20210712150707');
+('20210712150707'),
+('20210816184122');
 
 

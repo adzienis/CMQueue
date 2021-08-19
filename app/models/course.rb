@@ -17,6 +17,7 @@ class Course < ApplicationRecord
   # Not required for now
   # validates :course_code, presence: true, uniqueness: true
 
+  has_one :certificate
   has_many :enrollments, through: :roles
   has_many :users, through: :enrollments
   has_many :questions
