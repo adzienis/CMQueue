@@ -63,12 +63,12 @@ class Course < ApplicationRecord
   end
 
   after_create_commit do
+
+    Postgres::Views.create_views_schema(id)
     Postgres::Views::Course.create(id)
     Postgres::Views::Question.create(id)
     Postgres::Views::Tag.create(id)
     Postgres::Views::Enrollment.create(id)
-
-    Postgres::Views.create_views_schema(id)
   end
 
   after_destroy_commit do
