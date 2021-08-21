@@ -8,7 +8,11 @@ module Admin
   class ApplicationController < Administrate::ApplicationController
     include Pagy::Backend
     helper all_helpers_from_path "app/helpers"
-    before_action :authenticate_user!
+    before_action :authenticate_user!, :authenticate_admin
+
+    def authenticate_admin
+      raise CanCan::AccessDenied unless current_user.has_role? :admin
+    end
 
     def current_ability
       @current_ability ||= Ability.new(current_user, params)
@@ -18,8 +22,6 @@ module Admin
       authorize_resource(resource_class)
 
       @q = scoped_resource.ransack(params[:q])
-
-
 
       search_term = params[:search].to_s.strip
       #resources = Administrate::Search.new(scoped_resource,
