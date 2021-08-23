@@ -61,11 +61,14 @@ const handle_permission = async (setting_id, checked) => {
 };
 
 export default (props) => {
-  const { settings: settingsPlaceholder, userId } = props;
+  const { settings: settingsPlaceholder, userId, id, type } = props;
 
-  const { data: settings } = useQuery(["settings", "?", `user_id=${userId}`], {
-    placeholderData: settingsPlaceholder,
-  });
+  const { data: settings } = useQuery(
+    ["settings", "?", `type=${type}`, `id=${id}`],
+    {
+      placeholderData: settingsPlaceholder,
+    }
+  );
 
   const { mutate: changeSetting } = useWrappedMutation(
     ({ id, value }) => ({

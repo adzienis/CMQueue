@@ -1,3 +1,83 @@
+# Summary
+
+This is a Ruby on Rails powered office hours queue. This is the continuation of a pre-existing
+office hours queue for [CMQueue](https://cmqueue.xyz) that was written primarily with Node.js, and React.
+The website allows multiple courses to create and manage their office hours queues. The main motivation of this
+project is to allow better insight and transparency with the analysis of office
+hours. To that end, the "queue" is built with many features in order to better
+track and augment office hours.
+
+### Features
+
+1. A traditional office hours queue, where students can ask questions, and TA's
+   can answer them.
+
+2. Tracking entire life cycle of question (when it was created, when/why was it
+   frozen, split/categorize questions based on content).
+
+3. REST based API to allow course authorized applications to access data to enable
+   further, independent features.
+
+4. Course management of semesters, roles, rosters, tags, and questions.
+
+5. Importing and exporting data from CSV files.
+
+6. Ability for students, and TA's to review their own questions/interactions from
+   across courses/semesters.
+   
+8. Can integrate with third party tools such as PowerBI/Tableau/any other analysis tool
+  that can connect to PostgreSQL (database is exposed in a secure manner using TLS certificate
+   authentication, as well as restricted to read only views of secured schemas with strict
+   permissions)
+
+### Motivation
+
+The goal is to have a website, that doesn't necessarily do everything, but has
+enough features for to pull out information to summarize office hours
+performance (and hopefully try to make 90 student long office hours not so
+unbearable for everyone). The website has some basic course management, with an
+emphasis on being able to export the data through the REST API or manually, to
+perform more analytics somewhere else.
+
+Currently, very general insight on course performance comes from an integration
+with Metabase, which gives a pretty good "no-code" solution to interpreting the
+data, but it is still general, and its probably better to get more specific
+information.
+
+### Future Features
+
+* Make this into a PaaS with strict multi-tenancy, or as a self-hosted version.
+
+* While the REST API exists with a large number of endpoints, it would be interesting to have it
+  entirely fleshed out so that it is possible to get a large amount of functionality through
+  separate applications (maybe overzealous, but to enable the development of an app).
+  
+* Flesh out both course and user settings.
+
+* Currently, to manage multiple courses, they are all separated out by explicit endpoints (must go
+  to `...courses/1/questions` to get questions for a particular course, even if you manage multiple
+  courses). Possibly may look into `hotwire` to get this working, but it would be interesting to see
+  if it can be done with just passing an array of course id's into the url (so it would be
+  `...courses/questions?course_ids=[1,2]`)
+
+* Flesh out analytics: the data is there, and there are sections in the code for embedding
+  external graphs. But not sure whether it would be better to spend effort on statistics on
+  the site, vs investing time into a proper analytics tool (PowerBI/Excel sheets?).
+
+
+# Summary
+
+See [parent repo](https://github.com/adzienis/OH-Queuing) for a more general description.
+
+# Future
+
+* It would be great to offer a combination of a self hosted version as well as a more general,
+  hardened, multi-tenancy PaaS; ideally using subdomains.
+* Analytics currently somewhat manually done with [Metabase](https://www.metabase.com/).
+Current system is currently headed towards decoupling of the analysis, with the instructor able
+  to hook in their own third-party analytics tool (Metabase, Google Data Studio...). Possibly may
+  look into a more dedicated, but effort intensive, direct integration.
+
 # Demo
 
 [Demo](https://cmqueue-demo.herokuapp.com)
