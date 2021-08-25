@@ -110,7 +110,10 @@ export default (props) => {
             className="card-body"
             style={{ display: "flex", justifyContent: "center" }}
           >
-            <i className="fas fa-plus fa-2x" />
+            <div className="d-flex flex-column justify-content-center align-items-center">
+              <i className="fas fa-plus fa-2x" />
+              <div> Add a Course </div>
+            </div>
           </div>
         </a>
         {enrollments && instructor_enrollments

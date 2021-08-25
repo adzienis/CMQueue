@@ -19,6 +19,16 @@ export default (props) => {
     }
   );
 
+  let footerClass = "";
+
+  if (enrollment?.role.name === "instructor") {
+    footerClass = "bg-success";
+  } else if (enrollment?.role.name === "ta") {
+    footerClass = "bg-info";
+  } else if (enrollment?.role.name === "student") {
+    footerClass = "bg-warning";
+  }
+
   return (
     <a
       href={`/courses/${enrollment?.course.id}/queue`}
@@ -42,9 +52,12 @@ export default (props) => {
             />
           </div>
         </div>
-        <div>
-          Role: <b>{enrollment?.role.name.toUpperCase()}</b>
-        </div>
+      </div>
+      <div
+        className={`card-footer text-white  ${footerClass}`}
+        style={{ textTransform: "capitalize" }}
+      >
+        {enrollment?.role.name}
       </div>
     </a>
   );
