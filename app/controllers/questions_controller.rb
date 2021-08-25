@@ -100,7 +100,7 @@ class QuestionsController < ApplicationController
 
   def update
     @question = Question.find(params[:question_id])
-    @available_tags = Tag.undiscarded.unarchived.with_course(@question.course)
+    @available_tags = Tag.undiscarded.unarchived.with_course(@question.course.id)
     @question.update(question_params)
 
     tags = Tag.where(id: params[:question][:tag_ids])

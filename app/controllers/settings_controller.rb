@@ -20,7 +20,8 @@ class SettingsController < ApplicationController
   end
 
   def show
-    @settings = User.find(params[:user_id]).settings if params[:user_id]
+    @settings = @settings.where(resource_id: current_user.id, resource_type: "User") if @user
+    @settings = @settings.where(resource_id: @course.id, resource_type: "Course") if @course
   end
 
   def notifications
