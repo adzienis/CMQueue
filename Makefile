@@ -45,11 +45,11 @@ stop_dev:
 down_dev:
 	docker-compose -p development down
 console_dev:
-	cd OH-Queuing-Server; bundle exec rails c
+	bundle exec rails c
 server_dev:
-	cd OH-Queuing-Server; bundle exec rails s --binding=0.0.0.0
+	bundle exec rails s --binding=0.0.0.0
 migrate_dev:
-	cd OH-Queuing-Server; bundle exec rails db:migrate
+	bundle exec rails db:migrate
 
 ###############################################
 
