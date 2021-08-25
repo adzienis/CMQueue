@@ -3,11 +3,12 @@
 
   <%= tag.div id: "course-status", data: {
     courseId: @course.id
-  }.to_json do %><% end if current_user.has_any_role?({ name: :ta, resource: @course}, {name: :instructor, resource: @course}) %>
+  }.to_json do %>
+  <% end if current_user.has_any_role?({ name: :ta, resource: @course }, { name: :instructor, resource: @course }) %>
 
 
   <div style="display: flex; flex-direction: row; ">
-    <% if current_user.has_any_role?({ name: :ta, resource: @course}, {name: :instructor, resource: @course}) %>
+    <% if current_user.has_any_role?({ name: :ta, resource: @course }, { name: :instructor, resource: @course }) %>
       <% content_for :nav_content do %>
         <div class="dropdown">
           <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">

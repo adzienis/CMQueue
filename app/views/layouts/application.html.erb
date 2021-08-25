@@ -49,7 +49,7 @@
     <%= yield %>
   </div>
 <% end %>
-<%= render partial: "shared/footer" %>
+<%= render partial: "shared/footer" if request.path == "/landing" %>
 </body>
 
 </html>
