@@ -10,6 +10,8 @@ prod_server_id:=docker ps | grep production_server | sed 's/ .*//'
 -include .env.test
 -include .env.prod
 
+.PHONY= load_dev_env load_prod_ev load_test_env
+
 load_dev_env: 
 	@export $(shell cat .env.dev)
 load_prod_env: 
@@ -38,17 +40,17 @@ deploy:
 ###############################################
 
 # DEVELOPMENT COMMANDS
-run_dev:
+run_dev: load_dev_env
 	docker-compose -p development up --force-recreate --remove-orphans
-stop_dev:
+stop_dev: load_dev_env
 	docker-compose -p development stop
-down_dev:
+down_dev: load_dev_env
 	docker-compose -p development down
-console_dev:
+console_dev: load_dev_env
 	bundle exec rails c
-server_dev:
+server_dev: load_dev_env
 	bundle exec rails s --binding=0.0.0.0
-migrate_dev:
+migrate_dev: load_dev_env
 	bundle exec rails db:migrate
 
 ###############################################
