@@ -23,21 +23,6 @@ services:
     image: redis
     ports:
       - "6379:6379"
-  nginx:
-    networks:
-      - development
-    build: 
-      context: ./nginx
-      dockerfile: Dockerfile.nginx
-    environment:
-      - PRIVATE_KEY_PASS=${PRIVATE_KEY_PASS}
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    ports:
-      - '3004:80'
-      - '443:443'
-    volumes:
-      - $PWD/nginx/reverse-proxy.conf:/etc/nginx/nginx.conf
 networks:
     development:
         driver: bridge

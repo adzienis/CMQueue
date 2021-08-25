@@ -2,17 +2,32 @@ version: "3"
 services:
   db:
     image: postgres
+    networks:
+      - development
     environment:
       - POSTGRES_USER=production
       - POSTGRES_DATABASE=production
-  redis:
-    image: redis
+    volumes:
+      - $PWD/postgres-config/postgresql.conf:/etc/postgresql/postgresql.conf
+      - $PWD/postgres-config/pg_hba.conf:/conf/pg_hba.conf
+      - $PWD/pgconf:/pgconf
+    command: -c 'config_file=/etc/postgresql/postgresql.conf'
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - "5432:5432"
   nginx:
-    build: 
+    networks:
+      - development
+    build:
       context: ./nginx
       dockerfile: Dockerfile.nginx
     environment:
       - PRIVATE_KEY_PASS=${PRIVATE_KEY_PASS}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     ports:
       - '80:80'
       - '443:443'
+    volumes:
+      - $PWD/nginx/reverse-proxy.conf:/etc/nginx/nginx.conf
