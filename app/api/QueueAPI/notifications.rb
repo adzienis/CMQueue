@@ -60,7 +60,7 @@ module QueueAPI
 
           notification = Notification.find(params[:notification_id])
 
-          authorize! :write, notification
+          authorize! :update, notification
 
           notification.mark_as_read!
         end

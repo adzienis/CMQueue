@@ -45,6 +45,10 @@ module QueueAPI
         end
       end
       post do
+        question_state = QuestionState.new(declared(params)[:question_state])
+
+        authorize! :create, question_state
+
         question_state = QuestionState.create!(declared(params)[:question_state])
       end
 

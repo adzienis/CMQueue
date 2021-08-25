@@ -92,9 +92,14 @@ module QueueAPI
         post 'handle_question', scopes: [:admin] do
           question = Question.find(params[:question_id])
 
-          question.question_states.create(state: params[:state],
+          state = question.question_states.build(state: params[:state],
                                           enrollment_id: params[:enrollment_id],
                                           description: params[:description])
+
+          authorize! :create, state
+
+          state.save!
+
           question
         end
 
@@ -102,19 +107,23 @@ module QueueAPI
         get scopes: [:admin] do
           question = Question.find(params[:question_id])
 
+          authorize! :read, question
+
           question.as_json include: [:question_state]
         end
 
         desc "Get question states associated with a question."
         get :question_states do
-          QuestionState.where(question_id: params[:question_id])
+
+          question = Question.accessible_by(current_ability)
+
+
+          QuestionState.accessible_by(current_ability).where(question: question)
         end
 
         desc "Get previous questions of a question"
         get :previousQuestions do
-          question = Question.find_by(id: params[:question_id])
-
-          error!("User not found", :bad_request) and return unless question
+          question = Question.accessible_by(current_ability).find(params[:question_id])
 
           questions = Question.undiscarded
           questions = questions.accessible_by(current_ability) if current_user
@@ -129,7 +138,10 @@ module QueueAPI
       route_param :question_id do
 
         patch do
-          question = Question.find(params[:question_id])
+          question = Question.accessible_by(current_ability).find(params[:question_id])
+
+          authorize! :update, question
+
           question.update(params[:question])
           question.tags = (Tag.find(params[:tags])) if params.try(:question, :tags)
 
@@ -153,7 +165,7 @@ module QueueAPI
       post scopes: [:write] do
         question = Question.new(declared(params)[:question])
 
-        authorize! :manage, question
+        authorize! :create, question
 
         question.tags = Tag.find(params[:tags])
 

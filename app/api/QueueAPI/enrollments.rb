@@ -49,11 +49,9 @@ module QueueAPI
       post scopes: [:admin] do
         user = User.all
         user = user.accessible_by(current_ability) if current_user
-        user = user.find_by(id: params[:user_id])
+        user = user.find(params[:user_id])
 
-        error!("User not found", :bad_request) and return unless user
-
-        error!("Unauthorized!", :unauthorized) and return unless authorize! :enroll_user, user
+        authorize! :enroll_user, user
 
         if params[:code]
           ta_course = Course.find_by(ta_code: params[:code])
@@ -71,6 +69,7 @@ module QueueAPI
 
       end
 
+      desc "Get enrollments associated with a user."
       params do
         optional :user_id, type: Integer
         optional :course_id, type: Integer
@@ -90,17 +89,13 @@ module QueueAPI
       desc "Delete an enrollment"
       route_param :id do
         delete scopes: [:write] do
-          enrollment = Enrollment.find_by(id: params[:id])
+          enrollment = Enrollment.find(params[:id])
 
-          error!("Enrollment not found", :bad_request) and return unless enrollment
           authorize! :delete, enrollment
 
           enrollment.discard
         end
       end
-    end
-
-    resource :tags do
     end
   end
 end

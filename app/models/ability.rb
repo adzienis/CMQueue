@@ -111,7 +111,6 @@ class Ability
                                                                                .pluck(:id))
                                                .or(QuestionState.where("question_states.enrollment_id": user.enrollments.pluck(:id)))
                                                .or(QuestionState.where("questions.enrollment_id": user.enrollments.pluck(:id))) do |state|
-
         user.has_any_role?({ name: :ta, resource: state.question.course }, { name: :instructor, resource: state.question.course }) || state.question.user_id == user.id
       end
 

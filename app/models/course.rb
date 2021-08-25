@@ -9,10 +9,13 @@ require './lib/postgres/views'
 class Course < ApplicationRecord
   resourcify
 
+  # to prevent accidentally exposing sensitive columns
+  default_scope { select(Course.column_names - ["instructor_code", "ta_code", "student_code"]) }
+
   validates :name, uniqueness: true
-  validates :ta_code, presence: true, uniqueness: true
-  validates :student_code, presence: true, uniqueness: true
-  validates :instructor_code, presence: true, uniqueness: true
+  validates :ta_code, presence: true, uniqueness: true, on: :create
+  validates :student_code, presence: true, uniqueness: true, on: :create
+  validates :instructor_code, presence: true, uniqueness: true, on: :create
 
   # Not required for now
   # validates :course_code, presence: true, uniqueness: true
@@ -52,6 +55,10 @@ class Course < ApplicationRecord
     tags.undiscarded.unarchived.distinct
   end
 
+  def public_columns
+    select(Course.column_names - ["instructor_code", "ta_code"])
+  end
+
   after_update do
     broadcast_action_later_to self,
                               action: :refresh,
@@ -76,7 +83,7 @@ class Course < ApplicationRecord
     settings.create([{
                        label: "Searchable", key: "searchable", value: "false", description: "Allow students to search for this course."
                      }, {
-                       label: "Searchable Enrollment", key: "searchable_enrollment", value: "false", description: "Allow notifications to appear on the site."
+                       label: "Searchable Enrollment", key: "searchable_enrollment", value: "false", description: "Allow enrollment by searching for this course."
                      }, {
                        label: "Allow Enrollment", key: "allow_enrollment", value: "false", description: "Allow students to enroll in the course."
                      }])
