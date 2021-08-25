@@ -13,6 +13,11 @@ class Ability
       end
       #can :manage, Message, question_state: { question: { user: { id: user.id } } }
 
+      can :manage, Certificate, Certificate
+                                  .where(course_id: Course
+                                                      .where("courses.id": Course.find_roles([:instructor], user)
+                                                                                 .pluck(:id)))
+
       can :queue, Course
 
       can [:active_tas, :open_status, :read, :search], Course
