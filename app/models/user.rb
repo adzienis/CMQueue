@@ -16,8 +16,7 @@ class User < ApplicationRecord
   #         foreign_key: :resource_owner_id,
   #         dependent: :delete_all
 
-
-  has_many :active_questions, -> { undiscarded.questions_by_state("unresolved", "frozen", "resolving").or(undiscarded.by_state("kicked").unacknowledged)}, through: :enrollments, source: :questions
+  has_many :active_questions, -> { undiscarded.questions_by_state("unresolved", "frozen", "resolving").or(undiscarded.by_state("kicked").unacknowledged) }, through: :enrollments, source: :questions
 
   has_many :courses, through: :enrollments
 
@@ -54,9 +53,8 @@ class User < ApplicationRecord
 
   def is_staff_in_course?(course_id)
     course = Course.find(course_id)
-    has_any_role?({ name: :ta, resource: course}, {name: :instructor, resource: course})
+    has_any_role?({ name: :ta, resource: course }, { name: :instructor, resource: course })
   end
-
 
   def enrollment_with_course(course_id)
     enrollments.undiscarded.joins(:role).find_by("roles.resource_type": "Course", "roles.resource_id": course_id)
@@ -70,9 +68,9 @@ class User < ApplicationRecord
     %i[with_role_ransack]
   end
 
-  scope :with_course, ->(course_id) {joins(:enrollments, enrollments: :role).where("roles.resource_id": course_id, "roles.resource_type": "Course")}
+  scope :with_course, ->(course_id) { joins(:enrollments, enrollments: :role).where("roles.resource_id": course_id, "roles.resource_type": "Course") }
 
-  scope :undiscarded_enrollments, -> {joins(:enrollments).merge(Enrollment.undiscarded)}
+  scope :undiscarded_enrollments, -> { joins(:enrollments).merge(Enrollment.undiscarded) }
 
   scope :enrolled_in_course, lambda { |course|
     joins(:roles).where("roles.resource_id": course.id)
@@ -98,8 +96,8 @@ class User < ApplicationRecord
   scope :active_tas_by_date, lambda { |states, date, course|
     joins(:question_state)
       .where("question_states.state in (#{states.map do |x|
-                                            QuestionState.states[x]
-                                          end.join(',')})")
+        QuestionState.states[x]
+      end.join(',')})")
       .where('question_states.created_at >= ?', date.beginning_of_day)
       .where('question_states.created_at <= ?', date.end_of_day)
       .with_role(:ta, course)
@@ -126,7 +124,6 @@ class User < ApplicationRecord
     end
   end
 
-
   def self.to_csv
     attributes = %w{id given_name family_name}
 
@@ -134,17 +131,18 @@ class User < ApplicationRecord
       csv << attributes
 
       all.find_each do |user|
-        csv << attributes.map{ |attr| user.send(attr) }
+        csv << attributes.map { |attr| user.send(attr) }
       end
     end
   end
 
-
   after_create_commit do
-    self.settings.create([{ key: "Desktop_Notifications", value: "false"}, { key: "Site Notifications", value: "false"}])
+    settings.create([{
+                       label: "Desktop Notifications", key: "desktop_notifications", value: "false", description: "Allow notifications to appear natively on your desktop."
+                     }, {
+                       label: "Site Notifications", key: "site_notifications", value: "false", description: "Allow notifications to appear on the site."
+                     }])
   end
-
-
 
   rolify has_many_through: :enrollments
   devise :omniauthable, omniauth_providers: %i[google_oauth2]

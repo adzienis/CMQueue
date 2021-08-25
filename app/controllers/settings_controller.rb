@@ -32,12 +32,15 @@ class SettingsController < ApplicationController
 
   def update
     @settings = Setting.update(settings_params.keys, settings_params.values.map{|v| { value: v } })
+    respond_to do |format|
+      format.json { render json: nil}
+    end
   end
 
   def delete
   end
 
   def settings_params
-    params.permit(*current_user.settings.map{|v| v.id.to_s.to_sym })
+    params.permit(*Setting.all.accessible_by(current_ability).map{|v| v.id.to_s.to_sym })
   end
 end

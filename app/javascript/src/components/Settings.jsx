@@ -146,7 +146,7 @@ export default (props) => {
                     className="d-flex form-check form-switch w-100 ps-5 pe-5"
                     key={v.id}
                   >
-                    <label className="form-check-label"> {v.key} </label>
+                    <label className="form-check-label">{v.description}</label>
                     <div className="flex-1" />
                     <input
                       type="checkbox"

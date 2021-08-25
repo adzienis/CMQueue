@@ -19,6 +19,7 @@ class Course < ApplicationRecord
 
   has_one :certificate
   has_many :enrollments, through: :roles
+  has_many :settings, as: :resource
   has_many :users, through: :enrollments
   has_many :questions
   has_many :unresolved_questions, -> { undiscarded
@@ -69,6 +70,16 @@ class Course < ApplicationRecord
     Postgres::Views::Question.create(id)
     Postgres::Views::Tag.create(id)
     Postgres::Views::Enrollment.create(id)
+
+    # maybe wrap and change it parameterize.underscore by default for key
+
+    settings.create([{
+                       label: "Searchable", key: "searchable", value: "false", description: "Allow students to search for this course."
+                     }, {
+                       label: "Searchable Enrollment", key: "searchable_enrollment", value: "false", description: "Allow notifications to appear on the site."
+                     }, {
+                       label: "Allow Enrollment", key: "allow_enrollment", value: "false", description: "Allow students to enroll in the course."
+                     }])
   end
 
   after_destroy_commit do

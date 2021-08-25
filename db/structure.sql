@@ -534,6 +534,8 @@ CREATE TABLE public.settings (
     resource_id bigint,
     key character varying NOT NULL,
     value character varying NOT NULL,
+    description text NOT NULL,
+    label text NOT NULL,
     setting_type integer DEFAULT 0 NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL

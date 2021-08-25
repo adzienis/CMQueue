@@ -40,8 +40,13 @@ class Ability
 
       can :manage, Setting, Setting.where(resource_id: user.id, resource_type: "User")
                                    .or(Setting.where(resource_id: Course.find_roles([:instructor], user).pluck(:resource_id), resource_type: "Course")) do |setting|
-        (user.id == setting.resource_id && setting.resource_type == "User") ||
-          (setting.resource_type == "Course" && (user.has_any_role?({ name: :instructor, resource: enrollment.course })))
+
+        case setting.resource_type
+        when "User"
+          user.id == setting.resource_id
+        when "Course"
+          user.has_any_role?({ name: :instructor, resource: Course.find(setting.resource_id) })
+        end
       end
 
       can :read, Enrollment, Enrollment.joins(:role)
