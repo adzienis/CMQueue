@@ -123,3 +123,5 @@ gem "administrate", "~> 0.16.0"
 gem "administrate_exportable", "~> 0.5.0"
 
 gem "letter_opener", "~> 1.7"
+
+gem "ransack_search_element", "~> 0.1.0.pre.alpha"

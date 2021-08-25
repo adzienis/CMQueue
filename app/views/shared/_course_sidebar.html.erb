@@ -10,6 +10,16 @@
                     request.path == answer_course_path(@course) ? 'active-link' : ''}",
                   method: :get %>
   </li>
+
+  <%= tag.li class:"d-flex align-items-center" do %>
+
+    <div style="width: 16px" class="d-flex justify-content-center">
+      <i class="fas fa-user"></i>
+    </div>
+    <%= button_to "Settings", course_settings_path(@course),
+                  class: "btn text-decoration-none #{(request.path == course_settings_path(@course)) ?
+                                                       "active-link" : ""}", method: :get %>
+  <% end %>
   <li class="mb-1">
     <div class=" d-flex align-items-center">
       <div style="width: 16px" class="d-flex justify-content-center">
@@ -109,16 +119,6 @@
         </li>
       </ul>
     <% end %>
-  <% end %>
-
-  <% tag.li class:"d-flex align-items-center" do %>
-
-    <div style="width: 16px" class="d-flex justify-content-center">
-      <i class="fas fa-user"></i>
-    </div>
-    <%= button_to "Settings", course_settings_path(@course),
-                  class: "btn text-decoration-none #{(request.path == course_settings_path(@course)) ?
-                                                       "active-link" : ""}", method: :get %>
   <% end %>
 
 <% end %>

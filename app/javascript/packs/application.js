@@ -4,8 +4,6 @@ import * as ActiveStorage from "@rails/activestorage";
 import "channels";
 import "controllers";
 
-import bootstrap from "bootstrap/dist/js/bootstrap";
-
 import SearchModal from "../src/components/SearchModal";
 import StudentQueueView from "../src/components/StudentQueueView";
 import AddCourseByCode from "../src/components/AddCourseByCode";
@@ -20,14 +18,14 @@ import QueueInfoPanel from "../src/components/QueueInfoPanel";
 import TAActionPane from "../src/components/TAActionPane";
 import TALog from "../src/components/TALog";
 import TAQueueView from "../src/components/TAQueueView";
-import UserSettings from "../src/components/UserSettings";
-import TATimePerQuestion from "../src/components/TATimePerQuestion";
-import nestedDropdownListeners from "../src/utilities/nestedDropdownListeners";
+import UserSettings from "../src/components/Settings";
 
 import attachTurboEvents from "../src/utilities/turboExtraEvents";
 import registerManager from "../src/utilities/registerComponent";
 import QuestionAnsweringTime from "../src/components/QuestionAnsweringTime";
 import Popover from "bootstrap/js/dist/popover";
+import "ransack-search-element";
+
 registerManager.register_component(AddCourseByCode, "#add-course-by-code");
 registerManager.register_component(CourseStatus, "#course-status");
 registerManager.register_component(FilterDropdown, "#dropdown-filter");
@@ -42,9 +40,7 @@ registerManager.register_component(TALog, "#ta-chart");
 registerManager.register_component(TAQueueView, "#ta-queue-view");
 registerManager.register_component(UserSettings, "#user-settings");
 registerManager.register_component(QuestionAnsweringTime, "#question-time");
-//registerManager.register_component(TATimePerQuestion, "#time");
 
-nestedDropdownListeners();
 attachTurboEvents();
 
 registerManager.render_components();

@@ -42,12 +42,6 @@ const handle_permission = async (setting_id, checked) => {
           );
 
           return Promise.reject("err");
-
-          await wrappedFetch(`/settings/${setting_id}?`, {
-            method: "PATCH",
-            credentials: "include",
-            body: JSON.stringify({ [setting_id]: "false" }),
-          });
         }
       });
     }
@@ -61,7 +55,7 @@ const handle_permission = async (setting_id, checked) => {
 };
 
 export default (props) => {
-  const { settings: settingsPlaceholder, userId, id, type } = props;
+  const { settings: settingsPlaceholder, id, type } = props;
 
   const { data: settings } = useQuery(
     ["settings", "?", `type=${type}`, `id=${id}`],

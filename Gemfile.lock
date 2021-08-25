@@ -388,6 +388,8 @@ GEM
       activerecord (>= 5.2.4)
       activesupport (>= 5.2.4)
       i18n
+    ransack_search_element (0.1.0.pre.alpha)
+      rails (~> 6.1.4)
     rb-fsevent (0.11.0)
     rb-inotify (0.10.1)
       ffi (~> 1.0)
@@ -544,6 +546,7 @@ DEPENDENCIES
   rails_admin (~> 2.1)
   rails_admin_import (~> 2.2)
   ransack (~> 2.4)
+  ransack_search_element (~> 0.1.0.pre.alpha)
   redis (~> 4.0)
   rolify (~> 6.0)!
   rubocop (~> 1.17)

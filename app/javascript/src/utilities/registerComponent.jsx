@@ -52,7 +52,7 @@ class RegisterComponentManager {
 
             const data = JSON.parse(v.getAttribute("data"));
 
-            const reference = ReactDOM.render(
+            ReactDOM.render(
               <QueryClientProvider client={window.queryClient} contextSharing>
                 <Component {...data} />
               </QueryClientProvider>,

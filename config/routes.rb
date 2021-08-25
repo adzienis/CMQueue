@@ -8,23 +8,22 @@ Rails.application.routes.draw do
       resources :access_tokens
       resources :applications
     end
-      resources :users
-      resources :roles do
-        get :export, on: :collection
-      end
-      resources :enrollments
-      resources :announcements
-      resources :question_states
-      resources :question_tags
-      resources :settings
-      resources :notifications
-      resources :questions
-      resources :tags
-      resources :courses
+    resources :users
+    resources :roles do
+      get :export, on: :collection
+    end
+    resources :enrollments
+    resources :announcements
+    resources :question_states
+    resources :question_tags
+    resource :settings
+    resources :notifications
+    resources :questions
+    resources :tags
+    resources :courses
 
-      root to: "users#index"
+    root to: "users#index"
   end
-
 
   get '/api/swagger', to: 'application#swagger', as: :swagger
   get '/demo', to: redirect("https://cmqueue-demo.herokuapp.com/"), as: :demo
@@ -79,7 +78,6 @@ Rails.application.routes.draw do
 
   resources :courses, param: :course_id
 
-
   resources :users, only: [] do
     resources :questions
     resources :enrollments
@@ -110,7 +108,7 @@ Rails.application.routes.draw do
 
     resources :messages
 
-    resources :settings
+    resource :settings
 
     resources :certificates do
       collection do
