@@ -9,11 +9,13 @@ module QueueAPI
 
       route_param :course_id do
 
-        desc 'Get all settings associated with a course.'
+        desc 'Get all settings by course.'
         get 'settings' do
           course = Course.find(params[:course_id])
 
-          course.settings.accessible_by(current_ability)
+          settings = course.settings
+
+          settings.accessible_by(current_ability)
         end
 
         desc "Calculate the amount of time between a question resolving, and being resolved,
@@ -132,6 +134,8 @@ module QueueAPI
       get 'search', scopes: [:public] do
         courses = Course.all
         courses = courses.where('name LIKE :name', name: "%#{params[:name]}%") if params[:name]
+        courses = courses.joins(:settings).where("settings.key": "searchable_enrollment", "settings.value": "true")
+
         courses.select(Course.column_names - [:instructor_code, :ta_code])
 
         authorize! :read, Course
