@@ -93,6 +93,7 @@ export default (props) => {
                 }
               />
               <QueueInfoItem
+                info="Total number of questions that haven't been answered"
                 title={"Unresolved Questions"}
                 icon={
                   <div className="me-3 d-flex justify-content-center align-items-center">
@@ -107,6 +108,7 @@ export default (props) => {
               ) : null}
             </div>
             <QueueInfoItem
+              info="Shows which TA's have had activity within the past 15 minutes."
               title={"Active TA's"}
               loading={activeLoading}
               icon={

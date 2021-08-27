@@ -107,8 +107,7 @@ export default (props) => {
           <div className="modal-content">
             <div className="modal-header">
               <h5 className="modal-title" id="historyModalLabel">
-                {" "}
-                Question History{" "}
+                Question History
               </h5>
               <button
                 type="button"

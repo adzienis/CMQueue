@@ -1,11 +1,24 @@
 import React from "react";
 
 export default (props) => {
-  const { title, value, icon, loading, footer } = props;
+  const { title, value, icon, loading, footer, info } = props;
 
   return (
-    <div className="card bg-white">
-      <div className="card-body d-flex flex-row">
+    <div className="card bg-white position-relative">
+      {info ? (
+        <a
+          className="position-absolute"
+          style={{ right: "10px", top: "10px" }}
+          href="#"
+          data-bs-toggle="popover"
+          title="Information"
+          data-bs-content={info}
+          onClick={(e) => e.preventDefault()}
+        >
+          <i className="fas fa-info-circle fa-lg" />
+        </a>
+      ) : null}
+      <div className="card-body d-flex flex-row" style={{ minHeight: "115px" }}>
         {loading ? (
           <div className="d-flex justify-content-center align-items-center w-100">
             <div className="spinner-border" role="status">

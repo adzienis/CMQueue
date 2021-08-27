@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useQuery } from "react-query";
+import DelayedSpinner from "./DelayedSpinner";
 
 /**
  * Renders the total amount of time spent "resolving" the question.
@@ -44,11 +45,23 @@ export default (props) => {
     question.question_state.state !== "resolving" ||
     typeof time === "undefined"
   ) {
-    return null;
+    return (
+      <div
+        className="w-100 d-flex justify-content-center align-items-center"
+        style={{ height: "100px" }}
+      >
+        <div className="spinner-border" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="d-flex justify-content-center align-items-center flex-column">
+    <div
+      className="d-flex justify-content-center align-items-center flex-column"
+      style={{ height: "100px" }}
+    >
       <h2>
         {Math.floor(time / 60)}:{(time % 60).toString().padStart(2, "0")}
       </h2>

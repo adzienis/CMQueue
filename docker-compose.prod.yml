@@ -3,10 +3,11 @@ services:
   db:
     image: postgres
     networks:
-      - development
+      - production
     environment:
       - POSTGRES_USER=production
       - POSTGRES_DATABASE=production
+      - POSTGRES_HOST_AUTH_METHOD=trust
     volumes:
       - $PWD/postgres-config/postgresql.conf:/etc/postgresql/postgresql.conf
       - $PWD/postgres-config/pg_hba.conf:/conf/pg_hba.conf
@@ -18,7 +19,7 @@ services:
       - "5432:5432"
   nginx:
     networks:
-      - development
+      - production
     build:
       context: ./nginx
       dockerfile: Dockerfile.nginx
@@ -31,3 +32,16 @@ services:
       - '443:443'
     volumes:
       - $PWD/nginx/reverse-proxy.conf:/etc/nginx/nginx.conf
+  redis:
+    networks:
+      - production
+    image: redis
+    ports:
+      - "6379:6379"
+networks:
+    production:
+        driver: bridge
+        ipam:
+            driver: default
+            config:
+                - subnet: 172.16.211.0/24

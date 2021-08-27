@@ -60,10 +60,7 @@ export default (props) => {
               <form>
                 <div className="mb-3">
                   <div className="mb-2">
-                    <label className="form-label fw-bold mb-0">
-                      {" "}
-                      Role Code{" "}
-                    </label>
+                    <label className="form-label fw-bold mb-0">Role Code</label>
                     <div className="text-muted">
                       Enter the specific course role code given to you by an
                       instructor.
