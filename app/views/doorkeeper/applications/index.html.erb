@@ -1,11 +1,16 @@
-<div class="border-bottom mb-4">
-  <h1>Applications</h1>
-</div>
+<h2>Applications</h2>
+
 
 <div class="card shadow-sm">
   <div class="card-body">
+    <div class="mb-4">
+      These are applications you can create and authorize to access the REST API on the course's behalf. Each
+      application by default will have access to the public scope, which will be very basic read only information,
+      but you can grant more access by changing the scope.These applications will have access to whatever resource the course itself has access to.
+    </div>
 
     <p><%= link_to t('.new'), new_oauth_course_application_path(@course), class: 'btn btn-success' %></p>
+
 
     <div class="table-responsive">
       <table class="table table-striped">

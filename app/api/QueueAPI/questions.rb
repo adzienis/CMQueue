@@ -115,7 +115,8 @@ module QueueAPI
         desc "Get question states associated with a question."
         get :question_states do
 
-          question = Question.accessible_by(current_ability)
+          question = Question.accessible_by(current_ability).find(params[:question_id])
+
 
 
           QuestionState.accessible_by(current_ability).where(question: question)

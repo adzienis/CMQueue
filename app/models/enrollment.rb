@@ -34,6 +34,7 @@ class Enrollment < ApplicationRecord
     self.semester = Enrollment.default_semester if self.semester.nil?
   end
 
+  scope :with_role, ->(role_id) { joins(:role).where("roles.id": role_id) }
   scope :with_course, ->(course_id) { joins(:role).merge(Role.with_course(course_id)) }
 
   scope :with_course_roles, ->(*roles){ joins(:role).where("roles.name": roles, "roles.resource_type": "Course") }

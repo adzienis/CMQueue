@@ -532,6 +532,7 @@ CREATE TABLE public.settings (
     id bigint NOT NULL,
     resource_type character varying,
     resource_id bigint,
+    metadata_id bigint,
     key character varying NOT NULL,
     value character varying NOT NULL,
     description text NOT NULL,
@@ -1098,6 +1099,13 @@ CREATE INDEX index_roles_on_name_and_resource_type_and_resource_id ON public.rol
 --
 
 CREATE INDEX index_roles_on_resource ON public.roles USING btree (resource_type, resource_id);
+
+
+--
+-- Name: index_settings_on_metadata_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_settings_on_metadata_id ON public.settings USING btree (metadata_id);
 
 
 --
