@@ -2,9 +2,14 @@ on:
   push:
     branches:
       - production
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+  RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
 jobs:
   build-and-push-image:
     runs-on: ubuntu-latest
+
     permissions:
       contents: read
       packages: write
@@ -29,8 +34,11 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            RAILS_MASTER_KEY=${{ secrets.RAILS_MASTER_KEY }}
   deploy_server:
     runs-on: ubuntu-latest
+    needs: [build-and-push-image]
     steps:
     - uses: appleboy/ssh-action@master
       with:
@@ -39,8 +47,12 @@ jobs:
         password: ${{ secrets.PASSWORD }}
         port: ${{ secrets.PORT }}
         script: |
-          mkdir -p ${{ github.event.repository.name }}
-          cd ${{ github.event.repository.name }}
-          docker pull ghcr.io/${{ github.repository}}:production
-          docker stop ${{ github.event.repository.name }}
-          docker rm ${{ github.event.repository.name }}
+          mkdir -p cmqueue
+          cd cmqueue
+          docker pull ghcr.io/adzienis/cmqueue:production
+          docker stop cmqueue || true
+          docker rm cmqueue || true
+          docker run -p 3000:3000 --add-host=host.docker.internal:host-gateway --env-file=.env --name=cmqueue -d -t ghcr.io/adzienis/cmqueue:production
+
+
+
