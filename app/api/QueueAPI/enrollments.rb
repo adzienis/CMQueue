@@ -31,6 +31,7 @@ module QueueAPI
             courses = current_user unless params[:role]
 
             enrollments = current_user.enrollments.joins(:role).where("roles.resource_id": courses.pluck(:id), "roles.resource_type": "Course")
+            enrollments = enrollments.undiscarded
             enrollments.as_json include: [:course, :role]
           end
         end
@@ -47,25 +48,11 @@ module QueueAPI
         requires :user_id, type: Integer
       end
       post scopes: [:admin] do
-        user = User.all
-        user = user.accessible_by(current_ability) if current_user
-        user = user.find(params[:user_id])
 
-        authorize! :enroll_user, user
-
-        if params[:code]
-          ta_course = Course.find_by(ta_code: params[:code])
-          instructor_course = Course.find_by(instructor_code: params[:code])
-
-          if ta_course
-            user.add_role :ta, ta_course
-          elsif instructor_course
-            user.add_role :instructor, instructor_course
-          end
-        else
-          course = Course.find(params[:course_id])
-          user.add_role :student, course
-        end
+        ::Services::Enrollments::CreateEnrollment
+          .new(params[:user_id], params[:course_id], params[:code])
+          .set_current_ability(current_ability)
+          .perform
 
       end
 
@@ -89,11 +76,11 @@ module QueueAPI
       desc "Delete an enrollment"
       route_param :id do
         delete scopes: [:write] do
-          enrollment = Enrollment.find(params[:id])
 
-          authorize! :delete, enrollment
-
-          enrollment.discard
+          ::Services::Enrollments::DeleteEnrollment
+            .new(params[:id])
+            .set_current_ability(current_ability)
+            .perform
         end
       end
     end
