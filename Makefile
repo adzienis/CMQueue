@@ -10,14 +10,7 @@ prod_server_id:=docker ps | grep production_server | sed 's/ .*//'
 -include .env.test
 -include .env.prod
 
-.PHONY= load_dev_env load_prod_ev load_test_env
-
-load_dev_env: 
-	@export $(shell cat .env.dev)
-load_prod_env: 
-	@export $(shell cat .env.prod)
-load_test_env: 
-	@export $(shell cat .env.test)
+.EXPORT_ALL_VARIABLES:
 
 ###############################################
 
@@ -33,24 +26,22 @@ build_prod:
 console_prod:
 	docker exec -it $(shell ${prod_server_id}) bash -c "bundle exec rails c"
 deploy:
-	git rebase master production && \
-	git checkout master && \
-	git push origin production --force  
+	cd scripts; ./deploy.sh
 
 ###############################################
 
 # DEVELOPMENT COMMANDS
-run_dev: load_dev_env
+run_dev:
 	docker-compose -p development up --force-recreate --remove-orphans
-stop_dev: load_dev_env
+stop_dev:
 	docker-compose -p development stop
-down_dev: load_dev_env
+down_dev:
 	docker-compose -p development down
-console_dev: load_dev_env
+console_dev:
 	bundle exec rails c
-server_dev: load_dev_env
+server_dev:
 	bundle exec rails s --binding=0.0.0.0
-migrate_dev: load_dev_env
+migrate_dev:
 	bundle exec rails db:migrate
 
 ###############################################
