@@ -1,0 +1,6 @@
+#!/bin/bash
+set -e
+
+echo $@
+
+exec docker-compose --rm web bundle "$@"

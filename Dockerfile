@@ -1,23 +1,115 @@
-FROM ruby:3.0.2
-ARG RAILS_MASTER_KEY
+FROM ruby:3.0.1 AS builder
+LABEL maintainer="Mike Rogers <me@mikerogers.io>"
 
-ENV INSTALL_PATH /opt/app
-RUN mkdir -p $INSTALL_PATH
+# Dockerize allows us to wait for other containers to be ready before we run our own code.
+ENV DOCKERIZE_VERSION v0.6.1
+RUN wget -nv https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
+    && tar -C /usr/local/bin -xzvf dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
+    && rm dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz
 
-RUN curl -fsSL https://deb.nodesource.com/setup_12.x | bash -
-RUN apt-get install -y nodejs
-RUN npm install -g yarn tsc
-WORKDIR $INSTALL_PATH
+# Rails Specific libraries
+RUN apt-get update && apt-get install -y \
+      # ActiveStorage file inspection
+      file \
+      # Time zone data
+      tzdata \
+      # HTML to PDF conversion
+      # ttf-ubuntu-font-family \
+      # wkhtmltopdf \
+      # Image Resizing
+      imagemagick \
+      # Nice to have
+      bash \
+      postgresql\
+      postgresql-contrib\
+      git \
+      # VIM is a handy editor for editing credentials
+      vim \
+      # Allows for mimemagic gem to be installed
+      shared-mime-info
+RUN curl -sL https://deb.nodesource.com/setup_14.x  | bash -
+RUN apt-get -y install nodejs
+RUN npm install -g yarn
+# Install any extra dependencies via Aptfile - These are installed on Heroku
+# COPY Aptfile /usr/src/app/Aptfile
+# RUN apk add --update $(cat /usr/src/app/Aptfile | xargs)
 
-COPY package.json .
-COPY yarn.lock .
-COPY Gemfile .
-COPY Gemfile.lock .
-RUN rm -rf node_modules vendor
-RUN yarn install
-RUN gem install rails bundler
-RUN bundle install
-COPY . .
-RUN RAILS_MASTER_KEY=$RAILS_MASTER_KEY RAILS_ENV=production rails assets:precompile
+FROM builder AS development
 
-CMD  RAILS_ENV=production bundle exec rails db:migrate && RAILS_SERVE_STATIC_FILES=true bundle exec rails s -e production --log-to-stdout
+# Set common ENVs
+ENV BOOTSNAP_CACHE_DIR /usr/src/bootsnap
+ENV YARN_CACHE_FOLDER /usr/src/yarn
+ENV EDITOR vim
+ENV LANG en_US.UTF-8
+ENV BUNDLE_PATH /usr/local/bundle
+ENV RAILS_LOG_TO_STDOUT enabled
+ENV HISTFILE /usr/src/app/log/.bash_history
+
+# Set build args. These let linux users not run into file permission problems
+ARG USER_ID=${USER_ID:-1000}
+ARG GROUP_ID=${GROUP_ID:-1000}
+
+# Add non-root user and group with alpine first available uid, 1000
+RUN addgroup --gid $USER_ID --system appgroup \
+      && adduser -u $GROUP_ID --system appuser --ingroup appgroup
+
+# Install multiple gems at the same time
+RUN bundle config set jobs $(nproc)
+
+# Create app directory in the conventional /usr/src/app
+RUN mkdir -p /usr/src/app \
+      && mkdir -p /usr/src/app/node_modules \
+      && mkdir -p /usr/src/app/public/packs \
+      && mkdir -p /usr/src/app/tmp/cache \
+      && mkdir -p $YARN_CACHE_FOLDER \
+      && mkdir -p $BOOTSNAP_CACHE_DIR \
+      && chown -R appuser:appgroup /usr/src/app \
+      && chown -R appuser:appgroup $BUNDLE_PATH \
+      && chown -R appuser:appgroup $BOOTSNAP_CACHE_DIR \
+      && chown -R appuser:appgroup $YARN_CACHE_FOLDER
+WORKDIR /usr/src/app
+
+ENV PATH /usr/src/app/bin:$PATH
+
+# Add a script to be executed every time the container starts.
+COPY bin/docker/entrypoints/* /usr/bin/
+RUN chmod +x /usr/bin/wait-for-postgres.sh
+RUN chmod +x /usr/bin/wait-for-web.sh
+ENTRYPOINT ["/usr/bin/wait-for-postgres.sh"]
+
+# Define the user running the container
+USER appuser
+
+EXPOSE 3000
+CMD ["./bin/rails", "server", "-b", "0.0.0.0", "-p", "3000"]
+
+FROM development AS production
+
+ENV RAILS_ENV production
+ENV RACK_ENV production
+ENV NODE_ENV production
+
+COPY Gemfile /usr/src/app
+COPY .ruby-version /usr/src/app
+COPY Gemfile.lock /usr/src/app
+
+# Install Ruby Gems
+RUN bundle config set deployment 'true' \
+      && bundle config set without 'development:test' \
+      && bundle check || bundle install --jobs=$(nproc)
+
+COPY package.json /usr/src/app
+COPY yarn.lock /usr/src/app
+
+# Install Yarn Libraries
+RUN yarn install --frozen-lockfile --check-files
+
+# Chown files so non are root.
+COPY --chown=appuser:appgroup . /usr/src/app
+
+# Precompile the assets, yarn relay & bootsnap
+RUN RAILS_SERVE_STATIC_FILES=enabled \
+      SECRET_KEY_BASE=secret-key-base \
+      bundle exec rake assets:precompile \
+      && bundle exec bootsnap precompile --gemfile app/ lib/
+
