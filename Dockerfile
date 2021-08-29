@@ -91,6 +91,7 @@ ENTRYPOINT ["/usr/bin/default.sh"]
 ENV RAILS_ENV production
 ENV RACK_ENV production
 ENV NODE_ENV production
+ENV RAILS_SERVE_STATIC_FILES enabled
 
 COPY Gemfile /usr/src/app
 COPY .ruby-version /usr/src/app
@@ -110,9 +111,11 @@ RUN yarn install --frozen-lockfile --check-files
 # Chown files so non are root.
 COPY --chown=appuser:appgroup . /usr/src/app
 
+
 # Precompile the assets, yarn relay & bootsnap
 RUN RAILS_SERVE_STATIC_FILES=enabled \
       SECRET_KEY_BASE=secret-key-base \
       bundle exec rake assets:precompile \
       && bundle exec bootsnap precompile --gemfile app/ lib/
 
+CMD ["./bin/rails", "server", "-b", "0.0.0.0", "-p", "3000"]
