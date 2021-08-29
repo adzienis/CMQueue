@@ -1,5 +1,6 @@
 FROM ruby:3.0.1 AS builder
 LABEL maintainer="Mike Rogers <me@mikerogers.io>"
+ARG RAILS_MASTER_KEY
 
 # Dockerize allows us to wait for other containers to be ready before we run our own code.
 ENV DOCKERIZE_VERSION v0.6.1
@@ -84,6 +85,8 @@ EXPOSE 3000
 CMD ["./bin/rails", "server", "-b", "0.0.0.0", "-p", "3000"]
 
 FROM development AS production
+
+ENTRYPOINT ["/usr/bin/default.sh"]
 
 ENV RAILS_ENV production
 ENV RACK_ENV production
