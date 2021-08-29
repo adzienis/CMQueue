@@ -46,8 +46,6 @@ attachTurboEvents();
 registerManager.render_components();
 registerManager.register_hooks();
 
-console.log('hereasd')
-
 window.queryClient = queryClient;
 
 ReactStudentChannel.received = async (data) => {

@@ -14,11 +14,13 @@
       </p>
       <%= button_to "/users/auth/google_oauth2?origin=login",
                     method: :post,
-                    data: { 'turbo': "false" },
-                    class: "mt-4 p-0 border-0" do %>
+                    "data-turbo": false,
+                    class: "mt-4 p-0 border-0",
+                    width: "300", height: "300", decoding: "sync" do %>
 
         <%= image_tag 'google/web/2x/btn_google_signin_dark_normal_web@2x.png',
                       width: '310px',
+                      height: "75px",
                       class: "shadow-sm"
         %>
       <% end %>
@@ -43,7 +45,7 @@
             from creation to resolution.
           </p>
         </div>
-        <%= image_tag "example_queue.png", width: "100%", style: "border-color: black; border-style: solid; border-width: .5px" %>
+        <%= image_tag "example_queue.png", width: "100%", height: "auto", style: "border-color: black; border-style: solid; border-width: .5px", "data-turbo": false %>
       </div>
     </div>
     <div class="col d-flex align-items-start">

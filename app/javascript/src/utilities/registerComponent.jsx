@@ -33,6 +33,9 @@ class RegisterComponentManager {
   }
 
   register_hooks() {
+    document.addEventListener("DOMContentLoaded", (e) =>
+      this.render_components(e)
+    );
     document.addEventListener("turbo:load", (e) => this.render_components(e));
     document.addEventListener("not-turbo:frame-loaded", (e) =>
       this.render_components(e)
