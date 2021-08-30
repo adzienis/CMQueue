@@ -12,7 +12,7 @@ class TagsController < ApplicationController
     @tags = @tags.undiscarded.order("tags.created_at": :desc).where(course_id: params[:course_id]) if params[:course_id]
     @tags_ransack = @tags.ransack(params[:q])
 
-    @pagy, @records = pagy @tags_ransack.result.distinct
+    @pagy, @records = pagy @tags_ransack.result
     respond_to do |format|
       format.html
       format.js { render inline: "window.open('#{URI::HTTP.build(path: "#{request.path}.csv", query: request.query_parameters.to_query, format: :csv)}', '_blank')" }

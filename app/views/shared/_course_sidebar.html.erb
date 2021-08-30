@@ -19,7 +19,7 @@
     <%= button_to "Settings", course_settings_path(@course),
                   class: "btn text-decoration-none #{(request.path == course_settings_path(@course)) ?
                                                        "active-link" : ""}", method: :get %>
-  <% end %>
+  <% end if current_user.has_role? :instructor, @course  %>
   <li class="mb-1">
     <div class=" d-flex align-items-center">
       <div style="width: 16px" class="d-flex justify-content-center">
@@ -80,14 +80,14 @@
                         class: "btn text-decoration-none #{(request.path == course_enrollments_path(@course)) ?
                                                              "active-link" : ""}", method: :get %>
         </li>
-        <li class="d-flex align-items-center">
+        <%= tag.li class: "d-flex align-items-center" do %>
           <div style="width: 16px" class="d-flex justify-content-center">
             <i class="fas fa-database"></i>
           </div>
           <%= button_to "Database", database_course_path(@course),
                         class: "btn text-decoration-none #{(request.path == database_course_path(@course)) ?
                                                              "active-link" : ""}", method: :get %>
-        </li>
+        <% end if current_user.has_role? :instructor, @course %>
       </ul>
     <% end %>
   </li>

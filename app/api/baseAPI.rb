@@ -27,7 +27,7 @@ class BaseAPI < Grape::API
       end
 
       rescue_from CanCan::AccessDenied do |e|
-        error!(e, 400)
+        error!(e, 401)
       end
 
       before do

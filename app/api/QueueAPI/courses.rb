@@ -110,15 +110,20 @@ module QueueAPI
              .distinct
         end
 
-        desc 'Get the question at the top of the queue for a user.'
+        desc 'Get the question at the top of the queue for a user by course.'
         params do
           optional :tag_id, type: Integer
           requires :user_id, type: Integer
         end
         get 'topQuestion', scopes: [:public] do
+          course = Course.find(params[:course_id])
           question_state = User.find(params[:user_id]).question_state
 
-          top_question = Question.joins(:question_state).where("question_states.id": question_state&.id).undiscarded.first
+          top_question = Question.joins(:question_state).where("question_states.id": question_state&.id)
+          top_question = top_question.undiscarded
+          top_question = top_question.with_course(course.id).first
+
+          return nil unless top_question
 
           authorize! :read, top_question
 

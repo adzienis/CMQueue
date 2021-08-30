@@ -63,6 +63,9 @@ module QueueAPI
         optional :most_recent, type: Boolean
       end
       get scopes: [:read] do
+
+
+
         enrollments = Enrollment.all.undiscarded
         enrollments = enrollments.accessible_by(current_ability) if current_user
 

@@ -119,7 +119,7 @@ module QueueAPI
 
 
 
-          QuestionState.accessible_by(current_ability).where(question: question)
+          QuestionState.where(question: question)
         end
 
         desc "Get previous questions of a question"

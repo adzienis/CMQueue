@@ -12,7 +12,6 @@ module Services
         enrollment = Enrollment.find(@enrollment_id)
 
         @current_ability.authorize! :delete, enrollment
-
         enrollment.discard
       end
     end
