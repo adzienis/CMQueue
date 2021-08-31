@@ -1,39 +1,39 @@
 <div class="d-flex justify-content-center container mt-4">
   <div
     style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    grid-column-gap: 5%;
-    justify-items: center;"
-       class="d-grid w-100"
+      grid-column-gap: 5%;
+      justify-items: center;"
+    class="d-grid w-100"
   >
     <div class="w-100 mb-3">
-      <div class="mb-3">
-        <h1 class="mb-0 text-nowrap">
-          Student Courses
-        </h1>
-        <div class="text-muted">
-          All the courses in which you are currently enrolled as a student.
+      <div class="d-grid" style="grid-template-columns: 1fr 1fr; grid-column-gap: 15px">
+        <div class="mb-3">
+          <h1 class="mb-0 text-nowrap">
+            Student Courses
+          </h1>
+          <div class="text-muted">
+            All the courses in which you are currently enrolled as a student.
+          </div>
         </div>
-      </div>
-      <div id='enrollment-cards'>
+
+
+        <div class="mb-3">
+          <h1 class="mb-0 text-nowrap">
+            Instructor Courses
+          </h1>
+          <div class="text-muted">
+            All the courses in which you are currently enrolled as a TA or instructor.
+          </div>
+        </div>
 
         <%= content_tag :div, id: "hello-react", data: {
           userId: current_user.id,
         }.to_json do %><% end %>
-      </div>
-    </div>
-    <div class="w-100">
-      <div class="mb-3">
-        <h1 class="mb-0 text-nowrap">
-          Instructor Courses
-        </h1>
-        <div class="text-muted">
-          All the courses in which you are currently enrolled as a TA or instructor.
-        </div>
-      </div>
 
-      <%= content_tag :div, id: "add-course-by-code", data: {
-        userId: current_user.id,
-      }.to_json do %><% end %>
+        <%= content_tag :div, id: "add-course-by-code", data: {
+          userId: current_user.id,
+        }.to_json do %><% end %>
+      </div>
     </div>
   </div>
 </div>
