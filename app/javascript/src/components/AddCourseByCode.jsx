@@ -108,8 +108,8 @@ export default (props) => {
             style={{ display: "flex", justifyContent: "center" }}
           >
             <div className="d-flex flex-column justify-content-center align-items-center">
-              <i className="fas fa-plus fa-2x" />
-              <div> Add a Course </div>
+              <i className="fas fa-plus fa-2x text-primary" />
+              <div> Add a Course</div>
             </div>
           </div>
         </a>
