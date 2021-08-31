@@ -83,7 +83,9 @@ export default (props) => {
 
       await fetch(
         `/settings/${
-          settings.find((k) => k.key === "desktop_notifications").id
+          settings.find(
+            (k) => Object.keys(k.value)[0] === "desktop_notifications"
+          )?.id
         }?`,
         {
           method: "PATCH",
@@ -94,8 +96,9 @@ export default (props) => {
             "X-CSRF-Token": token,
           },
           body: JSON.stringify({
-            [settings.find((k) => k.key === "desktop_notifications").id]:
-              "false",
+            [settings.find(
+              (k) => Object.keys(k.value)[0] === "desktop_notifications"
+            )?.id]: "false",
           }),
         }
       );
@@ -105,10 +108,13 @@ export default (props) => {
   const grouped = {};
 
   settings.forEach((setting) => {
-    if (typeof grouped[setting.metadata?.label] === "undefined") {
-      grouped[setting.metadata?.label] = [];
+    const settingName = Object.keys(setting.value)[0];
+    const values = setting.value[settingName];
+
+    if (typeof grouped[values.label] === "undefined") {
+      grouped[values.label] = [];
     }
-    grouped[setting.metadata?.label].push(setting);
+    grouped[values.label].push(setting);
   });
 
   return (
@@ -118,13 +124,16 @@ export default (props) => {
           <div className="mb-4">
             <h3>{group}</h3>
             <ul className="list-group">
-              {settings.map((v) => {
-                if (v.key === "desktop_notifications") {
+              {settings.map((setting) => {
+                const settingName = Object.keys(setting.value)[0];
+                const values = setting.value[settingName];
+
+                if (settingName === "desktop_notifications") {
                   return (
                     <li className="list-group-item d-flex justify-content-between align-items-center">
                       <div
                         className="d-flex form-check form-switch w-100 ps-5 pe-5"
-                        key={v.id}
+                        key={setting.id}
                       >
                         <label className="d-block form-check-label">
                           Desktop Notifications
@@ -134,9 +143,12 @@ export default (props) => {
                           type="checkbox"
                           className="form-check-input d-block ms-0"
                           style={{ float: "inherit" }}
-                          checked={v.value === "true"}
+                          checked={values.value === "true"}
                           onClick={async (e) => {
-                            await handle_permission(v.id, e.target.checked);
+                            await handle_permission(
+                              setting.id,
+                              e.target.checked
+                            );
                             try {
                             } catch (err) {
                               console.log("caught error");
@@ -149,16 +161,16 @@ export default (props) => {
                   );
                 }
 
-                switch (v.metadata?.type) {
+                switch (values.type) {
                   case "boolean":
                     return (
                       <li className="list-group-item d-flex justify-content-between align-items-center">
                         <div
                           className="d-flex form-check form-switch w-100 ps-5 pe-5"
-                          key={v.id}
+                          key={setting.id}
                         >
                           <label className="form-check-label">
-                            {v.description}
+                            {values.description}
                           </label>
                           <div className="flex-1" />
                           <input
@@ -168,12 +180,12 @@ export default (props) => {
                             onClick={(e) => {
                               try {
                                 changeSetting({
-                                  id: v.id,
+                                  id: setting.id,
                                   value: `${e.target.checked}`,
                                 });
                               } catch (err) {}
                             }}
-                            checked={v.value === "true"}
+                            checked={values.value === "true"}
                           />
                         </div>
                       </li>
@@ -186,73 +198,5 @@ export default (props) => {
         );
       })}
     </div>
-  );
-
-  return (
-    <ul className="list-group">
-      {settings
-        .sort((l, r) => l.id - r.id)
-        .map((v) => {
-          if (v.key === "desktop_notifications") {
-            return (
-              <li className="list-group-item d-flex justify-content-between align-items-center">
-                <div
-                  className="d-flex form-check form-switch w-100 ps-5 pe-5"
-                  key={v.id}
-                >
-                  <label className="d-block form-check-label">
-                    Desktop Notifications
-                  </label>
-                  <div className="flex-1" />
-                  <input
-                    type="checkbox"
-                    className="form-check-input d-block ms-0"
-                    style={{ float: "inherit" }}
-                    checked={v.value === "true"}
-                    onClick={async (e) => {
-                      await handle_permission(v.id, e.target.checked);
-                      try {
-                      } catch (err) {
-                        console.log("caught error");
-                        e.target.checked = false;
-                      }
-                    }}
-                  />
-                </div>
-              </li>
-            );
-          }
-
-          switch (v.metadata?.type) {
-            case "boolean":
-              return (
-                <li className="list-group-item d-flex justify-content-between align-items-center">
-                  <div
-                    className="d-flex form-check form-switch w-100 ps-5 pe-5"
-                    key={v.id}
-                  >
-                    <label className="form-check-label">{v.description}</label>
-                    <div className="flex-1" />
-                    <input
-                      type="checkbox"
-                      className="form-check-input d-block ms-0"
-                      style={{ float: "inherit" }}
-                      onClick={(e) => {
-                        try {
-                          changeSetting({
-                            id: v.id,
-                            value: `${e.target.checked}`,
-                          });
-                        } catch (err) {}
-                      }}
-                      checked={v.value === "true"}
-                    />
-                  </div>
-                </li>
-              );
-              break;
-          }
-        })}
-    </ul>
   );
 };

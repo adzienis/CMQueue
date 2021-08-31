@@ -138,9 +138,23 @@ class User < ApplicationRecord
 
   after_create_commit do
     settings.create([{
-                       label: "Desktop Notifications", key: "desktop_notifications", value: "false", description: "Allow notifications to appear natively on your desktop."
+                       value: {
+                         desktop_notifications: {
+                           label: "Desktop Notifications",
+                           value: false,
+                           description: "Allow notifications to appear natively on your desktop.",
+                           type: "boolean"
+                         }
+                       }
                      }, {
-                       label: "Site Notifications", key: "site_notifications", value: "false", description: "Allow notifications to appear on the site."
+                       value: {
+                         site_notifications: {
+                           label: "Site Notifications",
+                           value: false,
+                           description: "Allow notifications to appear on the site.",
+                           type: "boolean"
+                         }
+                       }
                      }])
   end
 

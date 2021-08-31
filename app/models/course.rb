@@ -78,14 +78,33 @@ class Course < ApplicationRecord
     Postgres::Views::Tag.create(id)
     Postgres::Views::Enrollment.create(id)
 
-    # maybe wrap and change it parameterize.underscore by default for key
-
     settings.create([{
-                       label: "Searchable", key: "searchable", value: "false", description: "Allow students to search for this course."
+                       value: {
+                         searchable: {
+                           label: "Searchable",
+                           value: false,
+                           description: "Allow students to search for this course.",
+                           type: "boolean"
+                         }
+                       }
                      }, {
-                       label: "Searchable Enrollment", key: "searchable_enrollment", value: "false", description: "Allow enrollment by searching for this course."
+                       value: {
+                         searchable_enrollment: {
+                           label: "Searchable Enrollment",
+                           value: false,
+                           description: "Allow enrollment by searching for this course.",
+                           type: "boolean"
+                         }
+                       }
                      }, {
-                       label: "Allow Enrollment", key: "allow_enrollment", value: "false", description: "Allow students to enroll in the course."
+                       value: {
+                         allow_enrollment: {
+                           label: "Allow Enrollment",
+                           value: false,
+                           description: "Allow students to enroll in the course.",
+                           type: "boolean"
+                         }
+                       }
                      }])
   end
 

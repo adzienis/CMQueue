@@ -31,7 +31,16 @@ class SettingsController < ApplicationController
   end
 
   def update
-    @settings = Setting.update(settings_params.keys, settings_params.values.map{|v| { value: v } })
+    settings = Setting.where(id: settings_params.keys)
+
+    settings.each do |setting|
+      name = setting.value.keys[0]
+
+      setting.value[name]["value"] = settings_params[setting.id.to_s]
+
+      setting.save!
+
+    end
     respond_to do |format|
       format.json { render json: nil}
     end

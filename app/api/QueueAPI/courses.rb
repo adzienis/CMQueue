@@ -139,7 +139,7 @@ module QueueAPI
       get 'search', scopes: [:public] do
         courses = Course.all
         courses = courses.where('name LIKE :name', name: "%#{params[:name]}%") if params[:name]
-        courses = courses.joins(:settings).where("settings.key": "searchable_enrollment", "settings.value": "true")
+        courses = courses.joins(:settings).where("value -> 'searchable' ->> 'value' = 'true'")
 
         courses.select(Course.column_names - [:instructor_code, :ta_code])
 

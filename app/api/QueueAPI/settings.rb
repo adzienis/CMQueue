@@ -16,7 +16,7 @@ module QueueAPI
         settings = Setting.accessible_by(current_ability) if current_user
         settings = settings.where(resource_id: params[:id], resource_type: params[:type]) if params[:type] && params[:id]
         settings = settings.where(resource_id: params[:course_id], resource_type: "Course") if params[:course_id]
-        settings.as_json methods: :metadata
+        settings.as_json
       end
     end
   end
