@@ -111,18 +111,18 @@ export default (props) => {
     const settingName = Object.keys(setting.value)[0];
     const values = setting.value[settingName];
 
-    if (typeof grouped[values.label] === "undefined") {
-      grouped[values.label] = [];
+    if (typeof grouped[values.category] === "undefined") {
+      grouped[values.category] = [];
     }
-    grouped[values.label].push(setting);
+    grouped[values.category].push(setting);
   });
 
   return (
-    <div className="card card-body">
+    <div>
       {Object.entries(grouped).map(([group, settings]) => {
         return (
           <div className="mb-4">
-            <h3>{group}</h3>
+            <h3 className="fw-bold">{group}</h3>
             <ul className="list-group">
               {settings.map((setting) => {
                 const settingName = Object.keys(setting.value)[0];

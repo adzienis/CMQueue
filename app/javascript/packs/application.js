@@ -60,6 +60,7 @@ document.addEventListener("turbo:load", function (event) {
   var popoverTriggerList = [].slice.call(
     document.querySelectorAll('[data-bs-toggle="popover"]')
   );
+
   var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
     return new Popover(popoverTriggerEl);
   });

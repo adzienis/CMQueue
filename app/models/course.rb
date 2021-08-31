@@ -21,16 +21,16 @@ class Course < ApplicationRecord
   # validates :course_code, presence: true, uniqueness: true
 
   has_one :certificate
-  has_many :enrollments, through: :roles
+  has_many :enrollments, through: :roles, dependent: :destroy
   has_many :settings, as: :resource
   has_many :users, through: :enrollments
-  has_many :questions
+  has_many :questions, dependent: :destroy
   has_many :unresolved_questions, -> { undiscarded
                                          .questions_by_state("unresolved") }, class_name: "Question"
   has_many :active_questions, -> { undiscarded
                                      .questions_by_state("unresolved", "frozen", "resolving")
                                      .or(undiscarded.by_state("kicked").unacknowledged) }, class_name: "Question"
-  has_many :tags
+  has_many :tags, dependent: :destroy
   #has_many :announcements
 
   has_many :access_grants,
@@ -84,7 +84,8 @@ class Course < ApplicationRecord
                            label: "Searchable",
                            value: false,
                            description: "Allow students to search for this course.",
-                           type: "boolean"
+                           type: "boolean",
+                           category: "General"
                          }
                        }
                      }, {
@@ -93,7 +94,8 @@ class Course < ApplicationRecord
                            label: "Searchable Enrollment",
                            value: false,
                            description: "Allow enrollment by searching for this course.",
-                           type: "boolean"
+                           type: "boolean",
+                           category: "Enrollment"
                          }
                        }
                      }, {
@@ -102,7 +104,8 @@ class Course < ApplicationRecord
                            label: "Allow Enrollment",
                            value: false,
                            description: "Allow students to enroll in the course.",
-                           type: "boolean"
+                           type: "boolean",
+                           category: "Enrollment"
                          }
                        }
                      }])

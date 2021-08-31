@@ -1,7 +1,18 @@
 <h1> Question States </h1>
 
 
+<div class="text-muted mb-2">
+  Each "Question State" is an action that a user took on a question.
+</div>
+
+
 <%= turbo_frame_tag :container  do %>
+
+  <div class="text-muted mb-2">
+    Each "Question State" is an action that a user took on a question.
+  </div>
+
+
   <%= render partial: "shared/search_form",
              locals: {
                records: @records,

@@ -1,6 +1,5 @@
 import React from "react";
 import { useQuery } from "react-query";
-import TurboFrame from "./TurboFrame";
 
 export default (props) => {
   const { question } = props;
@@ -27,6 +26,7 @@ export default (props) => {
         className="btn btn-secondary position-relative"
         data-bs-toggle="modal"
         data-bs-target={`#question_${question?.id}`}
+        style={{ whiteSpace: "nowrap" }}
       >
         <span>Past Question States</span>
 

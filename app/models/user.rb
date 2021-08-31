@@ -27,7 +27,7 @@ class User < ApplicationRecord
   has_many :settings, as: :resource, dependent: :destroy
 
   # add scopes for course
-  has_many :applications, class_name: "Doorkeeper::Application", as: :owner
+  has_many :applications, class_name: "Doorkeeper::Application", as: :owner, dependent: :destroy
 
   #has_many :oauth_applications, as: :owner
 
@@ -143,7 +143,8 @@ class User < ApplicationRecord
                            label: "Desktop Notifications",
                            value: false,
                            description: "Allow notifications to appear natively on your desktop.",
-                           type: "boolean"
+                           type: "boolean",
+                           category: "Notifications"
                          }
                        }
                      }, {
@@ -152,7 +153,8 @@ class User < ApplicationRecord
                            label: "Site Notifications",
                            value: false,
                            description: "Allow notifications to appear on the site.",
-                           type: "boolean"
+                           type: "boolean",
+                           category: "Notifications"
                          }
                        }
                      }])

@@ -203,7 +203,7 @@ export default (props) => {
         data-bs-content="Logs what action each TA has taken on a question within around 2 hours."
         onClick={(e) => e.preventDefault()}
       >
-        <i className="fas fa-info-circle fa-lg"></i>
+        <i className="fas fa-info-circle fa-lg" />
       </a>
       {isLoading || isFetching ? (
         <div
