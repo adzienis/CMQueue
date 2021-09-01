@@ -51,3 +51,6 @@ vendor/assets/bower_components
 bower.json
 pgconf
 .git
+.env.dev
+.env.prod
+.env
