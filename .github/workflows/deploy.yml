@@ -59,6 +59,7 @@ jobs:
           docker stop  ${{ env.NAME }} || true
           docker rm ${{ env.NAME }} || true
           docker run -p 3000:3000 --add-host=host.docker.internal:host-gateway --env-file=.env --name=${{ env.NAME }} -d -t ${{ env.FULL_NAME }}:production
+          docker image prune -a
 
 
 
