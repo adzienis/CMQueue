@@ -21,6 +21,7 @@ module CMQueue
     config.action_view.raise_on_missing_translations = false
     config.active_model.i18n_customize_full_message = true
     config.active_record.schema_format = :sql
+    config.time_zone = 'Eastern Time (US & Canada)'
 
     config.hosts << "cmqueue.xyz"
     config.hosts << "cmqueue-demo.herokuapp.com"

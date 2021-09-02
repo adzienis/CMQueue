@@ -18,14 +18,21 @@
 
   <% unless request.headers.key? "Turbo-Frame" %>
     <%= tag.li class: "nav-item" do %>
-      <%= link_to new_polymorphic_path([@course, records.model]), class: "nav-link" do %>
-        <i class="fas fa-plus fa-lg me-2"></i>
-        <span> Add a new <%= records.model.name.titleize %> </span>
+      <% if records.model == Course %>
+        <%= link_to new_user_course_path(@user, course), class: "nav-link" do %>
+          <i class="fas fa-plus fa-lg me-2"></i>
+          <span> Add a new <%= records.model.name.titleize %> </span>
+        <% end %>
+      <% else %>
+        <%= link_to new_polymorphic_path([course, records.model]), class: "nav-link" do %>
+          <i class="fas fa-plus fa-lg me-2"></i>
+          <span> Add a new <%= records.model.name.titleize %> </span>
+        <% end %>
       <% end %>
     <% end if presenter.can_create? %>
 
     <%= tag.li class: "nav-item" do %>
-      <%= link_to polymorphic_path([:download, @course, records.model], **request.query_parameters), class: "nav-link" do %>
+      <%= link_to polymorphic_path([:download, course, records.model], **request.query_parameters), class: "nav-link" do %>
         <i class="fas fa-download fa-lg me-2"></i>
         <span>Export to CSV </span>
       <% end %>

@@ -13,6 +13,8 @@ class Ability
       end
       #can :manage, Message, question_state: { question: { user: { id: user.id } } }
 
+
+
       can :manage, Certificate, Certificate
                                   .where(course_id: Course
                                                       .where("courses.id": Course.find_roles([:instructor], user)
@@ -103,6 +105,8 @@ class Ability
       can :manage, Course, Course.where(id: Course.find_roles([:instructor], user).pluck(:resource_id)) do |course|
         user.has_any_role?({ name: :instructor, resource: course })
       end
+
+      cannot :create, Course unless ["arthurdzieniszewski@gmail.com"].include? user.email
 
       can :manage, QuestionState, QuestionState.joins(:question)
                                                .where("questions.course_id": Course

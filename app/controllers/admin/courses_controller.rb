@@ -32,7 +32,7 @@ module Admin
     # end
 
     def scoped_resource
-      Course.accessible_by(current_ability)
+      Course.unscoped.accessible_by(current_ability)
     end
 
     # Override `resource_params` if you want to transform the submitted

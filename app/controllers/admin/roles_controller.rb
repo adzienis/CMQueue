@@ -32,7 +32,7 @@ module Admin
     # end
 
     def scoped_resource
-      Role.accessible_by(current_ability)
+      Role.accessible_by(current_ability).undiscarded
     end
 
     # Override `resource_params` if you want to transform the submitted

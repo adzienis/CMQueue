@@ -34,7 +34,11 @@ module Shared
       end
 
       def can_create?
-        @options[:actions].include?(:new) && @current_user.has_role?(:instructor, @course)
+        if @model == Course
+          @options[:actions].include?(:new) && Ability.new(@current_user, {}).can?(:create, Course)
+        else
+          @options[:actions].include?(:new) && @current_user.has_role?(:instructor, @course)
+        end
       end
 
     end

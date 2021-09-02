@@ -16,4 +16,4 @@ openssl x509 -req -in client.csr -days 365 \
     -out $root/certs/client.crt
 rm client.csr
 
-tar --directory=$root -czvf $root/package.tar.gz certs/ca.crt certs/client.crt keys/client.key
+tar --directory=$root -cjvf $root/package.tar.bz2 certs/ca.crt certs/client.crt keys/client.key

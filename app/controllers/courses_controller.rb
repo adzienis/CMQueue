@@ -4,6 +4,7 @@ class CoursesController < ApplicationController
   load_and_authorize_resource id_param: :course_id
 
   def edit
+    @course = Course.unscoped.find(params[:course_id])
   end
 
   def database
@@ -38,10 +39,21 @@ class CoursesController < ApplicationController
   end
 
   def new
-
+    @course = Course.new
   end
 
   def index
+    @courses = Course.unscoped.accessible_by(current_ability)
+    @courses_ransack = @courses.order("courses.created_at": :desc)
+    @courses_ransack = @courses_ransack.where(course_id: params[:course_id]) if params[:course_id]
+    @courses_ransack = @courses_ransack.with_user(params[:user_id]) if params[:user_id]
+
+    @courses_ransack = @courses_ransack
+                           .joins(:enrollments)
+                           .includes(:enrollments)
+    @courses_ransack = @courses_ransack.ransack(params[:q])
+
+    @pagy, @records = pagy @courses_ransack.result
   end
 
   def semester
@@ -53,9 +65,24 @@ class CoursesController < ApplicationController
   def create
     @course = Course.create(course_params)
 
-    render turbo_stream: (turbo_stream.update @course, partial: "shared/new_form", locals: { model_instance: @course }) and return unless @course.errors.count == 0
+    # should refactor into a form object
+    current_user.add_role :instructor, @course
 
-    redirect_to courses_path
+    render turbo_stream: (turbo_stream.replace @course, partial: "shared/new_form", locals: { model_instance: @course,options: {
+      except: [:settings,
+               :roles,
+               :enrollments,
+               :users,
+               :questions,
+               :unresolved_questions,
+               :active_questions,
+               :tags,
+               :access_grants,
+               :access_tokens,
+               :applications,]
+    }  }) and return unless @course.errors.count == 0
+
+    redirect_to user_courses_path(@current_user)
   end
 
   def course_info
@@ -86,7 +113,7 @@ class CoursesController < ApplicationController
   private
 
   def course_params
-    params.require(:course).permit(:name, :status, :ta_code, :instructor_code, :open)
+    params.require(:course).permit(:name, :status, :ta_code, :instructor_code, :open, :course_code, :student_code)
   end
 
   def answer_params

@@ -9,6 +9,7 @@
     class: "mb-2" } } do |f| %>
   <%= f.hidden_field :course_id, value: params[:course_id] if params[:course_id] %>
   <% model_instance.class.content_columns
+                   .reject { |v| options&.dig(:except)&.include? v.name.to_sym }
                    .reject { |v| [:id, :created_at, :updated_at, :discarded_at].include? v.name.to_sym }
                    .each do |col| %>
     <b>

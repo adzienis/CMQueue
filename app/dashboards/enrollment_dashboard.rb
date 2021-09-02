@@ -74,6 +74,6 @@ class EnrollmentDashboard < Administrate::BaseDashboard
   # across all pages of the admin dashboard.
   #
   def display_resource(enrollment)
-     "#{enrollment.role.name}"
+     "#{enrollment.user.given_name}-#{enrollment.role.name}"
   end
 end

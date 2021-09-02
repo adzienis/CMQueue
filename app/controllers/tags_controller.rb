@@ -46,7 +46,7 @@ class TagsController < ApplicationController
   def create
     @tag = Tag.create(create_params)
 
-    render turbo_stream: (turbo_stream.replace @tag, partial: "shared/edit_form", locals: { model_instance: @tag }) and return unless @tag.errors.count == 0
+    render turbo_stream: (turbo_stream.replace @tag, partial: "shared/new_form", locals: { model_instance: @tag }) and return unless @tag.errors.count == 0
 
     redirect_to course_tags_path(@tag.course)
   end
@@ -55,7 +55,7 @@ class TagsController < ApplicationController
     @tag = Tag.find(params[:id])
     @tag.update(update_params)
 
-    render turbo_stream: (turbo_stream.update @tag, partial: "shared/edit_model", locals: { model_instance: @tag }) and return unless @tag.errors.count == 0
+    render turbo_stream: (turbo_stream.replace @tag, partial: "shared/edit_model", locals: { model_instance: @tag }) and return unless @tag.errors.count == 0
 
     redirect_to course_tag_path(@tag.course)
   end

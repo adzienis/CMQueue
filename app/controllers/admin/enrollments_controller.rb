@@ -32,7 +32,7 @@ module Admin
     # end
 
     def scoped_resource
-      Enrollment.accessible_by(current_ability)
+      Enrollment.accessible_by(current_ability).undiscarded
     end
 
     # Override `resource_params` if you want to transform the submitted

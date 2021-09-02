@@ -31,7 +31,7 @@ module Admin
     # end
 
     def scoped_resource
-      Tag.accessible_by(current_ability)
+      Tag.accessible_by(current_ability).undiscarded
     end
 
     # Override `resource_params` if you want to transform the submitted

@@ -12,7 +12,7 @@ class Course < ApplicationRecord
   # to prevent accidentally exposing sensitive columns
   default_scope { select(Course.column_names - ["instructor_code", "ta_code", "student_code"]) }
 
-  validates :name, uniqueness: true
+  validates :name, presence: true, uniqueness: true
   validates :ta_code, presence: true, uniqueness: true, on: :create
   validates :student_code, presence: true, uniqueness: true, on: :create
   validates :instructor_code, presence: true, uniqueness: true, on: :create
@@ -46,10 +46,14 @@ class Course < ApplicationRecord
   has_many :applications, class_name: "Doorkeeper::Application", as: :owner
 
   before_validation on: :create do
-    self.ta_code = SecureRandom.urlsafe_base64(6) unless ta_code
-    self.student_code = SecureRandom.urlsafe_base64(6) unless student_code
-    self.instructor_code = SecureRandom.urlsafe_base64(6) unless instructor_code
+    self.ta_code = SecureRandom.urlsafe_base64(6) unless ta_code.present?
+    self.student_code = SecureRandom.urlsafe_base64(6) unless student_code.present?
+    self.instructor_code = SecureRandom.urlsafe_base64(6) unless instructor_code.present?
   end
+
+  scope :with_user, ->(user_id) {
+    joins(:enrollments).merge(Enrollment.undiscarded.with_user(user_id))
+  }
 
   def available_tags
     tags.undiscarded.unarchived.distinct
@@ -58,6 +62,7 @@ class Course < ApplicationRecord
   def public_columns
     select(Course.column_names - ["instructor_code", "ta_code"])
   end
+
 
   after_update do
     broadcast_action_later_to self,

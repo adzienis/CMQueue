@@ -1,18 +1,20 @@
-<div class="container mt-4">
-
-  <h2>
-    Add a New Course
-  </h2>
-
-  <div class="card">
-    <div class="card-body">
-      <%= form_with url: courses_url, scope: :course do |form| %>
-        <div class="mb-3">
-          <%= form.label :name, "Name", class: "form-label" %>
-          <%= form.text_field :name, class: 'form-control' %>
-        </div>
-        <%= form.submit "Submit" %>
-      <% end %>
-    </div>
-  </div>
-</div>
+<%= render partial: "shared/new_model", locals: {
+  model: @course,
+  options: {
+    except: [:settings,
+             :roles,
+             :enrollments,
+             :users,
+             :questions,
+             :unresolved_questions,
+             :active_questions,
+             :tags,
+             :access_grants,
+             :access_tokens,
+             :applications,
+             :course_code,
+             :open,
+             :ta_code,
+             :student_code,
+             :instructor_code]
+  } } %>

@@ -49,6 +49,8 @@ Rails.application.configure do
 
   config.action_mailer.delivery_method = :smtp
 
+  config.action_mailer.delivery_method = :smtp
+
   config.action_mailer.smtp_settings = {
     :user_name => Rails.application.credentials.mailtrap[:user_name],
     :password => Rails.application.credentials.mailtrap[:password],
@@ -93,7 +95,6 @@ Rails.application.configure do
   config.file_watcher = ActiveSupport::EventedFileUpdateChecker
 
   config.web_console.whiny_requests = false
-
 
   # Uncomment if you wish to allow Action Cable access from any origin.
   # config.action_cable.disable_request_forgery_protection = true

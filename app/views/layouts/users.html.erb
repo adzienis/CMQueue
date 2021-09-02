@@ -1,9 +1,4 @@
-<% if @course %>
-  <% content_for :courses_content do %>
-    <%= yield %>
-  <% end %>
-  <%= render template: "layouts/courses" %>
-<% elsif @user %>
+<% if @user %>
 
   <% content_for :content do %>
     <div style="display: flex; flex-direction: row; ">
@@ -19,7 +14,11 @@
 
   <%= render template: "layouts/application" %>
 
-
+<% elsif @course %>
+  <% content_for :courses_content do %>
+    <%= yield %>
+  <% end %>
+  <%= render template: "layouts/courses" %>
 <% else %>
   <%= render template: "layouts/application" %>
 <% end %>
