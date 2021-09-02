@@ -6,14 +6,19 @@
     class="d-grid w-100"
   >
     <div class="w-100 mb-3">
-      <div class="d-grid" style="grid-template-columns: 1fr 1fr; grid-column-gap: 15px">
+      <div class="d-grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); grid-column-gap: 15px">
         <div class="mb-3">
           <h1 class="mb-0 text-nowrap">
             Student Courses
           </h1>
-          <div class="text-muted">
+          <div class="text-muted mb-3">
             All the courses in which you are currently enrolled as a student.
           </div>
+
+
+          <%= content_tag :div, id: "hello-react", data: {
+            userId: current_user.id,
+          }.to_json do %><% end %>
         </div>
 
 
@@ -21,18 +26,15 @@
           <h1 class="mb-0 text-nowrap">
             Instructor Courses
           </h1>
-          <div class="text-muted">
+          <div class="text-muted mb-3">
             All the courses in which you are currently enrolled as a TA or instructor.
           </div>
+
+          <%= content_tag :div, id: "add-course-by-code", data: {
+            userId: current_user.id,
+          }.to_json do %><% end %>
         </div>
 
-        <%= content_tag :div, id: "hello-react", data: {
-          userId: current_user.id,
-        }.to_json do %><% end %>
-
-        <%= content_tag :div, id: "add-course-by-code", data: {
-          userId: current_user.id,
-        }.to_json do %><% end %>
       </div>
     </div>
   </div>
