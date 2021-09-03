@@ -11,7 +11,6 @@
     courseId: @course.id, userId: current_user.id, enrollment: @enrollment.as_json(include: :role)
   }.to_json do %><% end %>
 
-
   <% if current_user.has_role? :student, @course %>
 
     <%= render partial: "questions/turbo_question_creator", locals: { question: @question, available_tags: @available_tags}  %>

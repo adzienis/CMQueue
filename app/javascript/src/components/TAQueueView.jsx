@@ -1,16 +1,26 @@
 import React, { useMemo } from "react";
-import { useInfiniteQuery } from "react-query";
+import { useInfiniteQuery, useQuery } from "react-query";
 import QuestionCard from "./QuestionCard";
+import useLocalStorage from "../hooks/useLocalStorage";
 
 export default (props) => {
   const { courseId, userId, enrollmentId } = props;
+
+  const { data: tags } = useQuery(["courses", parseInt(courseId, 10), "tags"]);
+
+  const [selectedTags, setSelectedTags] = useLocalStorage(
+    ["courses", parseInt(courseId, 10), "selectedTags"],
+    []
+  );
 
   const { data, fetchNextPage, hasNextPage } = useInfiniteQuery(
     ["courses", parseInt(courseId, 10), "paginatedQuestions"],
     ({ pageParam = -1 }) => {
       return fetch(
         `/api/courses/${courseId}/questions?cursor=${pageParam}&` +
-          `state=["frozen", "unresolved"]&course_id=${courseId}`,
+          `state=["frozen", "unresolved"]&course_id=${courseId}&tags=${selectedTags.map(
+            (v) => v.id
+          )}`,
         {
           headers: {
             Accept: "application/json",
@@ -38,8 +48,41 @@ export default (props) => {
 
   return (
     <div>
+      <ul className="nav nav-pills nav-justified mb-3">
+        {tags?.map((tag) => (
+          <li className="nav-item">
+            <a
+              onClick={(e) => {
+                e.preventDefault();
+
+                if (
+                  selectedTags.find(
+                    (selectedTag) => selectedTag.name === tag.name
+                  )
+                ) {
+                  setSelectedTags(
+                    selectedTags.filter((v) => v.name !== tag.name)
+                  );
+                } else {
+                  setSelectedTags([...selectedTags, tag]);
+                }
+              }}
+              className={`nav-link ${
+                selectedTags.find(
+                  (selectedTag) => selectedTag.name === tag.name
+                )
+                  ? "active"
+                  : ""
+              }`}
+              aria-current="page"
+              href="#"
+            >
+              {tag.name}
+            </a>
+          </li>
+        ))}
+      </ul>
       <div className="mb-4">
-        <h1 className="mb-3">Questions</h1>
         {flattenedQuestions?.length > 0 ? (
           flattenedQuestions?.map((v) => (
             <QuestionCard

@@ -3,6 +3,8 @@ import useWrappedMutation from "../hooks/useWrappedMutation";
 import QuestionHistory from "./QuestionHistory";
 import DelayedSpinner from "./DelayedSpinner";
 import { useQuery } from "react-query";
+import PastQuestionsModal from "./PastQuestionsModal";
+import PastQuestionStatesModal from "./PastQuestionStatesModal";
 
 export default (props) => {
   const { courseId, userId, question, enrollmentId } = props;
@@ -51,6 +53,23 @@ export default (props) => {
     statusText = "Kicked at ";
   }
 
+  const footer =
+    state === "frozen" ? (
+      <button
+        className="btn btn-primary"
+        style={{ backgroundColor: "rgb(33, 133, 208)" }}
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          unfreeze();
+        }}
+      >
+        <DelayedSpinner loading={frozenLoading} small>
+          Unfreeze
+        </DelayedSpinner>
+      </button>
+    ) : null;
+
   return (
     <div
       className={`card mb-3 shadow-sm ${
@@ -74,12 +93,64 @@ export default (props) => {
       </div>
       <div className="card-body">
         <div className="card-title">
-          {question?.user ? (
-            <>
-              <b>{question?.user?.given_name}</b>
-              <br />
-            </>
-          ) : null}
+          <div className="d-flex" style={{ justifyContent: "space-between" }}>
+            {question?.user ? (
+              <>
+                <b>{question?.user?.given_name}</b>
+                <br />
+              </>
+            ) : null}
+            <div className="dropdown">
+              <a
+                href=""
+                onClick={(e) => {
+                  e.preventDefault();
+                }}
+                className="dropdown-toggle"
+                id="dropdownMenuButton1"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                <i className="fas fa-bars fa-lg" />
+              </a>
+              <ul
+                className="dropdown-menu"
+                aria-labelledby="dropdownMenuButton1"
+              >
+                <li>
+                  <a
+                    href={`/courses/${courseId}/questions/${question?.id}`}
+                    className="dropdown-item"
+                  >
+                    More info
+                  </a>
+                </li>
+                <li>
+                  <a
+                    className="dropdown-item"
+                    href="#"
+                    onClick={(e) => e.preventDefault()}
+                  >
+                    <PastQuestionsModal question={question}>
+                      Previous Questions
+                    </PastQuestionsModal>
+                  </a>
+                </li>
+                <li>
+                  <a
+                    className="dropdown-item"
+                    href="#"
+                    onClick={(e) => e.preventDefault()}
+                  >
+                    <PastQuestionStatesModal question={question}>
+                      Past Question States
+                    </PastQuestionStatesModal>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+
           <div style={{ color: "var(--frozen)" }}>
             {state !== "unresolved" ? (
               <span>
@@ -96,34 +167,7 @@ export default (props) => {
         </div>
         <div className="card-text elipsis">{question.description}</div>
       </div>
-      <div className="card-footer">
-        <div className="card-footer-buttons">
-          {state === "frozen" ? (
-            <button
-              className="btn btn-primary"
-              style={{ backgroundColor: "rgb(33, 133, 208)" }}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                unfreeze();
-              }}
-            >
-              <DelayedSpinner loading={frozenLoading} small>
-                Unfreeze
-              </DelayedSpinner>
-            </button>
-          ) : null}
-          {}
-
-          <a
-            href={`/courses/${courseId}/questions/${question?.id}`}
-            className="btn btn-secondary text-decoration-none"
-          >
-            More info
-          </a>
-          <QuestionHistory question={question} />
-        </div>
-      </div>
+      {footer ? <div className="card-footer">{footer}</div> : null}
     </div>
   );
 };
