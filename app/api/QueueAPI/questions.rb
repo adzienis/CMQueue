@@ -50,7 +50,7 @@ module QueueAPI
             if params[:tags].present?
               tags = JSON.parse(params[:tags])
 
-              questions = questions.joins(:tags).where(tags: tags) if tags.length > 0
+              questions = questions.joins(:tags).where(tags: tags).group(:id).having("count(*) = ?", tags.length) if tags.length > 0
             end
 
             questions = questions.distinct
