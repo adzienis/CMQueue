@@ -35,6 +35,9 @@ module QueueAPI
             optional :state, type: Object, coerce_with: ->(val) {
               Array(JSON.parse(val)).to_json
             }
+            optional :tags, type: Object, coerce_with: ->(val) {
+              Array(JSON.parse(val)).to_json
+            }
             optional :cursor, type: Integer
           end
           get scope: [:instructor] do
@@ -43,6 +46,14 @@ module QueueAPI
             questions = questions.where(course_id: params[:course_id]) if params[:course_id]
             questions = questions.where(enrollment_id: params[:enrollment_id]) if params[:enrollment_id]
             questions = questions.questions_by_state(JSON.parse(params[:state])) if params[:state]
+
+            if params[:tags].present?
+              tags = JSON.parse(params[:tags])
+
+              questions = questions.joins(:tags).where(tags: tags) if tags.length > 0
+            end
+
+            questions = questions.distinct
 
             if params[:cursor]
               questions = questions.order('questions.created_at asc').limit(5) if params[:cursor] == '-1'
@@ -56,6 +67,7 @@ module QueueAPI
                 cursor: offset
               }
             end
+
 
             questions.as_json include: [:question_state, :tags, enrollment: { include: :user }]
           end

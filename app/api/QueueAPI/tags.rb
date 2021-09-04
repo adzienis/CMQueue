@@ -11,11 +11,18 @@ module QueueAPI
         desc "Get tags."
         resource :tags do
           get do
-            tags = Tag.undiscarded
-            tags = tags.accessible_by(current_ability) if current_user
-            tags = tags.where(course_id: params[:course_id]) if params[:course_id]
+            course = Course.find(params[:course_id])
 
-            tags
+            tags = course.available_tags.accessible_by(current_ability)
+          end
+        end
+
+        desc "Selected tags."
+        resource :tags do
+          get do
+            course = Course.find(params[:course_id])
+
+            tags = course.available_tags.accessible_by(current_ability)
           end
         end
       end

@@ -2,6 +2,7 @@ import React, { useMemo } from "react";
 import { useInfiniteQuery, useQuery } from "react-query";
 import QuestionCard from "./QuestionCard";
 import useLocalStorage from "../hooks/useLocalStorage";
+import Select from "react-select";
 
 export default (props) => {
   const { courseId, userId, enrollmentId } = props;
@@ -13,13 +14,24 @@ export default (props) => {
     []
   );
 
-  const { data, fetchNextPage, hasNextPage } = useInfiniteQuery(
-    ["courses", parseInt(courseId, 10), "paginatedQuestions"],
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isLoading: questionsLoading,
+  } = useInfiniteQuery(
+    [
+      "courses",
+      parseInt(courseId, 10),
+      "paginatedQuestions",
+      "?",
+      `tags=${JSON.stringify(selectedTags.map((v) => v?.id))}`,
+    ],
     ({ pageParam = -1 }) => {
       return fetch(
         `/api/courses/${courseId}/questions?cursor=${pageParam}&` +
-          `state=["frozen", "unresolved"]&course_id=${courseId}&tags=${selectedTags.map(
-            (v) => v.id
+          `state=["frozen", "unresolved"]&course_id=${courseId}&tags=${JSON.stringify(
+            selectedTags.map((v) => v?.id)
           )}`,
         {
           headers: {
@@ -39,6 +51,7 @@ export default (props) => {
       getNextPageParam: (lastPage, pages) => {
         return lastPage.cursor;
       },
+      keepPreviousData: true,
     }
   );
 
@@ -48,40 +61,28 @@ export default (props) => {
 
   return (
     <div>
-      <ul className="nav nav-pills nav-justified mb-3">
-        {tags?.map((tag) => (
-          <li className="nav-item">
-            <a
-              onClick={(e) => {
-                e.preventDefault();
+      <div className="mb-4">
+        <label className="fw-bold">Filter Questions by Tag</label>
+        <Select
+          placeholder="Select a Tag to Filter Questions"
+          isMulti
+          onChange={(data) => {
+            const mapped = data.map((tag) =>
+              tags.find((otherTag) => otherTag.id === tag.value)
+            );
 
-                if (
-                  selectedTags.find(
-                    (selectedTag) => selectedTag.name === tag.name
-                  )
-                ) {
-                  setSelectedTags(
-                    selectedTags.filter((v) => v.name !== tag.name)
-                  );
-                } else {
-                  setSelectedTags([...selectedTags, tag]);
-                }
-              }}
-              className={`nav-link ${
-                selectedTags.find(
-                  (selectedTag) => selectedTag.name === tag.name
-                )
-                  ? "active"
-                  : ""
-              }`}
-              aria-current="page"
-              href="#"
-            >
-              {tag.name}
-            </a>
-          </li>
-        ))}
-      </ul>
+            setSelectedTags(mapped);
+          }}
+          value={selectedTags.map((tag) => ({
+            value: tag.id,
+            label: tag.name,
+          }))}
+          options={tags?.map((tag) => ({
+            value: tag.id,
+            label: tag.name,
+          }))}
+        />
+      </div>
       <div className="mb-4">
         {flattenedQuestions?.length > 0 ? (
           flattenedQuestions?.map((v) => (
