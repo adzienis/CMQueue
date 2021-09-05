@@ -1,5 +1,5 @@
 
-<%
+<%=
   tag.div id: "dropdown-filter", data: {
     base: request.path,
     except: options[:except],
@@ -16,7 +16,7 @@
 %>
 
 
-<%= ransack_search_tag({
+<% ransack_search_tag({
                          root: model.columns.map { |v| { v.name => {
                            type: v.type,
                            label: v.name.humanize
