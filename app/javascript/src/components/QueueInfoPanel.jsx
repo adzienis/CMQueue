@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { useQuery } from "react-query";
 import QueueInfoItem from "./QueueInfoItem";
 import TALog from "./TALog";
 import QuestionPosition from "./QuestionPosition";
+import useLocalStorage from "../hooks/useLocalStorage";
 
 export default (props) => {
   const { courseId, userId, enrollment } = props;
@@ -13,11 +14,13 @@ export default (props) => {
     "answer_time",
   ]);
 
+  const [panelOpened, setPanelOpened] = useLocalStorage(
+    ["courses", parseInt(courseId, 10), "panelOpened"],
+    true
+  );
+
   const {
     data: [question],
-    isLoading,
-    isFetching,
-    refetch,
   } = useQuery(
     [
       "courses",
@@ -53,6 +56,10 @@ export default (props) => {
     "activeTAs",
   ]);
 
+  const accordionState = useMemo(() => {
+    return panelOpened;
+  }, []);
+
   return (
     <div className="accordion mt-3 mb-4 w-100">
       <div className="accordion-item">
@@ -62,11 +69,17 @@ export default (props) => {
             type="button"
             data-bs-toggle="collapse"
             data-bs-target="#info-collapse"
+            onClick={(e) => setPanelOpened(!panelOpened)}
           >
             <b>Queue Information</b>
           </button>
         </h2>
-        <div id="info-collapse" className="accordion-collapse collapse show">
+        <div
+          id="info-collapse"
+          className={`accordion-collapse collapse ${
+            accordionState ? "show" : ""
+          }`}
+        >
           <div className="accordion-body">
             <div
               className="mb-2"
