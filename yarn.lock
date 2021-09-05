@@ -7386,10 +7386,10 @@ range-parser@^1.2.1, range-parser@~1.2.1:
   resolved "https://registry.yarnpkg.com/range-parser/-/range-parser-1.2.1.tgz#3cf37023d199e1c24d1a55b84800c2f3e6468031"
   integrity sha512-Hrgsx+orqoygnmhFbKaHE6c296J+HTAQXoxEF6gNupROmmGJRoyzfG3ccAveqCBrwr/2yxQ5BVd/GTl5agOwSg==
 
-ransack-search-element@^0.0.1-alpha:
-  version "0.0.1-alpha"
-  resolved "https://registry.yarnpkg.com/ransack-search-element/-/ransack-search-element-0.0.1-alpha.tgz#5e0419bcd0f37510b3381195fcab50560faf9226"
-  integrity sha512-LWjCT29T7EPD8tONLOSorgJQucgj8OZIQ4DJ8fEfyg87LJda/iGnsmNyv3mIbe/tVwJB7vDzU1M4SZDebzdYIg==
+ransack-search-element@^0.0.2-alpha:
+  version "0.0.2-alpha"
+  resolved "https://registry.yarnpkg.com/ransack-search-element/-/ransack-search-element-0.0.2-alpha.tgz#99acf020a1c7b3d5c9a5c9b9e21e15cc90d0a376"
+  integrity sha512-anRRlPstCcfeBnrZJHuQQ1sS88YFGLX968UcsvSz2uHUPMX3uXM7g7AlQ06c4QwC00YN++LV9lYrnIk+vRrX8Q==
 
 raw-body@2.4.0:
   version "2.4.0"

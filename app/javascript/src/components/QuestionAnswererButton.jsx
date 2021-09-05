@@ -3,13 +3,18 @@ import useWrappedMutation from "../hooks/useWrappedMutation";
 import { useQuery } from "react-query";
 import useOneShot from "../hooks/useOneShot";
 import DelayedSpinner from "./DelayedSpinner";
+import useLocalStorage from "../hooks/useLocalStorage";
 
 export default (props) => {
   const { userId, courseId, enrollmentId } = props;
 
-  const [loading, setLoading] = useState(false);
-
   const one = useOneShot(() => Turbo.visit(`/courses/${courseId}/answer`));
+
+  const [selectedTags, setSelectedTags] = useLocalStorage(
+    ["courses", parseInt(courseId, 10), "selectedTags"],
+    []
+  );
+
   const { data: topQuestion } = useQuery(
     [
       "courses",
@@ -40,11 +45,12 @@ export default (props) => {
       state: "resolving",
       enrollment_id: enrollmentId,
     }),
-    `/api/courses/${courseId}/handle_question`,
+    `/api/courses/${courseId}/handle_question?tags=${JSON.stringify(
+      selectedTags.map((tag) => tag.id)
+    )}`,
     {},
     {
       onSuccess: async (d) => {
-        setLoading(true);
         if (d) {
           await window.queryClient.prefetchQuery([
             "courses",

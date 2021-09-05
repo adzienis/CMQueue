@@ -75,36 +75,6 @@ export default (props) => {
     }
   );
 
-  useEffect(async () => {
-    if (Notification.permission === "default") {
-      const token = document
-        .querySelector("meta[name='csrf-token']")
-        .getAttribute("content");
-
-      await fetch(
-        `/settings/${
-          settings.find(
-            (k) => Object.keys(k.value)[0] === "desktop_notifications"
-          )?.id
-        }?`,
-        {
-          method: "PATCH",
-          credentials: "include",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-            "X-CSRF-Token": token,
-          },
-          body: JSON.stringify({
-            [settings.find(
-              (k) => Object.keys(k.value)[0] === "desktop_notifications"
-            )?.id]: "false",
-          }),
-        }
-      );
-    }
-  }, [Notification.permission]);
-
   const grouped = {};
 
   settings.forEach((setting) => {

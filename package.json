@@ -25,7 +25,7 @@
     "prop-types": "^15.7.2",
     "qs": "^6.10.1",
     "rails-ujs": "^5.2.6",
-    "ransack-search-element": "^0.0.1-alpha",
+    "ransack-search-element": "^0.0.2-alpha",
     "react": "^17.0.2",
     "react-datepicker": "^4.1.1",
     "react-dom": "^17.0.2",

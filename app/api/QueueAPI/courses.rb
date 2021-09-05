@@ -41,7 +41,9 @@ module QueueAPI
 
         desc 'Handle the topmost question in the course, by default all tags.'
         params do
-          optional :tags, type: Array[Integer]
+          optional :tags, type: Object, coerce_with: ->(val) {
+            Array(JSON.parse(val)).to_json
+          }
           requires :state, type: String
           requires :enrollment_id, type: Integer
           requires :course_id, type: Integer
@@ -51,9 +53,15 @@ module QueueAPI
           top_question = Question.accessible_by(current_ability)
           top_question = top_question.undiscarded
 
-          top_question = top_question
-                           .joins(:tags)
-                           .where("tags.name": params[:tags]) if params[:tags]
+          if params[:tags]
+
+            tags = JSON.parse(params[:tags])
+
+            top_question = top_question.joins(:tags)
+                                       .where(tags: tags)
+                                       .group(:id)
+                                       .having("count(*) = ?", tags.length) if tags.length > 0
+          end
 
           top_question = top_question
                            .with_course(Course.find(params[:course_id]))
