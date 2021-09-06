@@ -151,7 +151,7 @@ export default (props) => {
                               try {
                                 changeSetting({
                                   id: setting.id,
-                                  value: `${e.target.checked}`,
+                                  value: e.target.checked,
                                 });
                               } catch (err) {}
                             }}
