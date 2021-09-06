@@ -1,9 +1,8 @@
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 import useWrappedMutation from "../hooks/useWrappedMutation";
 import { useQuery } from "react-query";
 import useOneShot from "../hooks/useOneShot";
 import DelayedSpinner from "./DelayedSpinner";
-import useLocalStorage from "../hooks/useLocalStorage";
 import UserContext from "../context/UserContext";
 
 export default (props) => {

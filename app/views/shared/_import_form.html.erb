@@ -36,5 +36,5 @@
   <%= f.hidden_field :course_id, value: params[:course_id]  %>
   <%= f.file_field :csv_file, required: true, class: "form-control mb-3" %>
 
-  <%= f.submit :Submit, class: "btn btn-primary" %>
+  <%= f.submit :Upload, class: "btn btn-primary", data: { "disable-with" => "Uploading..." }%>
 <% end %>

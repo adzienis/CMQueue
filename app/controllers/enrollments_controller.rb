@@ -33,16 +33,43 @@ class EnrollmentsController < ApplicationController
 
   def import
     begin
-      course = Course.find(params[:course_id])
-      CSV.foreach(params[:csv_file], headers: true) do |row|
-        user = User.find_or_create_by(row.to_hash)
-        user.add_role :student, course if user
+      file = params[:csv_file].read
+      json = JSON.parse(file)
+
+      json.each do |student|
+        email = student["email"]
+        name = student["name"]
+
+        enrollment = student["enrollments"][0]
+        type = enrollment["type"]
+
+        split_name = name.split(" ")
+        given_name = split_name[0]
+        family_name = split_name[-1]
+
+        # create a new user if they don't already exist
+        user = User.find_or_create_by(email: email, given_name: given_name, family_name: family_name)
+
+        return if user == current_user
+
+        # remove the existing enrollment
+        user.enrollments.with_course(@course.id).discard_all
+
+        case type
+        when "StudentEnrollment"
+          user.add_role :student, @course
+        when "TaEnrollment"
+          user.add_role :ta, @course
+        when "TeacherEnrollment"
+          user.add_role :instructor, @course
+        end
+
+
       end
 
-      SiteNotification.with(type: "Success", body: "Successfully imported file.", title: "Success", delay: 2).deliver(current_user)
-    rescue
-      SiteNotification.with(type: "Failure", body: "Failed to import file.", title: "Failure").deliver(current_user)
-
+      SiteNotification.success(current_user, "Successfully imported file.", 2)
+    rescue => e
+      SiteNotification.failure(current_user, "Failed to import file.")
     end
 
     redirect_to request.referer

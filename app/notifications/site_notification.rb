@@ -17,6 +17,22 @@ class SiteNotification < Noticed::Base
     }
   end
 
+  def self.success(target, message, delay=nil)
+    if delay
+      SiteNotification.with(type: "Success", body: message, title: "Success", delay: delay).deliver(target)
+    else
+      SiteNotification.with(type: "Success", body: message, title: "Success").deliver(target)
+    end
+  end
+
+  def self.failure(target, message, delay=nil)
+    if delay
+      SiteNotification.with(type: "Failure", body: message, title: "Failure", delay: delay).deliver(target)
+    else
+      SiteNotification.with(type: "Failure", body: message, title: "Failure").deliver(target)
+    end
+  end
+
   after_deliver do
     if params.key? :delay
       ClearNotificationJob.set(wait: params[:delay].seconds).perform_later(record.id)
