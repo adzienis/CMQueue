@@ -1,3 +1,5 @@
+
+
 <% if @course and !@course.new_record? %>
 
   <% content_for :content do %>
@@ -8,8 +10,7 @@
     }.to_json do %>
     <% end if current_user.has_any_role?({ name: :ta, resource: @course }, { name: :instructor, resource: @course }) %>
 
-
-    <div style="display: flex; flex-direction: row; ">
+    <div class="sidebar" style="display: flex; flex-direction: row; ">
       <% if current_user.has_any_role?({ name: :ta, resource: @course }, { name: :instructor, resource: @course }) %>
         <% content_for :nav_content do %>
           <div class="dropdown">
@@ -29,13 +30,14 @@
           </div>
         <% end if false %>
 
+
         <%= render partial: "shared/course_sidebar" %>
         <button class="btn btn-outline-secondary sidebar-opener" onclick="event.preventDefault(); toggle()">
           <i class="fas fa-chevron-right"></i>
         </button>
 
       <% end %>
-      <div id='courses-container' class="container w-100 mt-4 mb-5 overflow-auto" style="min-height: 100vh">
+      <div id='courses-container' class="container mt-4 mb-5" style="min-height: 100vh">
         <%= content_for?(:courses_content) ? yield(:courses_content) : yield %>
       </div>
     </div>

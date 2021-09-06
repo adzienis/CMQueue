@@ -90,22 +90,7 @@ html, body {
   scroll-behavior: auto !important;
 }
 
-.sidebar-opener {
-  z-index: 10;
-  display: none;
-  position: fixed;
-  left: 0px;
-  margin-left: 0px;
-  transition: left .5s ease, margin-left .5s ease;
-}
 
-.sidebar {
-  position: relative;
-  width: 200px;
-  min-width: 200px;
-  max-width: 200px;
-  transition: left .5s ease, margin-left .5s ease;
-}
 
 .shim {
   min-width: 200px;
@@ -114,6 +99,7 @@ html, body {
 }
 
 #courses-container {
+  width: 100vw;
 }
 
 .filter-row {
@@ -125,7 +111,35 @@ html, body {
   margin-bottom: 1em;
 }
 
+.sidebar-opener {
+  z-index: 10;
+  position: fixed;
+  transform: translateX(-200px);
+  transition: transform .5s ease;
+}
+
+.sidebar {
+  transition: transform .5s ease;
+}
+
 @media (max-width: 768px) {
+
+
+  .sidebar-opener {
+    display: block;
+    transform: translateX(200px);
+  }
+
+  .sidebar-opener.open {
+    transform: translateX(200px);
+  }
+  .sidebar {
+    transform: translateX(-200px);
+    width: max-content;
+  }
+  .sidebar.open {
+    transform: translateX(0px);
+  }
 
 
   .card-footer-buttons {
@@ -143,23 +157,6 @@ html, body {
   .filter-row > div {
     width: 100%;
     margin-right: 0;
-  }
-
-  .sidebar-opener {
-    display: block;
-  }
-
-  .sidebar-opener.open {
-    left: 200px;
-  }
-  .sidebar {
-    left: -200px;
-    margin-left: -200px;
-  }
-  .sidebar.open {
-    left: 0px;
-
-    margin-left: inherit;
   }
 
   .shim {
