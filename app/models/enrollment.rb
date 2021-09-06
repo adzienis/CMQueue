@@ -77,9 +77,9 @@ class Enrollment < ApplicationRecord
       else
         "Summer #{time.strftime("%Y")}"
       end
-    elsif time.month < 9
+    elsif time.month < 8
       "Summer #{time.strftime("%Y")}"
-    elsif time.month == 9
+    elsif time.month == 8
       if time.day <= 19
         "Summer #{time.strftime("%Y")}"
       else
@@ -101,9 +101,9 @@ class Enrollment < ApplicationRecord
       else
         "Su#{time.strftime("%y")}"
       end
-    elsif time.month < 9
+    elsif time.month < 8
       "Su#{time.strftime("%y")}"
-    elsif time.month == 9
+    elsif time.month == 8
       if time.day <= 19
         "Su#{time.strftime("%y")}"
       else
