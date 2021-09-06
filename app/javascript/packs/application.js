@@ -24,7 +24,6 @@ import attachTurboEvents from "../src/utilities/turboExtraEvents";
 import registerManager from "../src/utilities/registerComponent";
 import QuestionAnsweringTime from "../src/components/QuestionAnsweringTime";
 import Popover from "bootstrap/js/dist/popover";
-import "ransack-search-element";
 
 registerManager.register_component(AddCourseByCode, "#add-course-by-code");
 registerManager.register_component(CourseStatus, "#course-status");
