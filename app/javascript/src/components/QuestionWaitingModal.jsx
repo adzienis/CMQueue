@@ -39,7 +39,6 @@ export default function QuestionWaitingModal(props) {
   } = useForm({
     defaultValues: useMemo(() => {
       if (question) {
-        console.log("here", question);
         return {
           queues: question.tags
             .filter((v) => !v.archived)
@@ -126,8 +125,6 @@ export default function QuestionWaitingModal(props) {
     title = "Kicked";
   }
   const formFields = watch();
-
-  console.log(formFields);
 
   return (
     <div style={{ border, height: "700px" }} className="card shadow-sm">

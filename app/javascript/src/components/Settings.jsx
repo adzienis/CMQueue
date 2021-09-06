@@ -26,7 +26,7 @@ const handle_permission = async (setting_id, checked) => {
       await wrappedFetch(`/settings/${setting_id}?`, {
         method: "PATCH",
         credentials: "include",
-        body: JSON.stringify({ [setting_id]: "true" }),
+        body: JSON.stringify({ [setting_id]: true }),
       });
     } else {
       return Notification.requestPermission().then(async function (permission) {
@@ -34,7 +34,7 @@ const handle_permission = async (setting_id, checked) => {
           await wrappedFetch(`/settings/${setting_id}?`, {
             method: "PATCH",
             credentials: "include",
-            body: JSON.stringify({ [setting_id]: "true" }),
+            body: JSON.stringify({ [setting_id]: true }),
           });
         } else if (permission === "denied") {
           alert(
@@ -49,7 +49,7 @@ const handle_permission = async (setting_id, checked) => {
     await wrappedFetch(`/settings/${setting_id}?`, {
       method: "PATCH",
       credentials: "include",
-      body: JSON.stringify({ [setting_id]: "false" }),
+      body: JSON.stringify({ [setting_id]: false }),
     });
   }
 };
@@ -113,7 +113,7 @@ export default (props) => {
                           type="checkbox"
                           className="form-check-input d-block ms-0"
                           style={{ float: "inherit" }}
-                          checked={values.value === "true"}
+                          checked={values.value === true}
                           onClick={async (e) => {
                             await handle_permission(
                               setting.id,
@@ -155,7 +155,7 @@ export default (props) => {
                                 });
                               } catch (err) {}
                             }}
-                            checked={values.value === "true"}
+                            checked={values.value === true}
                           />
                         </div>
                       </li>

@@ -17,11 +17,14 @@ export default (props) => {
     url: `/api/notifications/${notification_id}/mark_as_read`,
   }));
 
-  const { data: settings } = useQuery(["settings", "?", `user_id=${userId}`], {
-    onSuccess: (d) => {
-      window.settings = d;
-    },
-  });
+  const { data: settings } = useQuery(
+    ["settings", "?", `id=${userId}`, `type=User`],
+    {
+      onSuccess: (d) => {
+        window.settings = d;
+      },
+    }
+  );
 
   if (!settings) return <div className="d-none" />;
 

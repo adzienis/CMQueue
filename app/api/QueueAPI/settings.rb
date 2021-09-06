@@ -8,8 +8,8 @@ module QueueAPI
     resource :settings do
       desc "Get all settings."
       params do
-        optional :id, type: Integer
-        optional :type, type: String
+        requires :id, type: Integer
+        requires :type, type: String
       end
       get do
         settings = Setting.all

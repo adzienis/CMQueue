@@ -7,7 +7,6 @@ export default (props) => {
 
   useLayoutEffect(() => {
     var ctx = document.getElementById("myChart");
-    console.log("tx", ctx);
     var myChart = new Chart(ctx, {
       type: "bar",
       data: {
