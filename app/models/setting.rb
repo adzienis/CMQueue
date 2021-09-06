@@ -36,6 +36,19 @@ class Setting < ApplicationRecord
       }
     end
   end
+
+  scope :update_all_json, ->(path,value) {
+    update_all("value = jsonb_set(value::jsonb, '#{path}', '#{value}'::jsonb)::jsonb")
+  }
+
+  def update_json(path, value)
+    Setting.update("value = jsonb_set(value::jsonb, '{site_notifications, value}', 'true'::jsonb)::jsonb")
+  end
+
+  def update_all_json(path, value)
+    Setting.update_all("value = jsonb_set(value::jsonb, '{site_notifications, value}', 'true'::jsonb)::jsonb")
+  end
+
   after_update do
 
     case resource_type
