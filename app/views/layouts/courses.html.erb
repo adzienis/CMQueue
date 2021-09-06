@@ -10,7 +10,7 @@
     }.to_json do %>
     <% end if current_user.has_any_role?({ name: :ta, resource: @course }, { name: :instructor, resource: @course }) %>
 
-    <div class="sidebar" style="display: flex; flex-direction: row; ">
+    <div class="<%= current_user.has_any_role?({ name: :ta, resource: @course }, { name: :instructor, resource: @course }) ? 'sidebar' : '' %>" style="display: flex; flex-direction: row; ">
       <% if current_user.has_any_role?({ name: :ta, resource: @course }, { name: :instructor, resource: @course }) %>
         <% content_for :nav_content do %>
           <div class="dropdown">
