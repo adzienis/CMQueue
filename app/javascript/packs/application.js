@@ -24,6 +24,7 @@ import attachTurboEvents from "../src/utilities/turboExtraEvents";
 import registerManager from "../src/utilities/registerComponent";
 import QuestionAnsweringTime from "../src/components/QuestionAnsweringTime";
 import Popover from "bootstrap/js/dist/popover";
+import nestedDropdownListeners from "../src/utilities/nestedDropdownListeners";
 
 registerManager.register_component(AddCourseByCode, "#add-course-by-code");
 registerManager.register_component(CourseStatus, "#course-status");
@@ -41,6 +42,7 @@ registerManager.register_component(UserSettings, "#user-settings");
 registerManager.register_component(QuestionAnsweringTime, "#question-time");
 
 attachTurboEvents();
+nestedDropdownListeners();
 
 registerManager.render_components();
 registerManager.register_hooks();

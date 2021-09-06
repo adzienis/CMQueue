@@ -52,6 +52,8 @@ class RegisterComponentManager {
         rootNode
       );
     }
+
+    document.dispatchEvent(new Event("react-component:load"));
   }
 }
 

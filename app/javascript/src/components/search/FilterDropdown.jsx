@@ -110,7 +110,7 @@ export default (props) => {
       .map(([k, v]) => {
         return v
           .map((x) => {
-            if (x["ass"]) {
+            if (x["ass"] && k.indexOf(x["ass"]) !== 0) {
               return (
                 `q[${x["ass"] + "_" + k + "_" + x["query"]}]` +
                 "=" +

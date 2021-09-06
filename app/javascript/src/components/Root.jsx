@@ -3,6 +3,7 @@ import { QueryClientProvider } from "react-query";
 import RenderedAt from "./RenderedAt";
 import UserContext from "../context/UserContext";
 import useLocalStorage from "../hooks/useLocalStorage";
+import ReactDOM from "react-dom";
 
 export default (props) => {
   const { registeredComponents, courseId } = props;
@@ -31,9 +32,10 @@ export default (props) => {
                     setSelectedTags,
                   }}
                 >
-                  <RenderedAt selector={selector}>
-                    <Component key={selector} {...data} />
-                  </RenderedAt>
+                  {ReactDOM.createPortal(
+                    <Component key={selector} {...data} />,
+                    v
+                  )}
                 </UserContext.Provider>
               );
             });

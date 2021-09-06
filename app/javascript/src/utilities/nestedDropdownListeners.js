@@ -1,4 +1,4 @@
-import * as bootstrap from "bootstrap/dist/js/bootstrap";
+import bootstrap from "bootstrap/dist/js/bootstrap";
 
 export default () => {
   document.addEventListener("react-component:load", (event) => {
