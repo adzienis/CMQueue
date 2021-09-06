@@ -69,6 +69,11 @@ export default (props) => {
             body = v.params.body;
             className = "bg-success text-white";
             break;
+          case "Failure":
+            title = v.params.title;
+            body = v.params.body;
+            className = "bg-danger text-white";
+            break;
         }
 
         return (

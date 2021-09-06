@@ -32,13 +32,18 @@ class EnrollmentsController < ApplicationController
   end
 
   def import
-    course = Course.find(params[:course_id])
-    CSV.foreach(params[:csv_file], headers: true) do |row|
-      user = User.find_or_create_by(row.to_hash)
-      user.add_role :student, course if user
-    end
+    begin
+      course = Course.find(params[:course_id])
+      CSV.foreach(params[:csv_file], headers: true) do |row|
+        user = User.find_or_create_by(row.to_hash)
+        user.add_role :student, course if user
+      end
 
-    SiteNotification.with(type: "Success", body: "Successfully imported file.", title: "Success", delay: 2).deliver(current_user)
+      SiteNotification.with(type: "Success", body: "Successfully imported file.", title: "Success", delay: 2).deliver(current_user)
+    rescue
+      SiteNotification.with(type: "Failure", body: "Failed to import file.", title: "Failure").deliver(current_user)
+
+    end
 
     redirect_to request.referer
   end
