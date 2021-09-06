@@ -25,7 +25,7 @@ export default (props) => {
 
   if (!settings) return <div className="d-none" />;
 
-  if (settings?.find((v) => v.key === "Site Notifications").value === "false")
+  if (settings?.find((v) => v.key === "Site Notifications")?.value === "false")
     return <div className="d-none" />;
 
   return (

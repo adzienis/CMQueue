@@ -1,18 +1,16 @@
-import React, { useMemo } from "react";
+import React, { useContext, useMemo } from "react";
 import { useInfiniteQuery, useQuery } from "react-query";
 import QuestionCard from "./QuestionCard";
 import useLocalStorage from "../hooks/useLocalStorage";
 import Select from "react-select";
+import UserContext from "../context/UserContext";
 
 export default (props) => {
   const { courseId, userId, enrollmentId } = props;
 
   const { data: tags } = useQuery(["courses", parseInt(courseId, 10), "tags"]);
 
-  const [selectedTags, setSelectedTags] = useLocalStorage(
-    ["courses", parseInt(courseId, 10), "selectedTags"],
-    []
-  );
+  const { selectedTags, setSelectedTags } = useContext(UserContext);
 
   const {
     data,

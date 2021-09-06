@@ -1,6 +1,6 @@
 import React from "react";
 import { useQuery } from "react-query";
-import RenderedAtBody from "../RenderedAtBody";
+import RenderedAtBody from "./RenderedAtBody";
 
 export default (props) => {
   const { question } = props;

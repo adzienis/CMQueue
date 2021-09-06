@@ -27,6 +27,11 @@
 
 <body style="background-color: #F3F4EF">
 
+
+<%= tag.div id: "root", data: {
+  courseId: params[:course_id]
+}.to_json %>
+
 <%= turbo_stream_from current_user %>
 
 <%= content_tag :div, id: "notification-feed", data: {

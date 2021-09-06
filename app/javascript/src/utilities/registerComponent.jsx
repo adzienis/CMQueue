@@ -1,6 +1,6 @@
-import { QueryClientProvider } from "react-query";
 import React from "react";
 import ReactDOM from "react-dom";
+import Root from "../components/Root";
 
 /**
  * Singleton React component manager to handle rendering of React components
@@ -43,31 +43,15 @@ class RegisterComponentManager {
   }
 
   render_components(event) {
-    Object.entries(this.registered_components).forEach(
-      ([selector, componentWrapper]) => {
-        const { Component, instance } = componentWrapper;
+    const rootNode = document.querySelector("#root");
+    if (rootNode) {
+      const data = JSON.parse(rootNode.getAttribute("data"));
 
-        const node = document.querySelectorAll(selector);
-
-        if (node.length > 0) {
-          node.forEach((v) => {
-            if (v.childNodes.length > 0) return;
-
-            const data = JSON.parse(v.getAttribute("data"));
-
-            ReactDOM.render(
-              <QueryClientProvider client={window.queryClient} contextSharing>
-                <Component {...data} />
-              </QueryClientProvider>,
-              v,
-              () => {
-                document.dispatchEvent(new Event("react-component:load"));
-              }
-            );
-          });
-        }
-      }
-    );
+      ReactDOM.render(
+        <Root registeredComponents={this.registered_components} {...data} />,
+        rootNode
+      );
+    }
   }
 }
 
