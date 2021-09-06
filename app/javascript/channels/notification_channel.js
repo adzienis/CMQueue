@@ -11,8 +11,6 @@ export default consumer.subscriptions.create("Noticed::NotificationChannel", {
   },
 
   async received(data) {
-    console.log("window sett", window.settings, data);
-
     if (
       "Notification" in window &&
       Notification.permission === "granted" &&

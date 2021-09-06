@@ -12,6 +12,8 @@ export default (props) => {
 
   const { selectedTags, setSelectedTags } = useContext(UserContext);
 
+  console.log(selectedTags, "tags", setSelectedTags);
+
   const { data: topQuestion } = useQuery(
     [
       "courses",

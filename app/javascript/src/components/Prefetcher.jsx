@@ -26,19 +26,27 @@ export default (props) => {
 
   useEffect(() => {
     studentCourses.forEach((v) => {
-      queryClient.prefetchQuery(["courses", parseInt(v.id, 10), "open_status"]);
       queryClient.prefetchQuery([
         "courses",
-        parseInt(v.id, 10),
+        parseInt(v.role.resource_id, 10),
+        "open_status",
+      ]);
+      queryClient.prefetchQuery([
+        "courses",
+        parseInt(v.role.resource_id, 10),
         "questions",
         "count",
         "?",
         'state=["unresolved", "frozen"]',
       ]);
-      queryClient.prefetchQuery(["courses", parseInt(v.id, 10), "activeTAs"]);
       queryClient.prefetchQuery([
         "courses",
-        parseInt(v.id, 10),
+        parseInt(v.role.resource_id, 10),
+        "activeTAs",
+      ]);
+      queryClient.prefetchQuery([
+        "courses",
+        parseInt(v.role.resource_id, 10),
         "questions",
         "?",
         `user_id=${userId}`,
@@ -49,29 +57,37 @@ export default (props) => {
 
   useEffect(() => {
     taCourses.forEach((v) => {
-      queryClient.prefetchQuery(["courses", parseInt(v.id, 10), "open_status"]);
       queryClient.prefetchQuery([
         "courses",
-        parseInt(v.id, 10),
+        parseInt(v.role.resource_id, 10),
+        "open_status",
+      ]);
+      queryClient.prefetchQuery([
+        "courses",
+        parseInt(v.role.resource_id, 10),
         "questions",
         "?",
         `state=["unresolved"]`,
       ]);
       queryClient.prefetchQuery([
         "courses",
-        parseInt(v.id, 10),
+        parseInt(v.role.resource_id, 10),
         "questions",
         "count",
         "?",
         'state=["unresolved", "frozen"]',
       ]);
-      queryClient.prefetchQuery(["courses", parseInt(v.id, 10), "activeTAs"]);
+      queryClient.prefetchQuery([
+        "courses",
+        parseInt(v.role.resource_id, 10),
+        "activeTAs",
+      ]);
       queryClient.prefetchInfiniteQuery(
-        ["courses", parseInt(v.id, 10), "paginatedQuestions"],
+        ["courses", parseInt(v.role.resource_id, 10), "paginatedQuestions"],
         ({ pageParam = -1 }) => {
           return fetch(
             `/api/courses/${v.id}/questions?cursor=${pageParam}&` +
-              `state=["frozen", "unresolved"]&course_id=${v.id}`,
+              `state=["frozen", "unresolved"]&course_id=${v.role.resource_id}`,
             {
               headers: {
                 Accept: "application/json",
@@ -92,29 +108,37 @@ export default (props) => {
 
   useEffect(() => {
     instructorCourses.forEach((v) => {
-      queryClient.prefetchQuery(["courses", parseInt(v.id, 10), "open_status"]);
       queryClient.prefetchQuery([
         "courses",
-        parseInt(v.id, 10),
+        parseInt(v.role.resource_id, 10),
+        "open_status",
+      ]);
+      queryClient.prefetchQuery([
+        "courses",
+        parseInt(v.role.resource_id, 10),
         "questions",
         "?",
         `state=["unresolved"]`,
       ]);
       queryClient.prefetchQuery([
         "courses",
-        parseInt(v.id, 10),
+        parseInt(v.role.resource_id, 10),
         "questions",
         "count",
         "?",
         'state=["unresolved", "frozen"]',
       ]);
-      queryClient.prefetchQuery(["courses", parseInt(v.id, 10), "activeTAs"]);
+      queryClient.prefetchQuery([
+        "courses",
+        parseInt(v.role.resource_id, 10),
+        "activeTAs",
+      ]);
       queryClient.prefetchInfiniteQuery(
-        ["courses", parseInt(v.id, 10), "paginatedQuestions"],
+        ["courses", parseInt(v.role.resource_id, 10), "paginatedQuestions"],
         ({ pageParam = -1 }) => {
           return fetch(
-            `/api/courses/${v.id}/questions?cursor=${pageParam}&` +
-              `state=["frozen", "unresolved"]&course_id=${v.id}`,
+            `/api/courses/${v.role.resource_id}/questions?cursor=${pageParam}&` +
+              `state=["frozen", "unresolved"]&course_id=${v.role.resource_id}`,
             {
               headers: {
                 Accept: "application/json",

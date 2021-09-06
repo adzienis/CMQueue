@@ -151,7 +151,7 @@ class User < ApplicationRecord
                        value: {
                          site_notifications: {
                            label: "Site Notifications",
-                           value: false,
+                           value: true,
                            description: "Allow notifications to appear on the site.",
                            type: "boolean",
                            category: "Notifications"

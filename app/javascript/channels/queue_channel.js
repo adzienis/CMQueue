@@ -47,7 +47,9 @@ consumer.subscriptions.create("QueueChannel", {
         };
 
         this.current_channel.general.received = async (data) => {
-          console.log("invalidatinggeneral", data.invalidate);
+          if (process.env.NODE_ENV === "development") {
+            console.log("invalidatinggeneral", data.invalidate);
+          }
 
           //Turbo.visit(window.location.toString(), { action: 'replace' })
           await queryClient.invalidateQueries(data.invalidate);
@@ -55,7 +57,9 @@ consumer.subscriptions.create("QueueChannel", {
           await queryClient.refetchQueries(data.invalidate);
         };
         this.current_channel.role.received = async (data) => {
-          console.log("invalidatingtas", data.invalidate);
+          if (process.env.NODE_ENV === "development") {
+            console.log("invalidatingtas", data.invalidate);
+          }
 
           //Turbo.visit(window.location.toString(), { action: 'replace' })
           await queryClient.invalidateQueries(data.invalidate);
@@ -81,7 +85,9 @@ consumer.subscriptions.create("QueueChannel", {
         };
 
         this.current_channel.general.received = async (data) => {
-          console.log("invalidatinggeneral", data.invalidate);
+          if (process.env.NODE_ENV === "development") {
+            console.log("invalidatinggeneral", data.invalidate);
+          }
 
           //Turbo.visit(window.location.toString(), { action: 'replace' })
           await queryClient.invalidateQueries(data.invalidate);
@@ -89,7 +95,9 @@ consumer.subscriptions.create("QueueChannel", {
           await queryClient.refetchQueries(data.invalidate);
         };
         this.current_channel.role.received = async (data) => {
-          console.log("invalidatingtas", data.invalidate);
+          if (process.env.NODE_ENV === "development") {
+            console.log("invalidatingtas", data.invalidate);
+          }
 
           //Turbo.visit(window.location.toString(), { action: 'replace' })
           await queryClient.invalidateQueries(data.invalidate);

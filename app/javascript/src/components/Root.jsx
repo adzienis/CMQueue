@@ -7,11 +7,10 @@ import useLocalStorage from "../hooks/useLocalStorage";
 export default (props) => {
   const { registeredComponents, courseId } = props;
 
-  const [selectedTags, setSelectedTags] = useLocalStorage([
-    "courses",
-    parseInt(courseId, 10),
-    "selectedTags",
-  ]);
+  const [selectedTags, setSelectedTags] = useLocalStorage(
+    ["courses", parseInt(courseId, 10), "selectedTags"],
+    []
+  );
 
   return (
     <QueryClientProvider client={window.queryClient} contextSharing>
