@@ -44,11 +44,13 @@ class EnrollmentsController < ApplicationController
         type = enrollment["type"]
 
         split_name = name.split(" ")
-        given_name = split_name[0]
-        family_name = split_name[-1]
+        given_name = split_name[-1]
+        family_name = split_name[0]
 
         # create a new user if they don't already exist
-        user = User.find_or_create_by(email: email, given_name: given_name, family_name: family_name)
+
+        user = User.find_by(email: email)
+        user = User.find_or_create_by(email: email, given_name: given_name, family_name: family_name) unless user
 
         return if user == current_user
 
