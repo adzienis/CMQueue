@@ -20,7 +20,6 @@ class Question < ApplicationRecord
   validates :location, :description, :tried, :course_id, :tags, presence: true
 
   validate :duplicate_question, on: :create
-  validate :has_at_least_one_tag, on: [:create, :update]
   validate :course_queue_open, on: :create
 
   ######### Handle at least one tag with '='
@@ -31,7 +30,7 @@ class Question < ApplicationRecord
   validate :check_for_tags_validator, on: [:create, :update]
 
   def check_for_tags_validator
-    errors.add(:tags, "at least one") if self.tags_validator
+    errors.add(:tags, "can't be empty") if self.tags_validator
   end
 
   def course_queue_open
@@ -43,7 +42,7 @@ class Question < ApplicationRecord
 
   def has_at_least_one_tag
     if tags.length == 0
-      errors.add(:tags, "must have at least one.")
+      errors.add(:tags, "can't be empty.")
     end
   end
 

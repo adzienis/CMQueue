@@ -13,6 +13,8 @@ export default (props) => {
     []
   );
 
+  console.log("rendering");
+
   return (
     <QueryClientProvider client={window.queryClient} contextSharing>
       {Object.entries(registeredComponents)

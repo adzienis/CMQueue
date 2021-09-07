@@ -12,6 +12,15 @@ export default (props) => {
 
   const { selectedTags, setSelectedTags } = useContext(UserContext);
 
+  const { data: count, isLoading: countLoading } = useQuery([
+    "courses",
+    parseInt(courseId, 10),
+    "questions",
+    "count",
+    "?",
+    `state=${JSON.stringify(["unresolved", "frozen"])}`,
+  ]);
+
   const {
     data,
     fetchNextPage,
@@ -57,46 +66,41 @@ export default (props) => {
     return data?.pages.map((v) => v.data).flat();
   }, [data]);
 
+  let questions = null;
+
+  if (!questionsLoading) {
+    questions = flattenedQuestions?.map((v) => (
+      <QuestionCard
+        enrollmentId={enrollmentId}
+        key={v.id}
+        question={v}
+        userId={userId}
+        courseId={courseId}
+      />
+    ));
+
+    if (questions.length === 0) {
+      questions = (
+        <div className="alert alert-warning border">
+          No questions with these filters, but there are still <b> {count} </b>{" "}
+          questions left!
+        </div>
+      );
+    }
+  } else {
+    questions = (
+      <div className="card card-body w-100 d-flex justify-content-center align-items-center">
+        <div className="spinner-border" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div>
       <div className="mb-4">
-        <label className="fw-bold">Filter Questions by Tag</label>
-        <Select
-          placeholder="Select a Tag to Filter Questions"
-          isMulti
-          onChange={(data) => {
-            const mapped = data.map((tag) =>
-              tags.find((otherTag) => otherTag.id === tag.value)
-            );
-
-            setSelectedTags(mapped);
-          }}
-          value={selectedTags.map((tag) => ({
-            value: tag.id,
-            label: tag.name,
-          }))}
-          options={tags?.map((tag) => ({
-            value: tag.id,
-            label: tag.name,
-          }))}
-        />
-      </div>
-      <div className="mb-4">
-        {flattenedQuestions?.length > 0 ? (
-          flattenedQuestions?.map((v) => (
-            <QuestionCard
-              enrollmentId={enrollmentId}
-              key={v.id}
-              question={v}
-              userId={userId}
-              courseId={courseId}
-            />
-          ))
-        ) : (
-          <div className="alert alert-warning border">
-            <span>No Questions</span>
-          </div>
-        )}
+        {questions}
         <div className="mt-4">
           <button
             className="btn btn-primary"

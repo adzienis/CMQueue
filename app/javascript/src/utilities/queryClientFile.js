@@ -5,6 +5,7 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       queryFn: defaultQueryFn,
+      staleTime: 100000,
     },
   },
 });
