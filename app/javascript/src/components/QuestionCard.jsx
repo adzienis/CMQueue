@@ -100,7 +100,7 @@ export default (props) => {
                 <br />
               </>
             ) : null}
-            <div className="dropdown">
+            <div className="dropdown d-none">
               <a
                 href=""
                 onClick={(e) => {

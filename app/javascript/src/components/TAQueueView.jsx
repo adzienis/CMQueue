@@ -79,10 +79,16 @@ export default (props) => {
       />
     ));
 
-    if (questions.length === 0) {
+    if (count === 0) {
       questions = (
         <div className="alert alert-warning border">
-          No questions with these filters, but there are still <b> {count} </b>{" "}
+          No questions left on the queue.
+        </div>
+      );
+    } else if (questions.length === 0) {
+      questions = (
+        <div className="alert alert-warning border">
+          No questions with these tags, but there are still <b> {count} </b>{" "}
           questions left!
         </div>
       );

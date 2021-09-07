@@ -65,8 +65,6 @@ class EnrollmentsController < ApplicationController
         when "TeacherEnrollment"
           user.add_role :instructor, @course
         end
-
-
       end
 
       SiteNotification.success(current_user, "Successfully imported file.", 2)
