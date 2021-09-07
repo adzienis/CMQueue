@@ -57,8 +57,6 @@ class QuestionState < ApplicationRecord
 
   after_create_commit do
 
-
-
     broadcast_action_later_to question.user,
                               action: :refresh,
                               target: "course-active-questions-count",
@@ -101,9 +99,16 @@ class QuestionState < ApplicationRecord
       invalidate: ['courses', question.course_id, 'paginatedPastQuestions']
     }
 
+    ActionCable.server.broadcast "#{course.id}#ta", {
+      invalidate: ["courses", question.course_id, "tags", "count"]
+    }
+    ActionCable.server.broadcast "#{course.id}#instructor", {
+      invalidate: ["courses", question.course_id, "tags", "count"]
+    }
+
     case state
     when "frozen"
-      SiteNotification.with(type: "QuestionState", why: description, title: "Question Frozen").deliver(question.enrollment.user)
+      # SiteNotification.with(type: "QuestionState", why: description, title: "Question Frozen").deliver(question.enrollment.user)
     when "kicked"
       SiteNotification.with(type: "QuestionState", why: description, title: "Question Kicked").deliver(question.enrollment.user)
     end
