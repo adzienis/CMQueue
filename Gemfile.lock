@@ -551,6 +551,7 @@ DEPENDENCIES
   ransack (~> 2.4)
   ransack_search_element (~> 0.1.0.pre.alpha)
   redis (~> 4.0)
+  responders (~> 3.0)
   rolify (~> 6.0)!
   rubocop (~> 1.17)
   rubocop-rails (~> 2.10)
