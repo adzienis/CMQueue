@@ -6,6 +6,14 @@ GIT
     rolify (6.0.0)
 
 GIT
+  remote: https://github.com/heartcombo/responders.git
+  revision: cf72db400492bf19a2169bd7b6de68e7036df30e
+  specs:
+    responders (3.0.1)
+      actionpack (>= 5.2)
+      railties (>= 5.2)
+
+GIT
   remote: https://github.com/hotwired/turbo-rails
   revision: 4fa9ae381375838a0dd74d9103c9fdceaa362e9d
   ref: 4fa9ae3
@@ -400,9 +408,6 @@ GEM
     reline (0.2.6)
       io-console (~> 0.5)
     remotipart (1.4.4)
-    responders (3.0.1)
-      actionpack (>= 5.0)
-      railties (>= 5.0)
     reverse_markdown (2.0.0)
       nokogiri
     rexml (3.2.5)
@@ -551,7 +556,7 @@ DEPENDENCIES
   ransack (~> 2.4)
   ransack_search_element (~> 0.1.0.pre.alpha)
   redis (~> 4.0)
-  responders (~> 3.0)
+  responders (~> 3.0)!
   rolify (~> 6.0)!
   rubocop (~> 1.17)
   rubocop-rails (~> 2.10)

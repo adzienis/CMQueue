@@ -128,4 +128,4 @@ gem "ransack_search_element", "~> 0.1.0.pre.alpha"
 
 gem "appsignal", "~> 3.0"
 
-gem "responders", "~> 3.0"
+gem "responders", "~> 3.0", github: 'heartcombo/responders'
