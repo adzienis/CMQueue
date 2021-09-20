@@ -83,7 +83,7 @@ module QueueAPI
         params do
           requires :course_id, type: Integer
         end
-        get 'open_status', scopes: [:public] do
+        get 'open', scopes: [:public] do
 
           course = Course.find(params[:course_id])
 
