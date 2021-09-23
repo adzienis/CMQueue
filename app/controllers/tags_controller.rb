@@ -3,6 +3,8 @@
 class TagsController < ApplicationController
   load_and_authorize_resource
 
+  respond_to :html, :json, :csv
+
   def download
     @course = Course.find(params[:course_id])
   end
@@ -10,11 +12,13 @@ class TagsController < ApplicationController
   def index
 
     @tags = @tags.undiscarded.order("tags.created_at": :desc).where(course_id: params[:course_id]) if params[:course_id]
+    @tags = @tags.count if params[:agg] == "count"
     @tags_ransack = @tags.ransack(params[:q])
 
     @pagy, @records = pagy @tags_ransack.result
     respond_to do |format|
       format.html
+      format.json { render json: @records }
       format.js { render inline: "window.open('#{URI::HTTP.build(path: "#{request.path}.csv", query: request.query_parameters.to_query, format: :csv)}', '_blank')" }
       format.csv {
         send_data helpers.to_csv(params[:tag].to_unsafe_h, @tags_ransack.result, Tag),
@@ -45,19 +49,14 @@ class TagsController < ApplicationController
 
   def create
     @tag = Tag.create(create_params)
-
-    render turbo_stream: (turbo_stream.replace @tag, partial: "shared/new_form", locals: { model_instance: @tag }) and return unless @tag.errors.count == 0
-
-    redirect_to course_tags_path(@tag.course)
+    respond_with @tag, location: course_tags_path(@course)
   end
 
   def update
     @tag = Tag.find(params[:id])
     @tag.update(update_params)
 
-    render turbo_stream: (turbo_stream.replace @tag, partial: "shared/edit_model", locals: { model_instance: @tag }) and return unless @tag.errors.count == 0
-
-    redirect_to course_tag_path(@tag.course)
+    respond_with @tag, location: course_tags_path(@course)
   end
 
   def edit
@@ -78,10 +77,10 @@ class TagsController < ApplicationController
   private
 
   def update_params
-    params.require(:tag).permit(:archived, :name, :description)
+    params.require(:tag).permit(:archived, :name, :description, :course_id, :tag_group_id)
   end
 
   def create_params
-    params.require(:tag).permit(:archived, :name, :description, :course_id)
+    params.require(:tag).permit(:archived, :name, :description, :course_id, :tag_group_id)
   end
 end

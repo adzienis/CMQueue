@@ -3,6 +3,13 @@
 class QuestionsController < ApplicationController
   load_and_authorize_resource id_param: :question_id
 
+  include ResourceInitializable
+  include ResourceAuthorizable
+  include CourseFilterable
+  include UserFilterable
+
+  respond_to :html, :json, :csv
+
   def new
     redirect_to queue_course_path(current_user.active_question.course) if current_user.active_question?
 
@@ -10,43 +17,23 @@ class QuestionsController < ApplicationController
     @available_tags = @course.available_tags
   end
 
+  def position
+    @questions = @questions.undiscarded
+    @questions = @questions.questions_by_state(JSON.parse(params[:state])) if params[:state]
+
+    respond_with @questions.pluck(:id).index(params[:question_id].to_i)
+  end
   def index
+    @questions = @questions.undiscarded.order(:created_at) #.order("max(question_states.state) desc").group("questions.id")
+    @questions = @questions.latest_by_state(JSON.parse(params[:state])) if params[:state]
 
-    @questions_ransack = @questions.undiscarded.order("questions.created_at": :desc)
-    @questions_ransack = @questions_ransack.where(course_id: params[:course_id]) if params[:course_id]
-    @questions_ransack = @questions_ransack.with_user(params[:user_id]) if params[:user_id]
-
-    @questions_ransack = @questions_ransack
-                           .joins(:question_states, :user, :tags)
-                           .includes(:question_states, :user, :tags)
-    @questions_ransack = @questions_ransack.ransack(params[:q])
+    @questions_ransack = @questions.ransack(params[:q])
 
     @pagy, @records = pagy @questions_ransack.result
 
-    respond_to do |format|
-      format.html
-      # to download file with form submit
-      format.js { render inline: "window.open('#{URI::HTTP.build(path: "#{request.path}.csv", query: request.query_parameters.to_query, format: :csv)}', '_blank')"}
-      format.csv {
-        send_data Question.to_csv(params[:question].to_unsafe_h, @questions_ransack.result),
-                  filename: helpers.csv_download_name(controller_name.classify.constantize)
-      }
-    end
-  end
+    @questions = @questions.count if params[:agg] == "count"
 
-  def count
-
-    @questions = Question.joins(:user, :question_state, :tags)
-    @questions = @questions.where(course_id: params[:course_id]) if params[:course_id]
-    @questions = @questions.where(user_id: params[:user_id]) if params[:user_id]
-    @questions = @questions.questions_by_state(JSON.parse(params[:state])) if params[:state]
-
-    respond_to do |format|
-      format.html
-      format.json do
-        render json: @questions.count
-      end
-    end
+    respond_with @questions
   end
 
   def acknowledge
@@ -56,30 +43,31 @@ class QuestionsController < ApplicationController
   end
 
   def previous_questions
-    @question = Question.find(params[:question_id])
+    @question = @questions.find(params[:question_id])
 
-    @questions_ransack = Question.previous_questions(@question).order(created_at: :desc).accessible_by(current_ability).undiscarded
-    @questions_ransack = @questions_ransack.where(course_id: params[:course_id]) if params[:course_id]
-    @questions_ransack = @questions_ransack.ransack(params[:q])
+    @questions = @questions.previous_questions(@question).order(created_at: :desc).accessible_by(current_ability).undiscarded
+    @questions = @questions.where(course_id: params[:course_id]) if params[:course_id]
+    @questions_ransack = @questions.ransack(params[:q])
 
     @pagy, @records = pagy @questions_ransack.result
+
+    respond_with @questions
   end
 
   def edit
-    @question = Question.find(params[:question_id])
+    @question = @questions.find(params[:question_id])
   end
 
   def show
-    @question = Question.find(params[:question_id])
+    @question = @questions.find(params[:question_id])
+
+    respond_with @question do |format|
+      format.json { render json: @question.as_json(include: [:user, :tags, :question_state])}
+    end
   end
 
   def create
     @question = Question.new(question_params)
-    tags = Tag.where(id: params[:question][:tag_ids])
-
-    @question.tags = tags
-
-    @available_tags = @question.course.available_tags
 
     @question.save
 
@@ -89,7 +77,7 @@ class QuestionsController < ApplicationController
   end
 
   def update_state
-    @question = Question.find(params[:question_id])
+    @question = @questions.find(params[:question_id])
     @enrollment = current_user.enrollment_with_course(params[:course_id])
 
     @question.unfreeze(@enrollment.id)
@@ -99,12 +87,9 @@ class QuestionsController < ApplicationController
   end
 
   def update
-    @question = Question.find(params[:question_id])
+    @question = @questions.find(params[:question_id])
     @available_tags = Tag.undiscarded.unarchived.with_course(@question.course.id)
     @question.update(question_params)
-
-    tags = Tag.where(id: params[:question][:tag_ids])
-    @question.tags = tags
 
     render turbo_stream: (turbo_stream.replace @question, partial: "form", locals: { question: @question, available_tags: @available_tags}) and return unless @question.errors.count == 0
 
@@ -136,6 +121,6 @@ class QuestionsController < ApplicationController
   private
 
   def question_params
-    params.require(:question).permit(:course_id, :description, :tried, :location, :user_id, :title, :enrollment_id)
+    params.require(:question).permit(:course_id, :description, :tried, :location, :user_id, :title, :enrollment_id, tag_ids: [])
   end
 end

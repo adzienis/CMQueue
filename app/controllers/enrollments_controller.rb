@@ -1,28 +1,27 @@
 # frozen_string_literal: true
 
 class EnrollmentsController < ApplicationController
-  load_and_authorize_resource
 
   def index
     @course = Course.find(params[:course_id]) if params[:course_id]
 
-    @enrollments_ransack = Enrollment
+    @enrollments = Enrollment
                              .undiscarded
                              .joins(:user, :role, :course)
                              .order("enrollments.created_at": :desc)
-    if params[:course_id]
-      @enrollments_ransack = @enrollments_ransack
-                               .joins(:role)
-                               .where("roles.resource_id": params[:course_id])
-    end
-    @enrollments_ransack = @enrollments_ransack.where(user_id: params[:user_id]) if params[:user_id]
+    @enrollments = @enrollments.where(user_id: params[:user_id]) if params[:user_id]
+    @enrollments = @enrollments
+                     .joins(:role)
+                     .where("roles.resource_id": params[:course_id]) if params[:course_id]
+    @enrollments = @enrollments.with_course_roles(params[:role]) if params[:role]
 
-    @enrollments_ransack = @enrollments_ransack.ransack(params[:q])
+    @enrollments_ransack = @enrollments.ransack(params[:q])
 
     @pagy, @records = pagy @enrollments_ransack.result
 
     respond_to do |format|
       format.html
+      format.json { render json: @enrollments, include: [:role, :course] }
       format.js { render inline: "window.open('#{URI::HTTP.build(path: "#{request.path}.csv", query: request.query_parameters.to_query, format: :csv)}', '_blank')" }
       format.csv {
         send_data Enrollment.to_csv(params[:enrollment].to_unsafe_h, @enrollments_ransack.result),
@@ -101,6 +100,7 @@ class EnrollmentsController < ApplicationController
 
     render turbo_stream: (turbo_stream.replace @enrollment, partial: "shared/new_form", locals: { model_instance: @enrollment, options: { except: [:question_states, :questions] } }) and return unless @enrollment.errors.count == 0
 
+    respond_with @enrollment
   end
 
   def destroy

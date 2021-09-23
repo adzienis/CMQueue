@@ -3,6 +3,8 @@
 class QuestionStatesController < ApplicationController
   load_and_authorize_resource
 
+  respond_to :html, :json
+
   def index
     @course = Course.find(params[:course_id]) if params[:course_id]
 
@@ -13,6 +15,8 @@ class QuestionStatesController < ApplicationController
     @question_states_ransack = @question_states.ransack(params[:q])
 
     @pagy, @records = pagy @question_states_ransack.result.distinct
+
+    respond_with @question_states
   end
 
   def edit; end

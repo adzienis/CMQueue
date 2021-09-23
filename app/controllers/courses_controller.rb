@@ -3,34 +3,32 @@
 class CoursesController < ApplicationController
   load_and_authorize_resource id_param: :course_id
 
+  respond_to :html, :json
+
+  include ResourceInitializable
+  include ResourceAuthorizable
+  include NameFilterable
+
   def edit
     @course = Course.unscoped.find(params[:course_id])
   end
 
-  def database
-  end
+  def top_question
+    top_question = Question.undiscarded
+    top_question = top_question.latest_by_state("resolving")
+    top_question = top_question.with_course(@course.id).first
 
-  def queue
-    redirect_to user_enrollments_path and return unless @course
-    redirect_to new_course_question_path(@course) if current_user.active_question.nil? && current_user.has_role?(:student, @course)
+    respond_with top_question and return if top_question.nil?
 
-    redirect_to answer_course_path(@course) and return if current_user.question_state&.state == 'resolving'
+    authorize! :read, top_question
 
-    @questions = @course.questions
-    @user_question = current_user.courses.find(@course.id).questions.first
-    @tags = Tag.all.where(course_id: @course.id).where(archived: false)
-
-    @question = current_user.active_question
-
-    @available_tags = @course.available_tags
-
-    @enrollment = Enrollment.undiscarded.joins(:role).find_by(user_id: current_user.id, "roles.resource_id": @course.id)
+    respond_with top_question  do |format|
+      format.json { render json: top_question.as_json(include: [:user, :tags, :question_state])}
+    end
   end
 
   def show
-    @course = Course.accessible_by(current_ability).select(current_ability.permitted_attributes(:read, @course)).find(params[:course_id])
-
-    raise CanCan::AccessDenied and return unless current_user.has_any_role?({ name: :ta, resource: @course}, {name: :instructor, resource: @course})
+    redirect_to new_course_question_path(@course) and return unless current_user.has_any_role?({ name: :ta, resource: @course}, {name: :instructor, resource: @course})
   end
 
   def answer_page
@@ -43,17 +41,16 @@ class CoursesController < ApplicationController
   end
 
   def index
-    @courses = Course.unscoped.accessible_by(current_ability)
-    @courses_ransack = @courses.order("courses.created_at": :desc)
-    @courses_ransack = @courses_ransack.where(course_id: params[:course_id]) if params[:course_id]
-    @courses_ransack = @courses_ransack.with_user(params[:user_id]) if params[:user_id]
+    @courses = Course.accessible_by(current_ability)
+    @courses = @courses.order("courses.created_at": :desc)
+    @courses = @courses.where(course_id: params[:course_id]) if params[:course_id]
+    @courses = @courses.with_user(params[:user_id]) if params[:user_id]
 
-    @courses_ransack = @courses_ransack
-                           .joins(:enrollments)
-                           .includes(:enrollments)
-    @courses_ransack = @courses_ransack.ransack(params[:q])
+    @courses_ransack = @courses.ransack(params[:q])
 
     @pagy, @records = pagy @courses_ransack.result
+
+    respond_with @courses
   end
 
   def semester
@@ -85,29 +82,12 @@ class CoursesController < ApplicationController
     redirect_to user_courses_path(@current_user)
   end
 
-  def course_info
-  end
-
   def update
     @course.update(course_params)
 
     render turbo_stream: (turbo_stream.update @course, partial: "shared/edit_form", locals: { model_instance: @course }) and return unless @course.errors.count == 0
 
     redirect_to course_path(@course)
-  end
-
-  def queues
-    @tags = Course.find(params[:course_id]).tags.order('tags.created_at DESC')
-
-    @tags_ransack = @tags.ransack(params[:q])
-
-    @pagy, @records = pagy @tags_ransack.result
-  end
-
-  def roster
-    @users_ransack = @course.users.with_any_roles(:student, :ta).distinct.ransack(params[:q])
-
-    @pagy, @records = pagy(@users_ransack.result)
   end
 
   private

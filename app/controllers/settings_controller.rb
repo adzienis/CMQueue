@@ -3,6 +3,12 @@ class SettingsController < ApplicationController
 
   before_action :restrict_routes
 
+  respond_to :html, :json
+
+  include ResourceInitializable
+  include ResourceAuthorizable
+  include PolymorphicFilterable
+
   def restrict_routes
     if @course
       raise CanCan::AccessDenied unless current_user.has_any_role?({name: :instructor, resource: @course})
@@ -12,16 +18,14 @@ class SettingsController < ApplicationController
   end
 
   def index
-    @settings = @settings.where(resource_id: current_user.id, resource_type: "User") if @user
-    @settings = @settings.where(resource_id: @course.id, resource_type: "Course") if @course
+    respond_with @settings
   end
 
   def create
   end
 
   def show
-    @settings = @settings.where(resource_id: current_user.id, resource_type: "User") if @user
-    @settings = @settings.where(resource_id: @course.id, resource_type: "Course") if @course
+    respond_with @settings
   end
 
   def notifications
@@ -31,25 +35,21 @@ class SettingsController < ApplicationController
   end
 
   def update
-    settings = Setting.where(id: settings_params.keys)
+    @setting = @settings.find(params[:setting_id])
 
-    settings.each do |setting|
-      name = setting.value.keys[0]
+    if setting_params.keys.include? "value"
+      @setting.set_value(setting_params[:value])
 
-      setting.value[name]["value"] = settings_params[setting.id.to_s]
-
-      setting.save!
-
+      @setting.save
     end
-    respond_to do |format|
-      format.json { render json: nil}
-    end
+
+    respond_with @setting
   end
 
   def delete
   end
 
-  def settings_params
-    params.permit(*Setting.all.accessible_by(current_ability).map{|v| v.id.to_s.to_sym })
+  def setting_params
+    params.require(:setting).permit(:value)
   end
 end
