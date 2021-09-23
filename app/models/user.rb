@@ -31,6 +31,19 @@ class User < ApplicationRecord
 
   #has_many :oauth_applications, as: :owner
 
+  def interacting_questions?(*states, course_id: nil)
+    interacting_questions(*states, course_id).any?
+  end
+
+  def interacting_questions(*states, course_id: nil)
+    states = ["resolving"] if states.empty?
+    if course_id.present?
+      Question.where(id: QuestionState.with_user(id).pluck(:question_id)).latest_by_state(states).with_course(course_id)
+    else
+      Question.where(id: QuestionState.with_user(id).pluck(:question_id)).latest_by_state(states)
+    end
+  end
+
   def enrolled_in_course?(course_id)
     enrollments.undiscarded.joins(:role).where("roles.resource_id": course_id, "roles.resource_type": "Course").any?
   end
@@ -49,6 +62,14 @@ class User < ApplicationRecord
 
   def active_question
     active_questions.first
+  end
+
+  def enrolled_in_course?(course_id)
+    enrolled_in_courses?(course_id)
+  end
+
+  def enrolled_in_courses?(*course_id)
+    courses.merge(Enrollment.undiscarded).find_by(id: course_id).present?
   end
 
   def is_staff_in_course?(course_id)

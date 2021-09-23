@@ -9,28 +9,32 @@ class Question < ApplicationRecord
   has_one :course, through: :enrollment
   has_one :user, through: :enrollment
   # this basically alias question_state
-  has_one :question_state, -> { order('created_at DESC') }, class_name: "QuestionState", dependent: :destroy
+  has_one :question_state, -> { order('max(created_at) DESC').group("question_states.id") }, class_name: "QuestionState", dependent: :destroy
 
-  has_and_belongs_to_many :tags, dependent: :destroy, autosave: true
+  has_and_belongs_to_many :tags, dependent: :destroy, autosave: true, inverse_of: :questions
 
   #has_many :notifications, as: :recipient
 
+  has_many :tag_groups, through: :tags
   has_many :question_states, dependent: :destroy
 
-  validates :location, :description, :tried, :course_id, :tags, presence: true
+  validates :location, :description, :tried, :course_id, presence: true
 
   validate :duplicate_question, on: :create
   validate :course_queue_open, on: :create
+  validate :has_at_least_one_tag
+  validate :has_location_tag
 
   ######### Handle at least one tag with '='
   # We have to manually override the assignment since we don't have callbacks
   # that accurately represent the count of the number of tags before we destroy
   # them (using '=').
   attr_accessor :tags_validator
-  validate :check_for_tags_validator, on: [:create, :update]
 
-  def check_for_tags_validator
-    errors.add(:tags, "can't be empty") if self.tags_validator
+  def has_location_tag
+    if tags.filter { |tag| ["Zoom", "Physical"].include? tag.name }.count == 0
+      errors.add(:tags, "must have location.")
+    end
   end
 
   def course_queue_open
@@ -65,6 +69,18 @@ class Question < ApplicationRecord
       .where('question_states.id = (SELECT MAX(question_states.id)
                                         FROM question_states where question_states.question_id = questions.id)')
       .where("question_states.state": states)
+  }
+
+  scope :latest_by_state, lambda { |*states|
+    where(id:
+            QuestionState.where(id:
+                                  QuestionState
+                                    .select('max(id) as max')
+                                    .group(:question_id))
+                         .where(state: states)
+                         .pluck(:question_id)
+    )
+
   }
 
   scope :previous_questions, lambda { |question = nil|
@@ -113,14 +129,6 @@ class Question < ApplicationRecord
     %i[previous_questions]
   end
 
-  def tags=(value)
-    if value.empty?
-      self.tags_validator = true
-      self.valid?
-    else
-      super(value)
-    end
-  end
 
   after_update do
     QueueChannel.broadcast_to user, {

@@ -5,7 +5,6 @@ class Tag < ApplicationRecord
   include RansackableConcern
 
   validates :name, presence: true
-  validates_associated :questions
 
   scope :with_course, ->(course_id) do
     where(course_id: course_id)
@@ -14,5 +13,6 @@ class Tag < ApplicationRecord
   scope :unarchived, -> { where(archived: false) }
 
   belongs_to :course
+  belongs_to :tag_group, optional: true
   has_and_belongs_to_many :questions, dependent: :destroy
 end

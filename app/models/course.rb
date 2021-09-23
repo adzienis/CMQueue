@@ -4,6 +4,8 @@ require './lib/postgres/views/course'
 require './lib/postgres/views/question'
 require './lib/postgres/views/tag'
 require './lib/postgres/views/enrollment'
+require './lib/postgres/views/user'
+require './lib/postgres/views/question_state'
 require './lib/postgres/views'
 
 class Course < ApplicationRecord
@@ -21,12 +23,22 @@ class Course < ApplicationRecord
   # validates :course_code, presence: true, uniqueness: true
 
   has_one :certificate
+  has_many :tag_groups
   has_many :enrollments, through: :roles, dependent: :destroy
   has_many :settings, as: :resource
   has_many :users, through: :enrollments
   has_many :questions, dependent: :destroy
-  has_many :unresolved_questions, -> { undiscarded
-                                         .questions_by_state("unresolved") }, class_name: "Question"
+  has_many :unresolved_questions, -> { undiscarded.questions_by_state("unresolved") }, class_name: "Question"
+
+  has_many :tas, -> { joins(:enrollments)
+                        .merge(Enrollment
+                                 .undiscarded
+                                 .with_course(id)
+                                 .with_course_roles(["ta"]))
+  }, class_name: "Question"
+  has_many :instructors, -> { joins(:role).undiscarded.with_course_roles(["ta"]) }, class_name: "Enrollment"
+  has_many :students, -> { joins(:enrollments) }, class_name: "Question"
+
   has_many :active_questions, -> { undiscarded
                                      .questions_by_state("unresolved", "frozen", "resolving")
                                      .or(undiscarded.by_state("kicked").unacknowledged) }, class_name: "Question"
@@ -55,6 +67,22 @@ class Course < ApplicationRecord
     joins(:enrollments).merge(Enrollment.undiscarded.with_user(user_id))
   }
 
+
+  def self.find_by_code?(code)
+    self.find_by_code(code).present?
+  end
+
+  def self.find_by_code(code)
+    ta_course = Course.find_by(ta_code: code)
+    instructor_course = Course.find_by(instructor_code: code)
+
+
+    return ta_course, :ta if ta_course
+    return instructor_course, :instructor if instructor_course
+
+    return nil
+  end
+
   def available_tags
     tags.undiscarded.unarchived.distinct
   end
@@ -63,7 +91,6 @@ class Course < ApplicationRecord
     select(Course.column_names - ["instructor_code", "ta_code"])
   end
 
-
   after_update do
     broadcast_action_later_to self,
                               action: :refresh,
@@ -71,7 +98,7 @@ class Course < ApplicationRecord
                               template: nil
 
     QueueChannel.broadcast_to self, {
-      invalidate: ['courses', id, 'open_status']
+      invalidate: ['courses', id, 'open']
     }
   end
 
@@ -82,6 +109,8 @@ class Course < ApplicationRecord
     Postgres::Views::Question.create(id)
     Postgres::Views::Tag.create(id)
     Postgres::Views::Enrollment.create(id)
+    Postgres::Views::QuestionState.create(id)
+    Postgres::Views::User.create(id)
 
     settings.create([{
                        value: {

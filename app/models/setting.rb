@@ -37,16 +37,28 @@ class Setting < ApplicationRecord
     end
   end
 
+  scope :with_type, ->(type) { where(resource_type: type) }
+  scope :with_user, ->(user_id) { where(resource_id: user_id, resource_type: "User") }
+  scope :with_course, ->(course_id){ where(resource_id: course_id, resource_type: "Course") }
+
   scope :update_all_json, ->(path,value) {
     update_all("value = jsonb_set(value::jsonb, '#{path}', '#{value}'::jsonb)::jsonb")
   }
 
+  def key
+    value.keys[0]
+  end
+
+  def set_value(new_value)
+    value[key]["value"] = new_value
+  end
+
   def update_json(path, value)
-    Setting.update("value = jsonb_set(value::jsonb, '{site_notifications, value}', 'true'::jsonb)::jsonb")
+    Setting.update("value = jsonb_set(value::jsonb, '{#{path}}', '#{value}'::jsonb)::jsonb")
   end
 
   def update_all_json(path, value)
-    Setting.update_all("value = jsonb_set(value::jsonb, '{site_notifications, value}', 'true'::jsonb)::jsonb")
+    Setting.update_all("value = jsonb_set(value::jsonb, '{#{path}}', '#{value}'::jsonb)::jsonb")
   end
 
   after_update do

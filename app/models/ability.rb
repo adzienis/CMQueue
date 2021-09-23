@@ -13,16 +13,16 @@ class Ability
       end
       #can :manage, Message, question_state: { question: { user: { id: user.id } } }
 
-
-
       can :manage, Certificate, Certificate
                                   .where(course_id: Course
                                                       .where("courses.id": Course.find_roles([:instructor], user)
-                                                                                 .pluck(:id)))
+                                                                                 .pluck(:id)
+                                                      )
+                                  )
 
       can :queue, Course
 
-      can [:active_tas, :open_status, :read, :search], Course
+      can [:active_tas, :open, :read, :search], Course
       can :read, User
       can :semester, Course
 
@@ -70,7 +70,7 @@ class Ability
 
       #can :manage, Message, Message.joins(:question_state).joins(question_state: :question)
       #                                .where("questions.course_id": Course
-      #                                                              .where("courses.id": Course.find_roles([:instructor], user)
+      #                         enrollment                                     .where("courses.id": Course.find_roles([:instructor], user)
       #                                                                                         .pluck(:resource_id))
       #                                                              .pluck(:id))
       #                                .or(Message.where(user_id: user.id))
@@ -130,6 +130,16 @@ class Ability
                                                                               .pluck(:resource_id))
                                                    .pluck(:id)) do |role|
         (role.new_record? && user.has_role?(:instructor, :any)) || user.has_any_role?({ name: :instructor, resource: role.course })
+      end
+
+
+
+      can :manage, TagGroup, TagGroup
+                          .where(course_id: Course
+                                              .where(id: Course.find_roles([:ta, :instructor], user)
+                                                               .pluck(:resource_id))
+                                              .pluck(:id)) do |tag_group|
+        user.has_any_role?({ name: :ta, resource: tag_group.course }, { name: :instructor, resource: tag_group.course })
       end
 
       can :manage, Tag, Tag
