@@ -72,11 +72,7 @@ export default function QuestionWaitingModal(props) {
     }
   }, [question]);
 
-  const { data: queues } = useQuery([
-    "courses",
-    parseInt(courseId, 10),
-    "tags",
-  ]);
+  const { data: queues } = useQuery(["tags", "?", `course_id=${courseId}`]);
   const { mutateAsync: updateQuestion, isLoading: updatedLoading } =
     useWrappedMutation(
       () => ({

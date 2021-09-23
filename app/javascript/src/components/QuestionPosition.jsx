@@ -7,11 +7,10 @@ export default (props) => {
 
   const { data: position, isLoading: positionLoading } = useQuery(
     [
-      "courses",
-      parseInt(courseId, 10),
       "questions",
       "position",
       "?",
+      `course_id=${courseId}`,
       `question_id=${question?.id}`,
       `state=["unresolved", "frozen"]`,
     ],

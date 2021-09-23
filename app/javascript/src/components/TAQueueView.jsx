@@ -16,8 +16,8 @@ export default (props) => {
     "courses",
     parseInt(courseId, 10),
     "questions",
-    "count",
     "?",
+    "agg=count",
     `state=${JSON.stringify(["unresolved", "frozen"])}`,
   ]);
 

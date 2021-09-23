@@ -3,6 +3,12 @@ import { useQuery } from "react-query";
 
 import useWrappedMutation from "../hooks/useWrappedMutation";
 import CourseCard from "./CourseCard";
+import ConfirmAction from "./ConfirmAction";
+import { ErrorMessage } from "@hookform/error-message";
+import { useForm } from "react-hook-form";
+import defaultMutationFn from "../utilities/defaultMutationFn";
+import ErrorSummary from "./forms/ErrorSummary";
+import ErrorContainer from "./forms/ErrorContainer";
 
 /**
  * Add a course by role code.
@@ -42,6 +48,19 @@ export default (props) => {
     }
   );
   const [code, setCode] = useState("");
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    control,
+    setError,
+    clearErrors,
+    reset,
+
+    formState: { errors: formErrors },
+  } = useForm();
+
   return (
     <>
       <div className="modal fade" id="course-code-modal">
@@ -57,7 +76,29 @@ export default (props) => {
               />
             </div>
             <div className="modal-body">
-              <form>
+              <ErrorSummary errors={formErrors} />
+              <form
+                onSubmit={handleSubmit(async (data) => {
+                  const resp = await defaultMutationFn("/enroll", {
+                    body: {
+                      code: data["code"],
+                    },
+                  });
+
+                  if (resp.errors) {
+                    Object.keys(resp.errors).forEach((key) => {
+                      setError(key, {
+                        type: "server",
+                        message:
+                          key.charAt(0).toUpperCase() +
+                          key.slice(1) +
+                          " " +
+                          resp.errors[key].join(", "),
+                      });
+                    });
+                  }
+                })}
+              >
                 <div className="mb-3">
                   <div className="mb-2">
                     <label className="form-label fw-bold mb-0">Role Code</label>
@@ -66,27 +107,10 @@ export default (props) => {
                       instructor.
                     </div>
                   </div>
-                  <input
-                    className="form-control"
-                    value={code}
-                    onChange={(e) => setCode(e.target.value)}
-                  />
-                  <b>
-                    <div className="invalid-feedback d-block">
-                      {Object.values(errors).flat().join(", and ")}
-                    </div>
-                  </b>
+                  <input className="form-control" {...register("code")} />
+                  <ErrorContainer name="code" errors={formErrors} />
                 </div>
-                <button
-                  className="btn btn-primary"
-                  onClick={(e) => {
-                    e.preventDefault();
-
-                    try {
-                      createEnrollment();
-                    } catch (e) {}
-                  }}
-                >
+                <button className="btn btn-primary" type="submit">
                   Submit
                 </button>
               </form>

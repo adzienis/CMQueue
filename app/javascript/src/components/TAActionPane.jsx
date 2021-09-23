@@ -29,13 +29,11 @@ const Option = (props) => {
 export default (props) => {
   const { courseId, userId, enrollmentId } = props;
 
-  const { data: tags } = useQuery(["courses", parseInt(courseId, 10), "tags"]);
+  const { data: tags } = useQuery(["tags", "?", `course_id=${courseId}`]);
   const { data: groupedTags } = useQuery([
-    "courses",
-    parseInt(courseId, 10),
-    "tags",
-    "count",
+    "grouped_tags",
     "?",
+    `course_id=${courseId}`,
     `state=${JSON.stringify(["unresolved", "frozen"])}`,
   ]);
 

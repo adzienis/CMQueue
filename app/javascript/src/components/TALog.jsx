@@ -25,14 +25,7 @@ export default (props) => {
     isFetching,
     isLoading,
   } = useQuery(
-    [
-      "courses",
-      parseInt(courseId, 10),
-      "question_states",
-      "ta_feed",
-      "?",
-      `date=${date.toISOString()}`,
-    ],
+    ["activity", "?", `date=${date.toISOString()}`, `course_id=${courseId}`],
     {
       placeholderData: [],
       select: (d) => {

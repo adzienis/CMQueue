@@ -28,7 +28,7 @@ export default (props) => {
   const { data: openStatus } = useQuery([
     "courses",
     parseInt(courseId, 10),
-    "open_status",
+    "open",
   ]);
 
   if (question === null || typeof openStatus === "undefined") {

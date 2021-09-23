@@ -9,7 +9,7 @@ export default (props) => {
   const { data: openStatus, isLoading: openLoading } = useQuery([
     "courses",
     parseInt(courseId, 10),
-    "open_status",
+    "open",
   ]);
 
   const { mutateAsync, isLoading: queueLoading } = useWrappedMutation(

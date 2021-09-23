@@ -26,7 +26,7 @@ const handle_permission = async (setting_id, checked) => {
       await wrappedFetch(`/settings/${setting_id}?`, {
         method: "PATCH",
         credentials: "include",
-        body: JSON.stringify({ [setting_id]: true }),
+        body: JSON.stringify({ setting: { value: true } }),
       });
     } else {
       return Notification.requestPermission().then(async function (permission) {
@@ -34,7 +34,7 @@ const handle_permission = async (setting_id, checked) => {
           await wrappedFetch(`/settings/${setting_id}?`, {
             method: "PATCH",
             credentials: "include",
-            body: JSON.stringify({ [setting_id]: true }),
+            body: JSON.stringify({ setting: { value: true } }),
           });
         } else if (permission === "denied") {
           alert(
@@ -49,24 +49,26 @@ const handle_permission = async (setting_id, checked) => {
     await wrappedFetch(`/settings/${setting_id}?`, {
       method: "PATCH",
       credentials: "include",
-      body: JSON.stringify({ [setting_id]: false }),
+      body: JSON.stringify({ setting: { value: false } }),
     });
   }
 };
 
 export default (props) => {
-  const { settings: settingsPlaceholder, id, type } = props;
+  const { id, type } = props;
 
   const { data: settings } = useQuery(
     ["settings", "?", `type=${type}`, `id=${id}`],
     {
-      placeholderData: settingsPlaceholder,
+      placeholderData: [],
     }
   );
 
   const { mutate: changeSetting } = useWrappedMutation(
     ({ id, value }) => ({
-      [id]: value,
+      setting: {
+        value,
+      },
       url: `/settings/${id}`,
     }),
     null,

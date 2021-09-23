@@ -5,12 +5,12 @@ import useWrappedMutation from "../hooks/useWrappedMutation";
 export default (props) => {
   const { userId } = props;
 
-  const ref = useRef();
-
   const { data: notifications } = useQuery([
     "users",
     parseInt(userId, 10),
-    "unread_notifications",
+    "notifications",
+    "?",
+    "unread=true",
   ]);
 
   const { mutate: markAsRead } = useWrappedMutation((notification_id) => ({
@@ -96,6 +96,7 @@ export default (props) => {
               >
                 {new Date(v.created_at).toLocaleTimeString()}
               </small>
+
               <button
                 type="button"
                 className={`btn-close ${

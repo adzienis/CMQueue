@@ -5,11 +5,10 @@ export default (props) => {
   const { courseId } = props;
 
   const { data: count } = useQuery([
-    "courses",
-    parseInt(courseId, 10),
     "questions",
-    "count",
     "?",
+    `course_id=${courseId}`,
+    "agg=count",
     'state=["unresolved", "frozen"]',
   ]);
 

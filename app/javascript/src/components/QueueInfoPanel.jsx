@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useQuery } from "react-query";
 import QueueInfoItem from "./QueueInfoItem";
 import TALog from "./TALog";
@@ -8,11 +8,7 @@ import useLocalStorage from "../hooks/useLocalStorage";
 export default (props) => {
   const { courseId, userId, enrollment } = props;
 
-  const { data: d } = useQuery([
-    "courses",
-    parseInt(courseId, 10),
-    "answer_time",
-  ]);
+  const { data: d } = useQuery(["answer_time", "?", `course_id=${courseId}`]);
 
   const [panelOpened, setPanelOpened] = useLocalStorage(
     ["courses", parseInt(courseId, 10), "panelOpened"],
@@ -38,22 +34,22 @@ export default (props) => {
   const { data: openStatus, isLoading: openLoading } = useQuery([
     "courses",
     parseInt(courseId, 10),
-    "open_status",
+    "open",
   ]);
 
   const { data: count, isLoading: countLoading } = useQuery([
     "courses",
     parseInt(courseId, 10),
     "questions",
-    "count",
     "?",
+    "agg=count",
     `state=${JSON.stringify(["unresolved", "frozen"])}`,
   ]);
 
   const { data: activeTas, isLoading: activeLoading } = useQuery([
-    "courses",
+    `courses`,
     parseInt(courseId, 10),
-    "activeTAs",
+    "recent_activity",
   ]);
 
   const accordionState = useMemo(() => {

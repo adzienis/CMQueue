@@ -43,7 +43,6 @@ export default (props) => {
   const possible_values = Object.keys(colNames).concat(
     associations.map((v) => Object.keys(v)[0]).flat()
   );
-
   const [filters, setFilters] = useState(
     /**
      * Here we initialize parameters from the query string,

@@ -11,6 +11,7 @@ export default consumer.subscriptions.create("Noticed::NotificationChannel", {
   },
 
   async received(data) {
+    console.log("here", data);
     if (
       "Notification" in window &&
       Notification.permission === "granted" &&
@@ -27,6 +28,10 @@ export default consumer.subscriptions.create("Noticed::NotificationChannel", {
     }
 
     if (data.invalidate) {
+      if (process.env.NODE_ENV === "development") {
+        console.log("invalidating", data.invalidate);
+      }
+
       await queryClient.invalidateQueries(data.invalidate);
 
       await queryClient.refetchQueries(data.invalidate);

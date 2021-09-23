@@ -4,19 +4,21 @@ import useWrappedMutation from "../hooks/useWrappedMutation";
 import CourseCard from "./CourseCard";
 import AsyncSelect from "react-select/async";
 import Select from "react-select";
+import { useForm, Controller } from "react-hook-form";
+import defaultMutationFn from "../utilities/defaultMutationFn";
+import { ErrorMessage } from "@hookform/error-message";
+import ErrorContainer from "./forms/ErrorContainer";
+import ErrorSummary from "./forms/ErrorSummary";
 
 export default (props) => {
   const { userId } = props;
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
-  const [selected, setSelected] = useState([]);
-  const { data } = useQuery(["courses", "search", "?", `name=${search}`], {
+  const { data } = useQuery(["courses", "?", `name=${search}`], {
     select: (data) => {
       return data.map((v) => ({ label: v.name, value: v.id }));
     },
   });
-
-  const { data: allCourses } = useQuery(["courses", "search"]);
 
   const { data: enrollments } = useQuery([
     "users",
@@ -35,13 +37,23 @@ export default (props) => {
       course_id,
       user_id: userId,
     }),
-    "/api/enrollments",
-    {}
+    `/enroll`
   );
 
   useEffect(() => {
     if (!open) setErrors({});
   }, [open]);
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    control,
+    setError,
+    reset,
+    clearErrors,
+    formState: { errors: formErrors },
+  } = useForm();
 
   return (
     <>
@@ -58,37 +70,49 @@ export default (props) => {
               />
             </div>
             <div className="modal-body">
-              <div className="mb-3">
-                <label className="form-label fw-bold mb-0">Search</label>
-                <div className="text-muted">
-                  Search for a course by its name, if it is open for enrollment.
+              <ErrorSummary errors={formErrors} />
+              <form onChange={(e) => clearErrors(["course", "enrollment"])}>
+                <div className="mb-2">
+                  <label className="form-label fw-bold mb-0">Search</label>
+                  <div className="text-muted">
+                    Search for a course by its name, if it is open for
+                    enrollment.
+                  </div>
+                  <Controller
+                    name="course_name"
+                    control={control}
+                    render={({ field }) => (
+                      <Select {...field} isMulti options={data} />
+                    )}
+                  />
                 </div>
-                <Select
-                  isMulti
-                  options={data}
-                  onInputChange={(newValue) => {
-                    setSearch(newValue);
-                  }}
-                  onChange={(options) => setSelected(options)}
-                />
-              </div>
-              <button
-                className="btn btn-primary"
-                onClick={(e) => {
-                  selected.map((v) => {
-                    try {
-                      addCourse(v.value);
-                    } catch (e) {}
-                  });
-                }}
-              >
-                Add Course
-              </button>
+
+                <button
+                  className="btn btn-primary"
+                  onClick={handleSubmit(async (data) => {
+                    const resp = await defaultMutationFn("/enroll", {
+                      body: {
+                        course_id: data["course_name"][0].value,
+                      },
+                    });
+
+                    if (resp.errors) {
+                      Object.keys(resp.errors).forEach((key) => {
+                        setError(key, {
+                          type: "server",
+                          message: key + " " + resp.errors[key].join(", "),
+                        });
+                      });
+                    }
+                  })}
+                >
+                  Add Course
+                </button>
+              </form>
             </div>
           </div>
         </div>
       </div>
-
       <div
         style={{ display: "grid", gridTemplateColumns: "1fr", rowGap: "1rem" }}
       >

@@ -1,37 +1,35 @@
 import useWrappedMutation from "../hooks/useWrappedMutation";
-import React from "react";
+import React, { useMemo } from "react";
 import { useQuery } from "react-query";
 
 export default (props) => {
   const { enrollment } = props;
 
-  // should just reference course above to enrollment so no n+1
-  const {
-    data: [enrollment_data],
-  } = useQuery(["enrollments", "?", `course_id=${enrollment?.course.id}`], {
-    placeholderData: [undefined],
-  });
   const { mutateAsync: deleteEnrollment } = useWrappedMutation(
     () => ({}),
-    `/api/enrollments/${enrollment_data?.id}`,
+    `/enrollments/${enrollment.id}`,
     {
       method: "DELETE",
     }
   );
 
   let footerClass = "";
+  let href = "";
 
-  if (enrollment?.role.name === "instructor") {
+  if (enrollment.role.name === "instructor") {
     footerClass = "bg-success";
-  } else if (enrollment?.role.name === "ta") {
+    href = `/courses/${enrollment.course.id}/queue`;
+  } else if (enrollment.role.name === "ta") {
     footerClass = "bg-info";
-  } else if (enrollment?.role.name === "student") {
+    href = `/courses/${enrollment.course.id}/queue`;
+  } else if (enrollment.role.name === "student") {
     footerClass = "bg-warning";
+    href = `/courses/${enrollment.course.id}/forms/question/new`;
   }
 
   return (
     <a
-      href={`/courses/${enrollment?.course.id}/queue`}
+      href={href}
       className="card shadow-sm text-decoration-none hover-container"
       style={{ color: "inherit" }}
     >
@@ -39,7 +37,7 @@ export default (props) => {
         <div className="card-title">
           <div style={{ display: "flex" }}>
             <h5 style={{ flex: 1 }}>
-              Go to <b>{enrollment?.course.name}</b>
+              Go to <b>{enrollment.course.name}</b>
             </h5>
             <i
               className="fas fa-times fa-lg"

@@ -29,20 +29,7 @@ export default (props) => {
       queryClient.prefetchQuery([
         "courses",
         parseInt(v.role.resource_id, 10),
-        "open_status",
-      ]);
-      queryClient.prefetchQuery([
-        "courses",
-        parseInt(v.role.resource_id, 10),
-        "questions",
-        "count",
-        "?",
-        'state=["unresolved", "frozen"]',
-      ]);
-      queryClient.prefetchQuery([
-        "courses",
-        parseInt(v.role.resource_id, 10),
-        "activeTAs",
+        "open",
       ]);
       queryClient.prefetchQuery([
         "courses",
@@ -60,7 +47,7 @@ export default (props) => {
       queryClient.prefetchQuery([
         "courses",
         parseInt(v.role.resource_id, 10),
-        "open_status",
+        "open",
       ]);
       queryClient.prefetchQuery([
         "courses",
@@ -68,19 +55,6 @@ export default (props) => {
         "questions",
         "?",
         `state=["unresolved"]`,
-      ]);
-      queryClient.prefetchQuery([
-        "courses",
-        parseInt(v.role.resource_id, 10),
-        "questions",
-        "count",
-        "?",
-        'state=["unresolved", "frozen"]',
-      ]);
-      queryClient.prefetchQuery([
-        "courses",
-        parseInt(v.role.resource_id, 10),
-        "activeTAs",
       ]);
       queryClient.prefetchInfiniteQuery(
         ["courses", parseInt(v.role.resource_id, 10), "paginatedQuestions"],
@@ -111,7 +85,7 @@ export default (props) => {
       queryClient.prefetchQuery([
         "courses",
         parseInt(v.role.resource_id, 10),
-        "open_status",
+        "open",
       ]);
       queryClient.prefetchQuery([
         "courses",
@@ -119,19 +93,6 @@ export default (props) => {
         "questions",
         "?",
         `state=["unresolved"]`,
-      ]);
-      queryClient.prefetchQuery([
-        "courses",
-        parseInt(v.role.resource_id, 10),
-        "questions",
-        "count",
-        "?",
-        'state=["unresolved", "frozen"]',
-      ]);
-      queryClient.prefetchQuery([
-        "courses",
-        parseInt(v.role.resource_id, 10),
-        "activeTAs",
       ]);
       queryClient.prefetchInfiniteQuery(
         ["courses", parseInt(v.role.resource_id, 10), "paginatedQuestions"],

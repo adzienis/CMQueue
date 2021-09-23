@@ -11,11 +11,7 @@ import ServerError from "./ServerError";
 export default (props) => {
   const { userId, courseId, enrollmentId } = props;
 
-  const { data: queues } = useQuery([
-    "courses",
-    parseInt(courseId, 10),
-    "tags",
-  ]);
+  const { data: queues } = useQuery(["tags", "?", `course_id=${courseId}`]);
 
   const formRef = useRef();
 
@@ -38,7 +34,7 @@ export default (props) => {
   const { data: openStatus } = useQuery([
     "courses",
     parseInt(courseId, 10),
-    "open_status",
+    "open",
   ]);
 
   const {
