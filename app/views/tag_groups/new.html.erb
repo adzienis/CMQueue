@@ -1,2 +1,1 @@
-<h1>TagGroups#edit</h1>
-<p>Find me in app/views/tag_groups/edit.html.erb</p>
+<%= render partial: "shared/new_model", locals: { model: @tag_group, options: { except: [:question_states, :questions ]} } %>

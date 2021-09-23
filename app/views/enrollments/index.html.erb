@@ -1,6 +1,5 @@
 <h1> Enrollments </h1>
 
-
 <%= render partial: "shared/search_form",
            locals: {
              records: @records,
@@ -8,7 +7,7 @@
              course: @course,
              pagy: @pagy,
              options: {
-               actions: [:download, :import, :new, :destroy],
+               actions: [:download, :import, :new, :destroy, :edit],
                except: [:course_id, :user_id, :role_id, :semester_id, :discarded_at],
                extra_columns: [{ user: :given_name }, { user: :family_name }, { role: :name }, { course: :name }],
                other_filters: {

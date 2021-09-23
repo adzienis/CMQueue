@@ -7,7 +7,7 @@
 </h1>
 <div class="card mb-5 shadow-sm">
   <div class="card-body">
-    <%= form_with model: model, url: polymorphic_url([course, model], **request.query_parameters), method: :get, local: false do |f| %>
+    <%= form_with model: model, url: polymorphic_url([course, model], **request.query_parameters, format: :csv), method: :get do |f| %>
 
       <%= fields_for :q do |q| %>
         <% params[:q]&.each do |param| %>

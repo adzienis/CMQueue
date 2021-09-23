@@ -62,13 +62,15 @@
 </ul>
 <div class="tab-content">
   <div class="tab-pane fade show active" id="results">
-    <%= render partial: "shared/search_results", locals: {
-      records: records,
-      pagy: pagy,
-      options: options,
-      ransack: ransack,
-      presenter: presenter,
-      course: course
-    } %>
+    <div class="card card-body">
+      <%= render partial: "shared/search_results", locals: {
+        records: records,
+        pagy: pagy,
+        options: options,
+        ransack: ransack,
+        presenter: presenter,
+        course: course
+      } %>
+    </div>
   </div>
 </div>

@@ -1,0 +1,17 @@
+<h1>
+  Tag Groups
+</h1>
+
+<%= render partial: "shared/search_form",
+           locals: {
+             records: @records,
+             ransack: @tag_groups_ransack,
+             course: @course,
+             pagy: @pagy,
+             options: {
+               actions: [:edit, :new, :destroy],
+               except: [:course_id, :course, :discarded_at],
+               format: [:name, :description],
+             }
+           } %>
+

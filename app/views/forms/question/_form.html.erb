@@ -1,4 +1,4 @@
-<%= simple_form_for question,
+<%= simple_form_for @question_form, as: :question, url: course_forms_question_path(@course), method: params[:action] == "new" || params[:action] == "create" ? :post : :patch,
                     html: {
                       class: "w-100", id: dom_id(question),
                       data: { controller: "form" },
@@ -9,32 +9,35 @@
                       label_html: { class: "fw-bold" }
                     } do |f| %>
   <%= f.full_error :course, class: "invalid-feedback d-block fw-bold", style: "font-size: 1rem" %>
-  <%= f.full_error :enrollment, class: "invalid-feedback d-block fw-bold", style: "font-size: 1rem"  %>
-  <%= f.hidden_field :enrollment_id, value: question.enrollment.id %>
-  <%= f.hidden_field :course_id, value: question.course.id %>
+  <%= f.full_error :enrollment, class: "invalid-feedback d-block fw-bold", style: "font-size: 1rem" %>
+  <%= f.hidden_field :enrollment_id, value: @enrollment.id %>
+  <%= f.hidden_field :course_id, value: @course.id %>
   <%= f.input :tried, label: "What have you tried?",
-              input_html: { value: question.tried },
+              as: :text,
               placeholder: 'Describe what steps you have taken so far to solve your question.'
   %>
   <%= f.input :description,
+              as: :text,
               label: "Description",
               placeholder: "Describe your current problem that you are trying to solve, as well as the context."
   %>
   <%= f.input :location,
+              as: :text,
               label: "Location/Zoom Link",
               placeholder: "Use the short zoom link."
   %>
 
   <div data-controller="react-select" class="mb-3">
-    <%= f.association :tags,
-                as: :select,
-                label: "Tags",
-                selected: question.tags.map(&:id),
-                input_html: {
-                  class: "invisible form-control", multiple: true
-                },
-                collection: available_tags
+    <%= f.collection_select :tag_ids,
+                            available_tags,
+                            :id,
+                            :name,
+                            {},
+                            multiple: true,
+                            class: "invisible form-control",
+                            autocomplete: false
     %>
+    <%= f.full_error :tags, class: "invalid-feedback d-block" %>
   </div>
 
 
@@ -52,15 +55,15 @@
                  data: { "disable-with": "Loading",
                  } if question.frozen? %>
   <%= tag.button :Delete, type: "submit", form: "delete", class: "btn btn-danger", data: { "disable-with" => "Loading" } if !question.new_record? %>
- <% end %>
+<% end %>
 
 <%= form_with url: update_state_question_path(question), id: "unfreeze", local: false do |f| %>
-  <%= f.hidden_field :course_id, value: question.course.id %>
-  <%= f.hidden_field :state, value: "unresolved" %>
-<% end if !question.new_record? %>
-<%= form_with url: question_path(question), id: "delete", method: :delete, local: false do |f| %>
-  <%= f.hidden_field :course_id, value: question.course.id %>
-  <%= f.hidden_field :state, value: "unresolved" %>
-<% end if !question.new_record? %>
+<%=  f.hidden_field :course_id, value: question.course.id  %>
+  <%=  f.hidden_field :state, value: "unresolved"  %>
+<%  end unless question.new_record? %>
+<%= form_with url: course_forms_question_path(@course), id: "delete", method: :delete, local: false do |f| %>
+<%=  f.hidden_field :course_id, value: question.course.id  %>
+  <%=  f.hidden_field :state, value: "unresolved"  %>
+<%  end unless question.new_record? %>
 
 

@@ -1,0 +1,10 @@
+<h2>
+  <b>
+    <%= TagGroup.model_name.human %>
+  </b>
+</h2>
+
+<%= render partial: "shared/show_model", locals: {
+  model_instance: @tag_group,
+  options: { actions: [:edit, :delete], except: [:course, :course_id, :discarded_at] }
+} %>

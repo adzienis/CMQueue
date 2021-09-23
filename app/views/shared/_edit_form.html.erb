@@ -1,7 +1,7 @@
 <% options ||= {} %>
 <% options[:except] ||= [] %>
 
-<%= simple_form_for model_instance, defaults: {
+<%= simple_form_for model_instance, url: polymorphic_path([@course, model_instance]),  defaults: {
   wrapper_html: {
     class: "mb-2",
   },
@@ -17,5 +17,28 @@
     </b>
   <% end %>
 
-  <%= f.submit :Update, class: "btn btn-primary", "data-disable-with": false %>
+  <% [:has_many, :belongs_to]
+       .collect { |s| model_instance.class.reflect_on_all_associations(s) }
+       .flatten
+       .reject { |v| options&.dig(:except)&.include? v.name.to_sym }
+       .reject { |v| [:course].include? v.name }
+       .each do |ass| %>
+    <%= f.association ass.name,
+                      value_method: :id,
+                      label_method: ->(v) {
+                        return v[:name] if v[:name]
+                        return "#{v[:given_name]} #{v[:family_name]}" if v[:given_name] && v[:family_name]
+                        return v[:id] if v[:id]
+                      },
+                      collection: (
+                        if params[:course_id]
+                          ass.klass.methods.include?(:with_course) ? ass.klass.accessible_by(current_ability).with_course(Course.find(params[:course_id])).distinct : ass.klass.accessible_by(current_ability).distinct
+                        else
+                          ass.klass.accessible_by(current_ability).distinct
+                        end
+                      )
+    %>
+  <% end %>
+
+  <%= f.submit :Update, class: "btn btn-primary", "data-disable-with": false, "data-turbo": false %>
 <% end %>

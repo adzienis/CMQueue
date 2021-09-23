@@ -1,0 +1,37 @@
+<h1>
+  <%= @course.name %>
+</h1>
+
+<hr>
+
+<div
+  style="display: flex; flex-direction: column; align-items: center" class="w-100">
+
+  <%= content_tag :div, id: "queue-info-panel", class: 'w-100', data: {
+    courseId: @course.id, userId: current_user.id, enrollment: @enrollment.as_json(include: :role)
+  }.to_json do %><% end %>
+
+  <% if current_user.has_role? :student, @course %>
+
+    <%= render partial: "questions/turbo_question_creator", locals: { question: @question, available_tags: @available_tags}  %>
+
+  <% elsif current_user.has_any_role?({ name: :ta, resource: @course }, { name: :instructor, resource: @course }) %>
+
+    <%= content_tag :div, id: "ta-action-pane", data: {
+      courseId: @course.id, userId: current_user.id,
+      enrollmentId: current_user.enrollments.most_recent_enrollment_by_course(@course.id).id
+    }.to_json, class: 'w-100' do %><% end %>
+
+    <hr class="w-100">
+  <% end %>
+
+
+  <% if current_user.has_any_role?({ name: :ta, resource: @course }, { name: :instructor, resource: @course }) %>
+    <%= content_tag :div, id: "ta-queue-view", data: {
+      courseId: @course.id, userId: current_user.id,
+      enrollmentId: current_user.enrollments.most_recent_enrollment_by_course(@course.id).id
+    }.to_json, class: 'w-100' do %><% end %>
+
+  <% end %>
+
+</div>

@@ -82,6 +82,14 @@
                         class: "btn text-decoration-none #{(request.path == course_enrollments_path(@course)) ?
                                                              "active-link" : ""}", method: :get %>
         </li>
+        <li class="d-flex align-items-center">
+          <div style="width: 16px" class="d-flex justify-content-center">
+            <i class="fas fa-user"></i>
+          </div>
+          <%= button_to "Tag Groups", course_tag_groups_path(@course),
+                        class: "btn text-decoration-none #{(request.path == course_tag_groups_path(@course)) ?
+                                                             "active-link" : ""}", method: :get %>
+        </li>
         <%= tag.li class: "d-flex align-items-center" do %>
           <div style="width: 16px" class="d-flex justify-content-center">
             <i class="fas fa-database"></i>

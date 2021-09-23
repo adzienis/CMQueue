@@ -4,7 +4,7 @@
 <% presenter = QuestionStatesHelper::QuestionStatesPresenter.new(question) %>
 
 
-<%= render partial: "questions/question_state_modal", locals: { question: question } %>
+<%= render partial: "question_state_modal", locals: { question: question } %>
 
 <%= tag.div class: "card w-100 shadow-sm #{presenter.creator_classes}",
             style: presenter.creator_styles do %>
@@ -34,6 +34,6 @@
         <% end %>
       <% end if question.resolving? %>
     </div>
-    <%= render partial: "questions/form", locals: { question: question, available_tags: available_tags } %>
+    <%= render partial: "form", locals: { question: question, available_tags: available_tags } %>
   </div>
 <% end %>
