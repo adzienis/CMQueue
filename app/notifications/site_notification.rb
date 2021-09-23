@@ -13,23 +13,31 @@ class SiteNotification < Noticed::Base
     {
       type: self.class.name,
       params: params,
-      invalidate: ['users', recipient.id, 'unread_notifications']
+      invalidate: ['users', recipient.id, 'notifications']
     }
   end
 
   def self.success(target, message, delay=nil)
     if delay
-      SiteNotification.with(type: "Success", body: message, title: "Success", delay: delay).deliver(target)
+      SiteNotification.with(type: "Success", body: message, title: "Success", delay: delay).deliver_later(target)
     else
-      SiteNotification.with(type: "Success", body: message, title: "Success").deliver(target)
+      SiteNotification.with(type: "Success", body: message, title: "Success").deliver_later(target)
+    end
+  end
+
+  def self.student_on_queue(target, delay=nil)
+    if delay
+      SiteNotification.with(type: "Success", body: message, title: "Success", delay: delay).deliver_later(target)
+    else
+      SiteNotification.with(type: "Success", body: message, title: "Success").deliver_later(target)
     end
   end
 
   def self.failure(target, message, delay=nil)
     if delay
-      SiteNotification.with(type: "Failure", body: message, title: "Failure", delay: delay).deliver(target)
+      SiteNotification.with(type: "Failure", body: message, title: "Failure", delay: delay).deliver_later(target)
     else
-      SiteNotification.with(type: "Failure", body: message, title: "Failure").deliver(target)
+      SiteNotification.with(type: "Failure", body: message, title: "Failure").deliver_later(target)
     end
   end
 

@@ -1,6 +1,20 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
+  namespace :forms do
+    get 'question/create'
+    get 'question/update'
+    get 'question/show'
+  end
+  post 'enroll', to: "forms/enroll_by_code#create"
+  namespace :courses do
+    get 'queue/index'
+  end
+  get "activity", to: "summaries#activity"
+  get "answer_time", to: "summaries#answer_time"
+  get "grouped_tags", to: "summaries#grouped_tags"
+
+  resources :tag_groups
 
   namespace :admin do
     namespace :doorkeeper do
@@ -16,7 +30,7 @@ Rails.application.routes.draw do
     resources :announcements
     resources :question_states
     resources :question_tags
-    resource :settings
+    resource :settings, param: :setting_id
     resources :notifications
     resources :questions
     resources :tags
@@ -47,7 +61,7 @@ Rails.application.routes.draw do
 
   resources :messages
 
-  resources :settings
+  resources :settings, param: :setting_id
 
   resources :enrollments do
     collection do
@@ -70,9 +84,9 @@ Rails.application.routes.draw do
       post 'acknowledge', to: 'questions#acknowledge'
       post 'update_state', to: 'questions#update_state'
     end
-
     collection do
       get 'download', to: "questions#download_form"
+      get 'position', to: 'questions#position'
     end
   end
 
@@ -83,16 +97,21 @@ Rails.application.routes.draw do
     resources :courses, param: :course_id
     resources :enrollments
     resources :tags
+    resources :notifications
     resource :settings do
       get 'notifications', to: "settings#notifications"
     end
+    member do
+      get "topQuestion", to: "courses#top_question"
+    end
   end
+
   resources :users, param: :user_id
 
   resources :courses, only: [] do
+
     resources :questions, param: :question_id do
       collection do
-        get 'count', to: 'questions#count'
         get 'download', to: "questions#download_form"
       end
     end
@@ -103,13 +122,19 @@ Rails.application.routes.draw do
       end
     end
 
+    namespace :forms do
+      resource :question, only: [:new, :create, :edit, :update, :destroy], controller: "question"
+    end
+
+    resources :tag_groups, param: :tag_group_id
+
     resources :users, param: :user_id
 
     resources :question_states
 
     resources :messages
 
-    resource :settings
+    resources :settings, param: :setting_id
 
     resources :certificates do
       collection do
@@ -139,7 +164,7 @@ Rails.application.routes.draw do
     member do
       post 'semester'
       get 'roster', to: 'courses#roster'
-      get 'queue', to: 'courses#queue'
+      get 'queue', to: 'courses/queue#show'
       get 'settings/queues', to: 'courses#queues'
       get 'activeTAs', to: 'courses#active_tas'
       get 'analytics', to: 'courses/analytics#index'
@@ -155,9 +180,9 @@ Rails.application.routes.draw do
       post 'freeze', to: 'courses#freeze'
       post 'kick', to: 'courses#kick'
       get 'topQuestion', to: 'courses#top_question'
-      get 'open', to: 'courses#open_status'
-      post 'open', to: 'courses#open'
-      get 'database', to: "courses#database", as: :database
+      get 'open', to: "courses/open#show"
+      get 'database', to: "courses/database#index", as: :database
+      get 'recent_activity', to: "summaries#recent_activity"
     end
   end
 

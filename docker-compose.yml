@@ -34,11 +34,21 @@ x-app: &app
     - redis
 
 services:
+  metabase:
+    image: metabase/metabase
+    ports:
+      - 3010:3000
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      MB_DB_FILE: /metabase-data/metabase.db
+    volumes:
+      - $PWD/metabase-data:/metabase-data/metabase.db
   postgres:
     image: postgres
     # Uncomment to access this containers Postgres instance via port 5432
-    #ports:
-      #- "127.0.0.1:5432:5432"
+    ports:
+      - "127.0.0.1:5432:5432"
     environment:
       PSQL_HISTFILE: /root/log/.psql_history
       POSTGRES_USER: postgres

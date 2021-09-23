@@ -52,3 +52,5 @@ scripts/keys
 .env.prod
 .env.dev
 .env.test
+metabase-data
+!metabase-data/.keep

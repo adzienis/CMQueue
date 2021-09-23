@@ -31,7 +31,7 @@ module QueueAPI
             tags = Tag.accessible_by(current_ability)
             tags = tags.with_course(params[:course_id])
             tags = tags.undiscarded
-            tags = tags.joins(:questions).merge(Question.by_state(params[:state])) if params[:state]
+            tags = tags.joins(:questions).merge(Question.undiscarded.latest_by_state(params[:state])) if params[:state]
             tags = tags.where(id: params[:tags]) if params[:tags]
             tags = tags.group(:id).count
 
