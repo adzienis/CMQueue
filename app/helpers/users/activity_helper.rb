@@ -1,0 +1,2 @@
+module Users::ActivityHelper
+end
