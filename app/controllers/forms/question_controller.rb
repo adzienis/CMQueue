@@ -10,10 +10,6 @@ class Forms::QuestionController < ApplicationController
 
     @question_form.save
 
-    #if @question_form.errors.any?
-    #  render :new and return
-    #end
-
     respond_with @question_form, location: edit_course_forms_question_path(@course)
   end
 
@@ -23,10 +19,6 @@ class Forms::QuestionController < ApplicationController
     @question_form = Forms::Question.new(current_user: current_user, question: @question, question_params: question_params.to_h.symbolize_keys)
 
     @question_form.save
-
-    #if @question_form.errors.any?
-    #  render :edit and return
-    #end
 
     respond_with @question_form, location: edit_course_forms_question_path(@course)
   end

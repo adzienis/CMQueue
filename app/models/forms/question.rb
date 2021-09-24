@@ -33,16 +33,15 @@ class Forms::Question
           @question = @current_user.questions.build(question_params)
         end
 
-        return false unless valid?
+        raise ActiveRecord::RecordInvalid.new(self) unless valid?
 
         @question.save!
       end
-
     rescue
+      promote_errors(@question) and return false
     ensure
-      promote_errors(@question)
+      true
     end
-
   end
 
 end
