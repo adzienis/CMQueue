@@ -46,7 +46,7 @@ class ApplicationController < ActionController::Base
   end
 
   def swagger; end
-  
+
   protected
   def authenticate_user!
     if user_signed_in?

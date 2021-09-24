@@ -2,7 +2,7 @@
 
 module Users
   class OmniauthCallbacksController < Devise::OmniauthCallbacksController
-    skip_before_action :verify_authenticity_token
+    skip_before_action :verify_authenticity_token, :authenticate_user!
     include Devise::Controllers::SignInOut
 
     def google_oauth2
