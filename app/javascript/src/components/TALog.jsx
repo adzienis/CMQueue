@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "react-query";
 import {
   CartesianGrid,
@@ -12,6 +12,7 @@ import {
 } from "recharts";
 
 import "react-datepicker/dist/react-datepicker.css";
+import DatePicker from "react-datepicker";
 
 export default (props) => {
   const { selectedQueueId, courseId, height = 470, limited = false } = props;
@@ -19,6 +20,10 @@ export default (props) => {
   const queryClient = useQueryClient();
 
   const [date, setDate] = useState(new Date());
+
+  const onChange = (date) => {
+    setDate(date);
+  };
 
   const {
     data: question_states,
@@ -66,12 +71,9 @@ export default (props) => {
 
   const ticks = useMemo(() => {
     if (question_states.length > 0) {
-      const mapped = question_states
-        .filter(
-          (x) =>
-            new Date() - new Date(x.created_at) < 60 * 60 * 1000 * 2 || !limited
-        )
-        .map((v) => new Date(v.created_at).getTime());
+      const mapped = question_states.map((v) =>
+        new Date(v.created_at).getTime()
+      );
       const minTime = mapped.reduce((prev, cur) => Math.min(prev, cur));
       const maxTime = mapped.reduce((prev, cur) => Math.max(prev, cur));
 
@@ -198,6 +200,8 @@ export default (props) => {
       >
         <i className="fas fa-info-circle fa-lg" />
       </a>
+
+      <DatePicker selected={date} onChange={onChange} date={date} />
       {isLoading || isFetching ? (
         <div
           style={{ height }}

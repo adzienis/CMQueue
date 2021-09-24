@@ -16,13 +16,23 @@ class SummariesController < ApplicationController
   def activity
     time = Time.zone.now
     time = Time.zone.parse(params[:date]) if params[:date]
+    start_time = Time.zone.parse(params[:start_date]) if params[:start_date]
+    end_time = Time.zone.parse(params[:end_date]) if params[:end_date]
 
     @states = QuestionState.all
     @states = @states.accessible_by(current_ability)
     @states = @states.with_course(@course.id) if params[:course_id]
+    if start_time.present? and end_time.present?
+      @states = @states
+                  .where('question_states.created_at < ?', end_time.end_of_day)
+                  .where('question_states.created_at > ?', start_time.beginning_of_day)
+    else
+
+      @states = @states
+                  .where('question_states.created_at < ?', time.end_of_day)
+                  .where('question_states.created_at > ?', time.beginning_of_day)
+    end
     @states = @states
-                .where('question_states.created_at < ?', time.end_of_day)
-                .where('question_states.created_at > ?', time.beginning_of_day)
                 .where(state: ['resolved', 'frozen', 'resolving'])
 
     respond_with @states
@@ -34,9 +44,9 @@ class SummariesController < ApplicationController
     authorize! :read, @course
 
     tas = tas.joins(:enrollments, enrollments: :question_state)
-       .where('question_states.created_at > ?', 15.minutes.ago)
-       .merge(QuestionState.with_course(@course.id))
-       .distinct(:id)
+             .where('question_states.created_at > ?', 15.minutes.ago)
+             .merge(QuestionState.with_course(@course.id))
+             .distinct(:id)
 
     respond_with tas
   end
