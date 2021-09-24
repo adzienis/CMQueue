@@ -4,7 +4,7 @@ class Tag < ApplicationRecord
   include Discard::Model
   include RansackableConcern
 
-  validates :name, presence: true
+  validates :name, :tag_group, presence: true
 
   scope :with_course, ->(course_id) do
     where(course_id: course_id)

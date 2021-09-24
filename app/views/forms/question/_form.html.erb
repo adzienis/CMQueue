@@ -38,23 +38,25 @@
       </div>
     </div>
     <% @course.tag_groups.each do |tag_group| %>
-      <div data-controller="react-select" class="mb-3">
-        <label class="form-label fw-bold">
-          <%= tag_group.name %>
-        </label>
-        <%= ff.collection_select tag_group.id,
-                                 tag_group.tags,
-                                 :id,
-                                 :name,
-                                 {
-                                   selected: question.tags.filter { |tag| tag_group.tags.include? tag }.map { |tag| tag.id }
-                                 },
-                                 multiple: true,
-                                 class: "invisible form-control",
-                                 autocomplete: false
-        %>
-        <%= f.error "tag_group_#{tag_group.id}", class: "invalid-feedback d-block" %>
-      </div>
+      <% if tag_group.tags.any? %>
+        <div data-controller="react-select" class="mb-3">
+          <label class="form-label fw-bold">
+            <%= tag_group.name %>
+          </label>
+          <%= ff.collection_select tag_group.id,
+                                   tag_group.tags,
+                                   :id,
+                                   :name,
+                                   {
+                                     selected: question.tags.filter { |tag| tag_group.tags.include? tag }.map { |tag| tag.id }
+                                   },
+                                   multiple: true,
+                                   class: "invisible form-control",
+                                   autocomplete: false
+          %>
+          <%= f.error "tag_group_#{tag_group.id}", class: "invalid-feedback d-block" %>
+        </div>
+      <% end %>
     <% end %>
   <% end %>
 

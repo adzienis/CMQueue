@@ -26,7 +26,10 @@ class Forms::Question
 
   def tag_groups_satisfied
     course.tag_groups.each do |tag_group|
-      errors.add("tag_group_#{tag_group.id}".to_sym, "#{tag_group.name} missing tag") unless (tag_ids & tag_group.tags.map { |tag| tag.id }).length > 0
+      if tag_group.tags.count > 0 and (tag_ids & tag_group.tags.map { |tag| tag.id }).empty?
+        errors.add("tag_group_#{tag_group.id}".to_sym,
+                   "#{tag_group.name} missing tag")
+      end
     end
   end
 
