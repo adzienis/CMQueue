@@ -45,7 +45,7 @@ module ApplicationHelper
     elsif instance.is_a?(ActiveRecord::Associations::CollectionProxy) && hash.instance_of?(Symbol)
       return instance.map { |v| v.send(hash) }.join(', ')
     elsif hash.instance_of? Symbol
-      return instance.send(hash)
+      return instance&.send(hash)
     end
 
     k, v = hash.first
