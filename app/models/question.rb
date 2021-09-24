@@ -23,19 +23,12 @@ class Question < ApplicationRecord
   validate :duplicate_question, on: :create
   validate :course_queue_open, on: :create
   validate :has_at_least_one_tag
-  validate :has_location_tag
-
   ######### Handle at least one tag with '='
   # We have to manually override the assignment since we don't have callbacks
   # that accurately represent the count of the number of tags before we destroy
   # them (using '=').
   attr_accessor :tags_validator
 
-  def has_location_tag
-    if tags.filter { |tag| ["Zoom", "Physical"].include? tag.name }.count == 0
-      errors.add(:tags, "must have location.")
-    end
-  end
 
   def course_queue_open
     course = Course.find_by(id: course_id)

@@ -10,11 +10,23 @@ class Forms::Question
     :question_params
   )
 
+  private def method_missing(symbol, *args)
+    if symbol.to_s.include? "tag_group"
+      if symbol.to_s.include? "="
+        instance_variable_set("@#{symbol}", *args)
+      else
+        instance_variable_get("@#{symbol}")
+      end
+    else
+      super
+    end
+  end
+
   validate :tag_groups_satisfied
 
   def tag_groups_satisfied
     course.tag_groups.each do |tag_group|
-      errors.add(:tags, "not included in all tag groups.") unless (tag_ids & tag_group.tags.map { |tag| tag.id }).length > 0
+      errors.add("tag_group_#{tag_group.id}".to_sym, "#{tag_group.name} missing tag") unless (tag_ids & tag_group.tags.map { |tag| tag.id }).length > 0
     end
   end
 
