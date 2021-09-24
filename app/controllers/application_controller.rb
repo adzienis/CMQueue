@@ -8,7 +8,7 @@ class ApplicationController < ActionController::Base
 
   include Pagy::Backend
 
-  before_action :set_course, :set_user, :authenticate_user!, :restrict_routes
+  before_action :authenticate_user!, :set_course, :set_user,  :restrict_routes
 
   def current_ability
     @current_ability ||= Ability.new(current_user, params)
@@ -32,6 +32,7 @@ class ApplicationController < ActionController::Base
                             .find_by(user_id: current_user.id, "roles.resource_id": @course.id) if params[:course_id]
   end
 
+
   def new_session_path(_scope)
     new_user_session_path
   end
@@ -45,4 +46,15 @@ class ApplicationController < ActionController::Base
   end
 
   def swagger; end
+  
+  protected
+  def authenticate_user!
+    if user_signed_in?
+      super
+    else
+      redirect_to root_path
+      ## if you want render 404 page
+      ## render :file => File.join(Rails.root, 'public/404'), :formats => [:html], :status => 404, :layout => false
+    end
+  end
 end
