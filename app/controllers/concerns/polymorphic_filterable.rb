@@ -5,10 +5,6 @@ module PolymorphicFilterable
     before_action :set_polymorphic_filtered
   end
 
-  class_methods do
-
-  end
-
   private
 
   def set_polymorphic_filtered

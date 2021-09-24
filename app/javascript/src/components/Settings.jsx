@@ -55,12 +55,12 @@ const handle_permission = async (setting_id, checked) => {
 };
 
 export default (props) => {
-  const { id, type } = props;
+  const { id, type, settings: initialSettings } = props;
 
   const { data: settings } = useQuery(
-    ["settings", "?", `type=${type}`, `id=${id}`],
+    [type.toLowerCase() + "s", parseInt(id, 10), "settings"],
     {
-      placeholderData: [],
+      placeholderData: initialSettings,
     }
   );
 

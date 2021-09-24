@@ -7,11 +7,12 @@ class SettingsController < ApplicationController
 
   include ResourceInitializable
   include ResourceAuthorizable
-  include PolymorphicFilterable
+  #include PolymorphicFilterable
+  include PolyScopedByParent
 
   def restrict_routes
     if @course
-      raise CanCan::AccessDenied unless current_user.has_any_role?({name: :instructor, resource: @course})
+      raise CanCan::AccessDenied unless current_user.has_any_role?({ name: :instructor, resource: @course })
     elsif @user
       raise CanCan::AccessDenied unless @user.id == current_user.id
     end
@@ -37,11 +38,9 @@ class SettingsController < ApplicationController
   def update
     @setting = @settings.find(params[:setting_id])
 
-    if setting_params.keys.include? "value"
-      @setting.set_value(setting_params[:value])
+    @setting.set_value(setting_params[:value]) if setting_params.keys.include? "value"
 
-      @setting.save
-    end
+    @setting.save
 
     respond_with @setting
   end

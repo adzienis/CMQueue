@@ -92,7 +92,7 @@ Rails.application.routes.draw do
 
   resources :courses, param: :course_id
 
-  resources :users, only: [] do
+  resources :users, only: [], model_name: "User" do
     resources :questions
     resources :courses, param: :course_id
     resources :enrollments
@@ -108,7 +108,7 @@ Rails.application.routes.draw do
 
   resources :users, param: :user_id
 
-  resources :courses, only: [] do
+  resources :courses, only: [], model_name: "Course" do
 
     resources :questions, param: :question_id do
       collection do

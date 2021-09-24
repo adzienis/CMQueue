@@ -40,6 +40,8 @@ class Setting < ApplicationRecord
   scope :with_type, ->(type) { where(resource_type: type) }
   scope :with_user, ->(user_id) { where(resource_id: user_id, resource_type: "User") }
   scope :with_course, ->(course_id){ where(resource_id: course_id, resource_type: "Course") }
+  scope :with_parent_type, ->(parent_type) { where(resource_type: parent_type) }
+  scope :with_parent_id, ->(parent_id) { where(resource_id: parent_id) }
 
   scope :update_all_json, ->(path,value) {
     update_all("value = jsonb_set(value::jsonb, '#{path}', '#{value}'::jsonb)::jsonb")
