@@ -2,6 +2,8 @@
 
 class EnrollmentsController < ApplicationController
 
+  respond_to :html, :json
+
   def index
     @course = Course.find(params[:course_id]) if params[:course_id]
 
@@ -75,7 +77,17 @@ class EnrollmentsController < ApplicationController
   end
 
   def download_form
+  end
 
+  def edit
+    @enrollment = Enrollment.find(params[:id])
+  end
+
+  def update
+    @enrollment = Enrollment.find(params[:id])
+    @enrollment.update(enrollment_params)
+
+    respond_with @enrollment, location: course_enrollments_path(@course)
   end
 
   def show
@@ -92,22 +104,13 @@ class EnrollmentsController < ApplicationController
     @course = Course.find_by(id: params[:course_id]) if params[:course_id]
     @enrollment = Enrollment.create(enrollment_params)
 
-    if @course
-      redirect_to course_enrollments_path(@course) unless @enrollment.errors.count > 0
-    else
-      redirect_to enrollments_path unless @enrollment.errors.count > 0
-    end
-
-    render turbo_stream: (turbo_stream.replace @enrollment, partial: "shared/new_form", locals: { model_instance: @enrollment, options: { except: [:question_states, :questions] } }) and return unless @enrollment.errors.count == 0
-
-    respond_with @enrollment
+    respond_with @enrollment, location: course_enrollments_path(@course)
   end
 
   def destroy
     @enrollment = Enrollment.find_by(id: params[:id]).discard
 
-    redirect_to request.referer
-
+    respond_with @enrollment, location: course_enrollments_path(@course)
   end
 
   private

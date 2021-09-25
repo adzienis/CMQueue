@@ -87,7 +87,7 @@ class Ability
       # cannot create or update an enrollment if the user isn't an instructor
 
       cannot [:update], Enrollment do |enrollment|
-        new_role = Role.find(params[:enrollment][:role_id])
+        new_role = Role.find(enrollment.role.id)
         !user.has_any_role?({ name: :instructor, resource: enrollment.course }) && Role.higher_security?(enrollment.role.name, new_role.name)
       end
 

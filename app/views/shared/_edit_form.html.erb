@@ -6,7 +6,7 @@
     class: "mb-2",
   },
   input_html: {
-    class: "mb-2" } } do |f| %>
+    class: "mb-2" } }, html: { autocomplete: 'off' } do |f| %>
   <%= f.hidden_field :course_id, value: params[:course_id] if params[:course_id] %>
   <% model_instance.class.content_columns
                    .reject { |v| options&.dig(:except)&.include? v.name.to_sym }
