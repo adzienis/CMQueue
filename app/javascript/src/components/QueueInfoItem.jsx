@@ -3,6 +3,8 @@ import React from "react";
 export default (props) => {
   const { title, value, icon, loading, footer, info } = props;
 
+  const mobile = window.innerWidth < 792;
+
   return (
     <div className="card bg-white position-relative">
       {info ? (
@@ -27,7 +29,7 @@ export default (props) => {
           </div>
         ) : (
           <>
-            {icon}
+            {!mobile && icon}
             <div>
               <div className="card-title mb-1 text-nowrap">
                 <b>{title}</b>

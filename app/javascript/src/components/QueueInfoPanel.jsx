@@ -125,7 +125,7 @@ export default (props) => {
                   <i className="fas fa-users fa-3x" />
                 </div>
               }
-              value={activeTas?.map((v) => v.given_name).join(",")}
+              value={activeTas?.map((v) => v.given_name).join(", ")}
               footer={
                 enrollment?.role.name !== "student" ? (
                   <div className="accordion" id="accordion-ta-log">
