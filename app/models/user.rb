@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class User < ApplicationRecord
+
+  has_many :active_enrollments, -> { undiscarded }, dependent: :delete_all, class_name: "Enrollment"
   has_many :enrollments, dependent: :destroy
   has_many :notifications, as: :recipient, dependent: :destroy
 

@@ -33,7 +33,7 @@ registerManager.register_component(NotificationFeed, "#notification-feed");
 registerManager.register_component(Prefetcher, "#prefetcher");
 registerManager.register_component(QuestionAnswererPage, "#question-answerer");
 registerManager.register_component(QueueInfoPanel, "#queue-info-panel");
-registerManager.register_component(SearchModal, "#hello-react");
+registerManager.register_component(SearchModal, "#search-course");
 registerManager.register_component(StudentQueueView, "#student-queue-view");
 registerManager.register_component(TAActionPane, "#ta-action-pane");
 registerManager.register_component(TALog, "#ta-chart");

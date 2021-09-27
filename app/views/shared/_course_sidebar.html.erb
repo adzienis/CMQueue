@@ -32,6 +32,7 @@
         request.path == course_enrollments_path(@course) ||
         request.path == course_questions_path(@course) ||
         request.path == course_tags_path(@course) ||
+        request.path == course_tag_groups_path(@course) ||
         request.path == oauth_course_applications_path(@course)) ? 'active-link' : ''}",
                      data: { "bs-toggle": "collapse", "bs-target": "#course-info-collapse" } do %>
         Information

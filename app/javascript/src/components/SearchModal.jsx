@@ -1,17 +1,15 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import useWrappedMutation from "../hooks/useWrappedMutation";
 import CourseCard from "./CourseCard";
-import AsyncSelect from "react-select/async";
 import Select from "react-select";
-import { useForm, Controller } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import defaultMutationFn from "../utilities/defaultMutationFn";
-import { ErrorMessage } from "@hookform/error-message";
-import ErrorContainer from "./forms/ErrorContainer";
 import ErrorSummary from "./forms/ErrorSummary";
 
 export default (props) => {
   const { userId } = props;
+
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
   const { data } = useQuery(["courses", "?", `name=${search}`], {
@@ -128,7 +126,7 @@ export default (props) => {
           >
             <div className="d-flex flex-column justify-content-center align-items-center">
               <i className="fas fa-plus fa-2x text-primary" />
-              <div> Add a Course </div>
+              <div> Add a Course</div>
             </div>
           </div>
         </a>
