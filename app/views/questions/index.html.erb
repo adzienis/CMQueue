@@ -1,4 +1,12 @@
-<h1> Questions </h1>
+<div class="mb-3">
+  <h1 class="mb-0">
+    Questions
+  </h1>
+  <div class="text-muted">
+    All student created questions.
+  </div>
+</div>
+
 
 <%= render partial: "shared/search_form",
            locals: {
@@ -7,7 +15,7 @@
              course: @course,
              pagy: @pagy,
              options: {
-               extra_columns: [{ user: :given_name},{question_state: :state}, { tags: :name }],
+               extra_columns: [{ user: :given_name }, { question_state: :state }, { tags: :name }],
                except: [:title, :notes, :user_id, :course_id, :discarded_at, :enrollment_id],
                actions: [:download],
                other_filters: {
