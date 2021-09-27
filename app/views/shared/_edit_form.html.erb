@@ -1,5 +1,6 @@
 <% options ||= {} %>
 <% options[:except] ||= [] %>
+<% options[:disabled] ||= [] %>
 
 <%= simple_form_for model_instance, url: polymorphic_path([@course, model_instance]),  defaults: {
   wrapper_html: {
@@ -25,6 +26,7 @@
        .each do |ass| %>
     <%= f.association ass.name,
                       value_method: :id,
+                      disabled: options[:disabled].include?(ass.name),
                       label_method: ->(v) {
                         return v[:name] if v[:name]
                         return "#{v[:given_name]} #{v[:family_name]}" if v[:given_name] && v[:family_name]
