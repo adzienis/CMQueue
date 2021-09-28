@@ -16,6 +16,7 @@
              pagy: @pagy,
              options: {
                actions: [:edit, :new, :destroy],
+               extra_columns: [{ tags: :name}],
                except: [:course_id, :course, :discarded_at],
                format: [:name, :description],
              }

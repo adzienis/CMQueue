@@ -9,9 +9,15 @@
         <% options[:extra_columns].each do |extra| %>
           <th style="min-width: 125px">
             <% if extra.instance_of? Hash %>
-              <%= sort_link(ransack, extra.flatten.join('_')) do %>
+
+              <% if records.model.reflect_on_association(extra.keys[0])&.macro == :has_many %>
                 <%= "#{flatten_hash(extra)[-2].to_s.titleize} #{flatten_hash(extra)[-1].to_s.titleize}" %>
-              <% end %>
+
+              <% else %>
+                <%= sort_link(ransack, extra.flatten.join('_')) do %>
+                  <%= "#{flatten_hash(extra)[-2].to_s.titleize} #{flatten_hash(extra)[-1].to_s.titleize}" %>
+                <% end %>
+                <% end %>
             <% else %>
               <%= sort_link(ransack, extra.to_s) %>
             <% end %>
@@ -68,9 +74,9 @@
           <% options[:extra_columns].each do |extra| %>
             <td>
               <% if extra.instance_of? Hash %>
-                <%= fetch_attribute(tag, extra) %>
+                <%= fetch_attribute(tag, extra).to_s.titleize %>
               <% else %>
-                <%= tag.send(extra) %>
+                <%= tag.send(extra).to_s.titleize %>
               <% end %>
             </td>
           <% end %>
@@ -83,7 +89,7 @@
                 <% if records.model.column_for_attribute(k).type.to_s == "datetime" %>
                   <%= tag.try(k.to_sym)&.in_time_zone('Eastern Time (US & Canada)')&.to_formatted_s(:american_short) %>
                 <% else %>
-                  <%= tag.send(k.to_sym) %>
+                  <%= tag.send(k.to_sym).to_s.titleize %>
                 <% end %>
               </div>
             </td>
