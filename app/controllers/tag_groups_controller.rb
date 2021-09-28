@@ -23,8 +23,6 @@ class TagGroupsController < ApplicationController
     @tag_group = TagGroup.accessible_by(current_ability).find(params[:tag_group_id])
     @tag_group.update(tag_group_params)
 
-
-
     respond_with @tag_group, location: course_tag_groups_path(@course)
   end
 
@@ -38,11 +36,17 @@ class TagGroupsController < ApplicationController
   end
 
   def destroy
+    @tag_groups = TagGroup.all
+    @tag_group = @tag_groups.find(params[:tag_group_id])
+
+    @tag_group.destroy
+
+    respond_with @tag_group, location: course_tag_groups_path(@course)
   end
 
   private
 
   def tag_group_params
-    params.require(:tag_group).permit(:course_id, :name,  tag_ids: [])
+    params.require(:tag_group).permit(:course_id, :name, tag_ids: [])
   end
 end

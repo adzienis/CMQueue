@@ -37,7 +37,7 @@
                 Are you sure you want to delete this?
               </div>
               <div class="modal-footer">
-                <%= link_to polymorphic_url(@course ? [@course, tag] : [tag]), method: :delete, class: "btn btn-primary" do %>
+                <%= link_to polymorphic_url(@course ? [@course, tag] : [tag]), "data-turbo": false, method: :delete, class: "btn btn-primary" do %>
                   Delete
                 <% end %>
               </div>

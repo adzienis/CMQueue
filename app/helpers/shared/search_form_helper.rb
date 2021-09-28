@@ -23,7 +23,7 @@ module Shared
       def can_import?
         if @course && @records.count > 0
           @options[:actions].include?(:import) &&
-            @current_user.has_any_role?({ name: :instructor, resource: @course })
+            @current_user.privileged_staff_of?(@course)
         else
           false
         end
@@ -37,7 +37,7 @@ module Shared
         if @model == Course
           @options[:actions].include?(:new) && Ability.new(@current_user, {}).can?(:create, Course)
         else
-          @options[:actions].include?(:new) && @current_user.has_role?(:instructor, @course)
+          @options[:actions].include?(:new) && @current_user.privileged_staff_of?(@course)
         end
       end
 

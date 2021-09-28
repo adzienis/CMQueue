@@ -111,13 +111,7 @@ class Course < ApplicationRecord
 
   after_create_commit do
 
-    Postgres::Views.create_views_schema(id)
-    Postgres::Views::Course.create(id)
-    Postgres::Views::Question.create(id)
-    Postgres::Views::Tag.create(id)
-    Postgres::Views::Enrollment.create(id)
-    Postgres::Views::QuestionState.create(id)
-    Postgres::Views::User.create(id)
+    Postgres::Views.create_course_views(id)
 
     settings.create([{
                        value: {

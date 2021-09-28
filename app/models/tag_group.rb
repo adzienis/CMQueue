@@ -1,6 +1,6 @@
 class TagGroup < ApplicationRecord
-  has_many :group_members, ->{ where(group_type: "TagGroup")},  foreign_key: :group_id
-  has_many :tags, through: :group_members, source: :individual, source_type: "Tag"
+  has_many :group_members, -> { where(group_type: "TagGroup") }, as: :group, foreign_key: :group_id, inverse_of: :group
+  has_many :tags, through: :group_members, as: :individual, source: :individual, source_type: "Tag", inverse_of: :tag_groups
 
   belongs_to :course
 

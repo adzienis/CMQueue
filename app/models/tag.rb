@@ -4,7 +4,7 @@ class Tag < ApplicationRecord
   include Discard::Model
   include RansackableConcern
 
-  validates :name, :tag_group, presence: true
+  validates :name, presence: true
 
   scope :with_course, ->(course_id) do
     where(course_id: course_id)
@@ -13,10 +13,9 @@ class Tag < ApplicationRecord
   scope :unarchived, -> { where(archived: false) }
 
   belongs_to :course
-  belongs_to :tag_group, optional: true
 
-  has_many :group_members, ->{ where(group_type: "Tag")},  foreign_key: :individual_id
-  has_many :tag_groups, through: :group_members, source: :group, source_type: "TagGroup"
+  has_many :group_members, -> { where(group_type: "Tag") }, foreign_key: :individual_id, as: :individual, inverse_of: :individual
+  has_many :tag_groups, through: :group_members, as: :group, source: :group, source_type: "TagGroup", inverse_of: :tags
 
   has_and_belongs_to_many :questions, dependent: :destroy
 end
