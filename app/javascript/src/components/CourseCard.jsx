@@ -2,6 +2,19 @@ import useWrappedMutation from "../hooks/useWrappedMutation";
 import React, { useMemo } from "react";
 import { useQuery } from "react-query";
 
+function capitalizeFirstLetter(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+function humanize_string(str) {
+  return str
+    .replace("_", " ")
+    .trim()
+    .split(" ")
+    .map((v) => capitalizeFirstLetter(v))
+    .join(" ");
+}
+
 export default (props) => {
   const { enrollment } = props;
 
@@ -17,16 +30,16 @@ export default (props) => {
   let href = "";
 
   if (enrollment.role.name === "instructor") {
-    footerClass = "bg-success";
+    footerClass = "bg-instructor";
     href = `/courses/${enrollment.course.id}/queue`;
   } else if (enrollment.role.name === "ta") {
-    footerClass = "bg-info";
+    footerClass = "bg-ta";
     href = `/courses/${enrollment.course.id}/queue`;
   } else if (enrollment.role.name === "lead_ta") {
-    footerClass = "bg-info";
+    footerClass = "bg-lead-ta";
     href = `/courses/${enrollment.course.id}/queue`;
   } else if (enrollment.role.name === "student") {
-    footerClass = "bg-warning";
+    footerClass = "bg-student";
     href = `/courses/${enrollment.course.id}/forms/question/new`;
   }
 
@@ -54,11 +67,8 @@ export default (props) => {
           </div>
         </div>
       </div>
-      <div
-        className={`card-footer text-white  ${footerClass}`}
-        style={{ textTransform: "capitalize" }}
-      >
-        {enrollment?.role.name}
+      <div className={`card-footer text-white  ${footerClass}`}>
+        {humanize_string(enrollment?.role.name)}
       </div>
     </a>
   );

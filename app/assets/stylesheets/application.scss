@@ -33,6 +33,38 @@ $toast-background-color: rgba($white, 1.0);
 @import url('https://fonts.googleapis.com/css2?family=Arimo:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&display=swap');
 //@import "font-awesome";
 
+.bg-ta {
+  background-color: #1C5D99;
+}
+
+.bg-student {
+  background-color: #E69A0C;
+}
+
+.bg-lead-ta {
+  background-color: #3083DC;
+}
+
+.bg-instructor {
+  background-color: #034C3C;
+}
+
+.ta-card {
+
+}
+
+.instructor-card {
+
+}
+
+.lead-ta-card {
+
+}
+
+.student-card {
+
+}
+
 .dropdown-menu {
   min-width: 100%
 }
@@ -89,7 +121,6 @@ html, body {
   height: initial !important;
   scroll-behavior: auto !important;
 }
-
 
 
 .shim {
