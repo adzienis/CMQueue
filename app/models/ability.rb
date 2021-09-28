@@ -140,7 +140,7 @@ class Ability
 
       can :manage, Tag, Tag
                           .where(course_id: Course
-                                              .where(id: Course.find_staff_roles(user)
+                                              .where(id: Course.find_privileged_staff_roles(user)
                                                                .pluck(:resource_id))
                                               .pluck(:id)) do |tag|
         user.privileged_staff_of?(tag.course)

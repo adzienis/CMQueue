@@ -15,7 +15,7 @@
              pagy: @pagy,
              options: {
                actions: [:edit, :new, :destroy, :download, :import],
-               extra_columns: [{ tag_group: :name}],
+               extra_columns: [{ tag_groups: :name}],
                except: [:course_id, :course, :discarded_at, :tag_group_id],
                format: [:name, :description],
                other_filters: {
