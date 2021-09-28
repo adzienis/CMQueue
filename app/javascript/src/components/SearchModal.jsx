@@ -23,7 +23,7 @@ export default (props) => {
     parseInt(userId, 10),
     "enrollments",
     "?",
-    "role=student",
+    `role=${JSON.stringify(["student"])}`,
   ]);
 
   const {

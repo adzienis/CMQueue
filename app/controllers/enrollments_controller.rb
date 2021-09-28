@@ -15,7 +15,7 @@ class EnrollmentsController < ApplicationController
     @enrollments = @enrollments
                      .joins(:role)
                      .where("roles.resource_id": params[:course_id]) if params[:course_id]
-    @enrollments = @enrollments.with_course_roles(params[:role]) if params[:role]
+    @enrollments = @enrollments.with_course_roles(JSON.parse(params[:role])) if params[:role]
 
     @enrollments_ransack = @enrollments.ransack(params[:q])
 

@@ -25,7 +25,7 @@ export default (props) => {
     parseInt(userId, 10),
     "enrollments",
     "?",
-    "role=ta",
+    `role=${JSON.stringify(["ta"])}`,
   ]);
 
   const { data: instructor_enrollments } = useQuery([
@@ -33,7 +33,7 @@ export default (props) => {
     parseInt(userId, 10),
     "enrollments",
     "?",
-    "role=instructor",
+    `role=${JSON.stringify(["instructor", "lead_ta", "ta"])}`,
   ]);
 
   const { mutateAsync: createEnrollment, errors } = useWrappedMutation(

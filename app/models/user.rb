@@ -2,6 +2,8 @@
 
 class User < ApplicationRecord
 
+  include ScopeableByCourseRoles
+
   has_many :active_enrollments, -> { undiscarded }, dependent: :delete_all, class_name: "Enrollment"
   has_many :enrollments, dependent: :destroy
   has_many :notifications, as: :recipient, dependent: :destroy
@@ -74,10 +76,6 @@ class User < ApplicationRecord
     courses.merge(Enrollment.undiscarded).find_by(id: course_id).present?
   end
 
-  def is_staff_in_course?(course_id)
-    course = Course.find(course_id)
-    has_any_role?({ name: :ta, resource: course }, { name: :instructor, resource: course })
-  end
 
   def enrollment_with_course(course_id)
     enrollments.undiscarded.joins(:role).find_by("roles.resource_type": "Course", "roles.resource_id": course_id)

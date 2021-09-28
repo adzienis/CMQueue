@@ -57,6 +57,11 @@ Rails.application.routes.draw do
     end
   end
 
+
+  namespace :metabase do
+    resources :dashboards, param: :dashboard_id
+  end
+
   resources :question_states
 
   resources :messages
@@ -124,6 +129,10 @@ Rails.application.routes.draw do
 
     namespace :forms do
       resource :question, only: [:new, :create, :edit, :update, :destroy], controller: "question"
+    end
+
+    namespace :metabase do
+      resources :dashboards, param: :dashboard_id
     end
 
     resources :tag_groups, param: :tag_group_id

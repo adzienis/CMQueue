@@ -22,6 +22,9 @@ export default (props) => {
   } else if (enrollment.role.name === "ta") {
     footerClass = "bg-info";
     href = `/courses/${enrollment.course.id}/queue`;
+  } else if (enrollment.role.name === "lead_ta") {
+    footerClass = "bg-info";
+    href = `/courses/${enrollment.course.id}/queue`;
   } else if (enrollment.role.name === "student") {
     footerClass = "bg-warning";
     href = `/courses/${enrollment.course.id}/forms/question/new`;

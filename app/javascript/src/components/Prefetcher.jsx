@@ -6,19 +6,37 @@ export default (props) => {
   const queryClient = useQueryClient();
 
   const { data: studentCourses } = useQuery(
-    ["users", parseInt(userId, 10), "enrollments", "?", "role=student"],
+    [
+      "users",
+      parseInt(userId, 10),
+      "enrollments",
+      "?",
+      `role=${JSON.stringify(["student"])}`,
+    ],
     {
       placeholderData: [],
     }
   );
   const { data: taCourses } = useQuery(
-    ["users", parseInt(userId, 10), "enrollments", "?", "role=ta"],
+    [
+      "users",
+      parseInt(userId, 10),
+      "enrollments",
+      "?",
+      `role=${JSON.stringify(["ta"])}`,
+    ],
     {
       placeholderData: [],
     }
   );
   const { data: instructorCourses } = useQuery(
-    ["users", parseInt(userId, 10), "enrollments", "?", "role=instructor"],
+    [
+      "users",
+      parseInt(userId, 10),
+      "enrollments",
+      "?",
+      `role=${JSON.stringify(["instructor"])}`,
+    ],
     {
       placeholderData: [],
     }

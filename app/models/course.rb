@@ -83,6 +83,13 @@ class Course < ApplicationRecord
     return nil
   end
 
+  def self.find_staff_roles(user=nil)
+    Course.find_roles([:ta, :lead_ta, :instructor], user)
+  end
+  def self.find_privileged_staff_roles(user=nil)
+    Course.find_roles([:lead_ta, :instructor], user)
+  end
+
   def available_tags
     tags.undiscarded.unarchived.distinct
   end

@@ -22,6 +22,9 @@ class TagGroupsController < ApplicationController
   def update
     @tag_group = TagGroup.accessible_by(current_ability).find(params[:tag_group_id])
     @tag_group.update(tag_group_params)
+
+
+
     respond_with @tag_group, location: course_tag_groups_path(@course)
   end
 

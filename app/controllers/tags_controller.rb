@@ -12,19 +12,12 @@ class TagsController < ApplicationController
   def index
 
     @tags = @tags.undiscarded.order("tags.created_at": :desc).where(course_id: params[:course_id]) if params[:course_id]
-    @tags = @tags.count if params[:agg] == "count"
     @tags_ransack = @tags.ransack(params[:q])
 
     @pagy, @records = pagy @tags_ransack.result
-    respond_to do |format|
-      format.html
-      format.json { render json: @records }
-      format.js { render inline: "window.open('#{URI::HTTP.build(path: "#{request.path}.csv", query: request.query_parameters.to_query, format: :csv)}', '_blank')" }
-      format.csv {
-        send_data helpers.to_csv(params[:tag].to_unsafe_h, @tags_ransack.result, Tag),
-                  filename: helpers.csv_download_name(controller_name.classify.constantize)
-      }
-    end
+    @tags = @tags.count if params[:agg] == "count"
+
+    respond_with @tags
   end
 
   def import

@@ -2,6 +2,8 @@
 
 class Role < ApplicationRecord
 
+  include FindableByCourseRoles
+
   has_many :enrollments, dependent: :delete_all
 
   scope :with_course, ->(course_id) { where(resource_id: course_id, resource_type: "Course") }
@@ -15,6 +17,8 @@ class Role < ApplicationRecord
             allow_nil: true
   validates :name, presence: true
 
+  scope :privileged_roles, ->{where(name: ["lead_ta", "instructor"])}
+  scope :staff_roles, ->{where(name: ["ta", "lead_ta", "instructor"])}
   scope :undiscarded, ->{joins(:enrollments).merge(Enrollment.undiscarded)}
 
   def course
@@ -25,10 +29,12 @@ class Role < ApplicationRecord
     case role_name
     when "instructor"
       0
-    when "ta"
+    when "head_ta"
       1
-    when "student"
+    when "ta"
       2
+    when "student"
+      3
     end
   end
 
