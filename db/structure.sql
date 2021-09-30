@@ -38,7 +38,7 @@ CREATE FUNCTION public.check_duplicate_question() RETURNS trigger
 
 SET default_tablespace = '';
 
-SET default_table_access_method = heap;
+SET default_with_oids = false;
 
 --
 -- Name: announcements; Type: TABLE; Schema: public; Owner: -
@@ -195,6 +195,40 @@ CREATE SEQUENCE public.enrollments_id_seq
 --
 
 ALTER SEQUENCE public.enrollments_id_seq OWNED BY public.enrollments.id;
+
+
+--
+-- Name: group_members; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.group_members (
+    id bigint NOT NULL,
+    individual_id integer,
+    individual_type character varying,
+    group_id integer,
+    group_type character varying,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: group_members_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.group_members_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: group_members_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.group_members_id_seq OWNED BY public.group_members.id;
 
 
 --
@@ -532,12 +566,7 @@ CREATE TABLE public.settings (
     id bigint NOT NULL,
     resource_type character varying,
     resource_id bigint,
-    metadata_id bigint,
-    key character varying NOT NULL,
-    value character varying NOT NULL,
-    description text NOT NULL,
-    label text NOT NULL,
-    setting_type integer DEFAULT 0 NOT NULL,
+    value json,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
 );
@@ -560,6 +589,40 @@ CREATE SEQUENCE public.settings_id_seq
 --
 
 ALTER SEQUENCE public.settings_id_seq OWNED BY public.settings.id;
+
+
+--
+-- Name: tag_groups; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.tag_groups (
+    id bigint NOT NULL,
+    course_id bigint NOT NULL,
+    name character varying NOT NULL,
+    description text DEFAULT ''::text,
+    validations jsonb,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: tag_groups_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.tag_groups_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: tag_groups_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.tag_groups_id_seq OWNED BY public.tag_groups.id;
 
 
 --
@@ -671,6 +734,13 @@ ALTER TABLE ONLY public.enrollments ALTER COLUMN id SET DEFAULT nextval('public.
 
 
 --
+-- Name: group_members id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.group_members ALTER COLUMN id SET DEFAULT nextval('public.group_members_id_seq'::regclass);
+
+
+--
 -- Name: notifications id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -741,6 +811,13 @@ ALTER TABLE ONLY public.settings ALTER COLUMN id SET DEFAULT nextval('public.set
 
 
 --
+-- Name: tag_groups id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.tag_groups ALTER COLUMN id SET DEFAULT nextval('public.tag_groups_id_seq'::regclass);
+
+
+--
 -- Name: tags id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -792,6 +869,14 @@ ALTER TABLE ONLY public.courses
 
 ALTER TABLE ONLY public.enrollments
     ADD CONSTRAINT enrollments_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: group_members group_members_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.group_members
+    ADD CONSTRAINT group_members_pkey PRIMARY KEY (id);
 
 
 --
@@ -880,6 +965,14 @@ ALTER TABLE ONLY public.schema_migrations
 
 ALTER TABLE ONLY public.settings
     ADD CONSTRAINT settings_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: tag_groups tag_groups_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.tag_groups
+    ADD CONSTRAINT tag_groups_pkey PRIMARY KEY (id);
 
 
 --
@@ -1102,17 +1195,17 @@ CREATE INDEX index_roles_on_resource ON public.roles USING btree (resource_type,
 
 
 --
--- Name: index_settings_on_metadata_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_settings_on_metadata_id ON public.settings USING btree (metadata_id);
-
-
---
 -- Name: index_settings_on_resource; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_settings_on_resource ON public.settings USING btree (resource_type, resource_id);
+
+
+--
+-- Name: index_tag_groups_on_course_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_tag_groups_on_course_id ON public.tag_groups USING btree (course_id);
 
 
 --
@@ -1168,7 +1261,7 @@ CREATE INDEX polymorphic_owner_oauth_access_tokens ON public.oauth_access_tokens
 -- Name: questions check_duplicate_question_trigger; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER check_duplicate_question_trigger BEFORE INSERT ON public.questions FOR EACH ROW EXECUTE FUNCTION public.check_duplicate_question();
+CREATE TRIGGER check_duplicate_question_trigger BEFORE INSERT ON public.questions FOR EACH ROW EXECUTE PROCEDURE public.check_duplicate_question();
 
 
 --
@@ -1185,6 +1278,14 @@ ALTER TABLE ONLY public.courses_questions
 
 ALTER TABLE ONLY public.question_states
     ADD CONSTRAINT fk_rails_0b8ad6b6fb FOREIGN KEY (question_id) REFERENCES public.questions(id);
+
+
+--
+-- Name: tag_groups fk_rails_3f646a74cf; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.tag_groups
+    ADD CONSTRAINT fk_rails_3f646a74cf FOREIGN KEY (course_id) REFERENCES public.courses(id);
 
 
 --
@@ -1315,6 +1416,10 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20210703035725'),
 ('20210711051202'),
 ('20210712150707'),
-('20210816184122');
+('20210816184122'),
+('20210917210147'),
+('20210917210227'),
+('20210928053422'),
+('20210928145344');
 
 
