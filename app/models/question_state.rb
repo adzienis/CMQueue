@@ -79,11 +79,11 @@ class QuestionState < ApplicationRecord
     }
 
     ActionCable.server.broadcast "#{course.id}#ta", {
-      invalidate: ['courses', question.course.id, 'topQuestion']
+      invalidate: ['api', 'courses', question.course.id, 'topQuestion']
     }
 
     ActionCable.server.broadcast "#{course.id}#instructor", {
-      invalidate: ['courses', question.course.id, 'topQuestion']
+      invalidate: ['api', 'courses', question.course.id, 'topQuestion']
     }
 
     QueueChannel.broadcast_to course, {

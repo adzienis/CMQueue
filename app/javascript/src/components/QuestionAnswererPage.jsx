@@ -17,6 +17,7 @@ export default (props) => {
 
   const { data: topQuestion } = useQuery(
     [
+      "api",
       "courses",
       parseInt(courseId, 10),
       "topQuestion",

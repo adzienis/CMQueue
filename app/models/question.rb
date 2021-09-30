@@ -143,11 +143,11 @@ class Question < ApplicationRecord
     }
 
     ActionCable.server.broadcast "#{course.id}#ta", {
-      invalidate: ['courses', course_id, 'topQuestion']
+      invalidate: ['api',  'courses', course_id, 'topQuestion']
     }
 
     ActionCable.server.broadcast "#{course.id}#instructor", {
-      invalidate: ['courses', course_id, 'topQuestion']
+      invalidate: ['api', 'courses', course_id, 'topQuestion']
     }
 
     ActionCable.server.broadcast "#{course.id}#ta", {
