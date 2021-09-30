@@ -130,11 +130,7 @@ export default (props) => {
                     className="dropdown-item"
                     href="#"
                     onClick={(e) => e.preventDefault()}
-                  >
-                    <PastQuestionsModal question={question}>
-                      Previous Questions
-                    </PastQuestionsModal>
-                  </a>
+                  ></a>
                 </li>
                 <li>
                   <a
