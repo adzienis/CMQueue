@@ -20,14 +20,6 @@ import ErrorContainer from "./forms/ErrorContainer";
 export default (props) => {
   const { userId } = props;
 
-  const { data: enrollments } = useQuery([
-    "users",
-    parseInt(userId, 10),
-    "enrollments",
-    "?",
-    `role=${JSON.stringify(["ta"])}`,
-  ]);
-
   const { data: instructor_enrollments } = useQuery([
     "users",
     parseInt(userId, 10),
@@ -137,10 +129,8 @@ export default (props) => {
             </div>
           </div>
         </a>
-        {enrollments && instructor_enrollments
-          ? enrollments
-              .concat(instructor_enrollments)
-              .map((v) => <CourseCard enrollment={v} />)
+        {instructor_enrollments
+          ? instructor_enrollments.map((v) => <CourseCard enrollment={v} />)
           : null}
       </div>
     </>
