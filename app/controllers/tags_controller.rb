@@ -70,10 +70,10 @@ class TagsController < ApplicationController
   private
 
   def update_params
-    params.require(:tag).permit(:archived, :name, :description, :course_id, :tag_group_id)
+    params.require(:tag).permit(:archived, :name, :description, :course_id, tag_group_ids: [])
   end
 
   def create_params
-    params.require(:tag).permit(:archived, :name, :description, :course_id, :tag_group_id)
+    params.require(:tag).permit(:archived, :name, :description, :course_id, tag_group_ids: [])
   end
 end

@@ -1,1 +1,3 @@
-<%= render partial: "shared/edit_model", locals: { model_instance: @tag, except: [:discarded_at] } %>
+<%= render partial: "shared/edit_model", locals: { model_instance: @tag, options: {
+  except: [:discarded_at, :group_members]
+} } %>

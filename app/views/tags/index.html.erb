@@ -15,8 +15,8 @@
              pagy: @pagy,
              options: {
                actions: [:edit, :new, :destroy, :download, :import],
-               extra_columns: [{ tag_groups: :name}],
-               except: [:course_id, :course, :discarded_at, :tag_group_id],
+               extra_columns: [{ tag_groups: :name }],
+               except: [:course_id, :course, :discarded_at, :tag_group_id, :group_members],
                format: [:name, :description],
                other_filters: {
                  course: Course.column_names.excluding("id", "created_at", "updated_at", "provider", "uid"),
