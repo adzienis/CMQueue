@@ -115,7 +115,7 @@ Rails.application.routes.draw do
 
   resources :courses, only: [], model_name: "Course" do
 
-    resources :questions, param: :question_id do
+    resources :questions, param: :question_id, except: [:new, :create] do
       collection do
         get 'download', to: "questions#download_form"
       end
