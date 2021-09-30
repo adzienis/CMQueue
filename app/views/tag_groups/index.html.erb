@@ -17,7 +17,7 @@
              options: {
                actions: [:edit, :new, :destroy],
                extra_columns: [{ tags: :name}],
-               except: [:course_id, :course, :discarded_at],
+               except: [:course_id, :course, :discarded_at, :validations],
                format: [:name, :description],
              }
            } %>

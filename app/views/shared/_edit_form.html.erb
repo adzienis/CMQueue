@@ -3,6 +3,9 @@
 <% options[:disabled] ||= [] %>
 
 <%= simple_form_for model_instance, url: polymorphic_path([@course, model_instance]), defaults: {
+  label_html: {
+    class: "fw-bold"
+  },
   wrapper_html: {
     class: "mb-2",
   },
