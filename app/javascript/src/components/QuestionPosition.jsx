@@ -33,7 +33,7 @@ export default (props) => {
           ? "Next"
           : typeof position === "undefined" || position === null
           ? "N/A"
-          : position
+          : position + 1
       }
     />
   );
