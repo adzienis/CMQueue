@@ -8,6 +8,10 @@ RUN wget -nv https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_V
     && tar -C /usr/local/bin -xzvf dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
     && rm dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz
 
+RUN apt-get update && apt-get install -y lsb-release
+
+RUN sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
 # Rails Specific libraries
 RUN apt-get update && apt-get install -y \
       # ActiveStorage file inspection
@@ -21,7 +25,8 @@ RUN apt-get update && apt-get install -y \
       imagemagick \
       # Nice to have
       bash \
-      postgresql\
+      postgresql-13\
+      postgresql-client-13 \
       postgresql-contrib\
       git \
       # VIM is a handy editor for editing credentials
