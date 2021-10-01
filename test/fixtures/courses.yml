@@ -6,5 +6,7 @@
 #
 class_418:
   name: 15-418
+  open: true
 class_213:
   name: 15-213
+  open: false
