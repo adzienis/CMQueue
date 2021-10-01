@@ -11,6 +11,7 @@ class QuestionState < ApplicationRecord
   validates_presence_of :question, :enrollment
   validate :proper_answer, on: :create
   validate :not_handling_another, on: :create
+  validate :valid_transition, on: :create
 
   def as_json(options = {})
     super(options.merge({
@@ -18,22 +19,41 @@ class QuestionState < ApplicationRecord
                         }))
   end
 
-  def proper_answer
-    question = Question.find(question_id) if question_id
+  def valid_transition
+    old_qs = question.question_state
 
+    return unless old_qs
+
+    valid_next_states = case old_qs.state
+                        when "unresolved"
+                          ["resolving", "frozen", "kicked"]
+                        when "resolving"
+                          ["resolved", "unresolved", "frozen", "kicked"]
+                        when "resolved"
+                          []
+                        when "frozen"
+                          ["unresolved"]
+                        else
+                          []
+                        end
+
+    errors.add(:state, "invalid action") unless valid_next_states.include? state
+  end
+
+  def proper_answer
     return unless question
 
     old_qs = question.question_state
 
     return unless old_qs
 
-    errors.add(:question, "already answered.") if (old_qs.state != "unresolved") && state == "resolving"
-    errors.add(:action, "already occurred.") if old_qs.state == state
+    errors.add(:question, "already answered") if (old_qs.state != "unresolved") && state == "resolving"
+    errors.add(:action, "already occurred") if old_qs.state == state
   end
 
   def not_handling_another
     return unless user&.question_state && question
-    errors.add(:user, "already handling another question.") if user.question_state.state == "resolving" && question.id != user.question_state.question.id
+    errors.add(:user, "already handling another question") if user.question_state.state == "resolving" && question.id != user.question_state.question.id
   end
 
   enum state: { unresolved: 0, resolving: 1, resolved: 2, frozen: 3, kicked: 4 }, _default: :unresolved

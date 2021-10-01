@@ -27,7 +27,8 @@ RUN apt-get update && apt-get install -y \
       bash \
       postgresql-13\
       postgresql-client-13 \
-      postgresql-contrib\
+      postgresql-contrib \
+      chromium \
       git \
       # VIM is a handy editor for editing credentials
       vim \

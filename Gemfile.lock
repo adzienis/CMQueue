@@ -104,6 +104,18 @@ GEM
       administrate (>= 0.13.0)
       rails (>= 4.2)
       railties (>= 5.2.2.1)
+    anycable (1.1.3)
+      anycable-core (= 1.1.3)
+      grpc (~> 1.37)
+    anycable-core (1.1.3)
+      anyway_config (>= 2.1.0)
+      google-protobuf (>= 3.13)
+    anycable-rails (1.1.2)
+      actioncable (>= 6)
+      anycable (~> 1.1)
+      globalid
+    anyway_config (2.2.1)
+      ruby-next-core (>= 0.11.0)
     appsignal (3.0.13)
       rack
     ast (2.4.2)
@@ -203,6 +215,9 @@ GEM
       rake
     globalid (0.5.2)
       activesupport (>= 5.0)
+    google-protobuf (3.18.0-x86_64-linux)
+    googleapis-common-protos-types (1.2.0)
+      google-protobuf (~> 3.14)
     grape (1.5.3)
       activesupport
       builder
@@ -212,6 +227,9 @@ GEM
       rack-accept
     grape-swagger (1.4.0)
       grape (~> 1.3)
+    grpc (1.40.0-x86_64-linux)
+      google-protobuf (~> 3.15)
+      googleapis-common-protos-types (~> 1.0)
     haml (5.2.2)
       temple (>= 0.8.0)
       tilt
@@ -428,6 +446,7 @@ GEM
       rubocop (>= 1.7.0, < 2.0)
     ruby-graphviz (1.2.5)
       rexml
+    ruby-next-core (0.13.1)
     ruby-progressbar (1.11.0)
     ruby2_keywords (0.0.5)
     rubyzip (2.3.2)
@@ -521,6 +540,7 @@ PLATFORMS
 DEPENDENCIES
   administrate (~> 0.16.0)
   administrate_exportable (~> 0.5.0)
+  anycable-rails (~> 1.1)
   appsignal (~> 3.0)
   bootsnap (>= 1.4.4)
   bootstrap (= 5.0.1)

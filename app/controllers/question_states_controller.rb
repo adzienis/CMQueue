@@ -16,7 +16,7 @@ class QuestionStatesController < ApplicationController
 
     @pagy, @records = pagy @question_states_ransack.result.distinct
 
-    respond_with @question_states
+    respond_with @question_states.includes(:user)
   end
 
   def edit; end

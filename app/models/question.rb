@@ -9,7 +9,7 @@ class Question < ApplicationRecord
   has_one :course, through: :enrollment
   has_one :user, through: :enrollment
   # this basically alias question_state
-  has_one :question_state, -> { order('max(created_at) DESC').group("question_states.id") }, class_name: "QuestionState", dependent: :destroy
+  has_one :question_state, -> { order('max(id) DESC').group("question_states.id") }, class_name: "QuestionState", dependent: :destroy
 
   has_and_belongs_to_many :tags, dependent: :destroy, autosave: true, inverse_of: :questions
 
@@ -18,7 +18,7 @@ class Question < ApplicationRecord
   has_many :tag_groups, through: :tags
   has_many :question_states, dependent: :destroy
 
-  validates :location, :description, :tried, :course_id, presence: true
+  validates :location, :description, :tried, presence: true
 
   validate :duplicate_question, on: :create
   validate :course_queue_open, on: :create
@@ -29,7 +29,6 @@ class Question < ApplicationRecord
   # them (using '=').
   attr_accessor :tags_validator
 
-
   def course_queue_open
     course = Course.find_by(id: course_id)
     return unless course
@@ -39,7 +38,7 @@ class Question < ApplicationRecord
 
   def has_at_least_one_tag
     if tags.length == 0
-      errors.add(:tags, "can't be empty.")
+      errors.add(:tags, "can't be empty")
     end
   end
 
@@ -114,14 +113,58 @@ class Question < ApplicationRecord
     question_state&.state == "kicked"
   end
 
+  def unresolve(enrollment_id)
+    transition_to_state("unresolved", enrollment_id)
+  end
+
+  def answer(enrollment_id)
+    resolving(enrollment_id)
+  end
+
+  def resolve(enrollment_id)
+    transition_to_state("resolved", enrollment_id)
+  end
+
+  def transition_to_state(state, enrollment_id)
+    return false if errors.any?
+
+    guard_db do
+      question_states.create!(enrollment_id: enrollment_id, state: state)
+    end
+  end
+
+  def guard_db(&block)
+    result = begin
+               transaction do
+                 result = yield
+                 validate!
+                 result
+               end
+             rescue ActiveRecord::RecordInvalid => error
+               error
+             end
+    reload and result
+  end
+
+  def resolving(enrollment_id)
+    transition_to_state("resolving", enrollment_id)
+  end
+
+  def kick(enrollment_id)
+    transition_to_state("kicked", enrollment_id)
+  end
+
+  def freeze(enrollment_id)
+    transition_to_state("frozen", enrollment_id)
+  end
+
   def unfreeze(enrollment_id)
-    question_states.create(enrollment_id: enrollment_id, state: "unresolved")
+    transition_to_state("unresolved", enrollment_id)
   end
 
   def self.ransackable_scopes(_auth_object = nil)
     %i[previous_questions]
   end
-
 
   after_update do
     QueueChannel.broadcast_to user, {
@@ -143,7 +186,7 @@ class Question < ApplicationRecord
     }
 
     ActionCable.server.broadcast "#{course.id}#ta", {
-      invalidate: ['api',  'courses', course_id, 'topQuestion']
+      invalidate: ['api', 'courses', course_id, 'topQuestion']
     }
 
     ActionCable.server.broadcast "#{course.id}#instructor", {

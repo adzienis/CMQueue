@@ -9,7 +9,7 @@ export default function useWrappedMutation(
 ) {
   const token = document
     .querySelector("meta[name='csrf-token']")
-    .getAttribute("content");
+    ?.getAttribute("content");
 
   const [errors, setErrors] = useState({});
 

@@ -5,9 +5,8 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       queryFn: defaultQueryFn,
-      refetchOnWindowFocus: "always",
-      refetchOnMount: "always",
-      refetchOnReconnect: "always",
+      staleTime: 10000,
+      cacheTime: 10000,
     },
   },
 });
