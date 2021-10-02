@@ -2,7 +2,6 @@ require "test_helper"
 
 class Courses::AnswerControllerTest < ActionDispatch::IntegrationTest
   include Devise::Test::IntegrationHelpers
-  include Warden::Test::Helpers
 
   setup do
     @course = courses(:class_418)
