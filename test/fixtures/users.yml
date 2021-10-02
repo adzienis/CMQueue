@@ -14,3 +14,8 @@ jason:
   given_name: Jason
   family_name: Bourne
   email: jason@gmail.com
+
+brian:
+  given_name: Brian
+  family_name: Railing
+  email: brian@gmail.com

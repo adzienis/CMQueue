@@ -6,11 +6,16 @@
 #
 
 student_418:
-  name: "student"
-  resource_type: "Course"
+  name: student
+  resource_type: Course
   resource: class_418
 
 ta_418:
-  name: "student"
-  resource_type: "Course"
+  name: student
+  resource_type: Course
+  resource: class_418
+
+instructor_418:
+  name: instructor
+  resource_type: Course
   resource: class_418

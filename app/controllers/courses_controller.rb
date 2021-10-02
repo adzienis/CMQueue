@@ -31,11 +31,6 @@ class CoursesController < ApplicationController
     redirect_to new_course_question_path(@course) and return unless current_user.has_any_role?({ name: :ta, resource: @course}, {name: :instructor, resource: @course})
   end
 
-  def answer_page
-    question_state = current_user.question_state
-    @top_question = question_state&.question
-  end
-
   def new
     @course = Course.new
   end

@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
+  namespace :courses do
+    get 'answer/show'
+  end
   namespace :forms do
     get 'question/create'
     get 'question/update'
@@ -181,8 +184,8 @@ Rails.application.routes.draw do
       get 'analytics/tas', to: 'courses/analytics#tas'
       get 'settings/course', to: 'courses/settings#index'
       post 'answer', to: 'courses#answer'
-      get 'answer', to: 'courses#answer_page'
-      get 'answer/question', to: 'courses#answer_page', as: :answer_question
+      get 'answer', to: 'courses/answer#show'
+      get 'answer/question', to: 'courses/answer#show', as: :answer_question
       get 'answer/previousQuestions', to: 'courses#answer_page'
       post 'putBack', to: 'courses#putBack'
       post 'finishAnswering', to: 'courses#finishAnswering'

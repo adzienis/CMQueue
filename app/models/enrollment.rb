@@ -59,9 +59,7 @@ class Enrollment < ApplicationRecord
   end
 
   def self.most_recent_enrollment_by_course(course_id)
-    course = Course.find_by(id: course_id)
-    return nil unless course
-    undiscarded.with_course(course).order(created_at: :desc).first
+    undiscarded.with_course(course_id).order(created_at: :desc).first
   end
 
   private

@@ -6,6 +6,11 @@ class ApplicationController < ActionController::Base
   self.responder = ApplicationResponder
 
 
+  rescue_from CanCan::AccessDenied do |exception|
+    render inline: "Access Denied", status: 403
+  end
+
+
   include Pagy::Backend
 
   before_action :authenticate_user!, :set_course, :set_user,  :restrict_routes

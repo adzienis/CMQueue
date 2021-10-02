@@ -7,9 +7,11 @@
 ta_418:
   user: arthur
   role: student_418
-# column: value
-#
+
 student_418:
   user: jason
   role: ta_418
-# column: value
+
+instructor_418:
+  user: brian
+  role: instructor_418

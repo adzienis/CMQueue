@@ -1,8 +1,9 @@
 class Courses::QueueController < ApplicationController
   def show
+    authorize! :staff_queue, @course
+
     redirect_to user_enrollments_path and return unless @course
-    redirect_to new_course_question_path(@course) if current_user.active_questions.with_course(@course.id).empty? &&
-                                                      current_user.has_role?(:student, @course)
+    redirect_to new_course_forms_question_path(@course) if current_user.has_role?(:student, @course)
 
     @questions = @course.questions
     @user_question = current_user.courses.find(@course.id).questions.first

@@ -1,0 +1,2 @@
+module Courses::AnswerHelper
+end
