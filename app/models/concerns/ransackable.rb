@@ -1,4 +1,4 @@
-module RansackableConcern
+module Ransackable
   extend ActiveSupport::Concern
 
   included do

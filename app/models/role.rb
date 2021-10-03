@@ -6,7 +6,8 @@ class Role < ApplicationRecord
 
   has_many :enrollments, dependent: :delete_all
 
-  scope :with_course, ->(course_id) { where(resource_id: course_id, resource_type: "Course") }
+  scope :with_courses, ->(*courses) { where(resource: courses, resource_type: "Course") }
+  scope :with_resources, ->(*resources) { where(resource: resources) }
 
   belongs_to :resource,
              polymorphic: true,

@@ -83,6 +83,9 @@ Rails.application.routes.draw do
   resources :questions, shallow: true, only: [] do
     resources :messages
     resources :question_states
+    member do
+      post 'handle', to: 'questions/handle#create'
+    end
   end
 
   resources :questions, param: :question_id do

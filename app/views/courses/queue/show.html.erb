@@ -19,7 +19,7 @@
 
     <%= content_tag :div, id: "ta-action-pane", data: {
       courseId: @course.id, userId: current_user.id,
-      enrollmentId: current_user.enrollments.most_recent_enrollment_by_course(@course.id).id
+      enrollmentId: current_user.enrollment_in_course(@course).id
     }.to_json, class: 'w-100' do %><% end %>
 
     <hr class="w-100">
@@ -29,7 +29,7 @@
   <% if current_user.staff_of?(@course) %>
     <%= content_tag :div, id: "ta-queue-view", data: {
       courseId: @course.id, userId: current_user.id,
-      enrollmentId: current_user.enrollments.most_recent_enrollment_by_course(@course.id).id
+      enrollmentId: current_user.enrollment_in_course(@course).id
     }.to_json, class: 'w-100' do %><% end %>
   <% end %>
 

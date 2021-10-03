@@ -6,7 +6,7 @@ module Postgres
         ActiveRecord::Base.connection.execute(
           <<-SQL
         CREATE OR REPLACE VIEW course_#{course_id}.questions AS
-          #{::Question.with_course(course_id).to_sql}
+          #{::Question.with_courses(course_id).to_sql}
         SQL
         )
       end

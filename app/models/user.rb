@@ -2,10 +2,8 @@
 
 class User < ApplicationRecord
 
-  include ScopeableByCourseRoles
+  include Enrollable
 
-  has_many :active_enrollments, -> { undiscarded }, dependent: :delete_all, class_name: "Enrollment"
-  has_many :enrollments, dependent: :destroy
   has_many :notifications, as: :recipient, dependent: :destroy
 
   alias_attribute :current_state, :question_state
@@ -42,14 +40,10 @@ class User < ApplicationRecord
   def interacting_questions(*states, course_id: nil)
     states = ["resolving"] if states.empty?
     if course_id.present?
-      Question.where(id: QuestionState.with_user(id).pluck(:question_id)).latest_by_state(states).with_course(course_id)
+      Question.where(id: QuestionState.with_user(id).pluck(:question_id)).latest_by_state(states).with_courses(course_id)
     else
       Question.where(id: QuestionState.with_user(id).pluck(:question_id)).latest_by_state(states)
     end
-  end
-
-  def enrolled_in_course?(course_id)
-    enrollments.undiscarded.joins(:role).where("roles.resource_id": course_id, "roles.resource_type": "Course").any?
   end
 
   def unacknowledged_kicked_question?
@@ -68,18 +62,6 @@ class User < ApplicationRecord
     active_questions.first
   end
 
-  def enrolled_in_course?(course_id)
-    enrolled_in_courses?(course_id)
-  end
-
-  def enrolled_in_courses?(*course_id)
-    courses.merge(Enrollment.undiscarded).find_by(id: course_id).present?
-  end
-
-
-  def enrollment_with_course(course_id)
-    enrollments.undiscarded.joins(:role).find_by("roles.resource_type": "Course", "roles.resource_id": course_id)
-  end
 
   def question_state
     question_states.order('question_states.id DESC').first
@@ -89,7 +71,7 @@ class User < ApplicationRecord
     %i[with_role_ransack]
   end
 
-  scope :with_course, ->(course_id) { joins(:enrollments, enrollments: :role).where("roles.resource_id": course_id, "roles.resource_type": "Course") }
+  scope :with_courses, ->(*courses) { joins(:enrollments, enrollments: :role).where("roles.resource": courses) }
 
   scope :undiscarded_enrollments, -> { joins(:enrollments).merge(Enrollment.undiscarded) }
 

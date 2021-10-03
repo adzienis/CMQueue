@@ -78,7 +78,7 @@ class QuestionsController < ApplicationController
 
   def update_state
     @question = @questions.find(params[:question_id])
-    @enrollment = current_user.enrollment_with_course(params[:course_id])
+    @enrollment = current_user.enrollment_in_course(params[:course_id])
 
     @question.unfreeze(@enrollment.id)
   end

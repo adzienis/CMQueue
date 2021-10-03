@@ -41,7 +41,7 @@ export default (props) => {
         question_id: topQuestion.id,
         description,
       }),
-      `/api/questions/${topQuestion?.id}/handle_question`,
+      `/questions/${topQuestion?.id}/handle`,
       {},
       {
         onSuccess: (d) => {

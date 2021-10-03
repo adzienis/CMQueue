@@ -39,7 +39,7 @@
                         },
                         collection: (
                           if params[:course_id]
-                            ass.klass.methods.include?(:with_course) ? ass.klass.accessible_by(current_ability).with_course(Course.find(params[:course_id])).distinct : ass.klass.accessible_by(current_ability).distinct
+                            ass.klass.methods.include?(:with_courses) ? ass.klass.accessible_by(current_ability).with_course(Course.find(params[:course_id])).distinct : ass.klass.accessible_by(current_ability).distinct
                           else
                             ass.klass.accessible_by(current_ability).distinct
                           end

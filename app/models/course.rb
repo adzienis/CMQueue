@@ -67,7 +67,6 @@ class Course < ApplicationRecord
     joins(:enrollments).merge(Enrollment.undiscarded.with_user(user_id))
   }
 
-
   def self.find_by_code?(code)
     self.find_by_code(code).present?
   end
@@ -76,19 +75,28 @@ class Course < ApplicationRecord
     ta_course = Course.find_by(ta_code: code)
     instructor_course = Course.find_by(instructor_code: code)
 
-
     return ta_course, :ta if ta_course
     return instructor_course, :instructor if instructor_course
 
     return nil
   end
 
-  def self.find_staff_roles(user=nil)
+  # Course Roles Finders
+  ######################################################3
+
+  def self.find_staff_roles(user = nil)
     Course.find_roles([:ta, :lead_ta, :instructor], user)
   end
-  def self.find_privileged_staff_roles(user=nil)
+
+  def self.find_unprivileged_roles(user = nil)
+    Course.find_roles([:student], user)
+  end
+
+  def self.find_privileged_staff_roles(user = nil)
     Course.find_roles([:lead_ta, :instructor], user)
   end
+
+
 
   def available_tags
     tags.undiscarded.unarchived.distinct

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class QuestionState < ApplicationRecord
-  include RansackableConcern
+  include Ransackable
   include Turbo::Broadcastable
   belongs_to :question, touch: true, optional: false
   belongs_to :enrollment

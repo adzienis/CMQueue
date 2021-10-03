@@ -11,6 +11,6 @@ module CourseFilterable
     resources = proc { instance_variable_get("@#{controller_name}") }
     set_resources = proc { |value| instance_variable_set("@#{controller_name}", value) }
 
-    set_resources.call(resources.call.with_course(params[:course_id])) if params[:course_id]
+    set_resources.call(resources.call.with_courses(params[:course_id])) if params[:course_id]
   end
 end

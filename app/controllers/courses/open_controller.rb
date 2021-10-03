@@ -1,6 +1,6 @@
 class Courses::OpenController < ApplicationController
   include CourseScoped
-  respond_to :html, :json
+  respond_to :json
 
   def index
     @courses = Course.accessible_by(current_ability).where(open: params[:open])

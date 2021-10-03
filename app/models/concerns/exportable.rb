@@ -1,4 +1,4 @@
-module ExportableConcern
+module Exportable
   extend ActiveSupport::Concern
 
   included do

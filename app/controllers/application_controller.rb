@@ -27,7 +27,7 @@ class ApplicationController < ActionController::Base
     if request.path.include?('users/')
       raise CanCan::AccessDenied unless current_user.id == params[:user_id].to_i if params[:user_id]
     elsif request.path.include?('courses/')
-      raise CanCan::AccessDenied unless current_user.enrolled_in_course?(params[:course_id]) if params[:course_id]
+      raise CanCan::AccessDenied unless current_user.enrolled_in_course?(@course) if @course
     end
   end
 

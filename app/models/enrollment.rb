@@ -1,7 +1,7 @@
 class Enrollment < ApplicationRecord
   include Discard::Model
-  include RansackableConcern
-  include ExportableConcern
+  include Ransackable
+  include Exportable
 
   enum semester: { Su21: "Su21", F21: "F21" }
 
@@ -36,7 +36,7 @@ class Enrollment < ApplicationRecord
 
   scope :with_role, ->(role_id) { joins(:role).where("roles.id": role_id) }
   scope :with_user, ->(user_id) { joins(:user).where("users.id": user_id) }
-  scope :with_course, ->(course_id) { joins(:role).merge(Role.with_course(course_id)) }
+  scope :with_courses, ->(courses) { joins(:role).merge(Role.with_resources(courses)) }
 
   scope :with_course_roles, ->(*roles){ joins(:role).where("roles.name": roles, "roles.resource_type": "Course") }
 
@@ -58,9 +58,6 @@ class Enrollment < ApplicationRecord
     }
   end
 
-  def self.most_recent_enrollment_by_course(course_id)
-    undiscarded.with_course(course_id).order(created_at: :desc).first
-  end
 
   private
 

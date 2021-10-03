@@ -2,8 +2,9 @@
 
 class Question < ApplicationRecord
   include Discard::Model
-  include RansackableConcern
-  include ExportableConcern
+  include Ransackable
+  include Exportable
+  include GuardableTransactions
 
   belongs_to :enrollment
   has_one :course, through: :enrollment
@@ -54,7 +55,8 @@ class Question < ApplicationRecord
 
   scope :acknowledged, -> { where(id: joins(:question_states).where.not("question_states.acknowledged_at": nil)) }
   scope :unacknowledged, -> { where(id: joins(:question_states).where("question_states.acknowledged_at": nil)) }
-  scope :with_course, ->(course_id) { joins(enrollment: :role).merge(Role.with_course(course_id)) }
+  scope :with_courses, ->(*courses) { joins(enrollment: :role).merge(Role.with_courses(courses)) }
+  scope :with_course, ->(*courses) { joins(enrollment: :role).merge(Role.with_courses(courses)) }
 
   scope :by_state, lambda { |*states|
     joins(:question_state)
@@ -89,8 +91,8 @@ class Question < ApplicationRecord
     where(created_at: Date.today.all_day)
   }
 
-  scope :with_user, ->(user_id) {
-    joins(:question_states, :enrollment).where("enrollments.user_id": user_id)
+  scope :with_users, ->(*users) {
+    joins(:enrollment).where("enrollments.user": users)
   }
 
   def resolved?
@@ -125,25 +127,12 @@ class Question < ApplicationRecord
     transition_to_state("resolved", enrollment_id)
   end
 
-  def transition_to_state(state, enrollment_id)
+  def transition_to_state(state, enrollment_id=send(:enrollment_id))
     return false if errors.any?
 
     guard_db do
       question_states.create!(enrollment_id: enrollment_id, state: state)
     end
-  end
-
-  def guard_db(&block)
-    result = begin
-               transaction do
-                 result = yield
-                 validate!
-                 result
-               end
-             rescue ActiveRecord::RecordInvalid => error
-               error
-             end
-    reload and result
   end
 
   def resolving(enrollment_id)
