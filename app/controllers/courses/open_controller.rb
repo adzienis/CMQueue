@@ -16,7 +16,6 @@ class Courses::OpenController < ApplicationController
 
   def show
     @course.open
-
     respond_with @course.open
   end
 

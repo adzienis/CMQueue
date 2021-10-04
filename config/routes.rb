@@ -33,7 +33,7 @@ Rails.application.routes.draw do
     resources :announcements
     resources :question_states
     resources :question_tags
-    resource :settings, param: :setting_id
+    resource :settings
     resources :notifications
     resources :questions
     resources :tags
@@ -59,17 +59,11 @@ Rails.application.routes.draw do
       post 'import', to: "tags#import"
     end
   end
-
-
-  namespace :metabase do
-    resources :dashboards, param: :dashboard_id
-  end
-
   resources :question_states
 
   resources :messages
 
-  resources :settings, param: :setting_id
+  resources :settings
 
   resources :enrollments do
     collection do
@@ -88,7 +82,7 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :questions, param: :question_id do
+  resources :questions do
     member do
       get 'paginatedPreviousQuestions', to: 'questions#paginated_previous_questions'
       get 'previousQuestions', to: 'questions#previous_questions'
@@ -101,11 +95,11 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :courses, param: :course_id
+  resources :courses
 
   resources :users, only: [], model_name: "User" do
     resources :questions
-    resources :courses, param: :course_id
+    resources :courses
     resources :enrollments
     resources :tags
     resources :notifications
@@ -117,11 +111,11 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :users, param: :user_id
+  resources :users
 
   resources :courses, only: [], model_name: "Course" do
 
-    resources :questions, param: :question_id, except: [:new, :create] do
+    resources :questions, except: [:new, :create] do
       collection do
         get 'download', to: "questions#download_form"
       end
@@ -134,22 +128,18 @@ Rails.application.routes.draw do
     end
 
     namespace :forms do
-      resource :question, only: [:new, :create, :edit, :update, :destroy], controller: "question"
+      resource :question, only: [:new, :create, :edit, :update, :destroy], controller: :question
     end
 
-    namespace :metabase do
-      resources :dashboards, param: :dashboard_id
-    end
+    resources :tag_groups
 
-    resources :tag_groups, param: :tag_group_id
-
-    resources :users, param: :user_id
+    resources :users
 
     resources :question_states
 
     resources :messages
 
-    resources :settings, param: :setting_id
+    resources :settings
 
     resources :certificates do
       collection do
@@ -175,7 +165,7 @@ Rails.application.routes.draw do
 
   resources :certificates
 
-  resources :courses, param: :course_id do
+  resources :courses do
     member do
       post 'semester'
       get 'roster', to: 'courses#roster'
@@ -196,6 +186,7 @@ Rails.application.routes.draw do
       post 'kick', to: 'courses#kick'
       get 'topQuestion', to: 'courses#top_question'
       get 'open', to: "courses/open#show"
+      patch 'open', to: "courses/open#update"
       get 'database', to: "courses/database#index", as: :database
       get 'recent_activity', to: "summaries#recent_activity"
     end

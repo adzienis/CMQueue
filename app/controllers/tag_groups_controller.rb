@@ -1,4 +1,5 @@
 class TagGroupsController < ApplicationController
+  load_and_authorize_resource id_param: :tag_group_id
 
   respond_to :html, :json
 
@@ -16,11 +17,11 @@ class TagGroupsController < ApplicationController
   end
 
   def show
-    @tag_group = TagGroup.accessible_by(current_ability).find(params[:tag_group_id])
+    @tag_group = @tag_groups.find(params[:tag_group_id])
   end
 
   def update
-    @tag_group = TagGroup.accessible_by(current_ability).find(params[:tag_group_id])
+    @tag_group = @tag_groups.find(params[:tag_group_id])
     @tag_group.update(tag_group_params)
 
     respond_with @tag_group, location: course_tag_groups_path(@course)
@@ -32,11 +33,10 @@ class TagGroupsController < ApplicationController
   end
 
   def edit
-    @tag_group = TagGroup.accessible_by(current_ability).find(params[:tag_group_id])
+    @tag_group = @tag_groups.find(params[:tag_group_id])
   end
 
   def destroy
-    @tag_groups = TagGroup.all
     @tag_group = @tag_groups.find(params[:tag_group_id])
 
     @tag_group.destroy

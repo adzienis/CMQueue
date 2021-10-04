@@ -1,16 +1,15 @@
 # frozen_string_literal: true
 
 class EnrollmentsController < ApplicationController
+  load_and_authorize_resource id_param: :enrollment_id
 
   respond_to :html, :json
 
   def index
-    @course = Course.find(params[:course_id]) if params[:course_id]
-
-    @enrollments = Enrollment
-                             .undiscarded
-                             .joins(:user, :role, :course)
-                             .order("enrollments.created_at": :desc)
+    @enrollments = @enrollments
+                     .undiscarded
+                     .joins(:user, :role, :course)
+                     .order("enrollments.created_at": :desc)
     @enrollments = @enrollments.where(user_id: params[:user_id]) if params[:user_id]
     @enrollments = @enrollments
                      .joins(:role)
@@ -80,35 +79,31 @@ class EnrollmentsController < ApplicationController
   end
 
   def edit
-    @enrollment = Enrollment.find(params[:id])
+    @enrollment = @enrollments.find(params[:id])
   end
 
   def update
-    @enrollment = Enrollment.find(params[:id])
     @enrollment.update(enrollment_params)
 
     respond_with @enrollment, location: course_enrollments_path(@course)
   end
 
   def show
-    @course = Course.find(params[:course_id]) if params[:course_id]
-    @enrollment = Enrollment.find(params[:id])
+    @enrollment = @enrollments.find(params[:id])
   end
 
   def new
-    @course = Course.find(params[:course_id]) if params[:course_id]
     @enrollment = Enrollment.new
   end
 
   def create
-    @course = Course.find_by(id: params[:course_id]) if params[:course_id]
     @enrollment = Enrollment.create(enrollment_params)
 
     respond_with @enrollment, location: course_enrollments_path(@course)
   end
 
   def destroy
-    @enrollment = Enrollment.find_by(id: params[:id]).discard
+    @enrollment = @enrollments.find(params[:enrollment_id]).discard
 
     respond_with @enrollment, location: course_enrollments_path(@course)
   end

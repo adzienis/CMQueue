@@ -39,6 +39,15 @@ module CMQueue
       Doorkeeper::AuthorizedApplicationsController.layout 'layouts/doorkeeper/admin'
     end
 
+    # overrides
+    overrides = "#{Rails.root}/app/overrides"
+    Rails.autoloaders.main.ignore(overrides)
+    config.to_prepare do
+      Dir.glob("#{overrides}/**/*_override.rb").each do |override|
+        load override
+      end
+    end
+
     # Configuration for the application, engines, and railties goes here.
     #
     # These settings can be overridden in specific environments using the files

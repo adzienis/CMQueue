@@ -9,7 +9,7 @@ class Enrollment < ApplicationRecord
 
   belongs_to :user, optional: false
   belongs_to :role, optional: false
-  has_one :course, through: :role, source: :resource, source_type: 'Course'
+  has_one :course, through: :role
   has_one :question_state, -> { order('question_states.id DESC') }
   has_many :question_states, dependent: :destroy
   has_many :questions, dependent: :destroy
@@ -30,7 +30,7 @@ class Enrollment < ApplicationRecord
 
   end
 
-  before_validation on: :create do
+  before_validation do
     self.semester = Enrollment.default_semester if self.semester.nil?
   end
 

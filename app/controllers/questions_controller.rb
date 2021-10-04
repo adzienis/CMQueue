@@ -2,12 +2,6 @@
 
 class QuestionsController < ApplicationController
   load_and_authorize_resource id_param: :question_id
-
-  include ResourceInitializable
-  include ResourceAuthorizable
-  include CourseFilterable
-  include UserFilterable
-
   respond_to :html, :json, :csv
 
   def new
@@ -18,13 +12,19 @@ class QuestionsController < ApplicationController
   end
 
   def position
+    @questions = Question.accessible_by(current_ability)
     @questions = @questions.undiscarded
+    @questions = @questions.with_courses(params[:course_id]) if params[:course_id]
+    @questions = @questions.with_users(params[:user_id]) if params[:user_id]
     @questions = @questions.questions_by_state(JSON.parse(params[:state])) if params[:state]
 
     respond_with @questions.pluck(:id).index(params[:question_id].to_i)
   end
+
   def index
     @questions = @questions.undiscarded.order(:created_at) #.order("max(question_states.state) desc").group("questions.id")
+    @questions = @questions.with_courses(params[:course_id]) if params[:course_id]
+    @questions = @questions.with_users(params[:user_id]) if params[:user_id]
     @questions = @questions.latest_by_state(JSON.parse(params[:state])) if params[:state]
 
     @questions_ransack = @questions.ransack(params[:q])
@@ -43,10 +43,12 @@ class QuestionsController < ApplicationController
   end
 
   def previous_questions
+    @questions = Question.accessible_by(current_ability)
     @question = @questions.find(params[:question_id])
+    @questions = @questions.with_courses(params[:course_id]) if params[:course_id]
+    @questions = @questions.with_users(params[:user_id]) if params[:user_id]
 
     @questions = @questions.previous_questions(@question).order(created_at: :desc).accessible_by(current_ability).undiscarded
-    @questions = @questions.where(course_id: params[:course_id]) if params[:course_id]
     @questions_ransack = @questions.ransack(params[:q])
 
     @pagy, @records = pagy @questions_ransack.result
@@ -55,14 +57,11 @@ class QuestionsController < ApplicationController
   end
 
   def edit
-    @question = @questions.find(params[:question_id])
   end
 
   def show
-    @question = @questions.find(params[:question_id])
-
     respond_with @question do |format|
-      format.json { render json: @question.as_json(include: [:user, :tags, :question_state])}
+      format.json { render json: @question.as_json(include: [:user, :tags, :question_state]) }
     end
   end
 
@@ -71,9 +70,7 @@ class QuestionsController < ApplicationController
 
     @question.save
 
-    render turbo_stream: (turbo_stream.replace @question, partial: "form", locals: { question: @question, available_tags: @available_tags}) and return unless @question.errors.count == 0
-
-    redirect_to queue_course_path(@question.course)
+    respond_with @question
   end
 
   def update_state
@@ -81,23 +78,22 @@ class QuestionsController < ApplicationController
     @enrollment = current_user.enrollment_in_course(params[:course_id])
 
     @question.unfreeze(@enrollment.id)
+
+    respond_with @question
   end
 
   def download_form
   end
 
   def update
-    @question = @questions.find(params[:question_id])
     @available_tags = Tag.undiscarded.unarchived.with_course(@question.course.id)
     @question.update(question_params)
 
-    render turbo_stream: (turbo_stream.replace @question, partial: "form", locals: { question: @question, available_tags: @available_tags}) and return unless @question.errors.count == 0
-
-    redirect_to request.referer
+    respond_with @question
   end
 
   def paginated_previous_questions
-    @question = Question.find(params[:id])
+    @question = @questions.find(params[:question_id])
     @paginated_past_questions = Question
                                   .left_joins(:question_state)
                                   .where("question_states.state = #{QuestionState.states['resolved']}")

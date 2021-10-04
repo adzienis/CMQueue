@@ -6,7 +6,7 @@ class Forms::QuestionController < ApplicationController
 
     @available_tags = @course.available_tags
 
-    merged_question_params = question_params.to_h.symbolize_keys.merge(tag_ids: params[:tag_groups].values.reduce{|x,y| x + y})
+    merged_question_params = question_params.to_h.symbolize_keys.merge(tag_ids: params[:tag_groups].values.reduce { |x, y| x + y })
     @question_form = Forms::Question.new(current_user: current_user,
                                          question_params: merged_question_params)
 
@@ -19,7 +19,7 @@ class Forms::QuestionController < ApplicationController
     @question = current_user.active_question
     @available_tags = @course.available_tags
 
-    merged_question_params = question_params.to_h.symbolize_keys.merge(tag_ids: params[:tag_groups].values.reduce{|x,y| x + y})
+    merged_question_params = question_params.to_h.symbolize_keys.merge(tag_ids: params[:tag_groups].values.reduce { |x, y| x + y })
 
     @question_form = Forms::Question.new(current_user: current_user, question: @question, question_params: merged_question_params)
 
@@ -29,18 +29,21 @@ class Forms::QuestionController < ApplicationController
   end
 
   def new
-    redirect_to edit_course_forms_question_path(current_user.active_question.course) if current_user.active_question?
+    redirect_to edit_course_forms_question_path(current_user.active_question.course) if current_user.active_question?(@course)
     @available_tags = @course.available_tags
+    @enrollment = current_user.enrollment_in_course(@course)
 
     @question_form = Forms::Question.new(question: Question.new(enrollment: @enrollment))
   end
 
   def edit
-    @question = current_user.active_question
+    @question = current_user.active_question(course: @course)
+    redirect_to new_course_forms_question_path(@course) and return if @question.nil?
+
+
+    @enrollment = current_user.enrollment_in_course(@course)
 
     @question_form = Forms::Question.new(question: @question)
-
-    redirect_to new_course_forms_question_path(@course) and return if @question.nil?
 
     @available_tags = @course.available_tags
   end
@@ -50,7 +53,7 @@ class Forms::QuestionController < ApplicationController
   end
 
   def destroy
-    current_user.active_question.discard
+    current_user.active_question.active_question(course: @course).discard
 
     redirect_to new_course_forms_question_path(@course)
   end

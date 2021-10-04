@@ -23,7 +23,13 @@ module Enrollable
   end
 
   def enrollment_in_course(course)
-    enrollments.undiscarded.joins(:role).where("roles.resource": course).order(created_at: :desc).first
+    if course.instance_of? Course
+      enrollments.undiscarded.joins(:role).where("roles.resource": course).order(created_at: :desc).first
+    elsif course.instance_of? Integer
+      enrollments.undiscarded.joins(:role).where("roles.resource_id": course, "roles.resource_type": "Course").order(created_at: :desc).first
+    else
+      nil
+    end
   end
 
   [:ta, :lead_ta, :instructor, :student].each do |role|

@@ -1,13 +1,11 @@
 # frozen_string_literal: true
 
 class QuestionStatesController < ApplicationController
-  load_and_authorize_resource
+  load_and_authorize_resource id_param: :question_state_id
 
   respond_to :html, :json
 
   def index
-    @course = Course.find(params[:course_id]) if params[:course_id]
-
     @question_states = @question_states.where(question_id: params[:question_id]) if params[:question_id]
 
     @question_states = @question_states.order("question_states.created_at": :desc).joins(:question).where("questions.course_id": params[:course_id]) if params[:course_id]
@@ -26,8 +24,7 @@ class QuestionStatesController < ApplicationController
   end
 
   def show
-    @course = Course.find(params[:course_id]) if params[:course_id]
-    @question_state = QuestionState.find(params[:id])
+    @question_state = @question_states.find(params[:id])
   end
 
   private

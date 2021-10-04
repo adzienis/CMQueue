@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class MessagesController < ApplicationController
-  load_and_authorize_resource
+  load_and_authorize_resource id_param: :message_id
 
   def index
     respond_to do |format|
@@ -9,14 +9,12 @@ class MessagesController < ApplicationController
         if params[:course_id]
           @messages = @messages.joins(question_state: :question).where("questions.course_id": params[:course_id])
         end
-        @course = Course.find(params[:course_id]) if params[:course_id]
 
         @messages_ransack = @messages.ransack(params[:q])
 
         @pagy, @records = pagy @messages_ransack.result
       end
       format.json do
-        @messages = Message.all
         if params[:question_id]
           @messages = @messages
                       .left_joins(:question_state)

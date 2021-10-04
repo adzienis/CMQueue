@@ -96,6 +96,19 @@ class Course < ApplicationRecord
     Course.find_roles([:lead_ta, :instructor], user)
   end
 
+  def student_role
+    roles.find_by("roles.name": "student")
+  end
+  def instructor_role
+    roles.find_by("roles.name": "instructor")
+  end
+  def ta_role
+    roles.find_by("roles.name": "ta")
+  end
+  def lead_ta_role
+    roles.find_by("roles.name": "lead_ta")
+  end
+
 
 
   def available_tags

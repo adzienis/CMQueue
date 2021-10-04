@@ -4,3 +4,18 @@
 # model remove the '{}' from the fixture names and add the columns immediately
 # below each fixture, per the syntax in the comments below
 #
+
+
+student_question:
+  description: blah
+  location: blah
+  tried: blah
+  enrollment: student_418_with_question
+  tags: [ malloc ]
+
+tim_question:
+  description: blah
+  location: blah
+  tried: blah
+  enrollment: tim_418
+  tags: [ malloc ]

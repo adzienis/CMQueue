@@ -54,14 +54,15 @@ class User < ApplicationRecord
     questions.by_state("kicked").unacknowledged.first
   end
 
-  def active_question?
-    !active_question.nil?
+  def active_question?(course: nil)
+    !active_question(course: course).nil?
   end
 
-  def active_question
-    active_questions.first
+  def active_question(course: nil)
+    questions = active_questions
+    questions = questions.with_courses(course) if course.present?
+    questions.first
   end
-
 
   def question_state
     question_states.order('question_states.id DESC').first

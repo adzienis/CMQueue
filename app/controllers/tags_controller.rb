@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class TagsController < ApplicationController
-  load_and_authorize_resource
+  load_and_authorize_resource id_param: :tag_id
 
   respond_to :html, :json, :csv
 

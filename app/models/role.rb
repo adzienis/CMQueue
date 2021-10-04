@@ -6,6 +6,10 @@ class Role < ApplicationRecord
 
   has_many :enrollments, dependent: :delete_all
 
+
+  belongs_to :course, -> { where(roles: {resource_type: 'Course'}) }, foreign_key: 'resource_id'
+
+
   scope :with_courses, ->(*courses) { where(resource: courses, resource_type: "Course") }
   scope :with_resources, ->(*resources) { where(resource: resources) }
 
@@ -29,18 +33,18 @@ class Role < ApplicationRecord
   def self.role_security_value(role_name)
     case role_name
     when "instructor"
-      0
-    when "head_ta"
-      1
-    when "ta"
-      2
-    when "student"
       3
+    when "lead_ta"
+      2
+    when "ta"
+      1
+    when "student"
+      0
     end
   end
 
   def self.higher_security?(role_tested, role_compared_to)
-    role_security_value(role_tested) > role_security_value(role_compared_to)
+    role_security_value(role_tested.name) > role_security_value(role_compared_to.name)
   end
 
   scopify

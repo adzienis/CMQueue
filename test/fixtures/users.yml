@@ -19,3 +19,18 @@ brian:
   given_name: Brian
   family_name: Railing
   email: brian@gmail.com
+
+no_enrollments:
+  given_name: Art
+  family_name: Jackson
+  email: jackson@gmail.com
+
+max:
+  given_name: max
+  family_name: Jackson
+  email: m_jackson@gmail.com
+
+tim:
+  given_name: tim
+  family_name: Jackson
+  email: t_jackson@gmail.com

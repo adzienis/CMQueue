@@ -521,9 +521,7 @@ ALTER SEQUENCE public.questions_id_seq OWNED BY public.questions.id;
 CREATE TABLE public.questions_tags (
     id bigint NOT NULL,
     question_id bigint,
-    tag_id bigint,
-    created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
+    tag_id bigint
 );
 
 
@@ -1466,6 +1464,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20210917210147'),
 ('20210917210227'),
 ('20210928053422'),
-('20210928145344');
+('20210928145344'),
+('20211003204929');
 
 

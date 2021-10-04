@@ -6,12 +6,20 @@
 #
 ta_418:
   user: arthur
-  role: student_418
+  role: ta_418
 
 student_418:
   user: jason
-  role: ta_418
+  role: student_418
 
 instructor_418:
   user: brian
   role: instructor_418
+
+student_418_with_question:
+  user: max
+  role: student_418
+
+tim_418:
+  user: tim
+  role: student_418

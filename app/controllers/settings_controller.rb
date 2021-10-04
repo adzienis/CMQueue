@@ -1,5 +1,5 @@
 class SettingsController < ApplicationController
-  load_and_authorize_resource
+  load_and_authorize_resource id_param: :setting_id
 
   before_action :restrict_routes
 

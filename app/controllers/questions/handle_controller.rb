@@ -3,12 +3,15 @@ class Questions::HandleController < ApplicationController
   respond_to :json
 
   before_action :set_resource, only: :create
+  before_action :authorize
 
-  def set_resource
-    @questions = Question.accessible_by(current_ability)
-    @question = @questions.find(params[:question_id])
+  def authorize
+    authorize! :handle_question, @question
   end
 
+  def set_resource
+    @question = Question.find(params[:question_id])
+  end
 
   def create
     ret = @question.transition_to_state(params[:state], params[:enrollment_id])

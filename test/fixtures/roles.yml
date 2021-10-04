@@ -11,7 +11,7 @@ student_418:
   resource: class_418
 
 ta_418:
-  name: student
+  name: ta
   resource_type: Course
   resource: class_418
 
