@@ -29,7 +29,7 @@ class Forms::QuestionController < ApplicationController
   end
 
   def new
-    redirect_to edit_course_forms_question_path(current_user.active_question.course) if current_user.active_question?(@course)
+    redirect_to edit_course_forms_question_path(current_user.active_question(course: @course).course) if current_user.active_question?(course: @course)
     @available_tags = @course.available_tags
     @enrollment = current_user.enrollment_in_course(@course)
 

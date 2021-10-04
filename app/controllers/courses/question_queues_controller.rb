@@ -5,7 +5,6 @@ module Courses
     def create; end
 
     def index
-      @question_queus = Question_Queue.all
 
       respond_to do |format|
         format.html

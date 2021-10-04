@@ -117,6 +117,14 @@ class Ability
         user.instructor_of?(course)
       end
 
+      can :queue_show, Course, Course.where(id: @staff_roles) do |course|
+        user.staff_of?(course)
+      end
+
+      can :answer, Course, Course.where(id: @staff_roles) do |course|
+        user.staff_of?(course)
+      end
+
       can :manage, QuestionState, QuestionState.joins(:question)
                                                .where("questions.course_id": @staff_roles)
                                                .or(QuestionState.where("question_states.enrollment_id": user.enrollments.pluck(:id)))
@@ -151,6 +159,8 @@ class Ability
                                      .where(courses: @staff_roles).or(Question.where("enrollments.user_id": user.id)) do |question|
         user.staff_of?(question.course) || question.user == user
       end
+
+
     end
   end
 end

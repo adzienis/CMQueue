@@ -1,6 +1,13 @@
 class Courses::QueueController < ApplicationController
+
+  before_action :authorize
+
+
+  def authorize
+    authorize! :queue_show, @course
+  end
+
   def show
-    authorize! :staff_queue, @course
 
     redirect_to user_enrollments_path and return unless @course
     redirect_to new_course_forms_question_path(@course) if current_user.has_role?(:student, @course)
