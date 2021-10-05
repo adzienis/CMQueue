@@ -53,7 +53,7 @@ class Forms::QuestionController < ApplicationController
   end
 
   def destroy
-    current_user.active_question.active_question(course: @course).discard
+    current_user.active_question(course: @course).discard
 
     redirect_to new_course_forms_question_path(@course)
   end

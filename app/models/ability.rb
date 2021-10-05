@@ -3,7 +3,7 @@
 class Ability
   include CanCan::Ability
 
-  def initialize(user, params)
+  def initialize(user, context)
     if user.present?
 
       if user.has_role? :admin
@@ -60,29 +60,9 @@ class Ability
       #  false
       #end
 
-      can :manage, Enrollment, Enrollment.joins(:role)
-                                         .where("roles.resource_id": @staff_roles) do |enrollment|
-        user.instructor_of?(enrollment.course)
-      end
-
-      can :create, Enrollment, Enrollment.where("enrollments.user_id": user.id) do |enrollment|
-        if params[:role_id].present?
-          next false if Role.higher_security?(Role.find(params[:role_id]), enrollment.role)
-        end
-        (enrollment.user == user)
-      end
-
-      can :update, Enrollment, Enrollment.where("enrollments.user_id": user.id) do |enrollment|
-
-        if params.dig(:enrollment, :role_id).present?
-          next false if Role.higher_security?(Role.find(params.dig(:enrollment, :role_id)), enrollment.role)
-        end
-        (enrollment.user == user)
-      end
-
-      can :read, Enrollment, Enrollment.where("enrollments.user_id": user.id) do |enrollment|
-        if params[:role_id].present?
-          next false if Role.higher_security?(Role.find(params[:role_id]), enrollment.role)
+      can [:read, :update, :create, :destroy], Enrollment, Enrollment.joins(:role).where(user: user).or(Enrollment.where("roles.resource_id": @staff_roles)) do |enrollment|
+        if context[:params][:role_id].present?
+          next false if Role.higher_security?(Role.find(context[:params][:role_id]), enrollment.role)
         end
         (enrollment.user == user)
       end
@@ -151,8 +131,12 @@ class Ability
         user.privileged_staff_of?(tag.course)
       end
 
-      can :handle_question, Question, Question.joins(:course).where(courses: @staff_roles) do |question|
+      can :create_handle, Question do |question|
         user.staff_of?(question.course)
+      end
+
+      can :index_database, Course do |course|
+        user.privileged_staff_of?(course)
       end
 
       can :manage, Question, Question.joins(:course, :enrollment)

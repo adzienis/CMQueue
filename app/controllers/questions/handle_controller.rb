@@ -6,7 +6,7 @@ class Questions::HandleController < ApplicationController
   before_action :authorize
 
   def authorize
-    authorize! :handle_question, @question
+    authorize! :create_handle, @question
   end
 
   def set_resource

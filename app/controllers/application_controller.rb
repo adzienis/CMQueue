@@ -14,7 +14,10 @@ class ApplicationController < ActionController::Base
   before_action :authenticate_user!, :set_course, :set_user, :restrict_routes
 
   def current_ability
-    @current_ability ||= Ability.new(current_user, params)
+    @current_ability ||= Ability.new(current_user,{
+      params: params,
+      path_parameters: request.path_parameters
+    })
   end
 
   def set_user
