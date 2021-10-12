@@ -50,6 +50,10 @@ group :development do
   gem 'rack-mini-profiler', '~> 2.0'
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'
+
+  gem "guard", "~> 2.18"
+gem 'mini_racer', platforms: :ruby
+
 end
 
 group :test do
@@ -65,11 +69,6 @@ gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
 
 
 
-gem 'rack-cors', '~> 1.1'
-
-gem 'mini_racer', platforms: :ruby
-
-gem 'cable_ready', '~> 4.5'
 
 gem 'cancancan', '~> 3.2'
 
@@ -81,18 +80,11 @@ gem 'pg', '~> 1.2'
 
 gem 'bootstrap', '= 5.0.1'
 
-gem 'kaminari', '~> 1.2'
-
 gem 'pagy'
 
 gem 'ransack', '~> 2.4'
 
-
-gem 'rails_admin_import', '~> 2.2'
-
 gem 'simple_form', '~> 5.1'
-
-gem 'rails_admin', '~> 2.1'
 
 gem 'pghero', '~> 2.8'
 
@@ -114,19 +106,9 @@ gem "noticed", "~> 1.4"
 
 gem "sidekiq", "~> 6.2"
 
-gem "solargraph", "~> 0.42.3"
-
 gem "whenever", "~> 1.0"
 
-gem "administrate", "~> 0.16.0"
-
-gem "administrate_exportable", "~> 0.5.0"
-
-gem "letter_opener", "~> 1.7"
-
 gem "ransack_search_element", "~> 0.1.0.pre.alpha"
-
-gem "appsignal", "~> 3.0"
 
 gem "responders", "~> 3.0", github: 'heartcombo/responders'
 

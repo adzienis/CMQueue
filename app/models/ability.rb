@@ -60,13 +60,16 @@ class Ability
       #  false
       #end
 
-      can [:read, :update, :create, :destroy], Enrollment, Enrollment.joins(:role).where(user: user).or(Enrollment.where("roles.resource_id": @staff_roles)) do |enrollment|
-        if context[:params][:role_id].present?
-          next false if Role.higher_security?(Role.find(context[:params][:role_id]), enrollment.role)
-        end
+      can [:read, :create, :destroy], Enrollment, Enrollment.joins(:role).where(user: user).or(Enrollment.where("roles.resource_id": @staff_roles)) do |enrollment|
         (enrollment.user == user)
       end
 
+      can [:update], Enrollment, Enrollment.joins(:role).where(user: user).or(Enrollment.where("roles.resource_id": @staff_roles)) do |enrollment|
+        if context[:params][:enrollment].present?
+          next false if Role.higher_security?(Role.find(context[:params][:enrollment][:role_id]), enrollment.role)
+        end
+        (enrollment.user == user)
+      end
 
       #can :manage, Message, Message.joins(:question_state).joins(question_state: :question)
       #                                .where("questions.course_id": Course
@@ -143,7 +146,6 @@ class Ability
                                      .where(courses: @staff_roles).or(Question.where("enrollments.user_id": user.id)) do |question|
         user.staff_of?(question.course) || question.user == user
       end
-
 
     end
   end
