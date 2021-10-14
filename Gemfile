@@ -13,7 +13,6 @@ gem 'puma', '~> 5.0'
 # Use SCSS for stylesheets
 gem 'sass-rails', '>= 6'
 # Transpile app-like JavaScript. Read more: https://github.com/rails/webpacker
-gem 'webpacker', '~> 5.0'
 # Turbolinks makes navigating your web application faster. Read more: https://github.com/turbolinks/turbolinks
 
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
@@ -78,7 +77,6 @@ gem 'turbo-rails', '~> 0.5.9', git: "https://github.com/hotwired/turbo-rails", r
 
 gem 'pg', '~> 1.2'
 
-gem 'bootstrap', '= 5.0.1'
 
 gem 'pagy'
 
@@ -113,3 +111,9 @@ gem "ransack_search_element", "~> 0.1.0.pre.alpha"
 gem "responders", "~> 3.0", github: 'heartcombo/responders'
 
 gem "anycable-rails", "~> 1.1"
+
+gem "jsbundling-rails", "~> 0.1.9"
+
+gem "cssbundling-rails", "~> 0.2.4"
+
+gem "newrelic_rpm", "~> 8.0"
