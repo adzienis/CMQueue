@@ -3,18 +3,10 @@
 <%= render layout: "shared/sidebar" do %>
   <li class="d-flex align-items-center">
     <div style="width: 16px" class="d-flex justify-content-center">
-      <i class="fas fa-question"></i>
-    </div>
-    <%= button_to "User", user_path(@user),
-                  class: "btn text-decoration-none #{(request.path == user_path(@user)) ?
-                                                       "active-link" : ""}", method: :get %>
-  </li>
-  <li class="d-flex align-items-center">
-    <div style="width: 16px" class="d-flex justify-content-center">
       <i class="fas fa-cog"></i>
     </div>
-    <%= button_to "Settings", user_settings_path(@user),
-                  class: "btn text-decoration-none #{(request.path == user_settings_path(@user)) ?
+    <%= button_to "Settings", user_settings_path(current_user),
+                  class: "btn text-decoration-none #{(request.path == user_settings_path(current_user)) ?
                                                        "active-link" : ""}", method: :get %>
   </li>
   <li class="mb-1">
@@ -23,9 +15,9 @@
         <i class="fas fa-info"></i>
       </div>
       <%= button_tag class: "btn btn-toggle align-items-center text-decoration-none
-                            #{(request.path == (@user) ||
-        request.path == user_questions_path(@user)||
-        request.path == user_enrollments_path(@user)) ? 'active-link' : ''}",
+                            #{(request.path == (current_user) ||
+        request.path == user_questions_path(current_user)||
+        request.path == user_enrollments_path(current_user)) ? 'active-link' : ''}",
                      data: { "bs-toggle": "collapse", "bs-target": "#course-info-collapse" } do %>
         Information
       <% end %>
@@ -37,8 +29,8 @@
           <div style="width: 16px" class="d-flex justify-content-center">
             <i class="fas fa-question"></i>
           </div>
-          <%= button_to "Questions", user_questions_path(@user),
-                        class: "btn text-decoration-none #{(request.path == user_questions_path(@user)) ?
+          <%= button_to "Questions", user_questions_path(current_user),
+                        class: "btn text-decoration-none #{(request.path == user_questions_path(current_user)) ?
                                                              "active-link" : ""}", method: :get %>
         </li>
 
@@ -46,16 +38,16 @@
           <div style="width: 16px" class="d-flex justify-content-center">
             <i class="fas fa-user"></i>
           </div>
-          <%= button_to "Enrollments", user_enrollments_path(@user),
-                        class: "btn text-decoration-none #{(request.path == user_enrollments_path(@user)) ?
+          <%= button_to "Enrollments", user_enrollments_path(current_user),
+                        class: "btn text-decoration-none #{(request.path == user_enrollments_path(current_user)) ?
                                                              "active-link" : ""}", method: :get %>
         </li>
         <%= tag.li class: "d-flex align-items-center" do %>
         <div style="width: 16px" class="d-flex justify-content-center">
           <i class="fas fa-book"></i>
         </div>
-        <%= button_to "Courses", user_courses_path(@user),
-                      class: "btn text-decoration-none #{(request.path == user_courses_path(@user)) ?
+        <%= button_to "Courses", user_courses_path(current_user),
+                      class: "btn text-decoration-none #{(request.path == user_courses_path(current_user)) ?
                                                            "active-link" : ""}", method: :get %>
 
         <% end if can? :create, Course %>

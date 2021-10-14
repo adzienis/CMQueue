@@ -1,6 +1,7 @@
 <% options ||= {} %>
 <% options[:except] ||= [] %>
 <% options[:disabled] ||= [] %>
+<% options[:associations] ||= {} %>
 
 <%= simple_form_for model_instance, url: polymorphic_path([@course, model_instance]), defaults: {
   label_html: {
@@ -28,24 +29,20 @@
        .reject { |v| [:course].include? v.name }
        .each do |ass| %>
 
-    <div data-controller="react-select" class="mb-3">
-      <%= f.association ass.name,
-                        value_method: :id,
-                        disabled: options[:disabled].include?(ass.name),
-                        label_method: ->(v) {
-                          return v[:name] if v[:name]
-                          return "#{v[:given_name]} #{v[:family_name]}" if v[:given_name] && v[:family_name]
-                          return v[:id] if v[:id]
-                        },
-                        collection: (
-                          if params[:course_id]
-                            ass.klass.methods.include?(:with_courses) ? ass.klass.accessible_by(current_ability).with_courses(Course.find(params[:course_id])).distinct : ass.klass.accessible_by(current_ability).distinct
-                          else
-                            ass.klass.accessible_by(current_ability).distinct
-                          end
-                        )
-      %>
-    </div>
+    <% if options[:associations].keys.include? ass.name %>
+      <div data-controller="react-select" class="mb-3">
+        <%= f.association ass.name,
+                          value_method: :id,
+                          disabled: options[:disabled].include?(ass.name),
+                          label_method: options[:associations][ass.name][:label_method],
+                          collection: options[:associations][ass.name][:collection]
+        %>
+      </div>
+
+    <% else %>
+
+    <% end %>
+
   <% end %>
 
   <%= f.submit :Update, class: "btn btn-primary", "data-disable-with": false, "data-turbo": false %>

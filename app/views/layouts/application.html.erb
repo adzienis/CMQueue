@@ -19,10 +19,12 @@
   <link as=font href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
   <%= stylesheet_link_tag 'application', media: 'all' %>
-  <%= javascript_pack_tag 'application' %>
+  <%= javascript_include_tag 'application' %>
   <%= favicon_link_tag asset_path("books.png") %>
 
   <%= yield :opt_js %>
+    <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
 </head>
 
 <body style="background-color: #F3F4EF">

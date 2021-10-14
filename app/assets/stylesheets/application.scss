@@ -14,13 +14,13 @@
  *= require_self
  */
 
-@import "../node_modules/bootstrap/scss/functions";
+@import "bootstrap/scss/functions";
 
 
 $primary: #24527A;
 
-@import "../node_modules/bootstrap/scss/variables";
-@import "../node_modules/bootstrap/scss/mixins";
+@import "bootstrap/scss/variables";
+@import "bootstrap/scss/mixins";
 
 
 $modal-fade-transform: scale(.7);

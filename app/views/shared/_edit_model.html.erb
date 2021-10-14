@@ -3,6 +3,7 @@
 </h2>
 
 <% options ||= {} %>
+<% options[:collections] ||= {} %>
 
 <div class="card mb-3">
   <div id="<%= model_instance.is_a?(Class) ? model_instance.name : dom_id(model_instance) %>" class="card-body">

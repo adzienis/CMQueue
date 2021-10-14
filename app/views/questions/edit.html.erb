@@ -1,5 +1,11 @@
 <div class="container mt-4">
-  <%= render partial: "shared/back_navbar" %>
-
-  <%= render partial: "shared/edit_model", locals: { model_instance: @question } %>
+  <%= render partial: "shared/edit_model", locals: { model_instance: @question, options: {
+    disabled: [:enrollment],
+    associations: {
+      enrollment: {
+        collection: Enrollment.all.with_courses(1).includes(:user),
+        label_method: ->(enrollment) { enrollment.user.given_name }
+      }
+    }
+  } } %>
 </div>

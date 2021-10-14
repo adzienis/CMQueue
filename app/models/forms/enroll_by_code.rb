@@ -3,7 +3,8 @@ class Forms::EnrollByCode
 
   attr_accessor(
     :code,
-    :current_user
+    :current_user,
+    :enrollment
   )
 
   validate :course_exists

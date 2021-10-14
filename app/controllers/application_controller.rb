@@ -30,7 +30,7 @@ class ApplicationController < ActionController::Base
 
   def restrict_routes
     if request.path.include?('users/')
-      raise CanCan::AccessDenied unless current_user.id == params[:user_id].to_i if params[:user_id]
+      # raise CanCan::AccessDenied unless current_user.id == params[:user_id].to_i if params[:user_id]
     elsif request.path.include?('courses/')
       raise CanCan::AccessDenied unless current_user.enrolled_in_course?(@course) if @course
     end

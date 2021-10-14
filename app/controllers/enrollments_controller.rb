@@ -104,7 +104,7 @@ class EnrollmentsController < ApplicationController
   end
 
   def destroy
-    @enrollment = @enrollments.find(params[:enrollment_id]).discard
+    @enrollment.discard
 
     respond_with @enrollment, location: course_enrollments_path(@course)
   end

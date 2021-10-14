@@ -40,7 +40,7 @@
     </div>
     <% @course.tag_groups.each do |tag_group| %>
       <% if tag_group.tags.any? %>
-        <div data-controller="react-select" class="mb-3">
+        <div data-controller="react_select" class="mb-3">
           <label class="form-label fw-bold">
             <%= tag_group.name %>
           </label>

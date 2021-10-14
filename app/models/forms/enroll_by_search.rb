@@ -3,7 +3,8 @@ class Forms::EnrollBySearch
 
   attr_accessor(
     :course_id,
-    :current_user
+    :current_user,
+    :enrollment
   )
 
   validates :course_id, presence: true
