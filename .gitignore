@@ -54,3 +54,7 @@ scripts/keys
 .env.test
 metabase-data
 !metabase-data/.keep
+
+/app/assets/builds/*
+!/app/assets/builds/.keep
+.sass-cache

@@ -2,13 +2,12 @@
 // Controller files must be named *_controller.js.
 
 import { Application } from "stimulus";
-import { definitionsFromContext } from "stimulus/webpack-helpers";
-import StimulusReflex from "stimulus_reflex";
-import consumer from "../channels/consumer";
-import controller from "../controllers/application_controller";
 
-const application = Application.start();
-const context = require.context("controllers", true, /_controller\.js$/);
-application.load(definitionsFromContext(context));
-StimulusReflex.initialize(application, { consumer, controller, isolate: true });
-StimulusReflex.debug = process.env.RAILS_ENV === "development";
+import form_controller from "./form_controller";
+import modal_controller from "./modal_controller";
+import react_select_controller from "./react_select_controller";
+
+window.Stimulus = Application.start();
+Stimulus.register("form", form_controller);
+Stimulus.register("modal", modal_controller);
+Stimulus.register("react_select", react_select_controller);

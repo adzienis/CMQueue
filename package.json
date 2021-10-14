@@ -2,7 +2,7 @@
   "name": "meet",
   "private": true,
   "dependencies": {
-    "@babel/preset-react": "^7.13.13",
+    "@babel/preset-react": "^7.14.5",
     "@hookform/error-message": "^2.0.0",
     "@hotwired/turbo": "adzienis/turbo#build",
     "@hotwired/turbo-rails": "adzienis/turbo-rails",
@@ -15,13 +15,11 @@
     "@types/semantic-ui": "^2.2.7",
     "babel-plugin-transform-react-remove-prop-types": "^0.4.24",
     "bootstrap": "^5.1.0",
-    "cable_ready": "^4.5.0",
     "chart.js": "^3.4.1",
     "cookie": "^0.4.1",
+    "esbuild-sass-plugin": "^1.6.1",
     "formik": "^2.2.9",
     "jquery": "^3.6.0",
-    "node-sass": "^6.0.0",
-    "prettier": "^2.3.2",
     "prop-types": "^15.7.2",
     "qs": "^6.10.1",
     "rails-ujs": "^5.2.6",
@@ -29,17 +27,22 @@
     "react-datepicker": "^4.1.1",
     "react-dom": "^17.0.2",
     "react-hook-form": "^7.15.4",
-    "react-on-rails": "12.2.0",
     "react-query": "^3.21.1",
     "react-select": "^4.3.1",
     "recharts": "^2.0.9",
+    "sass": "^1.42.1",
     "stimulus": "^2.0.0",
-    "stimulus_reflex": "3.4.1",
     "swagger-ui-react": "^4.0.0-beta.2"
   },
   "version": "0.1.0",
   "devDependencies": {
+    "esbuild": "^0.13.4",
+    "prettier": "^2.3.2",
     "webpack-bundle-analyzer": "^4.4.2",
     "webpack-dev-server": "^3.11.2"
+  },
+  "scripts": {
+    "build": "npx node es.js",
+    "watch": "npx node es_watch.js"
   }
 }

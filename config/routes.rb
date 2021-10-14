@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
+
+  resource :account, except: [:destroy, :create], controller: :account
+
   namespace :courses do
     get 'answer/show'
   end

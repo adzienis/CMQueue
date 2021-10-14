@@ -6,7 +6,7 @@ require 'devise'
 require 'rails/all'
 
 require 'action_view'
-require 'haml'
+# require 'haml'
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.

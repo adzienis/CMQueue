@@ -1,8 +1,8 @@
 import Rails from "rails-ujs";
 import "@hotwired/turbo-rails";
 import * as ActiveStorage from "@rails/activestorage";
-import "channels";
-import "controllers";
+import "../channels";
+import "../controllers";
 
 import SearchModal from "../src/components/SearchModal";
 import StudentQueueView from "../src/components/StudentQueueView";
@@ -48,6 +48,8 @@ registerManager.render_components();
 registerManager.register_hooks();
 
 window.queryClient = queryClient;
+
+import "../../assets/stylesheets/application.scss";
 
 ReactStudentChannel.received = async (data) => {
   console.log("invalidating", data.invalidate);

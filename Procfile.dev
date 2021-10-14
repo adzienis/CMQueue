@@ -7,3 +7,5 @@ web: rails s -p 3000
 # Note, if using React on Rails localization you will need to run
 # `bundle exec rake react_on_rails:locale` before you run bin/webpack
 client: sh -c 'rm -rf public/packs/* || true && bin/webpack -w'
+js: yarn build --watch
+css: yarn build:css --watch
