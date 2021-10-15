@@ -18,7 +18,6 @@ x-app: &app
   environment:
     REDIS_URL: redis://@redis:6379/1
     DATABASE_URL: postgres://postgres:postgres@postgres:5432/
-    WEBPACKER_DEV_SERVER_HOST: webpacker
   entrypoint: ./bin/docker/entrypoints/wait-for-web.sh
   volumes:
     - .:/usr/src/app:cached
@@ -73,19 +72,9 @@ services:
       - "127.0.0.1:3000:3000"
     stdin_open: true
     tty: true
-
-
   worker:
     <<: *app
     command: bundle exec sidekiq -C config/sidekiq.yml
-
-  webpacker:
-    <<: *app
-    command: ./bin/webpack-dev-server
-    environment:
-      WEBPACKER_DEV_SERVER_HOST: 0.0.0.0
-    ports:
-      - "127.0.0.1:3035:3035"
 
 volumes:
   postgresql:

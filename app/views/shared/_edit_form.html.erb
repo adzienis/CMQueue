@@ -30,7 +30,7 @@
        .each do |ass| %>
 
     <% if options[:associations].keys.include? ass.name %>
-      <div data-controller="react-select" class="mb-3">
+      <div data-controller="react_select" class="mb-3">
         <%= f.association ass.name,
                           value_method: :id,
                           disabled: options[:disabled].include?(ass.name),

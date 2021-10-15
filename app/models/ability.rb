@@ -125,6 +125,9 @@ class Ability
       can :manage, Role, Role.where(resource_id: @privileged_roles) do |role|
         (role.new_record? && user.has_role?(:instructor, :any)) || user.instructor_of?(role.course)
       end
+      can :new, TagGroup do |tag_group|
+        tag_group.new_record?
+      end
 
       can :manage, TagGroup, TagGroup.where(course_id: @staff_roles) do |tag_group|
         user.privileged_staff_of?(tag_group.course)

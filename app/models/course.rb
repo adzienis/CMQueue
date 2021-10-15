@@ -33,7 +33,7 @@ class Course < ApplicationRecord
   has_many :tas, -> { joins(:enrollments)
                         .merge(Enrollment
                                  .undiscarded
-                                 .with_course(id)
+                                 .with_courses(id)
                                  .with_course_roles(["ta"]))
   }, class_name: "Question"
   has_many :instructors, -> { joins(:role).undiscarded.with_course_roles(["ta"]) }, class_name: "Enrollment"
@@ -72,6 +72,7 @@ class Course < ApplicationRecord
   end
 
   def self.find_by_code(code)
+
     ta_course = Course.find_by(ta_code: code)
     instructor_course = Course.find_by(instructor_code: code)
 

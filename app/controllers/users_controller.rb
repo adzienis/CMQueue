@@ -4,7 +4,7 @@ class UsersController < ApplicationController
   load_and_authorize_resource id_param: :user_id
 
   def index
-    @users_ransack = @users.with_course(params[:course_id]) if params[:course_id]
+    @users_ransack = @users.with_courses(params[:course_id]) if params[:course_id]
 
     @users_ransack = @users_ransack.ransack(params[:q])
 

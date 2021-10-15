@@ -56,7 +56,7 @@ class EnrollmentsController < ApplicationController
         return if user == current_user
 
         # remove the existing enrollment
-        user.enrollments.with_course(@course.id).discard_all
+        user.enrollments.with_courses(@course.id).discard_all
 
         case type
         when "StudentEnrollment"

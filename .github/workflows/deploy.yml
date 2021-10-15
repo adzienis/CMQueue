@@ -36,10 +36,9 @@ jobs:
           build-args: |
             RAILS_MASTER_KEY=${{ secrets.RAILS_MASTER_KEY }}
           target: production
-
   deploy_server:
     runs-on: ubuntu-latest
-    needs: [build-and-push-image]
+    needs: build-and-push-image
     steps:
     - name: Define variables
       run: |
@@ -60,6 +59,15 @@ jobs:
           docker rm ${{ env.NAME }} || true
           docker run -p 3000:3000 --add-host=host.docker.internal:host-gateway --env-file=.env --name=${{ env.NAME }} -d -t ${{ env.FULL_NAME }}:production
           docker image prune -a
-
-
-
+  cleanup:
+    runs-on: ubuntu-latest
+    needs: deploy_server
+    steps:
+    - uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.OH_PRIVATE_KEY }}
+        port: ${{ secrets.PORT }}
+        script: |
+          docker image prune -a

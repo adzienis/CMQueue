@@ -33,6 +33,7 @@ module Postgres
       Enrollment.create(course_id)
       QuestionState.create(course_id)
       User.create(course_id)
+      Role.create(course_id)
     end
 
     def self.create_views_schema(course_id)

@@ -375,16 +375,6 @@ GEM
     ruby-progressbar (1.11.0)
     ruby2_keywords (0.0.5)
     rubyzip (2.3.2)
-    sass-rails (6.0.0)
-      sassc-rails (~> 2.1, >= 2.1.1)
-    sassc (2.4.0)
-      ffi (~> 1.9)
-    sassc-rails (2.1.2)
-      railties (>= 4.0.0)
-      sassc (>= 2.0)
-      sprockets (> 3.0)
-      sprockets-rails
-      tilt
     selenium-webdriver (3.142.7)
       childprocess (>= 0.5, < 4.0)
       rubyzip (>= 1.2.2)
@@ -405,7 +395,6 @@ GEM
       activesupport (>= 4.0)
       sprockets (>= 3.0.0)
     thor (1.1.0)
-    tilt (2.0.10)
     tzinfo (2.0.4)
       concurrent-ruby (~> 1.0)
     unf (0.1.4)
@@ -452,6 +441,7 @@ DEPENDENCIES
   irb
   jbuilder (~> 2.7)
   jsbundling-rails (~> 0.1.9)
+  jwt (~> 2.2)
   listen (~> 3.3)
   mini_racer
   newrelic_rpm (~> 8.0)
@@ -472,7 +462,6 @@ DEPENDENCIES
   rolify (~> 6.0)!
   rubocop (~> 1.17)
   rubocop-rails (~> 2.10)
-  sass-rails (>= 6)
   selenium-webdriver
   sidekiq (~> 6.2)
   simple_form (~> 5.1)

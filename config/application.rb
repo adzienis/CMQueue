@@ -26,6 +26,7 @@ module CMQueue
     config.time_zone = 'Eastern Time (US & Canada)'
 
     config.hosts << "cmqueue.xyz"
+    config.hosts << "localhost"
     config.hosts << "cmqueue-demo.herokuapp.com"
     Rails.application.config.action_cable.allowed_request_origins = ['http://cmqueue.xyz', 'https://cmqueue.xyz']
     config.to_prepare do

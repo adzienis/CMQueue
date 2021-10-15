@@ -1,1 +1,9 @@
-<%= render partial: "shared/edit_model", locals: { model_instance: @tag_group, options: {except: [:discarded_at, :group_members, :validations]} } %>
+<%= render partial: "shared/edit_model", locals: { model_instance: @tag_group, options: {
+  except: [:discarded_at, :group_members, :validations],
+  associations: {
+    tags: {
+      collection: Tag.with_courses(@course),
+      label_method: ->(tag) { tag.name }
+    }
+  }
+} } %>

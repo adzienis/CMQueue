@@ -43,6 +43,7 @@
   },
   "scripts": {
     "build": "npx node es.js",
+    "build:css": ":",
     "watch": "npx node es_watch.js"
   }
 }

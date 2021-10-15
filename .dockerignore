@@ -54,3 +54,7 @@ pgconf
 .env.dev
 .env.prod
 .env
+node_modules
+public
+tmp
+stats.json

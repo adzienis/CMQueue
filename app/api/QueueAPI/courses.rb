@@ -64,7 +64,7 @@ module QueueAPI
           end
 
           top_question = top_question
-                           .with_course(Course.find(params[:course_id]))
+                           .with_courses(Course.find(params[:course_id]))
                            .questions_by_state(['unresolved'])
                            .order(created_at: :asc)
                            .first
@@ -114,7 +114,7 @@ module QueueAPI
 
           tas.joins(:enrollments, enrollments: :question_state)
              .where('question_states.created_at > ?', 15.minutes.ago)
-             .merge(QuestionState.with_course(course.id))
+             .merge(QuestionState.with_courses(course.id))
              .distinct
         end
 
@@ -129,7 +129,7 @@ module QueueAPI
 
           top_question = Question.joins(:question_state).where("question_states.id": question_state&.id)
           top_question = top_question.undiscarded
-          top_question = top_question.with_course(course.id).first
+          top_question = top_question.with_courses(course.id).first
 
           return nil unless top_question
 

@@ -4,7 +4,7 @@ class SummariesController < ApplicationController
 
   def grouped_tags
     @tags = Tag.accessible_by(current_ability)
-    @tags = @tags.with_course(params[:course_id])
+    @tags = @tags.with_courses(params[:course_id])
     @tags = @tags.undiscarded
     @tags = @tags.joins(:questions).merge(Question.undiscarded.latest_by_state(JSON.parse(params[:state]))) if params[:state]
     @tags = @tags.where(id: params[:tags]) if params[:tags]
@@ -21,7 +21,7 @@ class SummariesController < ApplicationController
 
     @states = QuestionState.all
     @states = @states.accessible_by(current_ability)
-    @states = @states.with_course(@course.id) if params[:course_id]
+    @states = @states.with_courses(@course.id) if params[:course_id]
     if start_time.present? and end_time.present?
       @states = @states
                   .where('question_states.created_at < ?', end_time.end_of_day)
@@ -45,7 +45,7 @@ class SummariesController < ApplicationController
 
     tas = tas.joins(:enrollments, enrollments: :question_state)
              .where('question_states.created_at > ?', 15.minutes.ago)
-             .merge(QuestionState.with_course(@course.id))
+             .merge(QuestionState.with_courses(@course.id))
              .distinct(:id)
 
     respond_with tas

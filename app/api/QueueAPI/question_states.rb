@@ -19,7 +19,7 @@ module QueueAPI
 
             states = QuestionState.all
             states = states.accessible_by(current_ability) if current_user
-            states = states.with_course(Course.find(params[:course_id]))
+            states = states.with_courses(Course.find(params[:course_id]))
             states = states
                        .where('question_states.created_at < ?', time.end_of_day)
                        .where('question_states.created_at > ?', time.beginning_of_day)

@@ -58,7 +58,7 @@ class QuestionState < ApplicationRecord
 
   enum state: { unresolved: 0, resolving: 1, resolved: 2, frozen: 3, kicked: 4 }, _default: :unresolved
 
-  scope :with_course, ->(course_id) { joins(:question).where("questions.course_id": course_id) }
+  scope :with_courses, ->(course_id) { joins(:question).where("questions.course_id": course_id) }
   scope :with_user, ->(user_id) { joins(:enrollment).where("enrollments.user_id": user_id) }
 
   #has_many :messages, dependent: :destroy

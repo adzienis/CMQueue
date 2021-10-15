@@ -86,7 +86,7 @@ class QuestionsController < ApplicationController
   end
 
   def update
-    @available_tags = Tag.undiscarded.unarchived.with_course(@question.course.id)
+    @available_tags = Tag.undiscarded.unarchived.with_courses(@question.course.id)
     @question.update(question_params)
 
     respond_with @question, location: course_questions_path(@question.course)

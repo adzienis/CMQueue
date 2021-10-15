@@ -21,7 +21,6 @@ class TagGroupsController < ApplicationController
   end
 
   def update
-    @tag_group = @tag_groups.find(params[:tag_group_id])
     @tag_group.update(tag_group_params)
 
     respond_with @tag_group, location: course_tag_groups_path(@course)
@@ -33,7 +32,6 @@ class TagGroupsController < ApplicationController
   end
 
   def edit
-    @tag_group = @tag_groups.find(params[:tag_group_id])
   end
 
   def destroy

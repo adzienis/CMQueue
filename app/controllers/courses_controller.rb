@@ -16,7 +16,7 @@ class CoursesController < ApplicationController
   def top_question
     top_question = Question.undiscarded
     top_question = top_question.latest_by_state("resolving")
-    top_question = top_question.with_course(@course.id).first
+    top_question = top_question.with_courses(@course.id).first
 
     respond_with top_question and return if top_question.nil?
 

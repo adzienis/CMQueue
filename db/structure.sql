@@ -41,36 +41,6 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
--- Name: admin_managers; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.admin_managers (
-    id bigint NOT NULL,
-    created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
-);
-
-
---
--- Name: admin_managers_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.admin_managers_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: admin_managers_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.admin_managers_id_seq OWNED BY public.admin_managers.id;
-
-
---
 -- Name: announcements; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -734,13 +704,6 @@ CREATE TABLE public.users_roles (
 
 
 --
--- Name: admin_managers id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.admin_managers ALTER COLUMN id SET DEFAULT nextval('public.admin_managers_id_seq'::regclass);
-
-
---
 -- Name: announcements id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -864,14 +827,6 @@ ALTER TABLE ONLY public.tags ALTER COLUMN id SET DEFAULT nextval('public.tags_id
 --
 
 ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_id_seq'::regclass);
-
-
---
--- Name: admin_managers admin_managers_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.admin_managers
-    ADD CONSTRAINT admin_managers_pkey PRIMARY KEY (id);
 
 
 --
@@ -1460,7 +1415,6 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20210711051202'),
 ('20210712150707'),
 ('20210816184122'),
-('20210831122334'),
 ('20210917210147'),
 ('20210917210227'),
 ('20210928053422'),
