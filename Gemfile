@@ -119,3 +119,7 @@ gem "cssbundling-rails", "~> 0.2.4"
 gem "newrelic_rpm", "~> 8.0"
 
 gem "jwt", "~> 2.2"
+
+gem "http", "~> 5.0"
+
+gem "pry", "~> 0.14.1"
