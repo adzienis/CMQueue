@@ -43,12 +43,29 @@ class Setting < ApplicationRecord
   scope :with_parent_type, ->(parent_type) { where(resource_type: parent_type) }
   scope :with_parent_id, ->(parent_id) { where(resource_id: parent_id) }
 
+  scope :with_key, ->(key) { where(id: from(Setting.select("*, jsonb_object_keys(value::jsonb) json_key"), :settings).where(json_key: key).pluck(:id)) }
+  scope :with_key_value, ->(key, value) { where("value -> '#{key}' ->> 'value' = '#{value}'") }
+
   scope :update_all_json, ->(path,value) {
     update_all("value = jsonb_set(value::jsonb, '#{path}', '#{value}'::jsonb)::jsonb")
   }
 
+  # scope like method to find a setting with key
+  def self.find_by_key(key)
+    with_key(key).first
+  end
+
+  def self.option_value_of_key(key)
+    find_by_key(key).option_value
+  end
+
+
   def key
     value.keys[0]
+  end
+
+  def option_value
+    value.values.first["value"]
   end
 
   def set_value(new_value)

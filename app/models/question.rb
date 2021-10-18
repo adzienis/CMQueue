@@ -143,7 +143,7 @@ class Question < ApplicationRecord
     transition_to_state("kicked", enrollment_id)
   end
 
-  def freeze(enrollment_id)
+  def freeze_question(enrollment_id)
     transition_to_state("frozen", enrollment_id)
   end
 

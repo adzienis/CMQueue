@@ -43,7 +43,6 @@ class Ability
 
       can :manage, Setting, Setting.where(resource_id: user.id, resource_type: "User")
                                    .or(Setting.where(resource_id: @instructor_roles, resource_type: "Course")) do |setting|
-
         case setting.resource_type
         when "User"
           user.id == setting.resource_id
@@ -60,11 +59,20 @@ class Ability
       #  false
       #end
 
-      can [:read, :create, :destroy], Enrollment, Enrollment.joins(:role).where(user: user).or(Enrollment.where("roles.resource_id": @staff_roles)) do |enrollment|
+      can :new, Enrollment do |enrollment |
+        enrollment.new_record?
+      end
+
+      can [:create, :edit], Enrollment do |enrollment|
+        (enrollment.user == user && enrollment.role.name == "student") || (user.instructor_of?(enrollment.course))
+      end
+
+      can [:read, :destroy], Enrollment, Enrollment.joins(:role).where(user: user).or(Enrollment.where("roles.resource_id": @staff_roles)) do |enrollment|
         (enrollment.user == user)
       end
 
       can [:update], Enrollment, Enrollment.joins(:role).where(user: user).or(Enrollment.where("roles.resource_id": @staff_roles)) do |enrollment|
+        next true if user.instructor_of?(enrollment.course)
         if context[:params][:enrollment].present?
           next false if Role.higher_security?(Role.find(context[:params][:enrollment][:role_id]), enrollment.role)
         end
@@ -131,6 +139,10 @@ class Ability
 
       can :manage, TagGroup, TagGroup.where(course_id: @staff_roles) do |tag_group|
         user.privileged_staff_of?(tag_group.course)
+      end
+
+      can :manage, Analytics::Dashboard, Analytics::Dashboard.where(course_id: @staff_roles) do |dashboard|
+        dashboard.new_record? || user.privileged_staff_of?(dashboard.course)
       end
 
       can :manage, Tag, Tag.where(course_id: @privileged_roles) do |tag|

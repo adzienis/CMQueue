@@ -38,7 +38,7 @@ module Enrollable
         has_any_role?({ name: role.to_sym, resource: obj })
       elsif obj.instance_of? Integer
         course = Course.find(obj)
-        has_any_role?({ name: role.to_sym, resource_id: course })
+        has_any_role?({ name: role.to_sym, resource: course })
       else
         false
       end

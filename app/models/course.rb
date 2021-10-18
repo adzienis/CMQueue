@@ -23,11 +23,12 @@ class Course < ApplicationRecord
   # validates :course_code, presence: true, uniqueness: true
 
   has_one :certificate
-  has_many :tag_groups
+  has_many :tag_groups, dependent: :destroy
   has_many :enrollments, through: :roles, dependent: :destroy
-  has_many :settings, as: :resource
+  has_many :settings, as: :resource, dependent: :destroy
   has_many :users, through: :enrollments
   has_many :questions, dependent: :destroy
+  has_many :analytics_dashboards, :class_name => 'Analytics::Dashboard'
   has_many :unresolved_questions, -> { undiscarded.questions_by_state("unresolved") }, class_name: "Question"
 
   has_many :tas, -> { joins(:enrollments)
@@ -48,12 +49,12 @@ class Course < ApplicationRecord
   has_many :access_grants,
            class_name: 'Doorkeeper::AccessGrant',
            foreign_key: :resource_owner_id,
-           dependent: :delete_all
+           dependent: :destroy
 
   has_many :access_tokens,
            class_name: 'Doorkeeper::AccessToken',
            foreign_key: :resource_owner_id,
-           dependent: :delete_all
+           dependent: :destroy
 
   has_many :applications, class_name: "Doorkeeper::Application", as: :owner
 
@@ -66,6 +67,8 @@ class Course < ApplicationRecord
   scope :with_user, ->(user_id) {
     joins(:enrollments).merge(Enrollment.undiscarded.with_user(user_id))
   }
+
+  scope :with_setting_value, ->(key, value) { joins(:settings).merge(Setting.with_key_value(key, value)) }
 
   def self.find_by_code?(code)
     self.find_by_code(code).present?
@@ -80,6 +83,10 @@ class Course < ApplicationRecord
     return instructor_course, :instructor if instructor_course
 
     return nil
+  end
+
+  def setting(key)
+    settings.option_value_of_key(key)
   end
 
   # Course Roles Finders
@@ -100,17 +107,18 @@ class Course < ApplicationRecord
   def student_role
     roles.find_by("roles.name": "student")
   end
+
   def instructor_role
     roles.find_by("roles.name": "instructor")
   end
+
   def ta_role
     roles.find_by("roles.name": "ta")
   end
+
   def lead_ta_role
     roles.find_by("roles.name": "lead_ta")
   end
-
-
 
   def available_tags
     tags.undiscarded.unarchived.distinct
@@ -132,8 +140,6 @@ class Course < ApplicationRecord
   end
 
   after_create_commit do
-
-    Postgres::Views.create_course_views(id)
 
     settings.create([{
                        value: {
@@ -166,6 +172,7 @@ class Course < ApplicationRecord
                          }
                        }
                      }])
+
   end
 
   after_destroy_commit do
