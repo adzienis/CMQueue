@@ -1,16 +1,25 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
-
+  namespace :analytics do
+    namespace :dashboards do
+      namespace :metabase do
+        get 'dashboards', to: "dashboards#index"
+      end
+    end
+  end
   resource :account, except: [:destroy, :create], controller: :account
+
+
+  namespace :forms do
+    resource :question, only: [:new, :create, :edit, :update, :destroy], controller: :question
+    namespace :analytics do
+      resources :dashboards, only: [:new, :create, :edit, :update, :destroy], controller: :dashboard
+    end
+  end
 
   namespace :courses do
     get 'answer/show'
-  end
-  namespace :forms do
-    get 'question/create'
-    get 'question/update'
-    get 'question/show'
   end
   post 'enroll', to: "forms/enroll_by_code#create"
   namespace :courses do
@@ -117,6 +126,9 @@ Rails.application.routes.draw do
   resources :users
 
   resources :courses, only: [], model_name: "Course" do
+    namespace :analytics do
+      resources :dashboards
+    end
 
     resources :questions, except: [:new, :create] do
       collection do
@@ -132,6 +144,9 @@ Rails.application.routes.draw do
 
     namespace :forms do
       resource :question, only: [:new, :create, :edit, :update, :destroy], controller: :question
+      namespace :analytics do
+        resources :dashboards, only: [:new, :create, :edit, :update, :destroy], controller: :dashboard
+      end
     end
 
     resources :tag_groups
@@ -192,6 +207,7 @@ Rails.application.routes.draw do
       patch 'open', to: "courses/open#update"
       get 'database', to: "courses/database#index", as: :database
       get 'recent_activity', to: "summaries#recent_activity"
+      get 'questions_count', to: "courses/questions_count#show"
     end
   end
 
