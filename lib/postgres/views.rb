@@ -1,3 +1,11 @@
+require "./lib/postgres/views/role.rb"
+require "./lib/postgres/views/course.rb"
+require "./lib/postgres/views/enrollment.rb"
+require "./lib/postgres/views/question.rb"
+require "./lib/postgres/views/question_state.rb"
+require "./lib/postgres/views/tag.rb"
+require "./lib/postgres/views/user.rb"
+
 module Postgres
   module Views
 
@@ -33,7 +41,7 @@ module Postgres
       Enrollment.create(course_id)
       QuestionState.create(course_id)
       User.create(course_id)
-      Role.create(course_id)
+      ::Postgres::Views::Role.create(course_id)
     end
 
     def self.create_views_schema(course_id)

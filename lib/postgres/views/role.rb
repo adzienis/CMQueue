@@ -7,8 +7,7 @@ module Postgres
         CREATE OR REPLACE VIEW course_#{course_id}.roles AS
           SELECT *
           FROM roles
-          INNER JOIN enrollments ON roles.id = enrollments.role_id
-          WHERE enrollments.course_id = #{course_id}
+          WHERE resource_type = 'Course' and resource_id = #{course_id}
         SQL
         )
       end
