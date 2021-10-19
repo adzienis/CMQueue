@@ -88,7 +88,7 @@ class QuestionTest < ActiveSupport::TestCase
 
   test "unresolved question can transition to frozen" do
     q = Question.create(description: "foo", location: "foo", tried: "test", enrollment: @student_418, tags: [@tag_malloc])
-    q.freeze(@ta_418.id)
+    q.freeze_question(@ta_418.id)
 
     assert q.question_state.state == "frozen"
   end
@@ -117,7 +117,7 @@ class QuestionTest < ActiveSupport::TestCase
   test "resolving question can transition to frozen" do
     q = Question.create(description: "foo", location: "foo", tried: "test", enrollment: @student_418, tags: [@tag_malloc])
     q.resolving(@ta_418.id)
-    q.freeze(@ta_418.id)
+    q.freeze_question(@ta_418.id)
 
     assert q.question_state.state == "frozen"
   end
@@ -171,7 +171,7 @@ class QuestionTest < ActiveSupport::TestCase
     q.resolving(@ta_418.id)
     q.resolve(@ta_418.id)
 
-    q.freeze(@ta_418.id)
+    q.freeze_question(@ta_418.id)
 
     assert q.question_state.state == "resolved"
   end
@@ -188,7 +188,7 @@ class QuestionTest < ActiveSupport::TestCase
 
   test "frozen question can transition to unresolved" do
     q = Question.create(description: "foo", location: "foo", tried: "test", enrollment: @student_418, tags: [@tag_malloc])
-    q.freeze(@ta_418.id)
+    q.freeze_question(@ta_418.id)
 
     q.unresolve(@ta_418.id)
 
@@ -197,7 +197,7 @@ class QuestionTest < ActiveSupport::TestCase
 
   test "frozen question can't transition to resolving" do
     q = Question.create(description: "foo", location: "foo", tried: "test", enrollment: @student_418, tags: [@tag_malloc])
-    q.freeze(@ta_418.id)
+    q.freeze_question(@ta_418.id)
 
     q.resolving(@ta_418.id)
 
@@ -206,16 +206,16 @@ class QuestionTest < ActiveSupport::TestCase
 
   test "frozen question can't transition to frozen" do
     q = Question.create(description: "foo", location: "foo", tried: "test", enrollment: @student_418, tags: [@tag_malloc])
-    q.freeze(@ta_418.id)
+    q.freeze_question(@ta_418.id)
 
-    ret = q.freeze(@ta_418.id)
+    ret = q.freeze_question(@ta_418.id)
 
     assert ret.instance_of? ActiveRecord::RecordInvalid
   end
 
   test "frozen question can't transition to kicked" do
     q = Question.create(description: "foo", location: "foo", tried: "test", enrollment: @student_418, tags: [@tag_malloc])
-    q.freeze(@ta_418.id)
+    q.freeze_question(@ta_418.id)
 
     q.kick(@ta_418.id)
 
@@ -224,7 +224,7 @@ class QuestionTest < ActiveSupport::TestCase
 
   test "frozen question can't transition to resolved" do
     q = Question.create(description: "foo", location: "foo", tried: "test", enrollment: @student_418, tags: [@tag_malloc])
-    q.freeze(@ta_418.id)
+    q.freeze_question(@ta_418.id)
 
     q.resolve(@ta_418.id)
 
@@ -262,7 +262,7 @@ class QuestionTest < ActiveSupport::TestCase
     q = Question.create(description: "foo", location: "foo", tried: "test", enrollment: @student_418, tags: [@tag_malloc])
     q.kick(@ta_418.id)
 
-    q.freeze(@ta_418.id)
+    q.freeze_question(@ta_418.id)
 
     assert q.question_state.state == "kicked"
   end

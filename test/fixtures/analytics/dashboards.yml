@@ -1,11 +1,7 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  url: MyString
-  title: MyString
   course: one
 
 two:
-  url: MyString
-  title: MyString
   course: two
