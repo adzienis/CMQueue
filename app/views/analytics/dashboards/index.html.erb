@@ -1,0 +1,33 @@
+<h1>Dashboards</h1>
+
+<div class="card card-body">
+  <table class="table table-hover table-striped">
+    <thead>
+    <tr>
+      <th>Title</th>
+      <th>Dashboard Type</th>
+      <th colspan="3"></th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <% @dashboards.each do |analytics_dashboard| %>
+      <tr>
+        <% if analytics_dashboard.data["dashboard_type"] == "metabase" %>
+          <td><%= analytics_dashboard.data["name"] %></td>
+          <td><%= analytics_dashboard.data["dashboard_type"] %></td>
+        <% end %>
+
+        <td><%= link_to 'Show', course_analytics_dashboard_path(@course, analytics_dashboard), class: "btn btn-primary" %></td>
+        <td><%= link_to 'Edit', edit_course_forms_analytics_dashboard_path(@course, analytics_dashboard), class: "btn btn-warning" %></td>
+        <td><%= link_to 'Destroy', course_analytics_dashboard_path(@course, analytics_dashboard), method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-danger" %></td>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+
+  <br>
+
+  <%= link_to 'New Analytics Dashboard', new_course_forms_analytics_dashboard_path(@course), class: "btn btn-primary" %>
+</div>
+

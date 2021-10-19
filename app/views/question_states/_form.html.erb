@@ -1,0 +1,10 @@
+<%= simple_form_for [@course, @question_state], html: { autocomplete: 'off' } do |f| %>
+  <%= f.hidden_field :course_id, value: params[:course_id] if params[:course_id] %>
+  <div data-controller="react_select">
+    <%= f.association :enrollment, disabled: true, label_method: ->(enrollment) { enrollment.user.given_name } %>
+  </div>
+  <%= f.input :description %>
+  <%= f.input :state, collection: QuestionState.states.keys %>
+
+  <%= f.submit :Submit, class: "btn btn-primary", "data-disable-with": "Loading" %>
+<% end %>

@@ -1,0 +1,8 @@
+<%= content_for(:courses_content) do %>
+    <%= yield %>
+  <script>
+    document.body.classList.add("overflow-hidden")
+  </script>
+<% end %>
+<%= render template: "layouts/courses", locals: { fluid: params[:action] == "show" } %>
+

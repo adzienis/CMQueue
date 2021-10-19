@@ -1,8 +1,11 @@
+<% fluid ||= false %>
+
 
 
 <% if @course and !@course.new_record? %>
 
   <% content_for :content do %>
+
     <%= turbo_stream_from @course %>
 
     <%= tag.div id: "course-status", data: {
@@ -37,8 +40,14 @@
         </button>
 
       <% end %>
-      <div id='courses-container' class="container mt-4 mb-5" style="min-height: 100vh">
-        <%= content_for?(:courses_content) ? yield(:courses_content) : yield %>
+      <div id='courses-container' style="min-height: calc(100vh - 76px)" class="<%= "#{fluid ? '' : 'container mt-4 mb-5'}" %>">
+
+        <% flash.each do |key, value| %>
+          <div class="<%= flash_class(key) %>">
+            <%= value %>
+          </div>
+        <% end %>
+          <%= content_for?(:courses_content) ? yield(:courses_content) : yield %>
       </div>
     </div>
   <% end %>

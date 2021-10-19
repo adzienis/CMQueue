@@ -1,0 +1,11 @@
+<%= simple_form_for @course, html: { autocomplete: 'off' } do |f| %>
+  <%= f.hidden_field :course_id, value: params[:course_id] if params[:course_id] %>
+  <%= f.input :name %>
+  <%= f.input :course_code %>
+  <%= f.input :student_code %>
+  <%= f.input :ta_code %>
+  <%= f.input :instructor_code %>
+  <%= f.input :open %>
+
+  <%= f.submit :Submit, class: "btn btn-primary", "data-disable-with": "Loading" %>
+<% end %>

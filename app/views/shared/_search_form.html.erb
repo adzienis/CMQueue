@@ -31,7 +31,7 @@
       <% end %>
     <% end if presenter.can_create? %>
 
-    <%= tag.li class: "nav-item" do %>
+    <% tag.li class: "nav-item" do %>
       <%= link_to polymorphic_path([:download, course, records.model], **request.query_parameters), class: "nav-link" do %>
         <i class="fas fa-download fa-lg me-2"></i>
         <span>Export to CSV </span>

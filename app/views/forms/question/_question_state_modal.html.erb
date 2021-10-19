@@ -1,8 +1,8 @@
-<% if question.resolving? %>
-  <div data-controller="modal">
-    <div data-modal-target="modal" class="modal fade" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content">
+<div data-controller="modal" data-modal-question-id-value="<%= question.id %>">
+  <div data-modal-target="modal" class="modal fade" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <% if question.resolving? %>
           <div class="modal-header">
             <h5 class="modal-title">
               <b><%= "#{question.question_state.user.given_name} #{question.question_state.user.family_name}" %></b>
@@ -13,20 +13,13 @@
             <div class="d-flex justify-content-center align-items-center w-100">
               <%= content_tag :div, id: "question-time", data: {
                 questionId: question.id
-              }.to_json do %><% end %>
+              }.to_json do %>
+              <% end %>
             </div>
           </div>
           <div class="modal-footer">
           </div>
-        </div>
-      </div>
-    </div>
-  </div>
-<% elsif question.resolved? %>
-  <div data-controller="modal">
-    <div data-modal-target="modal" class="modal fade" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content">
+        <% elsif question.resolved? %>
           <div class="modal-header">
             <h5 class="modal-title">
               Question Answered
@@ -39,16 +32,8 @@
           </div>
           <div class="modal-footer">
           </div>
-        </div>
-      </div>
-    </div>
-  </div>
 
-<% elsif question.user&.unacknowledged_kicked_question? %>
-  <div data-controller="modal">
-    <div data-modal-target="modal" class="modal fade" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content">
+        <% elsif question.user&.unacknowledged_kicked_question? %>
           <div class="modal-header">
             <h5 class="modal-title">
               You have been kicked because...
@@ -63,19 +48,11 @@
                           class: "btn btn-success"
             %>
           </div>
-        </div>
-      </div>
-    </div>
-  </div>
 
-<% elsif question.frozen? %>
-  <div data-controller="modal">
-    <div data-modal-target="modal" class="modal fade" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content">
+        <% elsif question.frozen? %>
           <div class="modal-header">
             <h5 class="modal-title">
-              You have been frozen by <b><%= question.question_state.user.full_name  %></b> because...
+              You have been frozen by <b><%= question.question_state.user.full_name %></b> because...
             </h5>
           </div>
           <div class="modal-body">
@@ -94,8 +71,8 @@
                              } %>
             <% end if !question.new_record? %>
           </div>
-        </div>
+        <% end %>
       </div>
     </div>
   </div>
-<% end %>
+</div>

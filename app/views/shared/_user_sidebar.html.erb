@@ -15,9 +15,7 @@
         <i class="fas fa-info"></i>
       </div>
       <%= button_tag class: "btn btn-toggle align-items-center text-decoration-none
-                            #{(request.path == (current_user) ||
-        request.path == user_questions_path(current_user)||
-        request.path == user_enrollments_path(current_user)) ? 'active-link' : ''}",
+                            #{(["questions", "enrollments", "courses"].include? controller_name) ? 'active-link' : ''}",
                      data: { "bs-toggle": "collapse", "bs-target": "#course-info-collapse" } do %>
         Information
       <% end %>

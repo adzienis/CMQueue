@@ -2,27 +2,6 @@
   Database
 </h1>
 
-<%  metabase_site_url = "http://office-hours-01.andrew.cmu.edu:3010" %>
-<%  metabase_secret_key = "4c05ee9fbd6b68177aa9be91391aaf4dfa208b9aedf124ecf5f2e6cf87f9f89b" %>
-
-<% payload = {
-:resource => {:dashboard => 36},
-:params => {
-},
-:exp => Time.now.to_i + (60 * 100) # 10 minute expiration
-} %>
-<% token = JWT.encode payload, metabase_secret_key %>
-
-<% iframe_url = metabase_site_url + "/embed/dashboard/" + token + "#bordered=true&titled=true" %>
-
-<iframe
-  src="<%= iframe_url %>"
-  width="100%"
-  height="100%"
-  allowtransparency
-></iframe>
-
-
 <div class="card card-body">
   <div class="card-title">
 

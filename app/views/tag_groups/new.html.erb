@@ -1,1 +1,3 @@
-<%= render partial: "shared/new_model", locals: { model: @tag_group, options: { except: [:group_members, :validations ]} } %>
+<%= render "shared/form_wrapper" do %>
+  <%= render "form" %>
+<% end %>

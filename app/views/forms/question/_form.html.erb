@@ -10,7 +10,7 @@
                     } do |f| %>
   <%= f.full_error :course, class: "invalid-feedback d-block fw-bold", style: "font-size: 1rem" %>
   <%= f.full_error :enrollment, class: "invalid-feedback d-block fw-bold", style: "font-size: 1rem" %>
-  <%= f.hidden_field :enrollment_id, value: @enrollment.id %>
+  <%= f.hidden_field :enrollment_id, value: current_user.enrollment_in_course(@course).id %>
   <%= f.hidden_field :course_id, value: @course.id %>
   <%= f.input :tried, label: "What have you tried?",
               as: :text,

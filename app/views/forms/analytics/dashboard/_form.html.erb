@@ -1,0 +1,23 @@
+<div class="card card-body">
+
+  <%= simple_form_for([@course, @dashboard_form], html: { autocomplete: "off"}) do |f| %>
+    <% f.error_notification %>
+    <% f.error_notification message: f.object.errors[:base].to_sentence if f.object.errors[:base].present? %>
+
+    <div class="form-inputs">
+      <%= f.input :name %>
+      <%= f.hidden_field :course_id, value: @course.id if @course %>
+      <div data-controller="react_select">
+        <%= f.input :dashboard_type, collection: Analytics::Dashboard.dashboard_types.keys, include_blank: false, include_hidden: false %>
+      </div>
+      <% f.input :url %>
+      <div data-controller="metabase_dashboards" data-metabase_dashboards-course_id-value="<%= @course.id %>">
+        <%= f.input :metabase_id, collection: [] %>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <%= f.button :submit, class: "btn btn-primary" %>
+    </div>
+  <% end %>
+</div>

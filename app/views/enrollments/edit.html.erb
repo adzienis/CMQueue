@@ -1,6 +1,12 @@
 <%= render partial: "shared/edit_model", locals: {
   model_instance: @enrollment, options: {
     except: [:discarded_at, :questions, :question_states],
-    disabled: [:user]
+    disabled: [:user],
+    associations: {
+      role: {
+        collection: Role.with_courses(@course),
+        label_method: ->(role) { role.name }
+      }
+    }
   }
 } %>
