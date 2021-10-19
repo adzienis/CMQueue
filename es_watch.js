@@ -7,7 +7,6 @@ const sassPlugin = require("esbuild-sass-plugin")
 require('esbuild').build({
   entryPoints: ['app/javascript/packs/application.js'],
   bundle: true,
-  minify: true,
   watch: true,
   outfile: 'app/assets/builds/application.js',
   plugins: [sassPlugin.sassPlugin()],
