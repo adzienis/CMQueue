@@ -41,6 +41,38 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
+-- Name: analytics_dashboards; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.analytics_dashboards (
+    id bigint NOT NULL,
+    data jsonb,
+    course_id bigint NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
+);
+
+
+--
+-- Name: analytics_dashboards_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.analytics_dashboards_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: analytics_dashboards_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.analytics_dashboards_id_seq OWNED BY public.analytics_dashboards.id;
+
+
+--
 -- Name: announcements; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -49,8 +81,8 @@ CREATE TABLE public.announcements (
     title character varying DEFAULT ''::character varying,
     description text DEFAULT ''::text,
     visible boolean DEFAULT true,
-    created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
 );
 
 
@@ -93,8 +125,8 @@ CREATE TABLE public.certificates (
     id bigint NOT NULL,
     course_id bigint NOT NULL,
     data bytea,
-    created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
 );
 
 
@@ -129,8 +161,8 @@ CREATE TABLE public.courses (
     ta_code character varying,
     instructor_code character varying,
     open boolean DEFAULT false,
-    created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
 );
 
 
@@ -172,8 +204,8 @@ CREATE TABLE public.enrollments (
     user_id bigint,
     role_id bigint,
     semester character varying,
-    created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL,
     discarded_at timestamp without time zone
 );
 
@@ -207,8 +239,8 @@ CREATE TABLE public.group_members (
     individual_type character varying,
     group_id integer,
     group_type character varying,
-    created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
 );
 
 
@@ -242,8 +274,8 @@ CREATE TABLE public.notifications (
     type character varying NOT NULL,
     params jsonb,
     read_at timestamp without time zone,
-    created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
 );
 
 
@@ -353,8 +385,8 @@ CREATE TABLE public.oauth_applications (
     redirect_uri text,
     scopes character varying DEFAULT ''::character varying NOT NULL,
     confidential boolean DEFAULT true NOT NULL,
-    created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL,
     owner_id bigint,
     owner_type character varying
 );
@@ -386,8 +418,8 @@ ALTER SEQUENCE public.oauth_applications_id_seq OWNED BY public.oauth_applicatio
 CREATE TABLE public.question_queues (
     id bigint NOT NULL,
     course_id bigint,
-    created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL,
     archived boolean DEFAULT true
 );
 
@@ -418,12 +450,12 @@ ALTER SEQUENCE public.question_queues_id_seq OWNED BY public.question_queues.id;
 CREATE TABLE public.question_states (
     id bigint NOT NULL,
     question_id bigint,
-    created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL,
     description text,
     state integer NOT NULL,
     enrollment_id bigint NOT NULL,
-    acknowledged_at timestamp without time zone
+    acknowledged_at timestamp with time zone
 );
 
 
@@ -453,8 +485,8 @@ ALTER SEQUENCE public.question_states_id_seq OWNED BY public.question_states.id;
 CREATE TABLE public.questions (
     id bigint NOT NULL,
     course_id bigint,
-    created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL,
     title text,
     tried text,
     description text,
@@ -523,8 +555,8 @@ CREATE TABLE public.roles (
     name character varying,
     resource_type character varying,
     resource_id bigint,
-    created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
 );
 
 
@@ -565,8 +597,8 @@ CREATE TABLE public.settings (
     resource_type character varying,
     resource_id bigint,
     value json,
-    created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
 );
 
 
@@ -599,8 +631,8 @@ CREATE TABLE public.tag_groups (
     name character varying NOT NULL,
     description text DEFAULT ''::text,
     validations jsonb,
-    created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
 );
 
 
@@ -630,8 +662,8 @@ ALTER SEQUENCE public.tag_groups_id_seq OWNED BY public.tag_groups.id;
 CREATE TABLE public.tags (
     id bigint NOT NULL,
     course_id bigint,
-    created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL,
     archived boolean DEFAULT true,
     name text DEFAULT ''::text,
     description text DEFAULT ''::text,
@@ -667,8 +699,8 @@ CREATE TABLE public.users (
     given_name text,
     family_name text,
     email text,
-    created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
 );
 
 
@@ -701,6 +733,13 @@ CREATE TABLE public.users_roles (
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
 );
+
+
+--
+-- Name: analytics_dashboards id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.analytics_dashboards ALTER COLUMN id SET DEFAULT nextval('public.analytics_dashboards_id_seq'::regclass);
 
 
 --
@@ -827,6 +866,14 @@ ALTER TABLE ONLY public.tags ALTER COLUMN id SET DEFAULT nextval('public.tags_id
 --
 
 ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_id_seq'::regclass);
+
+
+--
+-- Name: analytics_dashboards analytics_dashboards_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.analytics_dashboards
+    ADD CONSTRAINT analytics_dashboards_pkey PRIMARY KEY (id);
 
 
 --
@@ -987,6 +1034,13 @@ ALTER TABLE ONLY public.tags
 
 ALTER TABLE ONLY public.users
     ADD CONSTRAINT users_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: index_analytics_dashboards_on_course_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_analytics_dashboards_on_course_id ON public.analytics_dashboards USING btree (course_id);
 
 
 --
@@ -1303,6 +1357,14 @@ ALTER TABLE ONLY public.certificates
 
 
 --
+-- Name: analytics_dashboards fk_rails_601e18b240; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.analytics_dashboards
+    ADD CONSTRAINT fk_rails_601e18b240 FOREIGN KEY (course_id) REFERENCES public.courses(id);
+
+
+--
 -- Name: question_states fk_rails_70d06a7903; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1419,6 +1481,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20210917210227'),
 ('20210928053422'),
 ('20210928145344'),
-('20211003204929');
+('20211003204929'),
+('20211016001702'),
+('20211017222247');
 
 

@@ -23,8 +23,6 @@ import UserSettings from "../src/components/Settings";
 import attachTurboEvents from "../src/utilities/turboExtraEvents";
 import registerManager from "../src/utilities/registerComponent";
 import QuestionAnsweringTime from "../src/components/QuestionAnsweringTime";
-import Popover from "bootstrap/js/dist/popover";
-import nestedDropdownListeners from "../src/utilities/nestedDropdownListeners";
 
 registerManager.register_component(AddCourseByCode, "#add-course-by-code");
 registerManager.register_component(CourseStatus, "#course-status");
@@ -50,6 +48,8 @@ registerManager.register_hooks();
 window.queryClient = queryClient;
 
 import "../../assets/stylesheets/application.scss";
+import "../src/utilities/attachPopoverListeners";
+import nestedDropdownListeners from "../src/utilities/nestedDropdownListeners";
 
 ReactStudentChannel.received = async (data) => {
   console.log("invalidating", data.invalidate);
@@ -58,16 +58,6 @@ ReactStudentChannel.received = async (data) => {
 
   await queryClient.refetchQueries(data.invalidate);
 };
-
-document.addEventListener("turbo:load", function (event) {
-  var popoverTriggerList = [].slice.call(
-    document.querySelectorAll('[data-bs-toggle="popover"]')
-  );
-
-  var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
-    return new Popover(popoverTriggerEl);
-  });
-});
 
 Rails.start();
 ActiveStorage.start();

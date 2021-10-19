@@ -77,6 +77,20 @@ class Question < ApplicationRecord
 
   }
 
+  scope :latest_by_state_with_user, lambda { |user, *states|
+    where(id:
+            QuestionState.where(id:
+                                  QuestionState
+                                    .joins(:user)
+                                    .where(users: user)
+                                    .select('max(question_states.id) as max')
+                                    .group(:question_id))
+                         .where(state: states)
+                         .pluck(:question_id)
+    )
+
+  }
+
   scope :previous_questions, lambda { |question = nil|
     q = Question.find_by(id: question)
     return Question.none unless q

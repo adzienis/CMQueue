@@ -20,11 +20,10 @@ class QuestionStatesController < ApplicationController
   def edit; end
 
   def create
-    @question_state = QuestionState.create!(create_params)
+    @question_state = QuestionState.create(create_params)
   end
 
   def show
-    @question_state = @question_states.find(params[:id])
   end
 
   private

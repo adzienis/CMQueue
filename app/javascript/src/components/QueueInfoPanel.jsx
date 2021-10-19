@@ -40,9 +40,8 @@ export default (props) => {
   const { data: count, isLoading: countLoading } = useQuery([
     "courses",
     parseInt(courseId, 10),
-    "questions",
+    "questions_count",
     "?",
-    "agg=count",
     `state=${JSON.stringify(["unresolved", "frozen"])}`,
   ]);
 
@@ -146,7 +145,7 @@ export default (props) => {
                         data-bs-parent="#accordion-ta-log"
                       >
                         <div className="accordion-body p-0">
-                          <TALog height={300} courseId={courseId} />
+                          <TALog height={600} courseId={courseId} />
                         </div>
                       </div>
                     </div>

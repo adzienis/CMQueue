@@ -5,6 +5,18 @@ require 'action_view'
 module ApplicationHelper
 
   include Pagy::Frontend
+
+  def flash_class(level)
+    case level
+    when "notice" then "alert alert-info"
+    when "success" then "alert alert-success"
+    when "error" then "alert alert-error"
+    when "alert" then "alert alert-error"
+    else
+      level
+    end
+  end
+
   def csv_download_name(model)
     "#{model.model_name.plural}_#{DateTime.now.localtime.strftime("%r %d-%m-%Y")}.csv"
   end

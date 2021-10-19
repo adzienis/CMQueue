@@ -89,7 +89,7 @@ export default (props) => {
       questions = (
         <div className="alert alert-warning border">
           No questions with these tags, but there are still <b> {count} </b>{" "}
-          questions left!
+          question{count === 1 ? "" : "s"} left!
         </div>
       );
     }

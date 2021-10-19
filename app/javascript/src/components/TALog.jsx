@@ -15,7 +15,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import DatePicker from "react-datepicker";
 
 export default (props) => {
-  const { selectedQueueId, courseId, height = 470, limited = false } = props;
+  const { selectedQueueId, courseId, height = 870, limited = false } = props;
 
   const queryClient = useQueryClient();
 

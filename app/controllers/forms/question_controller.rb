@@ -12,7 +12,7 @@ class Forms::QuestionController < ApplicationController
 
     @question_form.save
 
-    respond_with @question_form, location: edit_course_forms_question_path(@course)
+    respond_with @question_form, location: edit_course_forms_question_path(@course), flash: false
   end
 
   def update
@@ -25,7 +25,7 @@ class Forms::QuestionController < ApplicationController
 
     @question_form.save
 
-    respond_with @question_form, location: edit_course_forms_question_path(@course)
+    respond_with @question_form, location: edit_course_forms_question_path(@course), flash: false
   end
 
   def new

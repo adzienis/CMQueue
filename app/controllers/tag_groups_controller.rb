@@ -4,8 +4,6 @@ class TagGroupsController < ApplicationController
   respond_to :html, :json
 
   def index
-    @tag_groups = TagGroup.all
-
     @tag_groups_ransack = @tag_groups.ransack(params[:q])
 
     @pagy, @records = pagy @tag_groups_ransack.result
@@ -13,11 +11,9 @@ class TagGroupsController < ApplicationController
   end
 
   def new
-    @tag_group = TagGroup.new
   end
 
   def show
-    @tag_group = @tag_groups.find(params[:tag_group_id])
   end
 
   def update
@@ -35,8 +31,6 @@ class TagGroupsController < ApplicationController
   end
 
   def destroy
-    @tag_group = @tag_groups.find(params[:tag_group_id])
-
     @tag_group.destroy
 
     respond_with @tag_group, location: course_tag_groups_path(@course)

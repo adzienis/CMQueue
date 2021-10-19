@@ -57,6 +57,7 @@ export default class extends Controller {
         defaultValue={defaultValue}
         onChange={onChange}
         isMulti={isMulti}
+        isDisabled={select.getAttribute("disabled") === "disabled"}
       />,
       reactSelect
     );

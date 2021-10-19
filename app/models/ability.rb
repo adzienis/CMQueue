@@ -66,9 +66,12 @@ class Ability
       can [:create, :edit], Enrollment do |enrollment|
         (enrollment.user == user && enrollment.role.name == "student") || (user.instructor_of?(enrollment.course))
       end
+      can :read, Enrollment, Enrollment.joins(:role).where(user: user).or(Enrollment.where("roles.resource_id": @staff_roles)) do |enrollment|
+        (enrollment.user == user) ||  user.staff_of?(enrollment.course)
+      end
 
-      can [:read, :destroy], Enrollment, Enrollment.joins(:role).where(user: user).or(Enrollment.where("roles.resource_id": @staff_roles)) do |enrollment|
-        (enrollment.user == user)
+      can :destroy, Enrollment, Enrollment.joins(:role).where(user: user).or(Enrollment.where("roles.resource_id": @staff_roles)) do |enrollment|
+        (enrollment.user == user) ||  user.instructor_of?(enrollment.course)
       end
 
       can [:update], Enrollment, Enrollment.joins(:role).where(user: user).or(Enrollment.where("roles.resource_id": @staff_roles)) do |enrollment|
@@ -137,9 +140,10 @@ class Ability
         tag_group.new_record?
       end
 
-      can :manage, TagGroup, TagGroup.where(course_id: @staff_roles) do |tag_group|
+      can :manage, TagGroup, TagGroup.where(course_id: @privileged_roles) do |tag_group|
         user.privileged_staff_of?(tag_group.course)
       end
+      can :read, TagGroup
 
       can :manage, Analytics::Dashboard, Analytics::Dashboard.where(course_id: @staff_roles) do |dashboard|
         dashboard.new_record? || user.privileged_staff_of?(dashboard.course)

@@ -1,0 +1,2 @@
+module Courses::QuestionsCountHelper
+end

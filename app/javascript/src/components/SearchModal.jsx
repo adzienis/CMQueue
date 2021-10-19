@@ -6,6 +6,7 @@ import Select from "react-select";
 import { Controller, useForm } from "react-hook-form";
 import defaultMutationFn from "../utilities/defaultMutationFn";
 import ErrorSummary from "./forms/ErrorSummary";
+import ErrorContainer from "./forms/ErrorContainer";
 
 export default (props) => {
   const { userId } = props;
@@ -80,9 +81,15 @@ export default (props) => {
                     name="course_name"
                     control={control}
                     render={({ field }) => (
-                      <Select {...field} isMulti options={data} />
+                      <Select
+                        onInputChange={(newVal) => setSearch(newVal)}
+                        {...field}
+                        isMulti
+                        options={data}
+                      />
                     )}
                   />
+                  <ErrorContainer name="enrollment" errors={formErrors} />
                 </div>
 
                 <button

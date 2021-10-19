@@ -5,18 +5,12 @@ class CoursesController < ApplicationController
 
   respond_to :html, :json
 
-  include ResourceInitializable
-  include ResourceAuthorizable
-  include NameFilterable
-
   def edit
-    @course = Course.unscoped.find(params[:course_id])
+    @course = Course.unscoped.accessible_by(current_ability).find(params[:course_id])
   end
 
   def top_question
-    top_question = Question.undiscarded
-    top_question = top_question.latest_by_state("resolving")
-    top_question = top_question.with_courses(@course.id).first
+    top_question = current_user.interacting_questions.with_courses(@course).first
 
     respond_with top_question and return if top_question.nil?
 
@@ -28,18 +22,21 @@ class CoursesController < ApplicationController
   end
 
   def show
-    redirect_to new_course_question_path(@course) and return unless current_user.has_any_role?({ name: :ta, resource: @course}, {name: :instructor, resource: @course})
+    redirect_to new_course_forms_question_path(@course) and return unless current_user.has_any_role?({name: :instructor, resource: @course})
   end
 
   def new
-    @course = Course.new
   end
 
   def index
-    @courses = Course.accessible_by(current_ability)
-    @courses = @courses.order("courses.created_at": :desc)
+    @courses = Course.accessible_by(current_ability).order("courses.created_at": :desc)
     @courses = @courses.where(course_id: params[:course_id]) if params[:course_id]
     @courses = @courses.with_user(params[:user_id]) if params[:user_id]
+
+    if params[:name]
+      @courses = @courses.where("name LIKE ?", "#{params[:name]}%")
+      @courses = @courses.with_setting_value('searchable', 'true')
+    end
 
     @courses_ransack = @courses.ransack(params[:q])
 

@@ -36,8 +36,6 @@ class SettingsController < ApplicationController
   end
 
   def update
-    @setting = @settings.find(params[:setting_id])
-
     @setting.set_value(setting_params[:value]) if setting_params.keys.include? "value"
 
     @setting.save

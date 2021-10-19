@@ -110,6 +110,11 @@ class QuestionState < ApplicationRecord
       invalidate: ['courses', course.id, 'questions']
     }
 
+    QueueChannel.broadcast_to question.user, {
+      invalidate: ["questions", question.id]
+    }
+
+
     ActionCable.server.broadcast "#{course.id}#ta", {
       invalidate: ['courses', question.course_id, 'paginatedQuestions']
     }

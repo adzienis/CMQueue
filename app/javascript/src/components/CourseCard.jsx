@@ -56,15 +56,6 @@ export default (props) => {
             <h5 style={{ flex: 1 }}>
               Go to <b>{enrollment.course.name}</b>
             </h5>
-            <i
-              className="fas fa-times fa-lg"
-              onClick={(e) => {
-                e.preventDefault();
-                try {
-                  deleteEnrollment();
-                } catch (e) {}
-              }}
-            />
           </div>
         </div>
       </div>

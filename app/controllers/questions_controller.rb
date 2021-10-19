@@ -12,7 +12,7 @@ class QuestionsController < ApplicationController
   end
 
   def position
-    @questions = Question.accessible_by(current_ability)
+    @questions = Question.all
     @questions = @questions.undiscarded
     @questions = @questions.with_courses(params[:course_id]) if params[:course_id]
     @questions = @questions.with_users(params[:user_id]) if params[:user_id]
@@ -66,9 +66,7 @@ class QuestionsController < ApplicationController
   end
 
   def create
-    @question = Question.new(question_params)
-
-    @question.save
+    @question = Question.create(question_params)
 
     respond_with @question
   end

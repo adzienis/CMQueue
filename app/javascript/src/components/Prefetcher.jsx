@@ -43,6 +43,8 @@ export default (props) => {
   );
 
   useEffect(() => {
+    return;
+
     studentCourses.forEach((v) => {
       queryClient.prefetchQuery([
         "courses",
@@ -61,6 +63,7 @@ export default (props) => {
   }, [studentCourses]);
 
   useEffect(() => {
+    return;
     taCourses.forEach((v) => {
       queryClient.prefetchQuery([
         "courses",
@@ -99,6 +102,7 @@ export default (props) => {
   }, [taCourses]);
 
   useEffect(() => {
+    return;
     instructorCourses.forEach((v) => {
       queryClient.prefetchQuery([
         "courses",

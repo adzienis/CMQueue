@@ -80,7 +80,6 @@ class EnrollmentsController < ApplicationController
   end
 
   def edit
-    @enrollment = @enrollments.find(params[:id])
   end
 
   def update
@@ -90,11 +89,9 @@ class EnrollmentsController < ApplicationController
   end
 
   def show
-    @enrollment = @enrollments.find(params[:id])
   end
 
   def new
-    @enrollment = Enrollment.new
   end
 
   def create

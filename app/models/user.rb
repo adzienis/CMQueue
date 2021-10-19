@@ -33,17 +33,16 @@ class User < ApplicationRecord
 
   #has_many :oauth_applications, as: :owner
 
-  def interacting_questions?(*states, course_id: nil)
-    interacting_questions(*states, course_id).any?
+  def interacting_questions?(*states, course: nil)
+    states = ["resolving"] if states.empty?
+    questions = interacting_questions(*states)
+    questions = questions.with_courses(course) if course.present?
+    questions.any?
   end
 
-  def interacting_questions(*states, course_id: nil)
+  def interacting_questions(*states)
     states = ["resolving"] if states.empty?
-    if course_id.present?
-      Question.where(id: QuestionState.with_user(id).pluck(:question_id)).latest_by_state(states).with_courses(course_id)
-    else
-      Question.where(id: QuestionState.with_user(id).pluck(:question_id)).latest_by_state(states)
-    end
+    Question.latest_by_state_with_user(self, states)
   end
 
   def unacknowledged_kicked_question?
