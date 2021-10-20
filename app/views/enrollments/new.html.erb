@@ -1,1 +1,6 @@
-<%= render partial: "shared/new_model", locals: { model: @enrollment, options: { except: [:question_states, :questions ]} } %>
+<h3>
+  Enrollment
+</h3>
+<%= render "shared/form_wrapper" do %>
+  <%= render "form" %>
+<% end %>

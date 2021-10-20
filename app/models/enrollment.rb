@@ -25,7 +25,7 @@ class Enrollment < ApplicationRecord
               .where("roles.resource_id": role.resource_id, "roles.resource_type": "Course", user_id: user_id, semester: semester)
 
     unless found.empty?
-      errors.add(:enrollment, "already exists in course.")
+      errors.add(:base, "already exists in course.")
     end
 
   end

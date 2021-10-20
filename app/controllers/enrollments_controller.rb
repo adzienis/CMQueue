@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class EnrollmentsController < ApplicationController
-  load_and_authorize_resource id_param: :enrollment_id
+  load_and_authorize_resource id_param: :enrollment_id, except: :create
 
   respond_to :html, :json
 
@@ -95,7 +95,12 @@ class EnrollmentsController < ApplicationController
   end
 
   def create
-    @enrollment = Enrollment.create(enrollment_params)
+    @enrollment = Enrollment.new(enrollment_params)
+
+    if @enrollment.valid?
+      authorize! :create, @enrollment
+      @enrollment.save
+    end
 
     respond_with @enrollment, location: course_enrollments_path(@course)
   end

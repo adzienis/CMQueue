@@ -1,12 +1,6 @@
-<%= render partial: "shared/edit_model", locals: {
-  model_instance: @enrollment, options: {
-    except: [:discarded_at, :questions, :question_states],
-    disabled: [:user],
-    associations: {
-      role: {
-        collection: Role.with_courses(@course),
-        label_method: ->(role) { role.name }
-      }
-    }
-  }
-} %>
+<h3>
+  Enrollment
+</h3>
+<%= render "shared/form_wrapper" do %>
+  <%= render "form" %>
+<% end %>

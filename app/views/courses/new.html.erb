@@ -1,20 +1,6 @@
-<%= render partial: "shared/new_model", locals: {
-  model: @course,
-  options: {
-    except: [:settings,
-             :roles,
-             :enrollments,
-             :users,
-             :questions,
-             :unresolved_questions,
-             :active_questions,
-             :tags,
-             :access_grants,
-             :access_tokens,
-             :applications,
-             :course_code,
-             :open,
-             :ta_code,
-             :student_code,
-             :instructor_code]
-  } } %>
+<h3>
+  Course
+</h3>
+<%= render "shared/form_wrapper" do %>
+  <%= render "form" %>
+<% end %>

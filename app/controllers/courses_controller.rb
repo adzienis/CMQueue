@@ -22,6 +22,7 @@ class CoursesController < ApplicationController
   end
 
   def show
+    @course = Course.unscoped.accessible_by(current_ability).find(params[:course_id])
     redirect_to new_course_forms_question_path(@course) and return unless current_user.has_any_role?({name: :instructor, resource: @course})
   end
 
@@ -77,9 +78,7 @@ class CoursesController < ApplicationController
   def update
     @course.update(course_params)
 
-    render turbo_stream: (turbo_stream.update @course, partial: "shared/edit_form", locals: { model_instance: @course }) and return unless @course.errors.count == 0
-
-    redirect_to course_path(@course)
+    respond_with @course, location: course_path(@course)
   end
 
   private

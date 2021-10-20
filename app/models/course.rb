@@ -70,6 +70,27 @@ class Course < ApplicationRecord
 
   scope :with_setting_value, ->(key, value) { joins(:settings).merge(Setting.with_key_value(key, value)) }
 
+
+
+  def active_tas
+    tas.merge(Enrollment.undiscarded)
+  end
+  def tas
+    enrollments.joins(:role).where("roles.name": "ta")
+  end
+  def active_instructors
+    instructors.merge(Enrollment.undiscarded)
+  end
+  def instructors
+    enrollments.joins(:role).where("roles.name": "instructor")
+  end
+  def active_students
+    students.merge(Enrollment.undiscarded)
+  end
+  def students
+    enrollments.joins(:role).where("roles.name": "student")
+  end
+
   def self.find_by_code?(code)
     self.find_by_code(code).present?
   end

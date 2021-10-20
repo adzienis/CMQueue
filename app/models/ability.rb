@@ -59,13 +59,13 @@ class Ability
       #  false
       #end
 
-      can :new, Enrollment do |enrollment |
+      can [:new, :edit], Enrollment do |enrollment |
         enrollment.new_record?
       end
-
-      can [:create, :edit], Enrollment do |enrollment|
+      can :create, Enrollment do |enrollment|
         (enrollment.user == user && enrollment.role.name == "student") || (user.instructor_of?(enrollment.course))
       end
+
       can :read, Enrollment, Enrollment.joins(:role).where(user: user).or(Enrollment.where("roles.resource_id": @staff_roles)) do |enrollment|
         (enrollment.user == user) ||  user.staff_of?(enrollment.course)
       end

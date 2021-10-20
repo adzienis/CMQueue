@@ -29,7 +29,8 @@
       </div>
       <%= button_tag class: "btn btn-toggle align-items-center text-decoration-none
                             #{(["courses", "enrollments", "questions",
-                                "tags", "tag_groups", "dashboard", "dashboards"].include? controller_name) ? 'active-link' : ''}",
+                                "tags", "tag_groups", "dashboard",
+                                "dashboards"].include?(controller_name) || ["enrollments/import"].include?(controller_path)) ? 'active-link' : ''}",
                      data: { "bs-toggle": "collapse", "bs-target": "#course-info-collapse" } do %>
         Information
       <% end %>
@@ -76,7 +77,7 @@
             <i class="fas fa-user"></i>
           </div>
           <%= button_to "Enrollments", course_enrollments_path(@course),
-                        class: "btn text-decoration-none #{(controller_name == "enrollments") ?
+                        class: "btn text-decoration-none #{(controller_name == "enrollments" || controller_path == "enrollments/import") ?
                                                              "active-link" : ""}", method: :get %>
         </li>
         <li class="d-flex align-items-center">

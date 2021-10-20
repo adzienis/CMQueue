@@ -28,8 +28,8 @@ class Enrollments::ImportController < ApplicationController
       type = enrollment["type"]
 
       split_name = name.split(" ")
-      given_name = split_name[-1]
-      family_name = split_name[0]
+      given_name = split_name[0]
+      family_name = split_name[-1]
 
       user = User.find_by(email: email)
 
