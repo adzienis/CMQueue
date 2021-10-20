@@ -7,6 +7,8 @@
   </div>
 </div>
 
+<%= link_to "Import Enrollments", import_course_enrollments_path(@course) %>
+
 <%= render partial: "shared/search_form",
            locals: {
              records: @records,

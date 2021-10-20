@@ -1,0 +1,2 @@
+module Enrollments::ImportHelper
+end

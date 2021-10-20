@@ -39,24 +39,10 @@
     <% end if presenter.can_download? %>
 
     <%= tag.li class: "nav-item" do %>
-      <a href="#" onclick="event.preventDefault()" class="nav-link" data-bs-toggle="modal" data-bs-target="#import-modal">
+      <%= link_to polymorphic_url([:import, @course, records.model]), class: "nav-link" do %>
         <i class="fas fa-upload fa-lg me-2"></i>
         Import
-      </a>
-
-      <div class="modal fade" id="import-modal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h4 class="modal-title" id="import-modal-label"> Import <%= records.model.name.titleize %></h4>
-              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-              <%= render partial: "shared/import_form", locals: { format: options[:format], model: records.model } %>
-            </div>
-          </div>
-        </div>
-      </div>
+      <% end if presenter.can_import? %>
     <% end if presenter.can_import? %>
   <% end %>
 </ul>

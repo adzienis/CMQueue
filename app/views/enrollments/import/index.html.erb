@@ -1,0 +1,22 @@
+<h2> Import Enrollments </h2>
+<div class="card card-body">
+  <span>
+    It is possible to automatically import enrollments from canvas into the course. To do so, you should use the
+    <a href="https://chrome.google.com/webstore/detail/canvas-export/aaeignecekbkicldlelbofogfgekekkh">canvas-export</a>
+    plugin. You should then go to the root page of your course, for instance: <em>https://canvas.cmu.edu/courses/12345</em>.
+    You will then want to launch the plugin, and click "Download All Users". You will then be able to download a ".json" file
+    that exports all users currently enrolled your course.
+  </span>
+
+  <hr>
+
+  <%= form_with url: polymorphic_url([:import, @course, :enrollments]), method: :post, html: { autocomplete: "off"} do |f| %>
+    <%= f.hidden_field :course_id, value: params[:course_id]  %>
+    <div>
+      <label class="form-label fw-bold"> File </label>
+      <%= f.file_field :file, required: true, class: "form-control mb-3" %>
+    </div>
+
+    <%= f.submit :Upload, class: "btn btn-primary", data: { "disable-with" => "Uploading..." }%>
+  <% end %>
+</div>

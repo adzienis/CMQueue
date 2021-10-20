@@ -2,7 +2,7 @@ module Enrollable
   extend ActiveSupport::Concern
 
   included do
-    has_many :active_enrollments, -> { undiscarded }, dependent: :delete_all, class_name: "Enrollment"
+    has_many :active_enrollments, -> { undiscarded }, dependent: :destroy, class_name: "Enrollment"
     has_many :enrollments, dependent: :destroy
   end
 

@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
+  namespace :enrollments do
+    get 'import/index'
+    get 'import/create'
+  end
   namespace :analytics do
     namespace :dashboards do
       namespace :metabase do
@@ -80,7 +84,8 @@ Rails.application.routes.draw do
   resources :enrollments do
     collection do
       get 'download', to: "enrollments#download_form"
-      post 'import', to: "enrollments#import"
+      post 'import', to: "enrollments/import#create"
+      get 'import', to: "enrollments/import#index"
     end
   end
 
@@ -166,7 +171,10 @@ Rails.application.routes.draw do
     end
 
     resources :enrollments do
+
       collection do
+        get 'import', to: "enrollments/import#index"
+        post 'import', to: "enrollments/import#create"
         get 'download', to: "enrollments#download_form"
       end
     end
