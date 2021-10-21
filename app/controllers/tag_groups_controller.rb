@@ -39,6 +39,6 @@ class TagGroupsController < ApplicationController
   private
 
   def tag_group_params
-    params.require(:tag_group).permit(:course_id, :name, tag_ids: [])
+    params.require(:tag_group).permit(:course_id, :name, :description, tag_ids: [])
   end
 end

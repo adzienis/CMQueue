@@ -1,5 +1,9 @@
-<h1>Dashboards</h1>
-
+<div class="mb-3">
+  <h1 class="mb-0">Dashboards</h1>
+  <div class="text-muted">
+    Integrate analytics dashboards to get better insights on your data.
+  </div>
+</div>
 <div class="card card-body">
   <table class="table table-hover table-striped">
     <thead>
@@ -14,13 +18,22 @@
     <% @dashboards.each do |analytics_dashboard| %>
       <tr>
         <% if analytics_dashboard.data["dashboard_type"] == "metabase" %>
-          <td><%= analytics_dashboard.data["name"] %></td>
+          <td><%= link_to analytics_dashboard.data["name"], course_analytics_dashboard_path(@course, analytics_dashboard) %></td>
           <td><%= analytics_dashboard.data["dashboard_type"] %></td>
         <% end %>
-
-        <td><%= link_to 'Show', course_analytics_dashboard_path(@course, analytics_dashboard), class: "btn btn-primary" %></td>
-        <td><%= link_to 'Edit', edit_course_forms_analytics_dashboard_path(@course, analytics_dashboard), class: "btn btn-warning" %></td>
-        <td><%= link_to 'Destroy', course_analytics_dashboard_path(@course, analytics_dashboard), method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-danger" %></td>
+        <td class="d-flex">
+          <div style="flex: 1"></div>
+          <div class="dropdown">
+            <button class="btn btn-outline-primary dropdown-toggle" type="button" id="dropdownMenu2" data-bs-toggle="dropdown" aria-expanded="false">
+              Actions
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+              <li><%= link_to 'Show', course_analytics_dashboard_path(@course, analytics_dashboard), class: "dropdown-item" %></li>
+              <li><%= link_to 'Edit', edit_course_forms_analytics_dashboard_path(@course, analytics_dashboard), class: "dropdown-item" %></li>
+              <li><%= link_to 'Destroy', course_analytics_dashboard_path(@course, analytics_dashboard), method: :delete, data: { confirm: 'Are you sure?' }, class: "dropdown-item" %></li>
+            </ul>
+          </div>
+        </td>
       </tr>
     <% end %>
     </tbody>
