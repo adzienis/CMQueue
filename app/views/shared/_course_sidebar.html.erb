@@ -6,11 +6,10 @@
     <div style="width: 16px" class="d-flex justify-content-center">
       <i class="fas fa-chalkboard-teacher"></i>
     </div>
-    <%= button_to "Queue", queue_course_path(@course),
+    <%= link_to "Queue", queue_course_path(@course),
                   class: "btn btn-toggle align-items-center text-decoration-none
                             #{request.path == queue_course_path(@course) ||
-                    request.path == answer_course_path(@course) ? 'active-link' : ''}",
-                  method: :get %>
+                    request.path == answer_course_path(@course) ? 'active-link' : ''}" %>
   </li>
 
   <%= tag.li class:"d-flex align-items-center" do %>
@@ -18,9 +17,9 @@
     <div style="width: 16px" class="d-flex justify-content-center">
       <i class="fas fa-user"></i>
     </div>
-    <%= button_to "Settings", course_settings_path(@course),
+    <%= link_to "Settings", course_settings_path(@course),
                   class: "btn text-decoration-none #{(request.path == course_settings_path(@course)) ?
-                                                       "active-link" : ""}", method: :get %>
+                                                       "active-link" : ""}" %>
   <% end if current_user.has_role? :instructor, @course  %>
   <li class="mb-1">
     <div class=" d-flex align-items-center">
@@ -30,7 +29,8 @@
       <%= button_tag class: "btn btn-toggle align-items-center text-decoration-none
                             #{(["courses", "enrollments", "questions",
                                 "tags", "tag_groups", "dashboard",
-                                "dashboards"].include?(controller_name) || ["enrollments/import"].include?(controller_path)) ? 'active-link' : ''}",
+                                "dashboards"].include?(controller_name) ||
+        ["enrollments/import", "questions/search"].include?(controller_path)) ? 'active-link' : ''}",
                      data: { "bs-toggle": "collapse", "bs-target": "#course-info-collapse" } do %>
         Information
       <% end %>
@@ -43,66 +43,67 @@
             <div style="width: 16px" class="d-flex justify-content-center">
               <i class="fas fa-bowling-ball"></i>
             </div>
-            <%= button_to "Applications", oauth_course_applications_path,
+            <%= link_to "Applications", oauth_course_applications_path,
                           class: "btn text-decoration-none #{(request.path == oauth_course_applications_path(@course)) ?
-                                                               "active-link" : ""}", method: :get %>
+                                                               "active-link" : ""}" %>
           <% end %>
         <% end %>
         <%= tag.li class: "d-flex align-items-center" do %>
           <div style="width: 16px" class="d-flex justify-content-center">
             <i class="fas fa-book"></i>
           </div>
-          <%= button_to "Course", course_path(@course),
+          <%= link_to "Course", course_path(@course),
                         class: "btn text-decoration-none #{(controller_name == "courses") ?
-                                                             "active-link" : ""}", method: :get %>
+                                                             "active-link" : ""}" %>
         <% end if current_user.instructor_of?(@course) %>
         <li class="d-flex align-items-center">
           <div style="width: 16px" class="d-flex justify-content-center">
             <i class="fas fa-question"></i>
           </div>
-          <%= button_to "Questions", course_questions_path(@course),
-                        class: "btn text-decoration-none #{(controller_name == "questions") ?
-                                                             "active-link" : ""}", method: :get %>
+          <%= link_to "Questions", search_course_questions_path(@course),
+                        class: "btn text-decoration-none #{(controller_name == "questions" ||
+                          controller_path == "questions/search") ?
+                                                             "active-link" : ""}" %>
         </li>
         <li class="d-flex align-items-center">
           <div style="width: 16px" class="d-flex justify-content-center">
             <i class="fas fa-tags"></i>
           </div>
-          <%= button_to "Tags",  course_tags_path(@course),
+          <%= link_to "Tags",  course_tags_path(@course),
                         class: "btn text-decoration-none #{(controller_name == "tags") ?
-                                                             "active-link" : ""}", method: :get %>
+                                                             "active-link" : ""}" %>
         </li>
         <li class="d-flex align-items-center">
           <div style="width: 16px" class="d-flex justify-content-center">
             <i class="fas fa-user"></i>
           </div>
-          <%= button_to "Enrollments", course_enrollments_path(@course),
+          <%= link_to "Enrollments", course_enrollments_path(@course),
                         class: "btn text-decoration-none #{(controller_name == "enrollments" || controller_path == "enrollments/import") ?
-                                                             "active-link" : ""}", method: :get %>
+                                                             "active-link" : ""}" %>
         </li>
         <li class="d-flex align-items-center">
           <div style="width: 16px" class="d-flex justify-content-center">
             <i class="fas fa-layer-group"></i>
           </div>
-          <%= button_to "Tag Groups", course_tag_groups_path(@course),
+          <%= link_to "Tag Groups", course_tag_groups_path(@course),
                         class: "btn text-decoration-none #{(controller_name == "tag_groups") ?
-                                                             "active-link" : ""}", method: :get %>
+                                                             "active-link" : ""}" %>
         </li>
         <% tag.li class: "d-flex align-items-center" do %>
           <div style="width: 16px" class="d-flex justify-content-center">
             <i class="fas fa-database"></i>
           </div>
-          <%= button_to "Database", database_course_path(@course),
+          <%= link_to "Database", database_course_path(@course),
                         class: "btn text-decoration-none #{(controller_name == "dashboard") ?
-                                                             "active-link" : ""}", method: :get %>
+                                                             "active-link" : ""}" %>
         <% end if current_user.has_role? :instructor, @course %>
         <%= tag.li class: "d-flex align-items-center" do %>
           <div style="width: 16px" class="d-flex justify-content-center">
             <i class="fas fa-database"></i>
           </div>
-          <%= button_to "Dashboards", course_analytics_dashboards_path(@course),
+          <%= link_to "Dashboards", course_analytics_dashboards_path(@course),
                         class: "btn text-decoration-none #{(["dashboards", "dashboard"].include?(controller_name)) ?
-                                                             "active-link" : ""}", method: :get %>
+                                                             "active-link" : ""}" %>
         <% end if current_user.has_role? :instructor, @course %>
       </ul>
     <% end %>
@@ -124,12 +125,12 @@
       request.path == analytics_course_path(@course)) ? 'show' : ''}" do %>
       <ul class="navbar-toggler list-unstyled pb-1 small">
         <li>
-          <%= button_to "Overall", analytics_course_path(@course),
+          <%= link_to "Overall", analytics_course_path(@course),
                         class: "btn text-decoration-none #{(request.path == analytics_course_path(@course)) ?
                                                              "active-link" : ""}", method: :get %>
         </li>
         <li>
-          <%= button_to "TA", analytics_tas_course_path(@course),
+          <%= link_to "TA", analytics_tas_course_path(@course),
                         class: "btn text-decoration-none #{(request.path == analytics_tas_course_path(@course)) ?
                                                              "active-link" : ""}", method: :get %>
         </li>

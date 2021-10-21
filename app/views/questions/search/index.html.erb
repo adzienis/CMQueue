@@ -1,0 +1,96 @@
+<%
+
+  msg = if @pagy.count == 1
+   "#{@pagy.count} questions in #{@results.took} ms"
+ else
+   "#{@pagy.count} questions in #{@results.took} ms"
+  end
+%>
+
+<div class="mb-3">
+  <h1 class="mb-0">
+    Questions
+  </h1>
+  <div class="text-muted">
+    All created questions.
+  </div>
+</div>
+
+<div class="card card-body shadow-sm mb-2">
+  <%= form_tag(search_course_questions_path(@course), method: :get, html: { autocomplete: "off" }) do %>
+    <div class="mb-2">
+      <%= text_field_tag(:q, params[:q], class: "form-control") %>
+    </div>
+    <%= submit_tag("Search", class: "btn btn-primary") %>
+  <% end %>
+</div>
+
+<div class="d-flex">
+  <div class="card card-body shadow-sm me-2" style="width: 300px; max-width: 300px">
+    <% if @results.aggs.present? %>
+      <% @results.aggs.keys.each do |category| %>
+        <% if  @results.aggs[category]["buckets"].present? %>
+          <h5> Filter by <%= category.humanize.titleize %></h5>
+          <%= link_to "Remove #{category.humanize.titleize} filters",
+                      search_course_questions_path(@course,
+                                            request.query_parameters.reject{|k,v| k == category }) %>
+          <hr class="m-1">
+          <div style="overflow-y: scroll; min-height: 150px; max-height: 300px">
+            <% @results.aggs[category]["buckets"].each do |bucket| %>
+              <div>
+                <%= link_to "#{bucket["key"]}",
+                            search_course_questions_path(@course,
+                                                  request.query_parameters.merge(category => bucket["key"])), class: params[category] == bucket["key"] ? "fw-bold" : "" %>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+      <% end %>
+    <% end %>
+  </div>
+  <div class="w-100">
+    <h3> Results <small>(<%= msg %>)</small> </h3>
+    <% @results.results.each do |question| %>
+      <div class="card mb-2 shadow-sm">
+        <div class="card-body">
+          <h4>
+            <%= question.user.full_name %>
+          </h4>
+          <div>
+            <label class="fw-bold"> Description </label>
+            <div>
+              <%= question.description %>
+            </div>
+          </div>
+          <div>
+            <label class="fw-bold"> What Did They Try? </label>
+            <div>
+              <%= question.tried %>
+            </div>
+          </div>
+          <div>
+            <label class="fw-bold"> Location </label>
+            <div>
+              <%= question.location %>
+            </div>
+          </div>
+          <div>
+            <label class="fw-bold"> Created At </label>
+            <div>
+              <%= question.created_at.strftime("%a, %x, %I:%M %p") %>
+            </div>
+          </div>
+          <div>
+          </div>
+        </div>
+        <div class="card-footer">
+          <%= link_to "To Question", course_question_path(@course, question) %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+</div>
+<div class="w-100 d-flex justify-content-center">
+  <%== render partial: "pagy/nav.html.erb", locals: { pagy: @pagy } %>
+</div>

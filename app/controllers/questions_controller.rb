@@ -27,10 +27,6 @@ class QuestionsController < ApplicationController
     @questions = @questions.with_users(params[:user_id]) if params[:user_id]
     @questions = @questions.latest_by_state(JSON.parse(params[:state])) if params[:state]
 
-    @questions_ransack = @questions.ransack(params[:q])
-
-    @pagy, @records = pagy @questions_ransack.result
-
     @questions = @questions.count if params[:agg] == "count"
 
     respond_with @questions

@@ -8,20 +8,56 @@
 </div>
 
 
-<%= render partial: "shared/search_form",
-           locals: {
-             records: @records,
-             ransack: @questions_ransack,
-             course: @course,
-             pagy: @pagy,
-             options: {
-               extra_columns: [{ user: :given_name }, { question_state: :state }, { tags: :name }],
-               except: [:title, :notes, :user_id, :course_id, :discarded_at, :enrollment_id],
-               actions: [:download, :edit],
-               other_filters: {
-                 user: User.column_names.excluding("id", "created_at", "updated_at", "provider", "uid"),
-                 enrollment: Enrollment.column_names.excluding("id", "created_at", "updated_at", "provider", "uid"),
-                 question_state: QuestionState.column_names.excluding("updated_at", "id", "question_id", "user_id")
-               }
-             }
-           } %>
+<div>
+  <div class="card card-body">
+    <%= form_tag(course_questions_path(@course), method: :get, html: { autocomplete: "off" }) do %>
+      <%= text_field_tag(:q, params[:q] || "*") %>
+      <%= submit_tag("Search") %>
+    <% end %>
+
+
+    <% if @results.aggs.present? %>
+      <% @results.aggs.keys.each do |category| %>
+        <% if  @results.aggs[category]["buckets"].present? %>
+          <h5> Filter by <%= category.humanize.titleize %></h5>
+          <%= link_to "Remove #{category.humanize.titleize} filters",
+                      course_questions_path(@course,
+                                            request.query_parameters.reject{|k,v| k == category }) %>
+
+          <% @results.aggs[category]["buckets"].each do |bucket| %>
+            <%= link_to "#{bucket["key"]}",
+                        course_questions_path(@course,
+                                              request.query_parameters.merge(category => bucket["key"])), class: params[category] == bucket["key"] ? "fw-bold" : "" %>
+          <% end %>
+        <% end %>
+      <% end %>
+    <% end %>
+  </div>
+  <% @results.results.each do |question| %>
+    <div class="card card-body">
+      <div>
+        <%= question.created_at.strftime("%a, %x, %I:%M") %>
+      </div>
+      <div>
+        <%= question.description %>
+      </div>
+      <div>
+        <%= question.tried %>
+      </div>
+      <div>
+        <%= question.location %>
+      </div>
+    </div>
+  <% end %>
+
+</div>
+
+
+<% if @pagy.count == 1 %>
+  <%= "#{@pagy.count} questions" %>
+<% else %>
+  <%= "#{@pagy.count} questions" %>
+<% end %>
+<div class="w-100 d-flex justify-content-center">
+  <%== render partial: "pagy/nav.html.erb", locals: { pagy: @pagy } %>
+</div>

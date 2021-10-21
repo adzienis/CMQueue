@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require 'pagy/extras/searchkick'
 
 class Question < ApplicationRecord
 
@@ -6,10 +7,11 @@ class Question < ApplicationRecord
   include Ransackable
   include Exportable
   include GuardableTransactions
+  extend Pagy::Searchkick
+
   searchkick
 
-
-  scope :search_import, -> { includes(:question_state) }
+  scope :search_import, -> { includes(:question_state, :user, :tags) }
 
   def search_data
     {
@@ -18,7 +20,10 @@ class Question < ApplicationRecord
       description: description,
       location: location,
       state: question_state&.state,
-      discarded_at: discarded_at
+      discarded_at: discarded_at,
+      user_name: "#{user.given_name} #{user.family_name}",
+      resolved_by: question_state&.state == "resolved" ? question_state.user.given_name : nil,
+      tags: tags.map(&:name)
     }
   end
 
@@ -26,7 +31,10 @@ class Question < ApplicationRecord
   has_one :course, through: :enrollment
   has_one :user, through: :enrollment
   # this basically alias question_state
-  has_one :question_state, -> { order('max(id) DESC').group("question_states.id") }, class_name: "QuestionState", dependent: :destroy
+  has_one :question_state, -> { order('max(id) DESC').group("question_states.id") },
+          class_name: "QuestionState",
+          dependent: :destroy,
+          inverse_of: :question
 
   has_and_belongs_to_many :tags, dependent: :destroy, autosave: true, inverse_of: :questions
 

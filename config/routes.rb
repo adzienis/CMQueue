@@ -138,6 +138,7 @@ Rails.application.routes.draw do
     resources :questions, except: [:new, :create] do
       collection do
         get 'download', to: "questions#download_form"
+        get 'search', to: "questions/search#index"
       end
     end
 

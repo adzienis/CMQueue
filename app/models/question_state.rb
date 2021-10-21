@@ -1,9 +1,11 @@
 # frozen_string_literal: true
 
 class QuestionState < ApplicationRecord
+  searchkick
+
   include Ransackable
   include Turbo::Broadcastable
-  belongs_to :question, touch: true, optional: false
+  belongs_to :question, touch: true, optional: false, inverse_of: :question_state
   belongs_to :enrollment
 
   has_one :user, through: :enrollment
@@ -82,7 +84,12 @@ class QuestionState < ApplicationRecord
                          .pluck('questions.id'))
   }
 
+  after_commit do
+    question.reload.reindex
+  end
+
   after_create_commit do
+
     QueueChannel.broadcast_to user, {
       invalidate: ['courses',
                    course.id,
