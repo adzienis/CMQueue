@@ -29,7 +29,12 @@ const Option = (props) => {
 export default (props) => {
   const { courseId, userId, enrollmentId } = props;
 
-  const { data: tags } = useQuery(["tags", "?", `course_id=${courseId}`]);
+  const { data: tags } = useQuery([
+    "tags",
+    "?",
+    `course_id=${courseId}`,
+    "archived=false",
+  ]);
   const { data: groupedTags } = useQuery([
     "grouped_tags",
     "?",

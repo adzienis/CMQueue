@@ -115,44 +115,46 @@ export default (props) => {
                 <QuestionPosition question={question} courseId={courseId} />
               ) : null}
             </div>
-            <QueueInfoItem
-              info="Shows which TA's have had activity within the past 15 minutes."
-              title={"Active TA's"}
-              loading={activeLoading}
-              icon={
-                <div className="me-3 d-flex justify-content-center align-items-center">
-                  <i className="fas fa-users fa-3x" />
-                </div>
-              }
-              value={activeTas?.map((v) => v.given_name).join(", ")}
-              footer={
-                enrollment?.role.name !== "student" ? (
-                  <div className="accordion" id="accordion-ta-log">
-                    <div className="accordion-item">
-                      <h2 className="accordion-header">
-                        <button
-                          className="accordion-button collapsed"
-                          type="button"
-                          data-bs-toggle="collapse"
-                          data-bs-target="#collapse-ta-log"
+            <div className="d-none">
+              <QueueInfoItem
+                info="Shows which TA's have had activity within the past 15 minutes."
+                title={"Active TA's"}
+                loading={activeLoading}
+                icon={
+                  <div className="me-3 d-flex justify-content-center align-items-center">
+                    <i className="fas fa-users fa-3x" />
+                  </div>
+                }
+                value={activeTas?.map((v) => v.given_name).join(", ")}
+                footer={
+                  enrollment?.role.name !== "student" ? (
+                    <div className="accordion" id="accordion-ta-log">
+                      <div className="accordion-item">
+                        <h2 className="accordion-header">
+                          <button
+                            className="accordion-button collapsed"
+                            type="button"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#collapse-ta-log"
+                          >
+                            <b>TA Log</b>
+                          </button>
+                        </h2>
+                        <div
+                          id="collapse-ta-log"
+                          className="accordion-collapse collapse"
+                          data-bs-parent="#accordion-ta-log"
                         >
-                          <b>TA Log</b>
-                        </button>
-                      </h2>
-                      <div
-                        id="collapse-ta-log"
-                        className="accordion-collapse collapse"
-                        data-bs-parent="#accordion-ta-log"
-                      >
-                        <div className="accordion-body p-0">
-                          <TALog height={600} courseId={courseId} />
+                          <div className="accordion-body p-0">
+                            <TALog height={600} courseId={courseId} />
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                ) : null
-              }
-            />
+                  ) : null
+                }
+              />
+            </div>
           </div>
         </div>
       </div>

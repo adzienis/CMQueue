@@ -14,7 +14,7 @@ class Questions::HandleController < ApplicationController
   end
 
   def create
-    ret = @question.transition_to_state(params[:state], params[:enrollment_id])
+    ret = @question.transition_to_state(params[:state], params[:enrollment_id], description: params[:description])
 
     respond_with @question
   end

@@ -83,16 +83,11 @@ class QuestionState < ApplicationRecord
   }
 
   after_create_commit do
-
-    broadcast_action_later_to question.user,
-                              action: :refresh,
-                              target: "course-active-questions-count",
-                              partial: "shared/reload_turbo"
-
-    broadcast_action_later_to question.user,
-                              action: :refresh,
-                              target: "question-creator-container",
-                              partial: "shared/reload_turbo"
+    QueueChannel.broadcast_to user, {
+      invalidate: ['courses',
+                   course.id,
+                   'current_question']
+    }
 
     QueueChannel.broadcast_to course, {
       invalidate: ['courses', question.course.id, 'activeTAs']

@@ -12,17 +12,9 @@
         Augmenting what office hours traditionally are, CMQueue allows instructors to obtain key insights
         into how office hours are going.
       </p>
-      <%= button_to "/users/auth/google_oauth2?origin=login",
-                    method: :post,
-                    "data-turbo": false,
-                    class: "mt-4 p-0 border-0",
-                    width: "300", height: "300", decoding: "sync" do %>
 
-        <%= image_tag 'google/web/2x/btn_google_signin_dark_normal_web@2x.png',
-                      width: '310px',
-                      height: "75px",
-                      class: "shadow-sm"
-        %>
+      <%= form_with url: "/users/auth/google_oauth2?origin=login", method: :post, data: { turbo: "false" } do |form| %>
+        <input alt="here"  type="image" src="/assets/google/web/2x/btn_google_signin_dark_normal_web@2x.png" width="310px" height="75px">
       <% end %>
     </div>
   </div>

@@ -5,6 +5,9 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       queryFn: defaultQueryFn,
+      refetchOnWindowFocus: "always",
+      refetchInterval: 1000 * 60,
+      refetchIntervalInBackground: true,
     },
   },
 });

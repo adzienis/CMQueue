@@ -73,7 +73,7 @@ class Setting < ApplicationRecord
   end
 
   def update_json(path, value)
-    Setting.update("value = jsonb_set(value::jsonb, '{#{path}}', '#{value}'::jsonb)::jsonb")
+    update("value = jsonb_set(value::jsonb, '{#{path}}', '#{value}'::jsonb)::jsonb")
   end
 
   def update_all_json(path, value)

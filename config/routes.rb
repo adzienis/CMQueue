@@ -193,6 +193,7 @@ Rails.application.routes.draw do
 
   resources :courses do
     member do
+      get 'current_question', to: "courses/current_question#show"
       post 'semester'
       get 'roster', to: 'courses#roster'
       get 'queue', to: 'courses/queue#show'

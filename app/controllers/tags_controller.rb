@@ -12,6 +12,7 @@ class TagsController < ApplicationController
   def index
 
     @tags = @tags.undiscarded.order("tags.created_at": :desc).where(course_id: params[:course_id]) if params[:course_id]
+    @tags = @tags.where(archived: params[:archived]) if params[:archived]
     @tags_ransack = @tags.ransack(params[:q])
 
     @pagy, @records = pagy @tags_ransack.result

@@ -159,7 +159,6 @@ html, body {
 
 @media (max-width: 768px) {
 
-
   .sidebar-opener {
     display: block;
     transform: translateX(201px);
@@ -170,7 +169,7 @@ html, body {
   }
   .sidebar {
     transform: translateX(-200px);
-    width: max-content;
+    width: calc(100vw + 200px);
   }
   .sidebar.open {
     transform: translateX(0px);

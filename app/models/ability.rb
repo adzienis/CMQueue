@@ -62,6 +62,7 @@ class Ability
       can [:new, :edit], Enrollment do |enrollment |
         enrollment.new_record?
       end
+
       can :create, Enrollment do |enrollment|
         (enrollment.user == user && enrollment.role.name == "student") || (user.instructor_of?(enrollment.course))
       end

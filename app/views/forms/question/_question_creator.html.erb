@@ -4,7 +4,7 @@
 <% presenter = QuestionStatesHelper::QuestionStatesPresenter.new(question) %>
 
 
-<%= render partial: "question_state_modal", locals: { question: question } %>
+<%= render partial: "question_state_modal", locals: { question: question } if question %>
 
 <%= tag.div class: "card w-100 shadow-sm #{presenter.creator_classes}",
             style: presenter.creator_styles do %>

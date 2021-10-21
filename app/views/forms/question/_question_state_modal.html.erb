@@ -1,4 +1,4 @@
-<div data-controller="modal" data-modal-question-id-value="<%= question.id %>">
+<div data-controller="modal" data-modal-question-id-value="<%= question.id %>" data-question_form-target="modal"  data-modal-state-value="<%= question.question_state&.state %>">
   <div data-modal-target="modal" class="modal fade" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
       <div class="modal-content">
@@ -9,12 +9,8 @@
               is answering your question.
             </h5>
           </div>
-          <div class="modal-body">
+          <div class="modal-body" data-modal-target="body">
             <div class="d-flex justify-content-center align-items-center w-100">
-              <%= content_tag :div, id: "question-time", data: {
-                questionId: question.id
-              }.to_json do %>
-              <% end %>
             </div>
           </div>
           <div class="modal-footer">
@@ -27,7 +23,7 @@
           </div>
           <div class="modal-body">
             <div class="d-flex justify-content-center align-items-center w-100">
-              <%= button_to "New Question", new_course_question_path(question.course), method: :get, class: "btn btn-primary" %>
+              <%= button_to "New Question", new_course_forms_question_path(question.course), method: :get, class: "btn btn-primary" %>
             </div>
           </div>
           <div class="modal-footer">
@@ -64,6 +60,7 @@
               <%= f.hidden_field :course_id, value: question.course.id, autocomplete: "off" %>
               <%= f.hidden_field :state, value: "unresolved" %>
               <%= tag.button :Unfreeze,
+                             "data-turbo": false,
                              type: "submit",
                              form: "unfreeze",
                              class: "btn btn-primary",

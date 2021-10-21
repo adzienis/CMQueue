@@ -1,6 +1,13 @@
 <% question ||= Question.new %>
 <% available_tags ||= [] %>
 
-<%= turbo_frame_tag "question-creator-container", src: request.path, class: "w-100" do %>
+<%= turbo_frame_tag "question-creator-container",
+                    src: request.path,
+                    class: "w-100",
+                    "data-controller": "question_form",
+                    "data-question_form-new-record-value": question.new_record?,
+                    "data-question_form-question-id-value": question.id,
+                    "data-question_form-course-id-value": @course.id,
+                    "data-question_form-state-value": question.question_state&.state do %>
   <%= render partial: "question_creator", locals: { question: question, available_tags: available_tags } %>
 <% end %>

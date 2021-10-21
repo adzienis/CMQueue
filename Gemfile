@@ -122,3 +122,5 @@ gem "jwt", "~> 2.2"
 gem "http", "~> 5.0"
 
 gem "pry", "~> 0.14.1"
+
+gem "rack-cors", "~> 1.1"

@@ -59,7 +59,7 @@ module QueueAPI
             questions = questions.distinct
 
             if params[:cursor]
-              questions = questions.order('questions.created_at asc').limit(5) if params[:cursor] == '-1'
+              questions = Question.where(id: questions).includes(:question_state, :user, :tags).order('questions.created_at asc').limit(5) if params[:cursor] == '-1'
               unless params[:cursor] == '-1'
                 questions = questions.where('questions.id >= ?',
                                             params[:cursor]).order('questions.created_at asc').limit(5)
@@ -72,7 +72,7 @@ module QueueAPI
             end
 
 
-            questions.as_json include: [:question_state, :tags, enrollment: { include: :user }]
+            Question.where(id: questions).includes(:question_state, :user, :tags).as_json include: [:question_state, :tags, enrollment: { include: :user }]
           end
 
           desc "Get the position of a question based on a query."

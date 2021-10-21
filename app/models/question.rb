@@ -141,11 +141,11 @@ class Question < ApplicationRecord
     transition_to_state("resolved", enrollment_id)
   end
 
-  def transition_to_state(state, enrollment_id=send(:enrollment_id))
+  def transition_to_state(state, enrollment_id=send(:enrollment_id), description: nil)
     return false if errors.any?
 
     guard_db do
-      question_states.create!(enrollment_id: enrollment_id, state: state)
+      question_states.create!(enrollment_id: enrollment_id, state: state, description: description)
     end
   end
 
@@ -212,6 +212,13 @@ class Question < ApplicationRecord
   end
 
   after_create do
+
+    QueueChannel.broadcast_to user, {
+      invalidate: ['courses',
+                   course_id,
+                   'current_question']
+    }
+
     ActionCable.server.broadcast "#{course.id}#ta", {
       invalidate: ['courses', course_id, 'paginatedQuestions']
     }
@@ -232,6 +239,8 @@ class Question < ApplicationRecord
   end
 
   after_destroy do
+
+
     ActionCable.server.broadcast "#{course.id}#ta", {
       invalidate:
         ['courses', course_id, 'questions']
@@ -249,6 +258,12 @@ class Question < ApplicationRecord
   end
 
   after_discard do
+    QueueChannel.broadcast_to user, {
+      invalidate: ['courses',
+                   course_id,
+                   'current_question']
+    }
+
     ActionCable.server.broadcast "#{course.id}#ta", {
       invalidate:
         ['courses', course_id, 'questions']
