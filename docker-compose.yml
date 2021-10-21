@@ -18,6 +18,7 @@ x-app: &app
   environment:
     REDIS_URL: redis://@redis:6379/1
     DATABASE_URL: postgres://postgres:postgres@postgres:5432/
+    ELASTICSEARCH_URL: http://elastic-search:9200
   entrypoint: ./bin/docker/entrypoints/wait-for-web.sh
   volumes:
     - .:/usr/src/app:cached
@@ -33,6 +34,17 @@ x-app: &app
     - redis
 
 services:
+  elastic-search:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.15.1
+    volumes:
+      - data01:/usr/share/elasticsearch/data
+    container_name: es01
+    environment:
+      - discovery.type=single-node
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
   metabase:
     image: metabase/metabase:v0.41.0
     ports:
@@ -87,4 +99,5 @@ volumes:
   node_modules:
   yarn_cache:
   letter_opener:
+  data01:
 

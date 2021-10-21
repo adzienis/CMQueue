@@ -10,6 +10,7 @@ require './lib/postgres/views'
 
 class Course < ApplicationRecord
   resourcify
+  searchkick
 
   # to prevent accidentally exposing sensitive columns
   default_scope { select(Course.column_names - ["instructor_code", "ta_code", "student_code"]) }

@@ -1,10 +1,26 @@
 # frozen_string_literal: true
 
 class Question < ApplicationRecord
+
   include Discard::Model
   include Ransackable
   include Exportable
   include GuardableTransactions
+  searchkick
+
+
+  scope :search_import, -> { includes(:question_state) }
+
+  def search_data
+    {
+      id: id,
+      tried: tried,
+      description: description,
+      location: location,
+      state: question_state&.state,
+      discarded_at: discarded_at
+    }
+  end
 
   belongs_to :enrollment
   has_one :course, through: :enrollment
