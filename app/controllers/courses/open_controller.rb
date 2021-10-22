@@ -1,6 +1,13 @@
 class Courses::OpenController < ApplicationController
-  include CourseScoped
   respond_to :json
+
+
+  def current_ability
+    @current_ability ||= ::CourseAbility.new(current_user,{
+      params: params,
+      path_parameters: request.path_parameters
+    })
+  end
 
   def index
     @courses = Course.accessible_by(current_ability).where(open: params[:open])
@@ -9,6 +16,8 @@ class Courses::OpenController < ApplicationController
   end
 
   def update
+    authorize! :open, @course
+
     @course.update(open_params)
 
     respond_with @course.open

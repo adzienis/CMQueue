@@ -4,6 +4,13 @@ class QuestionsController < ApplicationController
   load_and_authorize_resource id_param: :question_id
   respond_to :html, :json, :csv
 
+  def current_ability
+    @current_ability ||= ::QuestionAbility.new(current_user,{
+      params: params,
+      path_parameters: request.path_parameters
+    })
+  end
+
   def new
     redirect_to queue_course_path(current_user.active_question.course) if current_user.active_question?
 

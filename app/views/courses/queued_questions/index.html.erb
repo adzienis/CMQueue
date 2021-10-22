@@ -1,0 +1,11 @@
+<turbo-frame id="questions">
+  <div class="mb-5">
+    <% @records.each do |question| %>
+      <div class="card card-body w-100">
+        <%= question.description %>
+      </div>
+    <% end %>
+  </div>
+
+  <%== render partial: 'pagy/nav', locals: {pagy: @pagy} %>
+</turbo-frame>

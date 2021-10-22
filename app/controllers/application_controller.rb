@@ -21,10 +21,16 @@ class ApplicationController < ActionController::Base
   end
 
   def set_user
-    @user = User.accessible_by(current_ability).find(params[:user_id]) if params[:user_id]
+    @user = User.accessible_by(UserAbility.new(current_user,{
+      params: params,
+      path_parameters: request.path_parameters
+    })).find(params[:user_id]) if params[:user_id]
   end
   def set_course
-    @course = Course.accessible_by(current_ability).find(params[:course_id]) if params[:course_id]
+    @course = Course.accessible_by(CourseAbility.new(current_user,{
+      params: params,
+      path_parameters: request.path_parameters
+    })).find(params[:course_id]) if params[:course_id]
   end
 
 

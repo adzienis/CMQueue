@@ -14,7 +14,6 @@ Rails.application.routes.draw do
   end
   resource :account, except: [:destroy, :create], controller: :account
 
-
   namespace :forms do
     resource :question, only: [:new, :create, :edit, :update, :destroy], controller: :question
     namespace :analytics do
@@ -194,6 +193,7 @@ Rails.application.routes.draw do
 
   resources :courses do
     member do
+      get 'queued_questions', to: "courses/queued_questions#index"
       get 'current_question', to: "courses/current_question#show"
       post 'semester'
       get 'roster', to: 'courses#roster'

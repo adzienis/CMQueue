@@ -16,7 +16,9 @@ consumer.subscriptions.create("QueueChannel", {
   },
 
   async received(data) {
-    console.log("received", data);
+    window.dispatchEvent(
+      new CustomEvent("page:invalidate", { detail: data.invalidate })
+    );
     await queryClient.invalidateQueries(data.invalidate);
 
     await queryClient.refetchQueries(data.invalidate);
@@ -51,6 +53,9 @@ consumer.subscriptions.create("QueueChannel", {
             console.log("invalidatinggeneral", data.invalidate);
           }
 
+          window.dispatchEvent(
+            new CustomEvent("page:invalidate", { detail: data.invalidate })
+          );
           //Turbo.visit(window.location.toString(), { action: 'replace' })
           await queryClient.invalidateQueries(data.invalidate);
 
@@ -61,6 +66,9 @@ consumer.subscriptions.create("QueueChannel", {
             console.log("invalidatingtas", data.invalidate);
           }
 
+          window.dispatchEvent(
+            new CustomEvent("page:invalidate", { detail: data.invalidate })
+          );
           //Turbo.visit(window.location.toString(), { action: 'replace' })
           await queryClient.invalidateQueries(data.invalidate);
 
@@ -89,6 +97,9 @@ consumer.subscriptions.create("QueueChannel", {
             console.log("invalidatinggeneral", data.invalidate);
           }
 
+          window.dispatchEvent(
+            new CustomEvent("page:invalidate", { detail: data.invalidate })
+          );
           //Turbo.visit(window.location.toString(), { action: 'replace' })
           await queryClient.invalidateQueries(data.invalidate);
 
@@ -98,6 +109,10 @@ consumer.subscriptions.create("QueueChannel", {
           if (process.env.NODE_ENV === "development") {
             console.log("invalidatingtas", data.invalidate);
           }
+
+          window.dispatchEvent(
+            new CustomEvent("page:invalidate", { detail: data.invalidate })
+          );
 
           //Turbo.visit(window.location.toString(), { action: 'replace' })
           await queryClient.invalidateQueries(data.invalidate);

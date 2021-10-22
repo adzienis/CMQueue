@@ -44,6 +44,8 @@ class Course < ApplicationRecord
   has_many :active_questions, -> { undiscarded
                                      .questions_by_state("unresolved", "frozen", "resolving")
                                      .or(undiscarded.by_state("kicked").unacknowledged) }, class_name: "Question"
+
+  has_many :questions_on_queue, -> { questions_by_state("unresolved", "frozen").undiscarded }, class_name: "Question"
   has_many :tags, dependent: :destroy
   #has_many :announcements
 

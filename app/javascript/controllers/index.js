@@ -9,6 +9,7 @@ import react_select_controller from "./react_select_controller";
 import metabase_dashboards_controller from "./metabase_dashboards_controller";
 import question_timer_controller from "./question_timer_controller";
 import question_form_controller from "./question_form_controller";
+import queued_questions_controller from "./queued_questions_controller";
 
 window.Stimulus = Application.start();
 Stimulus.register("form", form_controller);
@@ -17,3 +18,4 @@ Stimulus.register("react_select", react_select_controller);
 Stimulus.register("metabase_dashboards", metabase_dashboards_controller);
 Stimulus.register("question_timer", question_timer_controller);
 Stimulus.register("question_form", question_form_controller);
+Stimulus.register("queued_questions", queued_questions_controller);
