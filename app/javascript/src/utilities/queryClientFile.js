@@ -5,13 +5,12 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       queryFn: defaultQueryFn,
-      refetchOnWindowFocus: "always",
       refetchInterval: 1000 * 60,
       refetchIntervalInBackground: true,
     },
   },
 });
-document.addEventListener("turbo:before-fetch-response", (e) => {
+/*document.addEventListener("turbo:before-fetch-response", (e) => {
   queryClient
     .getQueryCache()
     .getAll()
@@ -19,5 +18,6 @@ document.addEventListener("turbo:before-fetch-response", (e) => {
       //v.observers.forEach((q) => v.removeObserver(q));
     });
 });
+*/
 
 export default queryClient;

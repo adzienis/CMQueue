@@ -9,7 +9,9 @@ class QuestionAbility
       user.staff_of?(question.course)
     end
 
-    can :manage, Question, Question.joins(:course, :enrollment)
+    # return if context[:path_parameters][:course_id].present? && !@staff_roles.include?(context[:params][:course_id].to_i)
+
+    can [:read, :create, :update, :destroy, :position, :search], Question, Question.joins(:course, :enrollment)
                                    .where(courses: @staff_roles).or(Question.where("enrollments.user_id": user.id)) do |question|
       user.staff_of?(question.course) || question.user == user
     end

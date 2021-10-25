@@ -1,5 +1,5 @@
-<div data-controller="modal" data-modal-question-id-value="<%= question.id %>" data-question_form-target="modal"  data-modal-state-value="<%= question.question_state&.state %>">
-  <div data-modal-target="modal" class="modal fade" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+<div data-controller="question_form" data-question_form-course-id-value="<%= @course.id %>" data-question_form-question-id-value="<%= question.id %>" data-question_form-target="modal"  data-question_form-state-value="<%= question.question_state&.state %>">
+  <div data-question_form-target="modal" class="modal fade" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
       <div class="modal-content">
         <% if question.resolving? %>

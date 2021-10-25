@@ -1,4 +1,4 @@
-import consumer from "./consumer"
+import consumer from "./consumer";
 import queryClient from "../src/utilities/queryClientFile";
 
 consumer.subscriptions.create("SiteChannel", {
@@ -11,11 +11,13 @@ consumer.subscriptions.create("SiteChannel", {
   },
 
   async received(data) {
-
-    if(data.invalidate) {
+    if (data.invalidate) {
+      if (process.env.NODE_ENV === "development") {
+        console.log("invalidating_site", data.invalidate);
+      }
       await queryClient.invalidateQueries(data.invalidate);
 
       await queryClient.refetchQueries(data.invalidate);
     }
-  }
+  },
 });

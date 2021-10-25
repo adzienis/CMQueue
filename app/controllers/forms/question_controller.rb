@@ -40,7 +40,6 @@ class Forms::QuestionController < ApplicationController
     @question = current_user.active_question(course: @course)
     redirect_to new_course_forms_question_path(@course) and return if @question.nil?
 
-
     @enrollment = current_user.enrollment_in_course(@course)
 
     @question_form = Forms::Question.new(question: @question)

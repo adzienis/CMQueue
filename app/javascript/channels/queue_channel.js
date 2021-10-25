@@ -19,6 +19,9 @@ consumer.subscriptions.create("QueueChannel", {
     window.dispatchEvent(
       new CustomEvent("page:invalidate", { detail: data.invalidate })
     );
+
+    console.log("received here");
+
     await queryClient.invalidateQueries(data.invalidate);
 
     await queryClient.refetchQueries(data.invalidate);

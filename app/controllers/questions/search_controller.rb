@@ -1,6 +1,13 @@
 class Questions::SearchController < ApplicationController
   respond_to :html
 
+  def current_ability
+    @current_ability ||= ::QuestionAbility.new(current_user,{
+      params: params,
+      path_parameters: request.path_parameters
+    })
+  end
+
   def build_clause(query_key)
     begin
       parsed = JSON.parse(params[query_key])
@@ -14,6 +21,8 @@ class Questions::SearchController < ApplicationController
   end
 
   def index
+    authorize! :search, Question
+
     search_params = {}
 
     search_params = search_params.merge(build_clause(:state)) if params[:state]

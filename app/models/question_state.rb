@@ -5,9 +5,9 @@ class QuestionState < ApplicationRecord
 
   include Ransackable
   include Turbo::Broadcastable
+
   belongs_to :question, touch: true, optional: false
   belongs_to :enrollment
-
   has_one :user, through: :enrollment
 
   validates_presence_of :question, :enrollment
@@ -90,7 +90,7 @@ class QuestionState < ApplicationRecord
 
   after_create_commit do
 
-    QueueChannel.broadcast_to user, {
+    SiteChannel.broadcast_to question.user, {
       invalidate: ['courses',
                    course.id,
                    'current_question']
@@ -115,7 +115,6 @@ class QuestionState < ApplicationRecord
     QueueChannel.broadcast_to question.user, {
       invalidate: ["questions", question.id]
     }
-
 
     ActionCable.server.broadcast "#{course.id}#ta", {
       invalidate: ['courses', question.course_id, 'paginatedQuestions']

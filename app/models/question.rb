@@ -259,7 +259,8 @@ class Question < ApplicationRecord
   end
 
   after_create_commit do
-    update!(question_state: QuestionState.create!(question_id: id, enrollment_id: enrollment_id)) if self
+    question_state = QuestionState.create!(question_id: id, enrollment_id: enrollment_id)
+    update!(question_state: question_state)
   end
 
   after_destroy do
