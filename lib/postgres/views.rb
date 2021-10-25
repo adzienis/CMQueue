@@ -5,6 +5,7 @@ require "./lib/postgres/views/question.rb"
 require "./lib/postgres/views/question_state.rb"
 require "./lib/postgres/views/tag.rb"
 require "./lib/postgres/views/user.rb"
+require "./lib/postgres/views/question_tag.rb"
 
 module Postgres
   module Views
@@ -42,6 +43,7 @@ module Postgres
       QuestionState.create(course_id)
       User.create(course_id)
       ::Postgres::Views::Role.create(course_id)
+      ::Postgres::Views::QuestionTag.create(course_id)
     end
 
     def self.create_views_schema(course_id)
