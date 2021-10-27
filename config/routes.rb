@@ -117,7 +117,11 @@ Rails.application.routes.draw do
     resources :questions
     resources :courses
     resources :enrollments
-    resources :tags
+    resources :tags do
+      collection do
+        get 'search', to: "tags/search#index"
+      end
+    end
     resources :notifications
     resource :settings do
       get 'notifications', to: "settings#notifications"
@@ -144,6 +148,7 @@ Rails.application.routes.draw do
     resources :tags do
       collection do
         get 'download', to: "tags#download_form"
+        get 'search', to: "tags/search#index"
       end
     end
 
@@ -154,7 +159,11 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :tag_groups
+    resources :tag_groups do
+      collection do
+          get 'search', to: "tag_groups/search#index"
+      end
+    end
 
     resources :users
 
@@ -171,8 +180,8 @@ Rails.application.routes.draw do
     end
 
     resources :enrollments do
-
       collection do
+        get 'search', to: "enrollments/search#index"
         get 'import', to: "enrollments/import#index"
         post 'import', to: "enrollments/import#create"
         get 'download', to: "enrollments#download_form"

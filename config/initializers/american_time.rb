@@ -1,2 +1,1 @@
-
-Time::DATE_FORMATS[:american_short] = "%d %b, %I:%M %p"
+Time::DATE_FORMATS[:american_short] = "%b %d, %I:%M %p"
