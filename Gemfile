@@ -126,3 +126,5 @@ gem "pry", "~> 0.14.1"
 gem "rack-cors", "~> 1.1"
 
 gem "searchkick", "~> 4.6"
+
+gem "view_component", "~> 2.41", require: "view_component/engine"

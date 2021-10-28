@@ -399,6 +399,9 @@ GEM
       unf_ext
     unf_ext (0.0.7.7)
     unicode-display_width (2.0.0)
+    view_component (2.41.0)
+      activesupport (>= 5.0.0, < 8.0)
+      method_source (~> 1.0)
     warden (1.2.9)
       rack (>= 2.0.9)
     web-console (4.1.0)
@@ -469,6 +472,7 @@ DEPENDENCIES
   spring
   turbo-rails (~> 0.5.9)!
   tzinfo-data
+  view_component (~> 2.41)
   web-console (>= 4.1.0)
   webdrivers
   whenever (~> 1.0)
