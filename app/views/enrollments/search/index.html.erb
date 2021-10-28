@@ -1,0 +1,73 @@
+<%
+  msg = if @pagy.count == 1
+          "#{@pagy.count} enrollments in #{@results.took} ms"
+        else
+          "#{@pagy.count} enrollments in #{@results.took} ms"
+        end
+%>
+
+<div class="mb-3">
+  <h1 class="mb-0">
+    Enrollments
+  </h1>
+  <div class="text-muted">
+    All created enrollments.
+  </div>
+</div>
+
+<div class="card card-body shadow-sm mb-2">
+  <%= form_tag(search_course_enrollments_path(@course), method: :get, html: { autocomplete: "off" }) do %>
+    <div class="mb-2">
+      <%= text_field_tag(:q, params[:q], class: "form-control") %>
+    </div>
+    <%= submit_tag("Search", class: "btn btn-primary") %>
+  <% end %>
+  <hr>
+  <div>
+    <%= link_to "Import Enrollments", import_course_enrollments_path(@course) %>
+  </div>
+</div>
+
+<div class="d-flex">
+  <div class="card card-body shadow-sm me-2" style="width: 300px; max-width: 300px">
+    <%= render(Shared::Search::SearchPaneComponents.new(results: @results,
+                                                        course: @course,
+                                                        query_params: request.query_parameters,
+                                                        resources: :enrollments
+    ))
+    %>
+  </div>
+  <div class="w-100">
+    <h3> Results <small>(<%= msg %>)</small></h3>
+    <% @results.results.each do |enrollment| %>
+      <div class="card mb-2 shadow-sm">
+        <div class="card-body">
+          <h4>
+            <%= link_to course_enrollment_path(@course, enrollment) do %>
+              <%= enrollment.role.name.titleize %>
+            <% end %>
+          </h4>
+          <div>
+            <label class="fw-bold"> User </label>
+            <div>
+              <%= enrollment.user.full_name %>
+            </div>
+          </div>
+          <div>
+            <label class="fw-bold"> Created At </label>
+            <div>
+              <%= enrollment.created_at.strftime("%a, %x, %I:%M %p") %>
+            </div>
+          </div>
+          <div>
+          </div>
+        </div>
+        <%= render(Shared::Search::CardFooterComponent.new(record: enrollment, course: @course)) %>
+      </div>
+    <% end %>
+  </div>
+
+</div>
+<div class="w-100 d-flex justify-content-center">
+  <%== render partial: "pagy/nav.html.erb", locals: { pagy: @pagy } %>
+</div>

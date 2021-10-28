@@ -1,0 +1,6 @@
+<div class="card-footer d-flex align-items-center">
+  <%= link_to "To #{record.model_name.human.titleize}", polymorphic_path([course, record]) %>
+  <div style="flex: 1"></div>
+  <%= link_to "Edit #{record.model_name.human.titleize}", polymorphic_path([:edit, course, record]), class: "btn btn-warning me-1" %>
+  <%= link_to "Destroy #{record.model_name.human.titleize}", polymorphic_path([course, record]), class: "btn btn-danger", method: :delete, "data-confirm": "Are you sure?" %>
+</div>

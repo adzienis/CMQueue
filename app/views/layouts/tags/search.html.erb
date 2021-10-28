@@ -1,0 +1,8 @@
+<% if params[:course_id] %>
+  <% content_for :courses_content do %>
+    <%= yield %>
+  <% end %>
+  <%= render template: "layouts/courses" %>
+<% else %>
+  <%= render template: "layouts/application" %>
+<% end %>

@@ -1,0 +1,6 @@
+<%= form_tag(polymorphic_path([:search, course, resources], query_parameters), method: :get, html: { autocomplete: "off" }) do %>
+  <div class="mb-2">
+    <%= text_field_tag(:q, params[:q], class: "form-control") %>
+  </div>
+  <%= submit_tag("Search", class: "btn btn-primary") %>
+<% end %>

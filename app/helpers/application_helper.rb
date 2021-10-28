@@ -8,10 +8,10 @@ module ApplicationHelper
 
   def flash_class(level)
     case level
-    when "notice" then "alert alert-info"
-    when "success" then "alert alert-success"
-    when "error" then "alert alert-danger"
-    when "alert" then "alert alert-danger"
+    when "notice" then "alert alert-info shadow-sm"
+    when "success" then "alert alert-success shadow-sm"
+    when "error" then "alert alert-danger shadow-sm"
+    when "alert" then "alert alert-danger shadow-sm"
     else
       level
     end

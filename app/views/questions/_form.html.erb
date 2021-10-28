@@ -8,5 +8,11 @@
     <%= f.association :enrollment, disabled: true, label_method: ->(enrollment) { enrollment.user.given_name } %>
   </div>
 
+  <%= f.simple_fields_for :question_state do |ff| %>
+    <div>
+      <%= ff.input :state, collection: QuestionState.states.keys %>
+    </div>
+  <% end %>
+
   <%= f.submit :Submit, class: "btn btn-primary", "data-disable-with": "Loading" %>
 <% end %>

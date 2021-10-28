@@ -1,0 +1,2 @@
+module TagGroups::SearchHelper
+end

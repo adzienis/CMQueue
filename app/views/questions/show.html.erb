@@ -1,14 +1,82 @@
-<h2>
-  <b>
-    <%= Question.name.humanize %>
-  </b>
-</h2>
+<h3>
+  <%= Question.name.humanize %>
+</h3>
 
+<div class="card">
+  <div class="card-body">
+    <div class="card-title">
+      <h4>
+        <%= link_to course_enrollment_path(@course, @question.enrollment) do %>
+          <%= @question.user.full_name %>
+        <% end %>
+      </h4>
+    </div>
 
-<%= render partial: "shared/show_model",
-           locals: {
-             model_instance: @question,
-             options: {
-               except: [:notes, :course, :title, :discarded_at, :user_id, :course_id, :notifications, :enrollment_id],
-             }
-           } %>
+    <hr>
+    <div class="mb-2">
+      <label class="fw-bold"> Id </label>
+      <div>
+        <%= @question.id %>
+      </div>
+    </div>
+    <div class="mb-2">
+      <label class="fw-bold"> Created At </label>
+      <div>
+        <%= @question.created_at.to_formatted_s(:american_short) %>
+      </div>
+    </div>
+    <div class="mb-2">
+      <label class="fw-bold"> Updated At </label>
+      <div>
+        <%= @question.updated_at.to_formatted_s(:american_short) %>
+      </div>
+    </div>
+    <div class="mb-2">
+      <label class="fw-bold"> Description </label>
+      <div>
+        <%= @question.description %>
+      </div>
+    </div>
+    <div class="mb-2">
+      <label class="fw-bold"> What Did They Try? </label>
+      <div>
+        <%= @question.tried %>
+      </div>
+    </div>
+    <div class="mb-2">
+      <label class="fw-bold"> Location </label>
+      <div>
+        <%= @question.location %>
+      </div>
+    </div>
+    <div class="mb-2">
+      <label class="fw-bold"> Time to Resolve/Time since Unresolved </label>
+      <div>
+        <%= "#{(@question.time_to_resolve / 3600).floor.to_s.rjust(2, "0")}:" +
+              "#{(@question.time_to_resolve / 60 % 60).floor.to_s.rjust(2, "0")}:" +
+              "#{(@question.time_to_resolve % 60).floor.to_s.rjust(2, "0")}" %>
+      </div>
+    </div>
+    <div class="mb-2">
+      <label class="fw-bold"> Current State </label>
+      <div>
+        <%= render(Questions::QuestionStateBadgeComponent.new(state: @question.question_state.state)) %>
+      </div>
+    </div>
+    <%= render(Questions::HandledByComponent.new(question: @question)) %>
+    <div class="mb-2">
+      <label class="fw-bold">
+        Tags
+        <span class="badge rounded-pill bg-danger">
+          <%= @question.tags.count %>
+        </span>
+      </label>
+      <div>
+        <% @question.tags.each do |tag| %>
+          <%= link_to tag.name, course_tag_path(@course, tag) %>&nbsp
+        <% end %>
+      </div>
+    </div>
+  </div>
+  <%= render(Shared::Models::Show::CardFooterComponent.new(record: @question, course: @course)) %>
+</div>

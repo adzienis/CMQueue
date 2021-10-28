@@ -30,7 +30,7 @@
                             #{(["courses", "enrollments", "questions",
                                 "tags", "tag_groups", "dashboard",
                                 "dashboards"].include?(controller_name) ||
-        ["enrollments/import", "questions/search"].include?(controller_path)) ? 'active-link' : ''}",
+        ["enrollments/import", "questions/search", "tags/search", "tag_groups/search", "enrollments/search"].include?(controller_path)) ? 'active-link' : ''}",
                      data: { "bs-toggle": "collapse", "bs-target": "#course-info-collapse" } do %>
         Information
       <% end %>
@@ -69,24 +69,25 @@
           <div style="width: 16px" class="d-flex justify-content-center">
             <i class="fas fa-tags"></i>
           </div>
-          <%= link_to "Tags",  course_tags_path(@course),
-                        class: "btn text-decoration-none #{(controller_name == "tags") ?
+          <%= link_to "Tags",  search_course_tags_path(@course),
+                        class: "btn text-decoration-none #{(controller_name == "tags" || controller_path == "tags/search") ?
                                                              "active-link" : ""}" %>
         </li>
         <li class="d-flex align-items-center">
           <div style="width: 16px" class="d-flex justify-content-center">
             <i class="fas fa-user"></i>
           </div>
-          <%= link_to "Enrollments", course_enrollments_path(@course),
-                        class: "btn text-decoration-none #{(controller_name == "enrollments" || controller_path == "enrollments/import") ?
+          <%= link_to "Enrollments", search_course_enrollments_path(@course),
+                        class: "btn text-decoration-none #{(controller_name == "enrollments" ||
+                          ["enrollments/import", "enrollments/search"].include?(controller_path)) ?
                                                              "active-link" : ""}" %>
         </li>
         <li class="d-flex align-items-center">
           <div style="width: 16px" class="d-flex justify-content-center">
             <i class="fas fa-layer-group"></i>
           </div>
-          <%= link_to "Tag Groups", course_tag_groups_path(@course),
-                        class: "btn text-decoration-none #{(controller_name == "tag_groups") ?
+          <%= link_to "Tag Groups", search_course_tag_groups_path(@course),
+                        class: "btn text-decoration-none #{(controller_name == "tag_groups" || ["tag_groups/search"].include?(controller_path)) ?
                                                              "active-link" : ""}" %>
         </li>
         <% tag.li class: "d-flex align-items-center" do %>

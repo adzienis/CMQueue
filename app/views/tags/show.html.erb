@@ -1,10 +1,62 @@
-<h2>
-  <b>
-    <%= Tag.name.humanize %>
-  </b>
-</h2>
+<h3>
+  <%= Tag.name.humanize %>
+</h3>
 
-  <%= render partial: "shared/show_model", locals: {
-    model_instance: @tag,
-    options: { actions: [:edit, :delete], except: [:course, :course_id, :discarded_at] }
-  } %>
+<div class="card">
+  <div class="card-body">
+    <div class="card-title">
+      <h4>
+        <%= @tag.name %>
+      </h4>
+    </div>
+    <hr>
+    <div class="mb-2">
+      <label class="fw-bold"> Id </label>
+      <div>
+        <%= @tag.id %>
+      </div>
+    </div>
+    <div class="mb-2">
+      <label class="fw-bold"> Created At </label>
+      <div>
+        <%= @tag.created_at.to_formatted_s(:american_short) %>
+      </div>
+    </div>
+    <div class="mb-2">
+      <label class="fw-bold"> Updated At </label>
+      <div>
+        <%= @tag.updated_at.to_formatted_s(:american_short) %>
+      </div>
+    </div>
+    <div class="mb-2">
+      <label class="fw-bold"> Description </label>
+      <div>
+        <%= @tag.description %>
+      </div>
+    </div>
+    <div class="mb-2">
+      <label class="fw-bold"> Visibility </label>
+      <div>
+        <%= tag.span class: "badge rounded-pill #{@tag.archived ? "bg-danger" : "bg-success"}" do %>
+          <%= @tag.archived ? "Hidden" : "Visible" %>
+        <% end %>
+      </div>
+    </div>
+    <div class="mb-2">
+      <label class="fw-bold">
+        Tag Groups
+        <span class="badge rounded-pill bg-info">
+          <%= @tag.tag_groups.count %>
+        </span>
+      </label>
+      <div>
+        <% @tag.tag_groups.each do |tag_group| %>
+          <span class="badge rounded-pill bg-danger">
+            <%= link_to tag_group.name, course_tag_group_path(@course, tag_group), style: "text-transform: none; color: white" %>
+          </span>
+        <% end %>
+      </div>
+    </div>
+  </div>
+  <%= render(Shared::Models::Show::CardFooterComponent.new(record: @tag, course: @course)) %>
+</div>

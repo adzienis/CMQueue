@@ -90,7 +90,7 @@ class QuestionsController < ApplicationController
     @available_tags = Tag.undiscarded.unarchived.with_courses(@question.course.id)
     @question.update(question_params)
 
-    respond_with @question, location: course_questions_path(@question.course)
+    respond_with @question, location: search_course_questions_path(@question.course)
   end
 
   def paginated_previous_questions
@@ -118,6 +118,15 @@ class QuestionsController < ApplicationController
   private
 
   def question_params
-    params.require(:question).permit(:course_id, :description, :tried, :location, :user_id, :title, :enrollment_id, :notes, tag_ids: [])
+    params.require(:question).permit(:course_id,
+                                     :description,
+                                     :tried,
+                                     :location,
+                                     :user_id,
+                                     :title,
+                                     :enrollment_id,
+                                     :notes,
+                                     question_state_attributes: [:id, :state],
+                                     tag_ids: [])
   end
 end

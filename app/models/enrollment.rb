@@ -1,7 +1,24 @@
+require 'pagy/extras/searchkick'
+
 class Enrollment < ApplicationRecord
   include Discard::Model
   include Ransackable
   include Exportable
+  extend Pagy::Searchkick
+
+  searchkick
+  scope :search_import, -> { includes(:role) }
+
+  def search_data
+    {
+      id: id,
+      user_id: user_id,
+      user_full_name: user.full_name,
+      role_name: role.name,
+      semester: semester,
+      discarded_at: discarded_at
+    }
+  end
 
   enum semester: { Su21: "Su21", F21: "F21" }
 

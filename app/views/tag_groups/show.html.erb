@@ -1,10 +1,48 @@
-<h2>
-  <b>
-    <%= TagGroup.model_name.human %>
-  </b>
-</h2>
+<h3>
+  <%= TagGroup.name.titleize %>
+</h3>
 
-<%= render partial: "shared/show_model", locals: {
-  model_instance: @tag_group,
-  options: { actions: [:edit, :delete], except: [:course, :course_id, :discarded_at] }
-} %>
+<div class="card">
+  <div class="card-body">
+    <div class="card-title">
+      <h4>
+        <%= @tag_group.name %>
+      </h4>
+    </div>
+    <hr>
+    <div class="mb-2">
+      <label class="fw-bold"> Id </label>
+      <div>
+        <%= @tag_group.id %>
+      </div>
+    </div>
+    <div class="mb-2">
+      <label class="fw-bold"> Created At </label>
+      <div>
+        <%= @tag_group.created_at.to_formatted_s(:american_short) %>
+      </div>
+    </div>
+    <div class="mb-2">
+      <label class="fw-bold"> Updated At </label>
+      <div>
+        <%= @tag_group.updated_at.to_formatted_s(:american_short) %>
+      </div>
+    </div>
+    <div class="mb-2">
+      <label class="fw-bold">
+        Tags
+        <span class="badge rounded-pill bg-info">
+          <%= @tag_group.tags.count %>
+        </span>
+      </label>
+      <div>
+        <% @tag_group.tags.each do |tag| %>
+        <span class="badge rounded-pill bg-danger">
+          <%= link_to tag.name, course_tag_path(@course, tag), style: "color: white" %>&nbsp
+        </span>
+        <% end %>
+      </div>
+    </div>
+  </div>
+  <%= render(Shared::Models::Show::CardFooterComponent.new(record: @tag_group, course: @course)) %>
+</div>

@@ -1,0 +1,4 @@
+<div class="card-footer">
+  <%= link_to "Edit #{record.model_name.human.titleize}", polymorphic_path([:edit, course, record]), class: "btn btn-warning me-1" %>
+  <%= link_to "Destroy #{record.model_name.human.titleize}", polymorphic_path([course, record]), class: "btn btn-danger", method: :delete, "data-confirm": "Are you sure?" %>
+</div>

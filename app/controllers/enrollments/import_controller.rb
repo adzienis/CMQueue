@@ -78,6 +78,6 @@ class Enrollments::ImportController < ApplicationController
   rescue Exception => e
     flash[:error] = "Failed to import file."
   ensure
-    redirect_to polymorphic_path([@course, :enrollments])
+    redirect_to search_course_enrollments_path(@course)
   end
 end

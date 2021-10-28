@@ -1,8 +1,26 @@
 # frozen_string_literal: true
+require 'pagy/extras/searchkick'
 
 class Tag < ApplicationRecord
   include Discard::Model
   include Ransackable
+  extend Pagy::Searchkick
+
+  searchkick
+
+  scope :search_import, -> { includes(:tag_groups) }
+
+  def search_data
+    {
+      id: id,
+      name: name,
+      created_at: created_at,
+      description: description,
+      course_id: course_id,
+      visibility: archived ? "visible" : "hidden",
+      tag_groups: tag_groups.map(&:name)
+    }
+  end
 
   validates :name, presence: true
 

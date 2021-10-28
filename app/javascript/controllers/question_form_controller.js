@@ -12,6 +12,8 @@ export default class extends Controller {
     courseId: Number,
   };
 
+  result = null;
+
   resolvingTimer(target, state, question) {
     const elem = document.createElement("div");
     elem.classList.add("h5");
@@ -49,6 +51,7 @@ export default class extends Controller {
     this.unsubscribe = subscribeToQuery(
       ["courses", this.courseIdValue, "current_question"],
       (result) => {
+        this.result = result;
         if (result.data) {
           if (old_state !== result.data.question_state.state) {
             old_state = result.data.question_state.state;
@@ -59,14 +62,6 @@ export default class extends Controller {
             this.formTarget.reload();
 
             this.formTarget.loaded.then((suc) => {
-              if (this.hasBodyTarget) {
-                this.resolvingTimer(
-                  this.bodyTarget,
-                  result.data.question_state.state,
-                  result.data
-                );
-              }
-
               if (["resolving", "frozen"].includes(old_state)) {
                 this.modal.show();
               } else {
@@ -74,9 +69,22 @@ export default class extends Controller {
               }
             });
           }
+        } else {
+          this.modal.hide();
+          this.formTarget.reload();
         }
       }
     );
+  }
+
+  bodyTargetConnected() {
+    if (this.result?.data) {
+      this.resolvingTimer(
+        this.bodyTarget,
+        this.result.data.question_state.state,
+        this.result.data
+      );
+    }
   }
 
   disconnect() {

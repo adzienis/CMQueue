@@ -1,0 +1,8 @@
+<%= link_to polymorphic_path([:search, course, resources], build_parameters(category, bucket["key"])),
+            class: build_class(category, bucket["key"]) do %>
+  <div class="d-flex">
+    <%= "#{bucket["key"]}" %>
+    <div style="flex: 1"></div>
+    <span class="badge bg-secondary"><%= bucket["doc_count"] %></span>
+  </div>
+<% end %>

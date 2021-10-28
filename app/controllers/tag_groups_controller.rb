@@ -19,12 +19,12 @@ class TagGroupsController < ApplicationController
   def update
     @tag_group.update(tag_group_params)
 
-    respond_with @tag_group, location: course_tag_groups_path(@course)
+    respond_with @tag_group, location: search_course_tag_groups_path(@course)
   end
 
   def create
     @tag_group = TagGroup.create(tag_group_params)
-    respond_with @tag_group, location: course_tag_groups_path(@course)
+    respond_with @tag_group, location: search_course_tag_groups_path(@course)
   end
 
   def edit
@@ -33,7 +33,7 @@ class TagGroupsController < ApplicationController
   def destroy
     @tag_group.destroy
 
-    respond_with @tag_group, location: course_tag_groups_path(@course)
+    respond_with @tag_group, location: search_course_tag_groups_path(@course)
   end
 
   private

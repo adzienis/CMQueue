@@ -262,3 +262,24 @@ html, body {
   transform: scale(1.25);
   -webkit-transform: scale(1.25);
 }
+
+
+.bg-unresolved {
+  background-color: #6c757d !important;
+}
+
+.bg-resolving {
+  background-color: #49b784 !important;
+}
+
+.bg-frozen {
+  background-color: #0d6efd !important;
+}
+
+.bg-kicked {
+  background-color: #dc3545 !important;
+}
+
+.bg-resolved {
+  background-color: #198754 !important;
+}

@@ -21,6 +21,7 @@ class Question < ApplicationRecord
       location: location,
       state: question_state&.state,
       discarded_at: discarded_at,
+      created_at: created_at,
       user_name: "#{user.given_name} #{user.family_name}",
       resolved_by: question_state&.state == "resolved" ? question_state.user.given_name : nil,
       tags: tags.map(&:name)
@@ -43,6 +44,8 @@ class Question < ApplicationRecord
   has_many :tag_groups, through: :tags
   has_many :question_states, dependent: :destroy
 
+  accepts_nested_attributes_for :question_state
+
   validates :location, :description, :tried, presence: true
 
   validate :duplicate_question, on: :create
@@ -53,6 +56,21 @@ class Question < ApplicationRecord
   # that accurately represent the count of the number of tags before we destroy
   # them (using '=').
   attr_accessor :tags_validator
+
+  def total_time_to_resolve
+    questions_states.order('min(id) DESC')
+  end
+
+  def time_to_resolve
+    last_unresolved = question_states.order(created_at: :asc).where(state: "unresolved").last
+    last_resolved = question_states.order(created_at: :asc).where(state: "resolved").last
+
+    if last_resolved.present?
+      last_resolved.created_at - last_unresolved.created_at
+    else
+      Time.now - last_unresolved.created_at
+    end
+  end
 
   def course_queue_open
     course = Course.find_by(id: course_id)
@@ -126,7 +144,7 @@ class Question < ApplicationRecord
   }
 
   scope :with_today, -> {
-    where(created_at: Date.today.all_day)
+    where(created_at: DateTime.current.all_day)
   }
 
   scope :with_users, ->(*users) {
@@ -165,7 +183,7 @@ class Question < ApplicationRecord
     transition_to_state("resolved", enrollment_id)
   end
 
-  def transition_to_state(state, enrollment_id=send(:enrollment_id), description: nil)
+  def transition_to_state(state, enrollment_id = send(:enrollment_id), description: nil)
     return false if errors.any?
 
     guard_db do
@@ -264,7 +282,6 @@ class Question < ApplicationRecord
   end
 
   after_destroy do
-
 
     ActionCable.server.broadcast "#{course.id}#ta", {
       invalidate:

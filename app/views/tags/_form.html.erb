@@ -2,7 +2,10 @@
   <%= f.hidden_field :course_id, value: params[:course_id] if params[:course_id] %>
   <%= f.input :name %>
   <%= f.input :description %>
-  <%= f.input :archived %>
+  <%= f.input :archived, label: "Invisible" %>
+  <div data-controller="react_select">
+    <%= f.association :tag_groups, collection: @course.tag_groups %>
+  </div>
 
   <%= f.submit :Submit, class: "btn btn-primary", "data-disable-with": "Loading" %>
 <% end %>

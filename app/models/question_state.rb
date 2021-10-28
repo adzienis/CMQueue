@@ -3,6 +3,18 @@
 class QuestionState < ApplicationRecord
   searchkick
 
+  scope :search_import, -> { includes(:question, :enrollment, :user) }
+
+  def search_data
+    {
+      id: id,
+      state: state,
+      discarded_at: question.discarded_at,
+      state_creator: "#{user.given_name} #{user.family_name}",
+      question_creator: "#{question.user.given_name} #{question.user.family_name}"
+    }
+  end
+
   include Ransackable
   include Turbo::Broadcastable
 

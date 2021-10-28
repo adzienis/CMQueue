@@ -73,7 +73,7 @@ class EnrollmentsController < ApplicationController
       SiteNotification.failure(current_user, "Failed to import file.")
     end
 
-    redirect_to request.referer
+    redirect_to search_course_enrollments_path(@course)
   end
 
   def download_form
@@ -85,7 +85,7 @@ class EnrollmentsController < ApplicationController
   def update
     @enrollment.update(enrollment_params)
 
-    respond_with @enrollment, location: course_enrollments_path(@course)
+    respond_with @enrollment, location: search_course_enrollments_path(@course)
   end
 
   def show
@@ -102,13 +102,13 @@ class EnrollmentsController < ApplicationController
       @enrollment.save
     end
 
-    respond_with @enrollment, location: course_enrollments_path(@course)
+    respond_with @enrollment, location: search_course_enrollments_path(@course)
   end
 
   def destroy
     @enrollment.discard
 
-    respond_with @enrollment, location: course_enrollments_path(@course)
+    respond_with @enrollment, location: search_course_enrollments_path(@course)
   end
 
   private

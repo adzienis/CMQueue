@@ -1,0 +1,84 @@
+<%
+  msg = if @pagy.count == 1
+          "#{@pagy.count} tags in #{@results.took} ms"
+        else
+          "#{@pagy.count} tags in #{@results.took} ms"
+        end
+%>
+
+<div class="mb-3">
+  <h1 class="mb-0">
+    Tags
+  </h1>
+  <div class="text-muted">
+    All created tags.
+  </div>
+</div>
+
+<div class="card card-body shadow-sm mb-2">
+  <%= form_tag(search_course_tags_path(@course, request.query_parameters), method: :get, html: { autocomplete: "off" }) do %>
+    <div class="mb-2">
+      <%= text_field_tag(:q, params[:q], class: "form-control") %>
+    </div>
+    <%= submit_tag("Search", class: "btn btn-primary") %>
+  <% end %>
+</div>
+<div class="d-flex">
+  <div class="card card-body shadow-sm me-2" style="width: 300px; max-width: 300px">
+    <%= render(Shared::Search::SearchPaneComponents.new(results: @results,
+                                                        course: @course,
+                                                        query_params: request.query_parameters,
+                                                        resources: :tags))
+    %>
+  </div>
+  <div class="w-100">
+    <h3> Results <small>(<%= msg %>)</small></h3>
+    <% @results.results.each do |tag| %>
+      <div class="card mb-2 shadow-sm position-relative">
+        <div class="card-body">
+          <div class="d-flex align-items-center">
+            <h4 class="me-1">
+              <%= link_to course_tag_path(@course, tag) do %>
+                <%= tag.name %>
+              <% end %>
+            </h4>
+            <div class="h-100 d-flex align-items-center">
+              <%= send(:tag).div class: "badge rounded-pill #{tag.archived ? "bg-danger" : "bg-success"}" do %>
+                <%= tag.archived ? "Hidden" : "Visible" %>
+              <% end %>
+            </div>
+          </div>
+          <div>
+            <label class="fw-bold"> Created At </label>
+            <div>
+              <%= tag.created_at.strftime("%a, %x, %I:%M %p") %>
+            </div>
+          </div>
+          <div class="mb-2">
+            <label class="fw-bold">
+              Tag Groups
+              <span class="badge rounded-pill bg-danger">
+                <%= tag.tag_groups.count %>
+              </span>
+            </label>
+            <div>
+              <% if tag.tag_groups.count == 0 %>
+                <span class="badge rounded-pill bg-secondary">
+                  None
+                </span>
+              <% end %>
+              <% tag.tag_groups.each do |tag_group| %>
+                <%= link_to tag_group.name, course_tag_group_path(@course, tag_group) %>&nbsp
+              <% end %>
+            </div>
+          </div>
+        </div>
+        <%= render(Shared::Search::CardFooterComponent.new(record: tag, course: @course)) %>
+      </div>
+    <% end %>
+  </div>
+
+</div>
+<div class="w-100 d-flex justify-content-center">
+  <%== render partial: "pagy/nav.html.erb", locals: { pagy: @pagy } %>
+</div>

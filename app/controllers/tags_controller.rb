@@ -34,19 +34,19 @@ class TagsController < ApplicationController
   def destroy
     @tag.discard
 
-    redirect_to request.referer
+    respond_with @tag, location: search_course_tags_path(@course)
   end
 
   def create
     @tag = Tag.create(create_params)
 
-    respond_with @tag, location: course_tags_path(@course)
+    respond_with @tag, location: search_course_tags_path(@course)
   end
 
   def update
     @tag.update(update_params)
 
-    respond_with @tag, location: course_tags_path(@course)
+    respond_with @tag, location: search_course_tags_path(@course)
   end
 
   def edit

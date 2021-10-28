@@ -1,13 +1,55 @@
-<h2>
-  <b>
-    <%= Enrollment.name.humanize %>
-  </b>
-</h2>
+<h3>
+  <%= Enrollment.name.humanize %>
+</h3>
 
-<%= render partial: "shared/show_model",
-           locals: {
-             model_instance: @enrollment,
-             options: {
-               except: [
-                 :discarded_at, :course, :enrollment_id, :user_id, :role_id, :user] }}
-%>
+<div class="card">
+  <div class="card-body">
+    <div class="card-title">
+      <h4>
+        <%= "#{@enrollment.user.full_name} - #{@enrollment.role.name.titleize}" %>
+      </h4>
+    </div>
+    <hr>
+    <div class="mb-2">
+      <label class="fw-bold"> Id </label>
+      <div>
+        <%= @enrollment.id %>
+      </div>
+    </div>
+    <div class="mb-2">
+      <label class="fw-bold"> Created At </label>
+      <div>
+        <%= @enrollment.created_at.to_formatted_s(:american_short) %>
+      </div>
+    </div>
+    <div class="mb-2">
+      <label class="fw-bold"> Updated At </label>
+      <div>
+        <%= @enrollment.updated_at.to_formatted_s(:american_short) %>
+      </div>
+    </div>
+    <div class="mb-2">
+      <label class="fw-bold"> Last Question with Activity </label>
+      <div>
+        <% active_question =  @enrollment.user.active_question(course: @course) %>
+        <% currently_handled_question = @enrollment.user.currently_handled_question(course: @course) %>
+
+        <% if active_question.nil? && currently_handled_question.nil? %>
+            <span class="badge rounded-pill bg-secondary">
+              None
+            </span>
+        <% end %>
+        <%= link_to course_question_path(@course, currently_handled_question) do %>
+          Go to #<%= currently_handled_question.id %>:
+          <%= render(Questions::QuestionStateBadgeComponent.new(state: currently_handled_question.question_state.state)) %>
+        <% end if currently_handled_question.present? %>
+
+        <%= link_to course_question_path(@course, active_question) do %>
+          Go to #<%= active_question.id %>:
+          <%= render(Questions::QuestionStateBadgeComponent.new(state: active_question.question_state.state)) %>
+        <% end if active_question.present? %>
+      </div>
+    </div>
+  </div>
+  <%= render(Shared::Models::Show::CardFooterComponent.new(record: @enrollment, course: @course)) %>
+</div>

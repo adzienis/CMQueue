@@ -1,4 +1,22 @@
+require 'pagy/extras/searchkick'
+
 class TagGroup < ApplicationRecord
+  extend Pagy::Searchkick
+
+  searchkick
+
+  scope :search_import, -> { includes(:tags) }
+
+  def search_data
+    {
+      id: id,
+      name: name,
+      description: description,
+      course_id: course_id,
+      created_at: created_at,
+      tags: tags.map(&:name)
+    }
+  end
   has_many :group_members, -> { where(group_type: "TagGroup") }, as: :group, foreign_key: :group_id, inverse_of: :group
   has_many :tags, through: :group_members, as: :individual, source: :individual, source_type: "Tag", inverse_of: :tag_groups
 

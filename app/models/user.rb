@@ -57,6 +57,11 @@ class User < ApplicationRecord
     !active_question(course: course).nil?
   end
 
+  def currently_handled_question(course: nil)
+    question_state = question_states.with_courses(course).first
+    question_state&.question&.user != self ? question_state&.question : nil
+  end
+
   def active_question(course: nil)
     questions = active_questions
     questions = questions.with_courses(course) if course.present?
