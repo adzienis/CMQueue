@@ -13,6 +13,7 @@ RUN apt-get update && apt-get install -y lsb-release
 RUN sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
 RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
 # Rails Specific libraries
+RUN curl -sL https://deb.nodesource.com/setup_14.x  | bash -
 RUN apt-get update && apt-get install -y \
       # ActiveStorage file inspection
       file \
@@ -28,14 +29,15 @@ RUN apt-get update && apt-get install -y \
       postgresql-13\
       postgresql-client-13 \
       postgresql-contrib \
+      ca-certificates \
       chromium \
       git \
       # VIM is a handy editor for editing credentials
       vim \
+      nodejs \
       # Allows for mimemagic gem to be installed
       shared-mime-info
-RUN curl -sL https://deb.nodesource.com/setup_14.x  | bash -
-RUN apt-get -y install nodejs
+RUN update-ca-certificates
 RUN npm install -g yarn
 # Install any extra dependencies via Aptfile - These are installed on Heroku
 # COPY Aptfile /usr/src/app/Aptfile
