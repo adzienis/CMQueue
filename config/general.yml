@@ -1,0 +1,11 @@
+shared: &shared
+  analytics_url: https://analytics.cmqueue.xyz
+
+development:
+  <<: *shared
+
+staging:
+  <<: *shared
+
+production:
+  <<: *shared
