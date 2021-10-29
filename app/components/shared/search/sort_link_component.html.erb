@@ -1,0 +1,7 @@
+<%= link_to polymorphic_path([:search, course, resources], merged_query_params), class: html_class do %>
+  Sort by <%= category %>
+  <% if selected? %>
+    <%= tag.i class: "fas fa-arrow-up" if direction == :desc %>
+    <%= tag.i class: "fas fa-arrow-down" if direction == :asc %>
+  <% end %>
+<% end %>
