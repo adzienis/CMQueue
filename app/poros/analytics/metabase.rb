@@ -3,7 +3,7 @@
 #
 # Caches responses
 class Analytics::Metabase
-  BASE_URL= "http://office-hours-01.andrew.cmu.edu:3010"
+  BASE_URL= Rails.configuration.general[:analytics_url]
 
   URL_MAPPING={
     session: -> { "#{BASE_URL}/api/session"},
@@ -36,7 +36,6 @@ class Analytics::Metabase
     @@username ||= username
     @@password ||= password
     return @@session if defined? @@session
-
 
     resp =  HTTP.headers("Content-Type": "application/json")
           .post(URL_MAPPING[:session].call,
