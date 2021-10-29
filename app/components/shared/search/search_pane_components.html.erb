@@ -1,11 +1,17 @@
 <% if options[:sort_extra].present? %>
   <% options[:sort_extra].each do |sort| %>
-    <%= sort_link(sort) %>
+    <%= render(Shared::Search::SortLinkComponent.new(category: sort,
+                                                     query_params: query_params,
+                                                     course: course,
+                                                     resources: resources)) %>
   <% end %>
 <% end %>
 <% if agg_keys.present? %>
   <% agg_keys.each do |category| %>
-    <%= sort_link(category) %>
+    <%= render(Shared::Search::SortLinkComponent.new(category: category,
+                                                     query_params: query_params,
+                                                     course: course,
+                                                     resources: resources)) %>
     <% if results.aggs.dig(category, "buckets").present? || options.dig(:extra_buckets, category.to_s).present? %>
       <h5> Filter by <%= category.to_s.humanize.titleize %></h5>
       <%= link_to "Remove #{category.to_s.humanize.titleize} filters",
