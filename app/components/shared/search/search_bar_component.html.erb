@@ -1,6 +1,15 @@
-<%= form_tag(polymorphic_path([:search, course, resources], query_parameters), method: :get, html: { autocomplete: "off" }) do %>
-  <div class="mb-2">
-    <%= text_field_tag(:q, params[:q], class: "form-control") %>
+<div class="card shadow-sm mb-2">
+  <div class="card-body">
+    <%= form_tag(polymorphic_path([:search, course, resources], query_parameters), method: :get, html: { autocomplete: "off" }) do %>
+      <div class="mb-2">
+        <%= text_field_tag(:q, params[:q], class: "form-control") %>
+      </div>
+      <%= submit_tag("Search", class: "btn btn-primary") %>
+    <% end %>
   </div>
-  <%= submit_tag("Search", class: "btn btn-primary") %>
-<% end %>
+
+  <%= tag.div class: "card-footer" do %>
+    <%= link_to "Import #{resources.to_s.titleize}", polymorphic_path([:import, course, resources]), class: "btn btn-primary" if actions.include? :import %>
+    <%= link_to "New Enrollment", polymorphic_path([:new, course, resource]), class: "btn btn-primary" if actions.include? :new %>
+  <% end if actions.any? %>
+</div>
