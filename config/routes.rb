@@ -201,6 +201,7 @@ Rails.application.routes.draw do
   resources :certificates
 
   resources :courses do
+    resources :user_invitation, only: [:new, :create], controller: "forms/courses/user_invitation"
     member do
       get 'queued_questions', to: "courses/queued_questions#index"
       get 'current_question', to: "courses/current_question#show"
