@@ -1,0 +1,2 @@
+module Users::ImpersonateHelper
+end

@@ -1,0 +1,23 @@
+<div class="card bg-white position-relative">
+  <a
+    class="position-absolute"
+    style="right: 10px; top: 10px"
+    href="#"
+    data-bs-toggle="popover"
+    title="Information"
+    data-bs-content="<%= info %>"
+  >
+    <i class="fas fa-info-circle fa-lg"></i>
+  </a>
+  <div class="card-body d-flex flex-row" style="min-height: 115px">
+    <div>
+      <div class="card-title mb-1 text-nowrap">
+        <b><%= title %></b>
+      </div>
+      <div class="card-text">
+        <p class="h2 text-secondary"><%= value %></p>
+      </div>
+    </div>
+  </div>
+  <div class="card-footer p-0"><%= footer %></div>
+</div>
