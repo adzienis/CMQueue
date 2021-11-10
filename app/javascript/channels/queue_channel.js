@@ -15,17 +15,7 @@ consumer.subscriptions.create("QueueChannel", {
     // Called when the subscription has been terminated by the server
   },
 
-  async received(data) {
-    window.dispatchEvent(
-      new CustomEvent("page:invalidate", { detail: data.invalidate })
-    );
-
-    console.log("received here");
-
-    await queryClient.invalidateQueries(data.invalidate);
-
-    await queryClient.refetchQueries(data.invalidate);
-  },
+  async received(data) {},
 
   update_course_channel() {
     const exp = /courses\/(\d+)/;
@@ -56,13 +46,10 @@ consumer.subscriptions.create("QueueChannel", {
             console.log("invalidatinggeneral", data.invalidate);
           }
 
-          window.dispatchEvent(
-            new CustomEvent("page:invalidate", { detail: data.invalidate })
-          );
-          //Turbo.visit(window.location.toString(), { action: 'replace' })
-          await queryClient.invalidateQueries(data.invalidate);
-
-          await queryClient.refetchQueries(data.invalidate);
+          if (data.type === "event") {
+            const event = new Event(data.event);
+            document.dispatchEvent(event);
+          }
         };
         this.current_channel.role.received = async (data) => {
           if (process.env.NODE_ENV === "development") {

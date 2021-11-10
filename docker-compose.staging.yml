@@ -12,12 +12,9 @@ x-app: &app
   build:
     context: .
     dockerfile: Dockerfile
-    target: production
+    target: development
   tmpfs:
     - /tmp
-  environment:
-    REDIS_URL: redis://@redis:6379/1
-    DATABASE_URL: postgres://postgres:postgres@postgres:5432/
   entrypoint: ./bin/docker/entrypoints/wait-for-web.sh
   volumes:
     - .:/usr/src/app:cached
@@ -32,32 +29,38 @@ x-app: &app
     - postgres
     - redis
 services:
+  elastic-search:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.15.1
+    volumes:
+      - data01:/usr/share/elasticsearch/data
+    container_name: es_staging
+    environment:
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms750m -Xmx750m
+      - xpack.security.enabled=true
   metabase:
-    image: metabase/metabase
+    image: metabase/metabase:v0.41.0
     ports:
       - 3010:3000
     extra_hosts:
       - "host.docker.internal:host-gateway"
     environment:
       MB_DB_FILE: /metabase-data/metabase.db
+      MB_SEND_EMAIL_ON_FIRST_LOGIN_FROM_NEW_DEVICE: FALSE
     volumes:
       - $PWD/metabase-data:/metabase-data/metabase.db
-    networks:
-      - default
   postgres:
     image: postgres:13
     # Uncomment to access this containers Postgres instance via port 5432
     ports:
-      - "127.0.0.1:5432:5432"
+      - "0.0.0.0:5432:5432"
     environment:
       PSQL_HISTFILE: /root/log/.psql_history
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     volumes:
-      - $PWD/init_db.sh:/docker-entrypoint-initdb.d/init_prod_db.sh
+      - $PWD/init_db.sh:/docker-entrypoint-initdb.d/init_db.sh
     restart: on-failure
-    networks:
-      - default
   redis:
     image: redis:6.0.12-alpine
     volumes:
@@ -66,16 +69,22 @@ services:
     #ports:
       #- "127.0.0.1:6379:6379"
     restart: on-failure
-    networks:
-      - default
+
+  web:
+    <<: *app
+    entrypoint: ./bin/docker/entrypoints/wait-for-postgres.sh
+    command: bash -c "./bin/docker/prepare-to-start-rails && ./bin/rails assets:precompile && ./bin/rails server -p 3000 -b '0.0.0.0'"
+    ports:
+      - "0.0.0.0:3000:3000"
+    stdin_open: true
+    tty: true
+    env_file:
+      .env.staging
   worker:
     <<: *app
     command: bundle exec sidekiq -C config/sidekiq.yml
-    networks:
-      - default
-networks:
-  default:
-    name: "cmqueue_prod"
+    env_file:
+      .env.staging
 
 volumes:
   postgresql:
@@ -87,4 +96,5 @@ volumes:
   node_modules:
   yarn_cache:
   letter_opener:
+  data01:
 

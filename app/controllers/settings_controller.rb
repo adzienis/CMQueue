@@ -5,10 +5,10 @@ class SettingsController < ApplicationController
 
   respond_to :html, :json
 
-  include ResourceInitializable
-  include ResourceAuthorizable
+  #include ResourceInitializable
+  #include ResourceAuthorizable
   #include PolymorphicFilterable
-  include PolyScopedByParent
+  #include PolyScopedByParent
 
   def restrict_routes
     if @course
@@ -19,6 +19,10 @@ class SettingsController < ApplicationController
   end
 
   def index
+    if params[:type].present?
+      @settings = @settings.where(resource_type: params[:type], resource_id: params[:id])
+    end
+
     respond_with @settings
   end
 

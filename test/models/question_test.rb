@@ -1,5 +1,21 @@
 # frozen_string_literal: true
 
+# == Schema Information
+#
+# Table name: questions
+#
+#  id            :bigint           not null, primary key
+#  course_id     :bigint
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
+#  title         :text
+#  tried         :text
+#  description   :text
+#  notes         :text
+#  location      :text
+#  discarded_at  :datetime
+#  enrollment_id :bigint           not null
+#
 require 'test_helper'
 
 class QuestionTest < ActiveSupport::TestCase

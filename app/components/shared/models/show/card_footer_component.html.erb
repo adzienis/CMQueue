@@ -1,4 +1,10 @@
-<div class="card-footer">
-  <%= link_to "Edit #{record.model_name.human.titleize}", polymorphic_path([:edit, course, record]), class: "btn btn-warning me-1" %>
-  <%= link_to "Destroy #{record.model_name.human.titleize}", polymorphic_path([course, record]), class: "btn btn-danger", method: :delete, "data-confirm": "Are you sure?" %>
-</div>
+<% tag.div class: "card-footer" do %>
+  <%= link_to "Edit #{record.model_name.human.titleize}",
+              polymorphic_path([:edit, course, record]),
+              class: "btn btn-warning me-1" if helpers.can? :edit, record %>
+  <%= link_to "Destroy #{record.model_name.human.titleize}",
+              polymorphic_path([course, record]),
+              class: "btn btn-danger",
+              method: :delete,
+              "data-confirm": "Are you sure?" if helpers.can? :destroy, record %>
+<% end if [:edit, :destroy].map{|v| helpers.can? v, record}.filter{|v| v}.any? %>

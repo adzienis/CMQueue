@@ -4,7 +4,8 @@
 
   <% content_for :content do %>
 
-    <%= turbo_stream_from @course %>
+    <%= turbo_stream_from @course, channel: SyncedTurboChannel%>
+    <%= turbo_stream_from @course, current_user, channel: SyncedTurboChannel%>
 
     <%= tag.div id: "course-status", data: {
       courseId: @course.id
@@ -39,12 +40,10 @@
 
       <% end %>
       <div id='courses-container' style="min-height: calc(100vh - 76px);" class="<%= "#{fluid ? '' : 'container mt-4 mb-5'}" %>">
-          <% flash.each do |key, value| %>
-            <div class="<%= flash_class(key) %>">
-              <%= value %>
-            </div>
-          <% end %>
-          <%= content_for?(:courses_content) ? yield(:courses_content) : yield %>
+        <turbo-frame id="flash">
+          <%= render "shared/flash" %>
+        </turbo-frame>
+        <%= content_for?(:courses_content) ? yield(:courses_content) : yield %>
       </div>
     </div>
   <% end %>

@@ -7,17 +7,7 @@ class Analytics::Dashboards::Metabase::DashboardsController < ApplicationControl
   def index
     metabase = Analytics::Metabase.new
 
-    metabase.login("arthurdzieniszewski@gmail.com", "Tadeusz1")
-
-    collection = metabase.collections.find{|c| c["name"] == @course.name}
-
-    respond_with nil if collection.nil?
-
-    items = metabase.collection_items(collection["id"])
-
-    respond_with nil if items.nil?
-
-    respond_with items["data"].filter{|item| item["model"] == "dashboard"}
+    respond_with Analytics::Metabase::Dashboards::GetCourseDashboards.new(metabase: metabase, course: @course).call
   end
 
   private

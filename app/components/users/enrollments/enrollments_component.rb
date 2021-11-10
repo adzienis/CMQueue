@@ -1,32 +1,14 @@
 module Users
   module Enrollments
-    class CourseComponent < ViewComponent::Base
-      def initialize(enrollment:)
+    class EnrollmentsComponent < ViewComponent::Base
+      def initialize(enrollments:)
         super
-        @enrollment = enrollment
-      end
-
-      def course
-        enrollment.course
-      end
-
-      def role
-        enrollment.role
-      end
-
-      def footer_class
-        if role.name == "ta"
-          "bg-ta"
-        elsif role.name == "instructor"
-          "bg-instructor"
-        elsif role.name == "student"
-          "bg-student"
-        end
+        @enrollments = enrollments
       end
 
       private
 
-      attr_reader :enrollment
+      attr_reader :enrollments
     end
   end
 end

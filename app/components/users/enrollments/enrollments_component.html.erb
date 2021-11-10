@@ -1,14 +1,10 @@
-<div id="<%= dom_id(enrollment) %>">
-  <%= link_to queue_course_path(course), class: "card shadow-sm text-decoration-none hover-container" do %>
-    <div class="card-body">
-      <div class="card-title">
-        <h5>
-          Go to <b><%= course.name %></b>
-        </h5>
-      </div>
-    </div>
-    <div class="card-footer text-light <%= footer_class %>">
-      <%= role.name.titleize %>
-    </div>
-  <% end %>
-</div>
+<%= tag.div class: "alert alert-warning shadow-sm d-flex justify-content-center align-items-center",
+            style: "height: 110px" do %>
+  <h4 class="fw-bold">
+    No Enrollments
+  </h4>
+<% end if enrollments.empty? %>
+
+<% enrollments.each do |enrollment| %>
+  <%= render(Users::Enrollments::EnrollmentComponent.new(enrollment: enrollment)) %>
+<% end %>

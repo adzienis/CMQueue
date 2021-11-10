@@ -19,14 +19,14 @@ module Search
       end
     end
 
-    def build_clauses(params)
+    def build_clauses(params, extra_params: {})
       where_params = {}
 
       attributes.each do |attribute|
         where_params = where_params.merge(build_clause(attribute)) if params[attribute]
       end
 
-      where_params
+      where_params.merge(extra_params)
     end
 
     private
@@ -47,13 +47,19 @@ module Search
         end
 
       else
-        begin
-          parsed = JSON.parse(params[query_key])
-        rescue JSON::ParserError
+        if params[query_key].instance_of? Array
           parsed = params[query_key]
+        else
+          begin
+            parsed = JSON.parse(params[query_key])
+          rescue JSON::ParserError
+            parsed = params[query_key]
+          end
         end
 
         return {} if parsed.instance_of?(Array) && parsed.empty?
+
+        return {} unless parsed.present?
 
         { query_key => parsed }
       end

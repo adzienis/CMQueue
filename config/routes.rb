@@ -1,10 +1,9 @@
 # frozen_string_literal: true
+require 'sidekiq/web'
 
 Rails.application.routes.draw do
-  namespace :enrollments do
-    get 'import/index'
-    get 'import/create'
-  end
+  mount Sidekiq::Web => "/sidekiq"
+
   namespace :analytics do
     namespace :dashboards do
       namespace :metabase do
@@ -49,7 +48,6 @@ Rails.application.routes.draw do
     resources :question_states
     resources :question_tags
     resource :settings
-    resources :notifications
     resources :questions
     resources :tags
     resources :courses
@@ -79,6 +77,11 @@ Rails.application.routes.draw do
   resources :messages
 
   resources :settings
+  resources :notifications do
+    member do
+      patch "read", to: "notifications/read#update"
+    end
+  end
 
   resources :enrollments do
     collection do
@@ -131,7 +134,14 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :users
+  resources :users do
+    member do
+      get 'impersonate', to: "users/impersonate#start_impersonating"
+    end
+    collection do
+      get 'stop_impersonating', to: "users/impersonate#stop_impersonating"
+    end
+  end
 
   resources :courses, only: [], model_name: "Course" do
     namespace :analytics do
@@ -142,6 +152,7 @@ Rails.application.routes.draw do
       collection do
         get 'download', to: "questions#download_form"
         get 'search', to: "questions/search#index"
+        get 'count', to: "questions/count#show"
       end
     end
 
@@ -161,7 +172,7 @@ Rails.application.routes.draw do
 
     resources :tag_groups do
       collection do
-          get 'search', to: "tag_groups/search#index"
+        get 'search', to: "tag_groups/search#index"
       end
     end
 
@@ -203,6 +214,9 @@ Rails.application.routes.draw do
   resources :courses do
     resources :user_invitation, only: [:new, :create], controller: "forms/courses/user_invitation"
     member do
+      post 'feed', to: "courses/feed#index"
+      get 'feed', to: "courses/feed#index"
+      post 'feed/answer', to: "courses/feed#answer"
       get 'queued_questions', to: "courses/queued_questions#index"
       get 'current_question', to: "courses/current_question#show"
       post 'semester'

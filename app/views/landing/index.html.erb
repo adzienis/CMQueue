@@ -1,3 +1,12 @@
+<% if Rails.env.development? %>
+  <% User.all.each do |user| %>
+    <div>
+      <%= link_to "Impersonate #{user.full_name}", impersonate_user_path(user), "data-turbo": false %>
+    </div>
+  <% end %>
+<% end %>
+
+
 <div class="container px-4 py-5">
   <div class="row flex-lg-row-reverse justify-content-center align-items-center g-5">
     <div class="col-10 col-sm-8 col-lg-6 d-flex justify-content-center align-items-center">
@@ -14,15 +23,13 @@
       </p>
 
       <%= form_with url: "/users/auth/google_oauth2?origin=login", method: :post, data: { turbo: "false" } do |form| %>
-        <input alt="here"  type="image" src="/assets/google/web/2x/btn_google_signin_dark_normal_web@2x.png" width="310px" height="75px">
+        <input alt="here" type="image" src="/assets/google/web/2x/btn_google_signin_dark_normal_web@2x.png" width="310px" height="75px">
       <% end %>
     </div>
   </div>
 </div>
 
 <hr>
-
-
 
 <div class="container px-4 py-5" id="hanging-icons">
   <h2 class="pb-2 border-bottom">Features</h2>

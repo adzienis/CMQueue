@@ -1,6 +1,6 @@
 module Users
   module Enrollments
-    class CourseComponent < ViewComponent::Base
+    class EnrollmentComponent < ViewComponent::Base
       def initialize(enrollment:)
         super
         @enrollment = enrollment
@@ -12,6 +12,11 @@ module Users
 
       def role
         enrollment.role
+      end
+
+      def link
+        return queue_course_path(course) if enrollment.staff?
+        new_course_forms_question_path(course) if enrollment.student?
       end
 
       def footer_class

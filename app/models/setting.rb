@@ -1,3 +1,14 @@
+# == Schema Information
+#
+# Table name: settings
+#
+#  id            :bigint           not null, primary key
+#  resource_type :string
+#  resource_id   :bigint
+#  value         :json
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
+#
 class Setting < ApplicationRecord
   enum setting_type: [:boolean, :integer, :string]
 
@@ -85,11 +96,11 @@ class Setting < ApplicationRecord
     case resource_type
     when "Course"
       QueueChannel.broadcast_to resource_type.constantize.find(resource_id), {
-        invalidate: ['courses', resource_id, 'settings']
+        invalidate: ['settings']
       }
     when "User"
       SiteChannel.broadcast_to resource_type.constantize.find(resource_id), {
-        invalidate: ['users', resource_id, 'settings']
+        invalidate: ['settings']
       }
     end
   end

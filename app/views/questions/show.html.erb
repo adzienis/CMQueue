@@ -2,7 +2,7 @@
   <%= Question.name.humanize %>
 </h3>
 
-<div class="card">
+<div class="card shadow-sm">
   <div class="card-body">
     <div class="card-title">
       <h4>
@@ -73,7 +73,9 @@
       </label>
       <div>
         <% @question.tags.each do |tag| %>
-          <%= link_to tag.name, course_tag_path(@course, tag) %>&nbsp
+        <span class="badge rounded-pill bg-danger">
+          <%= link_to tag.name, course_tag_path(@course, tag), style: "color: white" %>
+        </span>
         <% end %>
       </div>
     </div>

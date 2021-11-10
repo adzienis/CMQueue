@@ -1,6 +1,6 @@
 <%
   msg = if @pagy.count == 1
-          "#{@pagy.count} tag groups in #{@results.took} ms"
+          "#{@pagy.count} tag group in #{@results.took} ms"
         else
           "#{@pagy.count} tag groups in #{@results.took} ms"
         end
@@ -15,11 +15,12 @@
   </div>
 </div>
 
-<div class="card card-body shadow-sm mb-2">
-  <%= render(Shared::Search::SearchBarComponent.new(resources: :tag_groups,
-                                                    course: @course,
-                                                    query_parameters: request.query_parameters)) %>
-</div>
+<%= render(Shared::Search::SearchBarComponent.new(resources: :tag_groups,
+                                                  course: @course,
+                                                  query_parameters: request.query_parameters,
+                                                  options: {
+                                                    actions: [:new]
+                                                  })) %>
 <div class="d-flex">
   <div class="card card-body shadow-sm me-2" style="width: 300px; max-width: 300px">
     <%= render(Shared::Search::SearchPaneComponents.new(results: @results,
@@ -33,6 +34,30 @@
   </div>
   <div class="w-100">
     <h3> Results <small>(<%= msg %>)</small></h3>
+    <div class="card card-body d-flex flex-row">
+      <% if @results.aggs.present? %>
+        <div class="fw-bold">
+          Sort:
+        </div>
+        <div class="d-grid w-100" style="grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); justify-items: center">
+          <% @results.aggs.keys.each do |category| %>
+            <% if @results.aggs[category]["buckets"].present? %>
+              <div>
+                <%= render(Shared::Search::SortLinkComponent.new(category: category,
+                                                                 query_params: request.query_parameters,
+                                                                 course: @course,
+                                                                 resources: :tag_groups)) %>
+              </div>
+            <% end %>
+          <% end %>
+      <% end %>
+      </div>
+    </div>
+    <% if @results.results.empty? %>
+      <div class="alert alert-warning">
+        No Tag Groups
+      </div>
+    <% end %>
     <% @results.results.each do |tag_group| %>
       <div class="card mb-2 shadow-sm">
         <div class="card-body">

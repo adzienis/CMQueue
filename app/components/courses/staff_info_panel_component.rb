@@ -1,12 +1,11 @@
 module Courses
-  class StudentInfoPanelComponent < ViewComponent::Base
-    def initialize(course:, question:)
-      @question = question
+  class StaffInfoPanelComponent < ViewComponent::Base
+    def initialize(course:)
       @course = course
     end
 
     private
 
-    attr_reader :question, :course
+    attr_reader :course
   end
 end

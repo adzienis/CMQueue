@@ -1,6 +1,6 @@
 <%= simple_form_for [@course, @question], html: { autocomplete: 'off' } do |f| %>
   <%= f.hidden_field :course_id, value: params[:course_id] if params[:course_id] %>
-  <%= f.input :tried %>
+  <%= f.input :tried, label: "What Did They Try?" %>
   <%= f.input :description %>
   <%= f.input :location %>
 
@@ -13,6 +13,7 @@
       <%= ff.input :state, collection: QuestionState.states.keys %>
     </div>
   <% end %>
+
 
   <%= f.submit :Submit, class: "btn btn-primary", "data-disable-with": "Loading" %>
 <% end %>

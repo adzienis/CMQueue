@@ -1,4 +1,4 @@
-class Analytics::Metabase::Dashboards::ArchiveDashboard
+class Analytics::Metabase::Dashboards::UnarchiveDashboard
   def initialize(dashboard_id:, metabase:)
     @dashboard_id = dashboard_id
     @metabase = metabase
@@ -6,7 +6,7 @@ class Analytics::Metabase::Dashboards::ArchiveDashboard
 
   def call
     metabase.put_dashboard(dashboard_id: dashboard_id,
-                           json: Analytics::Metabase::Dashboards::Archive.new(dashboard_id: dashboard_id).call)
+                           json: Analytics::Metabase::Dashboards::Unarchive.new(dashboard_id: dashboard_id).call)
   end
 
   private

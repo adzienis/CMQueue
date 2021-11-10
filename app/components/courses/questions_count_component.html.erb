@@ -1,4 +1,4 @@
-<div id="queue-open-status" class="card bg-white position-relative">
+<div id="questions-count" class="card bg-white position-relative">
   <%= tag.a class: "position-absolute",
             style: "right: 10px; top: 10px",
             href: "#",
@@ -14,7 +14,7 @@
         <b><%= title %></b>
       </div>
       <div class="card-text">
-        <p class="h2 text-secondary"><span style="<%= value_style %>"><%= sanitize(value) %></span></p>
+        <p class="h2 text-secondary"><span style="<%= value_style %>"><%= value %></span></p>
       </div>
     </div>
   </div>

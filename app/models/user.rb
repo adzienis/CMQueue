@@ -1,5 +1,14 @@
-# frozen_string_literal: true
-
+# == Schema Information
+#
+# Table name: users
+#
+#  id          :bigint           not null, primary key
+#  given_name  :text
+#  family_name :text
+#  email       :text
+#  created_at  :datetime         not null
+#  updated_at  :datetime         not null
+#
 class User < ApplicationRecord
 
   include Enrollable
@@ -33,6 +42,16 @@ class User < ApplicationRecord
 
   #has_many :oauth_applications, as: :owner
 
+  def last_active_question(course)
+    if course.instance_of? Course
+      question_states.with_courses(course).order(created_at: :desc).first
+    elsif course.instance_of? Integer
+      question_states.with_courses(course).order(created_at: :desc).first
+    else
+      nil
+    end
+  end
+
   def interacting_questions?(*states, course: nil)
     states = ["resolving"] if states.empty?
     questions = interacting_questions(*states)
@@ -57,9 +76,17 @@ class User < ApplicationRecord
     !active_question(course: course).nil?
   end
 
+  def handling_question?(course: nil)
+    question = currently_handled_question(course: course)
+
+    return false unless question.present?
+
+    question.question_state.state == "resolving"
+  end
+
   def currently_handled_question(course: nil)
     question_state = question_states.with_courses(course).first
-    question_state&.question&.user != self ? question_state&.question : nil
+    question_state&.question&.user != self && question_state&.state == "resolving" ? question_state&.question : nil
   end
 
   def active_question(course: nil)

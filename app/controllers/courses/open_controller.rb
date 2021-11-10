@@ -1,5 +1,5 @@
 class Courses::OpenController < ApplicationController
-  respond_to :json
+  respond_to :json, :html
 
 
   def current_ability
@@ -20,7 +20,7 @@ class Courses::OpenController < ApplicationController
 
     @course.update(open_params)
 
-    respond_with @course.open
+    respond_with @course
   end
 
   def show

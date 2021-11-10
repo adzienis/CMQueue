@@ -2,8 +2,14 @@ module Enrollable
   extend ActiveSupport::Concern
 
   included do
-    has_many :active_enrollments, -> { undiscarded }, dependent: :destroy, class_name: "Enrollment"
+    has_many :active_enrollments, -> { undiscarded }, class_name: "Enrollment"
     has_many :enrollments, dependent: :destroy
+    has_many :staff_enrollments,
+             -> { undiscarded.merge(Enrollment.with_role_names(Role.staff_role_names))},
+             class_name: "Enrollment"
+    has_many :student_enrollments,
+             -> { undiscarded.merge(Enrollment.with_role_names(Role.student_role_names))},
+             class_name: "Enrollment"
   end
 
   def enrolled_in_course?(course)
@@ -31,6 +37,17 @@ module Enrollable
       nil
     end
   end
+
+  class_methods do
+    def with_staff_of(course)
+      joins(:enrollments, enrollments: :role).merge(Enrollment.undiscarded)
+                                             .where("roles.resource_type": "Course", "roles.resource_id": course.id,
+                                                    "roles.name": "ta")
+                                             .or(where("roles.resource_type": "Course", "roles.resource_id": course.id,
+                                                       "roles.name": "instructor"))
+    end
+  end
+
 
   [:ta, :lead_ta, :instructor, :student].each do |role|
     self.define_method("#{role}_of?") do |obj|

@@ -9,9 +9,9 @@ class Tags::SearchController < ApplicationController
   end
 
   def index
-    # authorize! :search, Enrollment
+    authorize! :search, Tag
 
-    builder = Search::ClauseBuilder.new(attributes: [:visibility], params: params)
+    builder = Search::ClauseBuilder.new(attributes: [:visibility, :name], params: params)
 
     where_params = builder.build_clauses(params)
     order_params = builder.build_order_clauses(request.query_parameters)

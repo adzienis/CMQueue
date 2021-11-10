@@ -1,9 +1,22 @@
+# == Schema Information
+#
+# Table name: enrollments
+#
+#  id           :bigint           not null, primary key
+#  user_id      :bigint
+#  role_id      :bigint
+#  semester     :string
+#  created_at   :datetime         not null
+#  updated_at   :datetime         not null
+#  discarded_at :datetime
+#
 require 'pagy/extras/searchkick'
 
 class Enrollment < ApplicationRecord
   include Discard::Model
   include Ransackable
   include Exportable
+  include Turbo::Broadcastable
   extend Pagy::Searchkick
 
   searchkick
@@ -32,6 +45,11 @@ class Enrollment < ApplicationRecord
   has_many :questions, dependent: :destroy
 
   validate :unique_enrollment_in_course_per_semester, on: :create
+  validate :semester_valid
+
+  def semester_valid
+    errors.add(:semester, "invalid") unless ["F21"].include? semester
+  end
 
   def unique_enrollment_in_course_per_semester
     return if user_id.nil? || role_id.nil? || semester.nil?
@@ -52,10 +70,13 @@ class Enrollment < ApplicationRecord
   end
 
   scope :with_role, ->(role_id) { joins(:role).where("roles.id": role_id) }
+  scope :with_role_names, ->(*role_names) do
+    joins(:role).where("roles.name": role_names, "roles.resource_type": "Course")
+  end
   scope :with_user, ->(user_id) { joins(:user).where("users.id": user_id) }
   scope :with_courses, ->(courses) { joins(:role).merge(Role.with_resources(courses)) }
 
-  scope :with_course_roles, ->(*roles){ joins(:role).where("roles.name": roles, "roles.resource_type": "Course") }
+  scope :with_course_roles, ->(*roles) { joins(:role).where("roles.name": roles, "roles.resource_type": "Course") }
 
   after_create do
     ActionCable.server.broadcast 'react-students', {
@@ -75,6 +96,21 @@ class Enrollment < ApplicationRecord
     }
   end
 
+  after_commit do
+    self.reindex(refresh: true)
+  end
+
+  def student?
+    role.name == "student" && role.resource_type == "Course"
+  end
+
+  def staff?
+    Role.staff_role_names.include?(role.name) && role.resource_type == "Course"
+  end
+
+  def privileged?
+    Role.privileged_role_names.include?(role.name) && role.resource_type == "Course"
+  end
 
   private
 

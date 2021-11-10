@@ -1,11 +1,11 @@
-class Analytics::Metabase::Dashboards::Archive
+class Analytics::Metabase::Dashboards::Unarchive
   def initialize(dashboard_id:)
     @dashboard_id = dashboard_id
   end
 
   def call
     {
-      archived: true
+      archived: false
     }
   end
 

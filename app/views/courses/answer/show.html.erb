@@ -1,5 +1,39 @@
-
-<%= content_tag :div, id: "question-answerer", data: {
-  courseId: @course.id, userId: current_user.id,
-  enrollmentId: current_user.enrollment_in_course(@course).id
-}.to_json do %><% end %>
+<div class="card">
+  <div class="card-body">
+    <div class="card-title">
+      <h3>
+        <%= @question.user.full_name %>
+      </h3>
+    </div>
+    <div class="mb-2">
+      <label class="fw-bold"> Description </label>
+      <div>
+        <%= @question.description %>
+      </div>
+    </div>
+    <div class="mb-2">
+      <label class="fw-bold"> What Have They Tried? </label>
+      <div>
+        <%= @question.tried %>
+      </div>
+    </div>
+    <div class="mb-2">
+      <label class="fw-bold"> Location </label>
+      <div>
+        <%= @question.location %>
+      </div>
+    </div>
+  </div>
+  <div class="card-footer d-flex">
+  <%= button_to "Unresolve",
+                handle_question_path(@question,
+                                     state: "unresolved",
+                                     enrollment_id: current_user.enrollment_in_course(@course)
+                ), class: "btn btn-primary", "data-disable-with": "Loading" %>
+    <%= button_to "Freeze",
+                  handle_question_path(@question,
+                                       state: "frozen",
+                                       enrollment_id: current_user.enrollment_in_course(@course)
+                  ), class: "btn btn-primary", "data-disable-with": "Loading" %>
+  </div>
+</div>

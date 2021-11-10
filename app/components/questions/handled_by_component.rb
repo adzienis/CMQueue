@@ -1,4 +1,7 @@
 class Questions::HandledByComponent < ViewComponent::Base
+
+  delegate :question_state, to: :question
+
   def initialize(question:)
     @question = question
   end
@@ -19,13 +22,25 @@ class Questions::HandledByComponent < ViewComponent::Base
     "badge rounded-pill #{bg_class}"
   end
 
+  def label_msg
+    if state == "resolved"
+      "Resolved By"
+    else
+      "Currently Handled By"
+    end
+  end
+
+  def state
+    question_state.state
+  end
+
   def render?
-    @question.question_state.user != @question.user &&
-    @question.question_state.state != "unresolved"
+    question_state.user != question.user &&
+    question_state.state != "unresolved"
   end
 
   def user_name
-    @question.question_state.user.given_name
+    question_state.user.given_name
   end
 
   private

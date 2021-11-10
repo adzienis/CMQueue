@@ -58,9 +58,9 @@ export default (props) => {
   const { id, type, settings: initialSettings } = props;
 
   const { data: settings } = useQuery(
-    [type.toLowerCase() + "s", parseInt(id, 10), "settings"],
+    ["settings", "?", `type=${type}`, `id=${id}`],
     {
-      placeholderData: initialSettings,
+      initialData: [],
     }
   );
 

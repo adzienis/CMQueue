@@ -1,24 +1,30 @@
-<div id="queue-open-status" class="card bg-white position-relative">
-  <%= tag.a class: "position-absolute",
-            style: "right: 10px; top: 10px",
-            href: "#",
-            "data-bs-toggle": "popover",
-            title: "information",
-            "data-bs-content": info do
-  %>
-    <i class="fas fa-info-circle fa-lg"></i>
-  <% end if info.present? %>
-  <div class="card-body d-flex flex-row" style="min-height: 115px">
-    <div>
-      <div class="card-title mb-1 text-nowrap">
-        <b><%= title %></b>
-      </div>
-      <div class="card-text">
-        <p class="h2 text-secondary"><span style="<%= value_style %>"><%= sanitize(value) %></span></p>
-      </div>
-    </div>
-  </div>
-  <%= tag.div class: "card-footer p-0" do %>
-    <%= footer %>
-  <% end if footer.present? %>
-</div>
+module Courses
+  class QuestionsCountComponent < QueueInfoComponent
+    def initialize(course:)
+      @course = course
+    end
+
+    def title
+      "Unresolved Questions"
+    end
+
+    def footer
+    end
+
+    def info
+      nil
+    end
+
+    def value_style
+      ""
+    end
+
+    def value
+      course.active_questions.latest_by_state("unresolved", "frozen").count
+    end
+
+    private
+
+    attr_reader :course
+  end
+end

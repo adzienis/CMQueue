@@ -29,25 +29,21 @@
 
 <body style="background-color: #F3F4EF">
 
+<% if request.env['warden'].present? %>
+  <%= turbo_stream_from current_user, channel: SyncedTurboChannel %>
 
-<%= tag.div id: "root", data: {
-  courseId: params[:course_id]
-}.to_json %>
+  <%= content_tag :div, id: "notification-feed", data: {
+    userId: current_user.id
+  }.to_json do %>
+  <% end if current_user %>
 
-<%= turbo_stream_from current_user %>
+  <%= render partial: "shared/site_navbar" %>
+<% end %>
 
-<%= content_tag :div, id: "notification-feed", data: {
-  userId: current_user.id
-}.to_json do %>
-<% end if current_user %>
-
-<%= content_tag :div, id: "prefetcher", data: {
-  userId: current_user.id,
-}.to_json do %>
-<% end if current_user %>
 
 <style><%= yield :stylesheets %></style>
-<%= render partial: "shared/site_navbar" %>
+
+<%= render(Notifications::NotificationsComponent.new(current_user: current_user)) %>
 
 <% if content_for?(:content) %>
   <%= yield(:content) %>

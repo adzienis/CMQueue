@@ -2,7 +2,7 @@
   <%= f.hidden_field :course_id, value: params[:course_id] if params[:course_id] %>
   <%= f.input :name %>
   <%= f.input :description %>
-  <%= f.input :archived, label: "Invisible" %>
+  <%= f.input :archived, label: "Hidden" %>
   <div data-controller="react_select">
     <%= f.association :tag_groups, collection: @course.tag_groups %>
   </div>

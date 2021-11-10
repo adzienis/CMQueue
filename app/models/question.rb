@@ -1,4 +1,21 @@
 # frozen_string_literal: true
+
+# == Schema Information
+#
+# Table name: questions
+#
+#  id            :bigint           not null, primary key
+#  course_id     :bigint
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
+#  title         :text
+#  tried         :text
+#  description   :text
+#  notes         :text
+#  location      :text
+#  discarded_at  :datetime
+#  enrollment_id :bigint           not null
+#
 require 'pagy/extras/searchkick'
 
 class Question < ApplicationRecord
@@ -24,7 +41,8 @@ class Question < ApplicationRecord
       created_at: created_at,
       user_name: "#{user.given_name} #{user.family_name}",
       resolved_by: question_state&.state == "resolved" ? question_state.user.given_name : nil,
-      tags: tags.map(&:name)
+      tags: tags.map(&:name),
+      course_id: course.id
     }
   end
 
@@ -99,6 +117,7 @@ class Question < ApplicationRecord
   scope :unacknowledged, -> { where(id: joins(:question_states).where("question_states.acknowledged_at": nil)) }
   scope :with_courses, ->(*courses) { joins(enrollment: :role).merge(Role.with_courses(courses)) }
   scope :with_courses, ->(*courses) { joins(enrollment: :role).merge(Role.with_courses(courses)) }
+  scope :unresolved, ->{ by_state("unresolved") }
 
   scope :by_state, lambda { |*states|
     joins(:question_state)
@@ -150,6 +169,10 @@ class Question < ApplicationRecord
   scope :with_users, ->(*users) {
     joins(:enrollment).where("enrollments.user": users)
   }
+
+  def position_in_course
+    course.questions.undiscarded.order(created_at: :asc).latest_by_state("unresolved").pluck(:id).index(id)
+  end
 
   def resolved?
     question_state&.state == "resolved"
@@ -277,8 +300,7 @@ class Question < ApplicationRecord
   end
 
   after_create_commit do
-    question_state = QuestionState.create!(question_id: id, enrollment_id: enrollment_id)
-    update!(question_state: question_state)
+    update!(question_state: QuestionState.create!(question_id: id, enrollment_id: enrollment_id))
   end
 
   after_destroy do
@@ -321,6 +343,29 @@ class Question < ApplicationRecord
                    'questions']
     }
 
+  end
+
+  after_commit do
+    tags.reindex
+    self.reindex(refresh: true)
+    broadcast_replace_later_to course,
+                               target: "questions-count",
+                               html: ApplicationController.render(Courses::QuestionsCountComponent.new(course: course),
+                                                                  layout: false),
+                               channel: SyncedTurboChannel
+
+    course.active_questions.each do |question|
+      broadcast_replace_later_to question.user,
+                                 target: "question-position",
+                                 html: ApplicationController
+                                         .render(Courses::QuestionPositionComponent.new(question: question), layout: false),
+                                 channel: SyncedTurboChannel
+    end
+
+    QueueChannel.broadcast_to course, {
+      type: "event",
+      event: "invalidate:question-feed"
+    }
   end
 
   singleton_class.send(:alias_attribute, :current_state, :question_state)

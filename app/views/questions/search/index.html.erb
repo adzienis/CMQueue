@@ -1,6 +1,6 @@
 <%
   msg = if @pagy.count == 1
-          "#{@pagy.count} questions in #{@results.took} ms"
+          "#{@pagy.count} question in #{@results.took} ms"
         else
           "#{@pagy.count} questions in #{@results.took} ms"
         end
@@ -15,12 +15,10 @@
   </div>
 </div>
 
-<div class="card card-body shadow-sm mb-2">
-  <%= render(Shared::Search::SearchBarComponent.new(resources: :questions,
-                                                    course: @course,
-                                                    query_parameters: request.query_parameters))
-  %>
-</div>
+<%= render(Shared::Search::SearchBarComponent.new(resources: :questions,
+                                                  course: @course,
+                                                  query_parameters: request.query_parameters))
+%>
 <div class="d-flex">
   <div class="card card-body shadow-sm me-2" style="width: 300px; max-width: 300px">
     <%= render(Shared::Search::SearchPaneComponents.new(results: @results,
@@ -34,8 +32,35 @@
   </div>
   <div class="w-100">
     <h3> Results <small>(<%= msg %>)</small></h3>
+    <div class="card card-body d-flex flex-row">
+      <% if @results.aggs.present? %>
+        <div class="fw-bold">
+          Sort:
+        </div>
+        <div class="d-grid w-100" style="grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); justify-items: center">
+          <% @results.aggs.keys.each do |category| %>
+            <% if @results.aggs[category]["buckets"].present? %>
+              <div>
+                <%= render(Shared::Search::SortLinkComponent.new(category: category,
+                                                                 query_params: request.query_parameters,
+                                                                 course: @course,
+                                                                 resources: :questions)) %>
+              </div>
+            <% end %>
+          <% end %>
+      <% end %>
+      </div>
+    </div>
+    <% if @results.results.empty? %>
+      <div class="alert alert-warning">
+        No Questions
+      </div>
+    <% end %>
     <% @results.results.each do |question| %>
-      <div class="card mb-2 shadow-sm">
+      <div class="card mb-2 shadow-sm position-relative">
+        <span class="position-absolute" style="top: -10px">
+          <%= render(Questions::QuestionStateBadgeComponent.new(state: question.question_state.state)) %>
+        </span>
         <div class="card-body">
           <h4>
             <%= link_to question.user.full_name, course_question_path(@course, question) %>

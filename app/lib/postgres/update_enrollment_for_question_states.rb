@@ -1,4 +1,4 @@
-class Postgres::Cleanup::UpdateEnrollmetnForQuestionStates
+class Postgres::UpdateEnrollmentForQuestionStates
 
   #
   # Updates all questions states to have their enrollment for a user updated to the users

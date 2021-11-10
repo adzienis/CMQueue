@@ -1,5 +1,16 @@
 # frozen_string_literal: true
 
+# == Schema Information
+#
+# Table name: roles
+#
+#  id            :bigint           not null, primary key
+#  name          :string
+#  resource_type :string
+#  resource_id   :bigint
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
+#
 class Role < ApplicationRecord
 
   include FindableByCourseRoles
@@ -41,6 +52,18 @@ class Role < ApplicationRecord
     when "student"
       0
     end
+  end
+
+  def self.privileged_role_names
+    ["instructor", "lead_ta"]
+  end
+
+  def self.staff_role_names
+    ["ta", "instructor", "lead_ta"]
+  end
+
+  def self.student_role_names
+    ["student"]
   end
 
   def self.higher_security?(role_tested, role_compared_to)

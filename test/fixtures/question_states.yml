@@ -1,4 +1,16 @@
-# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+# == Schema Information
+#
+# Table name: question_states
+#
+#  id              :bigint           not null, primary key
+#  question_id     :bigint
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
+#  description     :text
+#  state           :integer          not null
+#  enrollment_id   :bigint           not null
+#  acknowledged_at :datetime
+#
 
 # This model initially had no columns defined. If you add columns to the
 # model remove the '{}' from the fixture names and add the columns immediately

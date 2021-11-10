@@ -9,7 +9,7 @@ class Enrollments::SearchController < ApplicationController
   end
 
   def index
-    # authorize! :search, Enrollment
+    authorize! :search, Enrollment
 
     builder = Search::ClauseBuilder.new(attributes: [:user_full_name, :role_name], params: params)
 

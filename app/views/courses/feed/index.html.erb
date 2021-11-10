@@ -1,0 +1,4 @@
+<%= render(Courses::Feed::FeedComponent.new(course: @course,
+                                            questions: @questions,
+                                            current_user: current_user,
+                                            pagy: @pagy)) %>

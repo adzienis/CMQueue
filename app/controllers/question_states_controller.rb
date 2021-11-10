@@ -21,6 +21,8 @@ class QuestionStatesController < ApplicationController
 
   def create
     @question_state = QuestionState.create(create_params)
+
+    respond_with @question_state
   end
 
   def show

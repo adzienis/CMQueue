@@ -1,11 +1,11 @@
 module Courses
-  class QuestionsCountComponent < QueueInfoComponent
-    def initialize(course:)
-      @course = course
+  class QuestionPositionComponent < QueueInfoComponent
+    def initialize(question:)
+      @question = question
     end
 
     def title
-      "Unresolved Questions"
+      "Position"
     end
 
     def footer
@@ -20,11 +20,16 @@ module Courses
     end
 
     def value
-      course.active_questions.count
+      return "N/A" unless position.present?
+      position == 0 ? "Next" : position + 1
+    end
+
+    def position
+      question.position_in_course
     end
 
     private
 
-    attr_reader :course
+    attr_reader :question
   end
 end

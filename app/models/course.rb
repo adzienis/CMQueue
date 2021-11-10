@@ -1,5 +1,17 @@
-# frozen_string_literal: true
-
+# == Schema Information
+#
+# Table name: courses
+#
+#  id              :bigint           not null, primary key
+#  name            :string
+#  course_code     :string
+#  student_code    :string
+#  ta_code         :string
+#  instructor_code :string
+#  open            :boolean          default(FALSE)
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
+#
 require './lib/postgres/views/course'
 require './lib/postgres/views/question'
 require './lib/postgres/views/tag'
@@ -9,6 +21,8 @@ require './lib/postgres/views/question_state'
 require './lib/postgres/views'
 
 class Course < ApplicationRecord
+  include Turbo::Broadcastable
+
   resourcify
   searchkick
 
@@ -73,8 +87,6 @@ class Course < ApplicationRecord
 
   scope :with_setting_value, ->(key, value) { joins(:settings).merge(Setting.with_key_value(key, value)) }
 
-
-
   def active_tas
     tas.merge(Enrollment.undiscarded)
   end
@@ -117,7 +129,9 @@ class Course < ApplicationRecord
   ######################################################3
 
   def self.find_staff_roles(user = nil)
-    Course.find_roles([:ta, :lead_ta, :instructor], user)
+    Role.joins(enrollments: :user).where("users.id": user)
+        .where("roles.resource_type": "Course", name: [:ta, :lead_ta, :instructor])
+        .merge(Enrollment.undiscarded)
   end
 
   def self.find_unprivileged_roles(user = nil)
@@ -152,15 +166,11 @@ class Course < ApplicationRecord
     select(Course.column_names - ["instructor_code", "ta_code"])
   end
 
-  after_update do
-    broadcast_action_later_to self,
-                              action: :refresh,
-                              target: "question-creator-container",
-                              template: nil
-
-    QueueChannel.broadcast_to self, {
-      invalidate: ['courses', id, 'open']
-    }
+  after_commit do
+    broadcast_replace_later_to(self,
+                         target: "queue-open-status",
+                         html: ApplicationController.render(Courses::QueueOpenStatusComponent.new(course: self),
+                                                            layout: false))
   end
 
   after_create_commit do

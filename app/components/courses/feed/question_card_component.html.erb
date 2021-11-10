@@ -1,0 +1,31 @@
+<turbo-frame id="<%= dom_id(question) %>">
+  <div class="card shadow-sm mb-3 position-relative">
+    <div class="position-absolute" style="top: -15px; left: 0">
+      <% question.tags.each do |tag| %>
+        <span class="badge bg-danger">
+          <%= tag.name %>
+        </span>
+      <% end %>
+    </div>
+    <div class="card-body">
+      <div class="card-title fw-bold">
+        <div class="fw-bold">
+          <%= tag.span status_badge_msg, class: status_badge_class %>
+          <%= question.user.full_name %>
+        </div>
+        <div class="<%= status_class %>"> <%= status_msg %></div>
+      </div>
+      <%= question.description %>
+    </div>
+    <%= tag.div class: "card-footer" do %>
+      <%= button_to "Unfreeze",
+                    handle_question_path(question,
+                                         state: "unresolved",
+                                         enrollment_id: current_user.enrollment_in_course(question.course)),
+                    class: "btn btn-primary",
+                    remote: true,
+                    "data-turbo": false,
+                    "data-disable-with": "Unfreezing" if question.frozen? %>
+    <% end if footer? %>
+  </div>
+</turbo-frame>

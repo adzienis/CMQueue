@@ -14,7 +14,6 @@ export default class extends Controller {
   static values = { courseId: Number };
 
   initialize() {
-    console.log("here queue");
     window.addEventListener("page:invalidate", (event) => {
       if (
         arrayEquals(event.detail, ["courses", this.courseIdValue, "questions"])

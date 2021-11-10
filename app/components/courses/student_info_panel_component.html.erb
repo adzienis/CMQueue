@@ -1,0 +1,16 @@
+<div class="accordion w-100 mb-3" id="accordionExample">
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="headingOne">
+      <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+        <b> Queue Information </b>
+      </button>
+    </h2>
+    <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+      <div class="accordion-body d-grid" style="grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); column-gap: 10px">
+        <%= render(Courses::QueueOpenStatusComponent.new(course: course)) %>
+        <%= render(Courses::QuestionsCountComponent.new(course: course)) %>
+        <%= render(Courses::QuestionPositionComponent.new(question: question)) %>
+      </div>
+    </div>
+  </div>
+</div>

@@ -3,7 +3,6 @@
 </h1>
 
 <hr>
-
 <%= content_tag :div, id: "user-settings", data: {
   userId: current_user.id, settings: @settings,
   id: @course&.id || @user&.id, type: @course ? "Course" : "User"

@@ -3,6 +3,7 @@ import "@hotwired/turbo-rails";
 import * as ActiveStorage from "@rails/activestorage";
 import "../channels";
 import "../controllers";
+import "chartkick/chart.js";
 
 import SearchModal from "../src/components/SearchModal";
 import StudentQueueView from "../src/components/StudentQueueView";

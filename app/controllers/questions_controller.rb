@@ -32,6 +32,10 @@ class QuestionsController < ApplicationController
     @questions = @questions.undiscarded.order(:created_at) #.order("max(question_states.state) desc").group("questions.id")
     @questions = @questions.with_courses(params[:course_id]) if params[:course_id]
     @questions = @questions.with_users(params[:user_id]) if params[:user_id]
+    if params[:tags].present?
+      tags = JSON.parse(params[:tags])
+      @questions = @questions.joins(:tags).where(tags: tags) if tags.present?
+    end
     @questions = @questions.latest_by_state(JSON.parse(params[:state])) if params[:state]
 
     @questions = @questions.count if params[:agg] == "count"
@@ -79,8 +83,6 @@ class QuestionsController < ApplicationController
     @enrollment = current_user.enrollment_in_course(@course)
 
     @question.unfreeze(@enrollment.id)
-
-    respond_with @question
   end
 
   def download_form

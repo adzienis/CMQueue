@@ -22,10 +22,13 @@ class Questions::SearchController < ApplicationController
                                                      resolved_by: {},
                                                      tags: {},
                                                      created_at: {
-                                                       ranges: [{ from: DateTime.now.beginning_of_day,
+                                                       date_ranges: [{ from: DateTime.now.beginning_of_day,
                                                                   to: DateTime.now.end_of_day, key: 'Today' },
                                                                 { from: DateTime.now.beginning_of_day - 1,
-                                                                  to: DateTime.now.end_of_day - 1, key: 'Yesterday' }]
+                                                                  to: DateTime.now.end_of_day - 1, key: 'Yesterday' },
+                                                                { from: DateTime.now.beginning_of_day - 7,
+                                                                  to: DateTime.now.end_of_day, key: 'Past Week' }
+                                                       ]
                                                      }
                                              },
                                              order: order_params,

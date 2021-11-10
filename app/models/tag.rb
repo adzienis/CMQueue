@@ -1,4 +1,16 @@
-# frozen_string_literal: true
+# == Schema Information
+#
+# Table name: tags
+#
+#  id           :bigint           not null, primary key
+#  course_id    :bigint
+#  created_at   :datetime         not null
+#  updated_at   :datetime         not null
+#  archived     :boolean          default(TRUE)
+#  name         :text             default("")
+#  description  :text             default("")
+#  discarded_at :datetime
+#
 require 'pagy/extras/searchkick'
 
 class Tag < ApplicationRecord
@@ -15,9 +27,10 @@ class Tag < ApplicationRecord
       id: id,
       name: name,
       created_at: created_at,
+      discarded_at: discarded_at,
       description: description,
       course_id: course_id,
-      visibility: archived ? "visible" : "hidden",
+      visibility: archived ? "hidden" : "visible",
       tag_groups: tag_groups.map(&:name)
     }
   end
@@ -36,4 +49,9 @@ class Tag < ApplicationRecord
   has_many :tag_groups, through: :group_members, as: :group, source: :group, source_type: "TagGroup", inverse_of: :tags
 
   has_and_belongs_to_many :questions, dependent: :destroy
+
+  after_commit do
+    tag_groups.reindex
+    self.reindex(refresh: true)
+  end
 end

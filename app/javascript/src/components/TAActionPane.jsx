@@ -4,6 +4,7 @@ import QueueOpener from "./QueueOpener";
 import Select, { components } from "react-select";
 import { useQuery } from "react-query";
 import UserContext from "../context/UserContext";
+import TALog from "./TALog";
 
 const Option = (props) => {
   const { groupedTags } = props.selectProps;
@@ -46,7 +47,24 @@ export default (props) => {
 
   return (
     <div className="mb-4">
-      <div className="mb-4">
+      <div className="d-flex mb-4">
+        <div
+          className="w-100"
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+            gridGap: "10px",
+          }}
+        >
+          <QuestionAnswerer
+            userId={userId}
+            courseId={courseId}
+            enrollmentId={enrollmentId}
+          />
+          <QueueOpener userId={userId} courseId={courseId} />
+        </div>
+      </div>
+      <div>
         <label className="fw-bold">Filter Questions by Tag</label>
         <Select
           groupedTags={groupedTags}
@@ -64,28 +82,20 @@ export default (props) => {
             value: tag.id,
             label: tag.name,
           }))}
-          options={tags?.map((tag) => ({
-            value: tag.id,
-            label: tag.name,
-          }))}
+          options={tags
+            ?.filter((tag) => {
+              const pair = Object.entries(groupedTags || [])?.find(
+                ([k, v]) => parseInt(k, 10) === tag.id
+              );
+              if (typeof pair !== "undefined") {
+                return pair[1] > 0;
+              }
+            })
+            .map((tag) => ({
+              value: tag.id,
+              label: tag.name,
+            }))}
         />
-      </div>
-      <div className="d-flex">
-        <div
-          className="w-100"
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-            gridGap: "10px",
-          }}
-        >
-          <QuestionAnswerer
-            userId={userId}
-            courseId={courseId}
-            enrollmentId={enrollmentId}
-          />
-          <QueueOpener userId={userId} courseId={courseId} />
-        </div>
       </div>
     </div>
   );

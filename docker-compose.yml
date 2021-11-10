@@ -15,10 +15,6 @@ x-app: &app
     target: development
   tmpfs:
     - /tmp
-  environment:
-    REDIS_URL: redis://@redis:6379/1
-    DATABASE_URL: postgres://postgres:postgres@postgres:5432/
-    ELASTICSEARCH_URL: http://elastic-search:9200
   entrypoint: ./bin/docker/entrypoints/wait-for-web.sh
   volumes:
     - .:/usr/src/app:cached
@@ -32,6 +28,7 @@ x-app: &app
   depends_on:
     - postgres
     - redis
+    - elastic-search
 services:
   elastic-search:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.15.1
@@ -41,6 +38,7 @@ services:
     environment:
       - discovery.type=single-node
       - ES_JAVA_OPTS=-Xms750m -Xmx750m
+      - xpack.security.enabled=true
   metabase:
     image: metabase/metabase:v0.41.0
     ports:
@@ -72,7 +70,6 @@ services:
     #ports:
       #- "127.0.0.1:6379:6379"
     restart: on-failure
-
   web:
     <<: *app
     entrypoint: ./bin/docker/entrypoints/wait-for-postgres.sh
@@ -81,9 +78,13 @@ services:
       - "0.0.0.0:3000:3000"
     stdin_open: true
     tty: true
+    env_file:
+      .env
   worker:
     <<: *app
     command: bundle exec sidekiq -C config/sidekiq.yml
+    env_file:
+      .env
 
 volumes:
   postgresql:

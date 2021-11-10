@@ -1,5 +1,5 @@
 <div class="mb-2">
-  <label class="fw-bold"> Currently Handled By </label>
+  <label class="fw-bold"> <%= label_msg %> </label>
   <div>
     <%= link_to user_name, course_enrollment_path(question.course, question.question_state.user.enrollment_in_course(question.course)) %>
   </div>

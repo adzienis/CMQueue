@@ -1,22 +1,20 @@
-class Analytics::Metabase::Dashboard
-  def initialize(dashboard:, metabase:)
-    @dashboard = dashboard
+class Analytics::Metabase::Card
+  def initialize(card:, metabase:)
+    @card = card
     @metabase = metabase
   end
 
   def id
-    dashboard["id"]
+    card["id"]
   end
 
-  def archive
-    Analytics::Metabase::Dashboards::ArchiveDashboard.new(dashboard_id: id, metabase: metabase).call
-  end
-
-  def unarchive
-    Analytics::Metabase::Dashboards::UnarchiveDashboard.new(dashboard_id: id, metabase: metabase).call
+  def add_to_dashboard(dashboard_id)
+    Analytics::Metabase::Dashboards::AddCardToDashboard.new(metabase: metabase,
+                                                            dashboard_id: dashboard_id,
+                                                            card_id: id).call
   end
 
   private
 
-  attr_reader :dashboard, :metabase
+  attr_reader :card, :metabase
 end

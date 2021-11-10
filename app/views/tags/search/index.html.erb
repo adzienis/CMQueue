@@ -1,10 +1,11 @@
 <%
   msg = if @pagy.count == 1
-          "#{@pagy.count} tags in #{@results.took} ms"
+          "#{@pagy.count} tag in #{@results.took} ms"
         else
           "#{@pagy.count} tags in #{@results.took} ms"
         end
 %>
+
 
 <div class="mb-3">
   <h1 class="mb-0">
@@ -15,14 +16,12 @@
   </div>
 </div>
 
-<div class="card card-body shadow-sm mb-2">
-  <%= form_tag(search_course_tags_path(@course, request.query_parameters), method: :get, html: { autocomplete: "off" }) do %>
-    <div class="mb-2">
-      <%= text_field_tag(:q, params[:q], class: "form-control") %>
-    </div>
-    <%= submit_tag("Search", class: "btn btn-primary") %>
-  <% end %>
-</div>
+<%= render(Shared::Search::SearchBarComponent.new(resources: :tags,
+                                                  course: @course,
+                                                  query_parameters: request.query_parameters,
+                                                  options: {
+                                                    actions: [:new]
+                                                  })) %>
 <div class="d-flex">
   <div class="card card-body shadow-sm me-2" style="width: 300px; max-width: 300px">
     <%= render(Shared::Search::SearchPaneComponents.new(results: @results,
@@ -33,8 +32,37 @@
   </div>
   <div class="w-100">
     <h3> Results <small>(<%= msg %>)</small></h3>
+    <div class="card card-body d-flex flex-row">
+      <% if @results.aggs.present? %>
+        <div class="fw-bold">
+          Sort:
+        </div>
+        <div class="d-grid w-100" style="grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); justify-items: center">
+          <% @results.aggs.keys.each do |category| %>
+            <% if @results.aggs[category]["buckets"].present? %>
+              <div>
+                <%= render(Shared::Search::SortLinkComponent.new(category: category,
+                                                                 query_params: request.query_parameters,
+                                                                 course: @course,
+                                                                 resources: :tags)) %>
+              </div>
+            <% end %>
+          <% end %>
+      <% end %>
+      </div>
+    </div>
+    <% if @results.results.empty? %>
+      <div class="alert alert-warning">
+        No Tags
+      </div>
+    <% end %>
     <% @results.results.each do |tag| %>
       <div class="card mb-2 shadow-sm position-relative">
+        <span class="position-absolute" style="top: -10px">
+          <%= send(:tag).div class: "badge rounded-pill #{tag.archived ? "bg-danger" : "bg-success"}" do %>
+                <%= tag.archived ? "Hidden" : "Visible" %>
+              <% end %>
+        </span>
         <div class="card-body">
           <div class="d-flex align-items-center">
             <h4 class="me-1">
@@ -42,11 +70,6 @@
                 <%= tag.name %>
               <% end %>
             </h4>
-            <div class="h-100 d-flex align-items-center">
-              <%= send(:tag).div class: "badge rounded-pill #{tag.archived ? "bg-danger" : "bg-success"}" do %>
-                <%= tag.archived ? "Hidden" : "Visible" %>
-              <% end %>
-            </div>
           </div>
           <div>
             <label class="fw-bold"> Created At </label>

@@ -10,6 +10,8 @@ class EnrollmentAbility
       enrollment.new_record?
     end
 
+    can :search, Enrollment if @staff_roles.any?
+
     can :create, Enrollment do |enrollment|
       (enrollment.user == user && enrollment.role.name == "student") || (user.instructor_of?(enrollment.course))
     end
@@ -22,7 +24,7 @@ class EnrollmentAbility
       (enrollment.user == user) ||  user.instructor_of?(enrollment.course)
     end
 
-    can [:update], Enrollment, Enrollment.joins(:role).where(user: user).or(Enrollment.where("roles.resource_id": @staff_roles)) do |enrollment|
+    can :update, Enrollment, Enrollment.joins(:role).where(user: user).or(Enrollment.where("roles.resource_id": @staff_roles)) do |enrollment|
       next true if user.instructor_of?(enrollment.course)
       if context[:params][:enrollment].present?
         next false if Role.higher_security?(Role.find(context[:params][:enrollment][:role_id]), enrollment.role)

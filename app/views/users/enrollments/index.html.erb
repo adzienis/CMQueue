@@ -14,10 +14,48 @@
           <div class="text-muted mb-3">
             All the courses in which you are currently enrolled as a student.
           </div>
+          <%= render(Users::Enrollments::EnrollmentsComponent.new(enrollments: current_user.student_enrollments)) %>
+        </div>
+
+
+        <div class="mb-3">
+          <h1 class="mb-0 text-nowrap">
+            Instructor Courses
+          </h1>
+          <div class="text-muted mb-3">
+            All the courses in which you are currently enrolled as a TA or instructor.
+          </div>
+
+          <%= render(Users::Enrollments::EnrollmentsComponent.new(enrollments: current_user.staff_enrollments)) %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<% tag.div class: "d-flex justify-content-center container mt-4" do %>
+
+  <div
+    style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      grid-column-gap: 5%;
+      justify-items: center;"
+    class="d-grid w-100"
+  >
+    <div class="w-100 mb-3">
+      <div class="d-grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); grid-column-gap: 15px">
+        <div class="mb-3">
+          <h1 class="mb-0 text-nowrap">
+            Student Courses
+          </h1>
+          <div class="text-muted mb-3">
+            All the courses in which you are currently enrolled as a student.
+          </div>
 
           <%= content_tag :div, id: "search-course", data: {
             userId: current_user.id,
-          }.to_json do %><% end %>
+          }.to_json do %>
+          <% end %>
         </div>
 
 
@@ -31,10 +69,11 @@
 
           <%= content_tag :div, id: "add-course-by-code", data: {
             userId: current_user.id,
-          }.to_json do %><% end %>
+          }.to_json do %>
+          <% end %>
         </div>
 
       </div>
     </div>
   </div>
-</div>
+<% end %>

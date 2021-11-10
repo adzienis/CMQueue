@@ -12,29 +12,29 @@
   <%= f.full_error :enrollment, class: "invalid-feedback d-block fw-bold", style: "font-size: 1rem" %>
   <%= f.hidden_field :enrollment_id, value: current_user.enrollment_in_course(@course).id %>
   <%= f.hidden_field :course_id, value: @course.id %>
-  <%= f.input :tried, label: "What have you tried?",
+  <%= f.input :tried, label: "what have you tried?",
               as: :text,
-              placeholder: 'Describe what steps you have taken so far to solve your question.'
+              placeholder: 'describe what steps you have taken so far to solve your question.'
   %>
   <%= f.input :description,
               as: :text,
-              label: "Description",
-              placeholder: "Describe your current problem that you are trying to solve, as well as the context."
+              label: "description",
+              placeholder: "describe your current problem that you are trying to solve, as well as the context."
   %>
   <%= f.input :location,
               as: :text,
-              label: "Location/Zoom Link",
-              placeholder: "Use the short zoom link."
+              label: "location/zoom link",
+              placeholder: "use the short zoom link."
   %>
   <hr class="mt-4">
   <%= simple_fields_for :tag_groups do |ff| %>
     <div class="mb-2">
       <h5 class="form-label fw-bold mb-0">
-        Tags
+        tags
       </h5>
 
       <div class="text-muted">
-        Select tags that appropriately categorize your question. Each category requires at least
+        select tags that appropriately categorize your question. each category requires at least
         one tag.
       </div>
     </div>
@@ -62,20 +62,20 @@
   <% end %>
 
 
-  <%= f.submit (question.new_record? ? :Submit : :Update),
+  <%= f.submit (question.new_record? ? :submit : :update),
                class: "btn btn-success",
                data: {
-                 "disable-with": "Loading",
+                 "disable-with": "loading",
                  "form-target": "submit"
                } %>
 
-  <%= tag.button :Unfreeze,
+  <%= tag.button :unfreeze,
                  type: "submit",
                  form: "unfreeze",
                  class: "btn btn-primary",
-                 data: { "disable-with": "Loading",
+                 data: { "disable-with": "loading",
                  } if question.frozen? %>
-  <%= tag.button :Delete, type: "submit", form: "delete", class: "btn btn-danger", data: { "disable-with" => "Loading" } if !question.new_record? %>
+  <%= tag.button :delete, type: "submit", form: "delete", class: "btn btn-danger", data: { "disable-with" => "loading" } if !question.new_record? %>
 <% end %>
 
 <%= form_with url: update_state_question_path(question), id: "unfreeze", local: false do |f| %>
@@ -86,5 +86,3 @@
   <%= f.hidden_field :course_id, value: question.course.id %>
   <%= f.hidden_field :state, value: "unresolved" %>
 <% end unless question.new_record? %>
-
-

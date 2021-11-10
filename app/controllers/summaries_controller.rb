@@ -21,7 +21,7 @@ class SummariesController < ApplicationController
 
     @states = QuestionState.all
     @states = @states.accessible_by(current_ability)
-    @states = @states.with_courses(@course.id) if params[:course_id]
+    @states = @states.with_courses(@course) if params[:course_id]
     if start_time.present? and end_time.present?
       @states = @states
                   .where('question_states.created_at < ?', end_time.end_of_day)
@@ -43,9 +43,9 @@ class SummariesController < ApplicationController
 
     authorize! :read, @course
 
-    tas = tas.joins(:enrollments, enrollments: :question_state)
+    tas = tas.joins(enrollments: [:question_states, {role: :course}])
              .where('question_states.created_at > ?', 15.minutes.ago)
-             .merge(QuestionState.with_courses(@course.id))
+             .merge(QuestionState.joins(:course).with_courses(@course))
              .distinct(:id)
 
     respond_with tas

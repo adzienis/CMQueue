@@ -1,0 +1,21 @@
+<div id="<%= dom_id(notification) %>"
+     data-controller="toast"
+     class="toast"
+     role="alert"
+     aria-live="assertive"
+     aria-atomic="true"
+>
+  <div class="toast-header">
+    <strong class="me-auto">Notification</strong>
+    <small><%= notification.created_at.to_formatted_s(:american_short) %></small>
+    <%= button_to "", read_notification_path(notification),
+                  remote: true,
+                  "data-turbo": false,
+                  method: :patch,
+                  class: "btn-close"
+    %>
+  </div>
+  <div class="toast-body">
+    <%= message %>
+  </div>
+</div>

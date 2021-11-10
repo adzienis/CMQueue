@@ -1,0 +1,6 @@
+<turbo-frame id="open-button" class="w-100">
+  <%= button_to msg, open_course_path(course, course: { open: !open? }),
+                class: "btn queue-button w-100 #{button_class}",
+                method: :patch, "data-disable-with": loading_msg
+  %>
+</turbo-frame>

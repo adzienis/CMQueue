@@ -81,10 +81,5 @@
   </div>
 
 
-  <%= turbo_frame_tag "question-creator-container",
-                      "data-question_form-target": "form",
-                      src: request.path,
-                      class: "w-100" do %>
     <%= render partial: "question_creator", locals: { question: question, available_tags: available_tags } %>
-  <% end %>
 </div>

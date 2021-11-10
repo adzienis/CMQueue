@@ -9,7 +9,7 @@ class TagGroups::SearchController < ApplicationController
   end
 
   def index
-    # authorize! :search, Enrollment
+    authorize! :search, TagGroup
 
     builder = Search::ClauseBuilder.new(attributes: [], params: params)
 

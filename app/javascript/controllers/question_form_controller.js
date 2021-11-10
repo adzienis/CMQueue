@@ -69,7 +69,8 @@ export default class extends Controller {
               }
             });
           }
-        } else {
+        } else if (!result.data && old_state === "resolving") {
+          old_state = null;
           this.modal.hide();
           this.formTarget.reload();
         }

@@ -1,0 +1,5 @@
+<div id="notifications" class="position-fixed" style="z-index: 10000; right: 7px; top: 7px">
+  <% current_user.notifications.unread.each do |notification| %>
+    <%= render(Notifications::NotificationComponent.new(notification: notification)) %>
+  <% end %>
+</div>

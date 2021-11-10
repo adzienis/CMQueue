@@ -1,4 +1,4 @@
-class Analytics::Queries::TimePerQue
+class Analytics::Queries::TimePerQueue
   def initialize(course:)
     @course = course
   end

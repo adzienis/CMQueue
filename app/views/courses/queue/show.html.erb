@@ -1,53 +1,21 @@
 <h1>
   <%= @course.name %>
 </h1>
-
 <hr>
 
 <div
   style="display: flex; flex-direction: column; align-items: center" class="w-100">
 
-  <%= content_tag :div, id: "queue-info-panel", class: 'w-100', data: {
-    courseId: @course.id, userId: current_user.id, enrollment: @enrollment.as_json(include: :role)
-  }.to_json do %><% end %>
+  <%= render(Courses::StaffInfoPanelComponent.new(course: @course)) %>
 
-  <% if current_user.student_of?(@course) %>
-
-    <%= render partial: "questions/turbo_question_creator", locals: { question: @question, available_tags: @available_tags}  %>
-
-  <% elsif current_user.staff_of?(@course) %>
-
-    <%= content_tag :div, id: "ta-action-pane", data: {
-      courseId: @course.id, userId: current_user.id,
-      enrollmentId: current_user.enrollment_in_course(@course).id
-    }.to_json, class: 'w-100' do %><% end %>
-
-    <hr class="w-100">
-  <% end %>
-
-
-  <% if current_user.staff_of?(@course) %>
-    <%= content_tag :div, id: "ta-queue-view", data: {
-      courseId: @course.id, userId: current_user.id,
-      enrollmentId: current_user.enrollment_in_course(@course).id
-    }.to_json, class: 'w-100' do %><% end %>
-  <% end %>
-
-
-  <% if false %>
-    <turbo-frame data-controller="queued_questions"
-                 data-queued_questions-course-id-value="<%= @course.id %>"
-                 id="questions"
-                 src="<%= queued_questions_course_path(@course) %>">
-      <div class="mb-5">
-        <% @records.each do |question| %>
-          <div class="card card-body w-100">
-            <%= question.description %>
-          </div>
-        <% end %>
-      </div>
-
-      <%== render partial: 'pagy/nav', locals: {pagy: @pagy} %>
+  <div class="w-100"
+       data-controller="turbo-refresher"
+       data-turbo-refresher-event-name-value="invalidate:question-feed">
+    <turbo-frame id="feed" class="w-100" data-turbo-refresher-target="frame" src="<%= feed_course_path(@course) %>">
+      <%= render(Courses::Feed::FeedComponent.new(course: @course,
+                                                  questions: @questions,
+                                                  current_user: current_user,
+                                                  pagy: @pagy)) %>
     </turbo-frame>
-  <% end %>
+  </div>
 </div>

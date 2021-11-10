@@ -16,22 +16,6 @@
     <% end %>
 
 
-    <% if @results.aggs.present? %>
-      <% @results.aggs.keys.each do |category| %>
-        <% if  @results.aggs[category]["buckets"].present? %>
-          <h5> Filter by <%= category.humanize.titleize %></h5>
-          <%= link_to "Remove #{category.humanize.titleize} filters",
-                      course_questions_path(@course,
-                                            request.query_parameters.reject{|k,v| k == category }) %>
-
-          <% @results.aggs[category]["buckets"].each do |bucket| %>
-            <%= link_to "#{bucket["key"]}",
-                        course_questions_path(@course,
-                                              request.query_parameters.merge(category => bucket["key"])), class: params[category] == bucket["key"] ? "fw-bold" : "" %>
-          <% end %>
-        <% end %>
-      <% end %>
-    <% end %>
   </div>
   <% @results.results.each do |question| %>
     <div class="card card-body">
