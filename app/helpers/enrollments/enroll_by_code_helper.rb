@@ -1,0 +1,2 @@
+module Enrollments::EnrollByCodeHelper
+end

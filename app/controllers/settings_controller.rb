@@ -19,9 +19,7 @@ class SettingsController < ApplicationController
   end
 
   def index
-    if params[:type].present?
-      @settings = @settings.where(resource_type: params[:type], resource_id: params[:id])
-    end
+    @settings = @course.settings if request.path_parameters[:course_id].present?
 
     respond_with @settings
   end

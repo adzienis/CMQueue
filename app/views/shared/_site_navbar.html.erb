@@ -20,18 +20,14 @@
             <%= link_to "Enrollments", current_user_enrollments_url, class: "nav-link #{request.path == current_user_enrollments_path ? 'active' : ''}" %>
           </li>
           <li class="nav-item">
-            <%= link_to "Account", user_path(current_user), class: "nav-link #{request.path.include?("users/#{current_user.id}") ? 'active' : ''}" %>
+            <%= link_to "Account", account_path, class: "nav-link #{controller_path == "accounts" ? 'active' : ''}" %>
           </li>
           <li class="nav-item">
-            <%= link_to "Sign out", destroy_user_session_path, class: "nav-link", "data-turbo":false %>
-          </li>
-          <li class="nav-item">
-            <%= link_to "Admin Dashboard", "/admin", class: "nav-link", data: { turbo: "false" } if current_user.has_role? :admin %>
+            <%= link_to "Sign out", destroy_user_session_path, class: "nav-link" %>
           </li>
           <li class="nav-item flex-grow-1 justify-content-center d-flex">
             <%= yield :nav_content %>
           </li>
-
           <li class="nav-item">
             <a class="nav-link active">
               <b>

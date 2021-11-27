@@ -1,6 +1,10 @@
 class Questions::QuestionStateBadgeComponent < ViewComponent::Base
-  def initialize(state:)
-    @state = state
+  def initialize(question_state:)
+    @question_state = question_state
+  end
+
+  def state
+    question_state.state
   end
 
   def class_param
@@ -16,10 +20,10 @@ class Questions::QuestionStateBadgeComponent < ViewComponent::Base
                  "bg-resolved"
                end
 
-    "badge rounded-pill #{bg_class}"
+    "badge #{bg_class}"
   end
 
   private
 
-  attr_reader :state
+  attr_reader :question_state
 end

@@ -4,7 +4,7 @@
 # pick it up automatically.
 ---
 :verbose: false
-:concurrency: 3
+:concurrency: 5
 :max_retries: 3
 
 # Set timeout to 8 on Heroku, longer if you manage your own systems.
@@ -17,7 +17,8 @@
   - critical
   - sentry
   - mailers
-  - default
+  - [default, 2]
+  - course_queue
   - action_mailbox_routing
   - action_mailbox_incineration
   - active_storage_analysis

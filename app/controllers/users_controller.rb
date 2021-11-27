@@ -3,6 +3,13 @@
 class UsersController < ApplicationController
   load_and_authorize_resource id_param: :user_id
 
+  def current_ability
+    @current_ability ||= ::UserAbility.new(current_user,{
+      params: params,
+      path_parameters: request.path_parameters
+    })
+  end
+
   def index
     @users_ransack = @users.with_courses(params[:course_id]) if params[:course_id]
 

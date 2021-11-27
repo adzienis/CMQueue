@@ -53,6 +53,7 @@ module Users
     end
 
     def failure
+      flash[:error] = "You have been signed out."
       redirect_to root_path
     end
 

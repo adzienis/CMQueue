@@ -1,0 +1,47 @@
+<tr class="position-relative">
+  <td style="width: 100%">
+    <div>
+      <div class="mb-2">
+        <%= link_to course_question_path(question.course, question), class: "fw-bold" do %>
+          <%= question.user.full_name.titleize %> <i class="fas fa-external-link-alt"></i>
+
+          <span>
+          <%= render(Questions::QuestionStateBadgeComponent.new(question_state: question.question_state)) %>
+        </span>
+        <% end %>
+      </div>
+      <div>
+        <div>
+          <small class="fw-bold"> Description </small>
+        </div>
+        <%= question.description %>
+      </div>
+      <div>
+        <div>
+          <small class="fw-bold"> Tried </small>
+        </div>
+        <%= question.tried %>
+      </div>
+      <div>
+        <div>
+          <small class="fw-bold"> Location </small>
+        </div>
+        <%= question.location %>
+      </div>
+      <div>
+        <small class="fw-bold"> Tags: </small>
+        <% question.tags.map do |tag| %>
+          <%= link_to(tag.name, course_tag_path(question.course, tag), class: "badge bg-danger text-white") %>
+        <% end %>
+      </div>
+      <%= render(Shared::Search::CardFooterComponent.new(record: question,
+                                                         course: question.course,
+                                                         options: {
+                                                           actions: [:edit]
+                                                         })) %>
+    </div>
+  </td>
+  <td style="min-width: 211px">
+    <%= question.created_at.strftime("%a, %x, %I:%M %p") %>
+  </td>
+</tr>

@@ -3,6 +3,15 @@
 </h1>
 <hr>
 
+<ul class="nav nav-tabs">
+  <li class="nav-item">
+    <%= link_to "Queue", queue_course_path(@course), class: "nav-link active" %>
+  </li>
+  <li class="nav-item">
+    <%= link_to "TA Log", queue_staff_log_course_path(@course), class: "nav-link" %>
+  </li>
+</ul>
+
 <div
   style="display: flex; flex-direction: column; align-items: center" class="w-100">
 
@@ -12,10 +21,9 @@
        data-controller="turbo-refresher"
        data-turbo-refresher-event-name-value="invalidate:question-feed">
     <turbo-frame id="feed" class="w-100" data-turbo-refresher-target="frame" src="<%= feed_course_path(@course) %>">
-      <%= render(Courses::Feed::FeedComponent.new(course: @course,
-                                                  questions: @questions,
-                                                  current_user: current_user,
-                                                  pagy: @pagy)) %>
+      <% q = Courses::FeedController.new;  q.set_request!(request); q.set_response!(response); %>
+      <% q.process(:index) %>
+      <%= q.render_to_string(layout: false) %>
     </turbo-frame>
   </div>
 </div>

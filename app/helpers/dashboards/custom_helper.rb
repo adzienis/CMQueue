@@ -1,0 +1,2 @@
+module Dashboards::CustomHelper
+end

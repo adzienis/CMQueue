@@ -20,7 +20,7 @@ module Courses
     end
 
     def value
-      course.active_questions.latest_by_state("unresolved", "frozen").count
+      course.questions_on_queue.count
     end
 
     private

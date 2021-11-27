@@ -1,6 +1,7 @@
-<div class="flash-messages">
+<div class="flash-messages position-absolute shadow-sm"
+     style="top: 10px; left: 50%; transform: translateX(-50%); z-index: 10000">
   <% flash.each do |key, value| %>
-    <div class="<%= flash_class(key) %>">
+    <div class="<%= flash_class(key) %> mb-0">
       <%= value %>
     </div>
   <% end %>

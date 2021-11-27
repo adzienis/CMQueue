@@ -18,7 +18,7 @@ class TagGroups::SearchController < ApplicationController
 
     @enrollment_results = TagGroup.pagy_search(params[:q].present? ? params[:q] : "*",
                                                aggs: { tags: {} },
-                                               where: where_params.merge({ discarded_at: nil }),
+                                               where: where_params.merge({ discarded_at: nil, course_id: @course.id }),
                                                order: order_params)
     @pagy, @results = pagy_searchkick(@enrollment_results, items: 10)
   end

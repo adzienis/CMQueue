@@ -1,7 +1,8 @@
 module Courses
   class QuestionPositionComponent < QueueInfoComponent
-    def initialize(question:)
+    def initialize(question:, position: nil)
       @question = question
+      @position = position
     end
 
     def title
@@ -20,16 +21,19 @@ module Courses
     end
 
     def value
-      return "N/A" unless position.present?
-      position == 0 ? "Next" : position + 1
+      return "N/A" if question.destroyed?
+      return "N/A" unless wrapped_position.present?
+      (wrapped_position+1).ordinalize
     end
 
-    def position
+    def wrapped_position
+      return position if position.present?
+
       question.position_in_course
     end
 
     private
 
-    attr_reader :question
+    attr_reader :question, :position
   end
 end

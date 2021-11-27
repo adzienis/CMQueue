@@ -12,18 +12,21 @@ class ImportEnrollmentsJob < ApplicationJob
     end
   end
 
-
   def perform(json:, course:, current_user: nil)
     new_imports = 0
     updated_imports = 0
     message = ""
     failure = false
 
+    pres_sections = course.courses_sections.to_a
+    pres_sections_h = pres_sections.map { |v| [v[:name], v[:id]] }.to_h
+
     json.each do |student|
       email = student["email"]
       name = student["name"]
 
       enrollment = student["enrollments"][0]
+      student_sections = student["enrollments"].map { |e| e["section"] }
       type = enrollment["type"]
 
       split_name = name.split(" ")
@@ -42,46 +45,62 @@ class ImportEnrollmentsJob < ApplicationJob
 
       enrollment = user.enrollment_in_course(course)
 
+      student_sections.each do |sec|
+        if pres_sections_h[sec["name"]].nil?
+          created = course.courses_sections.create(name: sec["name"])
+          pres_sections_h[created.name] = created.id
+        end
+      end
+
       if enrollment.present?
         unless role_equal?(user.enrollment_in_course(course).role.name, type)
           updated_imports += 1
           enrollment.discard
           case type
           when "StudentEnrollment"
-            user.add_role :student, course
+            user.enrollments.create(role: course.student_role,
+                                    courses_section_ids: student_sections.map { |v| pres_sections_h[v["name"]] })
           when "TaEnrollment"
-            user.add_role :ta, course
+            user.enrollments.create(role: course.ta_role,
+                                    courses_section_ids: student_sections.map { |v| pres_sections_h[v["name"]] })
           when "TeacherEnrollment"
-            user.add_role :instructor, course
+            user.enrollments.create(role: course.instructor_role,
+                                    courses_section_ids: student_sections.map { |v| pres_sections_h[v["name"]] })
           end
         end
       else
         new_imports += 1
         case type
         when "StudentEnrollment"
-          user.add_role :student, course
+          user.enrollments.create(role: course.student_role,
+                                  courses_section_ids: student_sections.map { |v| pres_sections_h[v["name"]] })
         when "TaEnrollment"
-          user.add_role :ta, course
+          user.enrollments.create(role: course.ta_role,
+                                  courses_section_ids: student_sections.map { |v| pres_sections_h[v["name"]] })
         when "TeacherEnrollment"
-          user.add_role :instructor, course
+          user.enrollments.create(role: course.instructor_role,
+                                  courses_section_ids: student_sections.map { |v| pres_sections_h[v["name"]] })
         else
           new_imports -= 1
         end
       end
 
-      rescue JSON::ParserError => e
-        message = "Failed to import file: failed to parse file (make sure to upload a valid json file)."
-        failure = true
-        break
-      rescue Exception => e
-        message = "Failed to import file."
-        failure = true
-        break
+    rescue JSON::ParserError => e
+      message = "Failed to import file: failed to parse file (make sure to upload a valid json file)."
+      failure = true
+      break
+    rescue Exception => e
+      message = "Failed to import file."
+      failure = true
+      break
     end
 
-    message = "Successfully imported #{json.count} entries.
-                       Created #{new_imports} new entries, and updated #{updated_imports} entries." unless failure
+    unless failure
+      message = <<~MSG.chomp
+        Successfully imported enrollments. Created #{new_imports} new entries, and updated #{updated_imports} entries.
+      MSG
+    end
 
-    SiteNotification.with(message: message).deliver_later(current_user)
+    SiteNotification.with(message: message, site: true).deliver_later(current_user)
   end
 end

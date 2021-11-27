@@ -6,19 +6,14 @@ class Forms::Question::QuestionCreatorComponent < ViewComponent::Base
   end
 
   def question
-    @question_form.question
+    question_form.question
   end
 
   def creator_classes
-    "#{ question.frozen? ? "frozen-card" : ""}"
-  end
-
-  def creator_styles
-    if question.user&.active_question?
-      ""
-    else
-      "#{question.course&.open ? "" : "pointer-events: none; opacity: .6"}"
-    end
+    classes = ""
+    classes = "#{classes} frozen-card" if question.frozen?
+    classes = "#{classes} disabled" if question.course.present? && !question.course&.open? && question.new_record?
+    classes
   end
 
   private

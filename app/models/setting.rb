@@ -12,41 +12,10 @@
 class Setting < ApplicationRecord
   enum setting_type: [:boolean, :integer, :string]
 
-  # don't know if I like this, might want to just encode in the database
-  def metadata
-    case key
-    when "searchable"
-      {
-        type: :boolean,
-        label: "General"
-      }
-    when "enrollment"
-      {
-        type: :boolean,
-        label: "Enrollment"
-      }
-    when "searchable_enrollment"
-      {
-        type: :boolean,
-        label: "Enrollment"
-      }
-    when "allow_enrollment"
-      {
-        type: :boolean,
-        label: "Enrollment"
-      }
-    when "desktop_notifications"
-      {
-        type: :boolean,
-        label: "Notifications"
-      }
-    when "site_notifications"
-      {
-        type: :boolean,
-        label: "Notifications"
-      }
-    end
-  end
+  belongs_to :resource, polymorphic: true
+  has_one :self_ref, :class_name => self.name, :foreign_key => :id
+  has_one :course, through: :self_ref, source: :resource, source_type: "Course"
+  has_one :user, through: :self_ref, source: :resource, source_type: "User"
 
   scope :with_type, ->(type) { where(resource_type: type) }
   scope :with_user, ->(user_id) { where(resource_id: user_id, resource_type: "User") }
@@ -68,6 +37,14 @@ class Setting < ApplicationRecord
 
   def self.option_value_of_key(key)
     find_by_key(key).option_value
+  end
+
+  def description
+    value[key]["description"]
+  end
+
+  def self.course
+    Course.find(resource_id) if resource_type == "Course"
   end
 
 

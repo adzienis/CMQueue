@@ -1,0 +1,14 @@
+<li class="list-group-item">
+  <%= form_with model: setting, url: polymorphic_path([record, setting]), data: { controller: 'autosave', autosave_delay_value: '0' } do |f| %>
+    <%= f.label setting.key.humanize, class: "fw-bold" %>
+    <div class="text-muted">
+      <%= setting.description %>
+    </div>
+    <div class="form-check form-switch">
+      <%= f.check_box setting.key,
+                      class: "form-check-input",
+                      data: { action: 'autosave#save' },
+                      checked: setting.option_value, autocomplete: "off", checked_value: true, unchecked_value: false %>
+    </div>
+  <% end %>
+</li>

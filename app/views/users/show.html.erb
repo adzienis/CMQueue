@@ -1,16 +1,16 @@
-<h3>
-  <%= User.name.humanize %>
-</h3>
-
-<%= render partial: "shared/show_model",
-           locals: {
-             model_instance: @user,
-             options: {
-               except: [
-                 :uid, :provider, :course, :access_tokens, :access_grants,
-                 :courses, :roles, :enrollments, :question_states,
-                 :question_state, :notifications, :settings, :created_at, :updated_at
-               ]
-             }
-           }
-%>
+<div class="card shadow-sm">
+  <div class="card-body">
+    <div class="card-title">
+      <h4>
+        <%= @user.full_name %>
+      </h4>
+    </div>
+    <hr>
+    <div class="mb-2">
+      <label class="fw-bold"> Email </label>
+      <div>
+        <%= @user.email %>
+      </div>
+    </div>
+  </div>
+</div>

@@ -20,7 +20,7 @@ class Courses::OpenController < ApplicationController
 
     @course.update(open_params)
 
-    respond_with @course
+    respond_with @course, flash: false
   end
 
   def show

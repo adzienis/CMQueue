@@ -47,8 +47,15 @@ consumer.subscriptions.create("QueueChannel", {
           }
 
           if (data.type === "event") {
-            const event = new Event(data.event);
-            document.dispatchEvent(event);
+            if (typeof data.payload !== undefined) {
+              const event = new CustomEvent(data.event, {
+                detail: data.payload,
+              });
+              document.dispatchEvent(event);
+            } else {
+              const event = new Event(data.event);
+              document.dispatchEvent(event);
+            }
           }
         };
         this.current_channel.role.received = async (data) => {

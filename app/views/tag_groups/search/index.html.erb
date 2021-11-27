@@ -15,80 +15,30 @@
   </div>
 </div>
 
-<%= render(Shared::Search::SearchBarComponent.new(resources: :tag_groups,
-                                                  course: @course,
-                                                  query_parameters: request.query_parameters,
-                                                  options: {
-                                                    actions: [:new]
-                                                  })) %>
-<div class="d-flex">
-  <div class="card card-body shadow-sm me-2" style="width: 300px; max-width: 300px">
-    <%= render(Shared::Search::SearchPaneComponents.new(results: @results,
-                                                        course: @course,
-                                                        query_params: request.query_parameters,
-                                                        resources: :tag_groups,
-                                                        options: {
-                                                          sort_extra: [:created_at]
-                                                        }))
-    %>
-  </div>
+<turbo-frame id="search-container" class="search-container" data-turbo-action="advance" target="_top">
+  <%= render(Shared::Search::SearchPaneComponents.new(results: @results,
+                                                      course: @course,
+                                                      query_params: request.query_parameters,
+                                                      resources: :tag_groups,
+                                                      options: {
+                                                        sort_extra: [:created_at]
+                                                      }))
+  %>
   <div class="w-100">
-    <h3> Results <small>(<%= msg %>)</small></h3>
-    <div class="card card-body d-flex flex-row">
-      <% if @results.aggs.present? %>
-        <div class="fw-bold">
-          Sort:
-        </div>
-        <div class="d-grid w-100" style="grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); justify-items: center">
-          <% @results.aggs.keys.each do |category| %>
-            <% if @results.aggs[category]["buckets"].present? %>
-              <div>
-                <%= render(Shared::Search::SortLinkComponent.new(category: category,
-                                                                 query_params: request.query_parameters,
-                                                                 course: @course,
-                                                                 resources: :tag_groups)) %>
-              </div>
-            <% end %>
-          <% end %>
+    <%= render(Shared::Search::SearchBarComponent.new(resources: :tag_groups,
+                                                      course: @course,
+                                                      query_parameters: request.query_parameters,
+                                                      options: {
+                                                        actions: [:new]
+                                                      })) %>
+    <%= render(Shared::Search::ResultsComponent.new(course: @course, pagy: @pagy, search: @results, options: {
+      headers: [:tag_group, created_at: :sortable]
+    })) do |c| %>
+      <% @results.results.each do |result| %>
+        <%= c.result do %>
+          <%= render(TagGroups::Search::ResultRowComponent.new(tag_group: result)) %>
+        <% end %>
       <% end %>
-      </div>
-    </div>
-    <% if @results.results.empty? %>
-      <div class="alert alert-warning">
-        No Tag Groups
-      </div>
-    <% end %>
-    <% @results.results.each do |tag_group| %>
-      <div class="card mb-2 shadow-sm">
-        <div class="card-body">
-          <h4>
-            <%= link_to course_tag_group_path(@course, tag_group) do %>
-              <%= tag_group.name %>
-            <% end %>
-          </h4>
-          <div>
-            <label class="fw-bold"> Tags </label>
-            <div>
-              <% tag_group.tags.map do |tag| %>
-                <%= link_to(tag.name, course_tag_path(@course, tag)) %>
-              <% end %>
-            </div>
-          </div>
-          <div>
-            <label class="fw-bold"> Created At </label>
-            <div>
-              <%= tag_group.created_at.strftime("%a, %x, %I:%M %p") %>
-            </div>
-          </div>
-          <div>
-          </div>
-        </div>
-        <%= render(Shared::Search::CardFooterComponent.new(record: tag_group, course: @course)) %>
-      </div>
     <% end %>
   </div>
-
-</div>
-<div class="w-100 d-flex justify-content-center">
-  <%== render partial: "pagy/nav.html.erb", locals: { pagy: @pagy } %>
-</div>
+</turbo-frame>

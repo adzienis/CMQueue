@@ -3,30 +3,35 @@ module GuardableTransactions
 
   private
 
-  def promote_errors(child)
+  def promote_errors(association:nil, child:)
     child.errors.each do |attribute, message|
-      errors.add(attribute, message)
+      if association.present?
+        send(association).errors.add(attribute, message)
+        errors.add(association, "is invalid")
+      else
+        errors.add(attribute, message)
+      end
     end
   end
 
-  def guard_db(&block)
+  def guard_db(association:nil, &block)
     result = begin
-               transaction do
-                 result = yield
+               ActiveRecord::Base.transaction do
+                 yield
                  validate!
-                 result
+                 nil
                end
-             rescue ActiveRecord::RecordInvalid => error
+             rescue Exception => error
                error
              end
-    if result.instance_of? Exception
-      if result.instance_of? ActiveRecord::RecordInvalid
-        promote_errors(result.record)
-      else
-        nil
+    if result.is_a? Exception
+      if result.is_a? ActiveRecord::RecordInvalid
+        promote_errors(association: association, child: result.record)
       end
+      result
+    else
+      false
     end
-    reload and result
   end
 
 end

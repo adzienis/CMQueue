@@ -1,0 +1,19 @@
+<div class="card shadow-sm">
+  <div class="card-body">
+    <div class="card-title">
+      <h4>
+        <%= current_user.full_name %>
+      </h4>
+    </div>
+    <hr>
+    <div class="mb-2">
+      <label class="fw-bold"> Email </label>
+      <div>
+        <%= current_user.email %>
+      </div>
+    </div>
+  </div>
+  <div class="card-footer">
+    <%= button_to "Edit", edit_account_path, method: :get, class: "btn btn-warning" %>
+  </div>
+</div>

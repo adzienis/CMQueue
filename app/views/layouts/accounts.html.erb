@@ -1,0 +1,7 @@
+<% content_for :content do %>
+  <%= render Accounts::SidebarComponent.new do %>
+    <%= yield %>
+  <% end %>
+<% end %>
+
+<%= render template: "layouts/application" %>

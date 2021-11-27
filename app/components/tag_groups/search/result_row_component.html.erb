@@ -1,0 +1,19 @@
+<tr>
+  <td>
+    <div class="mb-2">
+      <%= link_to course_tag_group_path(tag_group.course, tag_group), class: "fw-bold" do %>
+        <%= tag_group.name.titleize %> <i class="fas fa-external-link-alt"></i>
+      <% end %>
+    </div>
+    <div>
+      <small class="fw-bold"> Tags: </small>
+      <% tag_group.tags.map do |tag| %>
+        <%= link_to(tag.name, course_tag_path(tag_group.course, tag), class: "badge bg-danger text-white") %>
+      <% end %>
+    </div>
+    <%= render(Shared::Search::CardFooterComponent.new(record: tag_group, course: tag_group.course, options: { actions: [:edit] })) %>
+  </td>
+  <td>
+    <%= tag_group.created_at.strftime("%a, %x, %I:%M %p") %>
+  </td>
+</tr>

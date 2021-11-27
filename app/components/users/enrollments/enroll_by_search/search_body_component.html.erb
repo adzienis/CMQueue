@@ -1,0 +1,14 @@
+<div id='search-body'>
+  <%= label_tag "Select a Course" %>
+  <div>
+    <% enrollment.errors.full_messages.each do |message| %>
+      <div class="invalid-feedback d-block">
+        <%= message %>
+      </div>
+    <% end %>
+  </div>
+  <div>
+    <%= collection_select :enrollment, :course_id, Course.with_setting_value("searchable", true), :id, :name, { selected: enrollment.role&.resource_id },
+                          class: "form-control #{enrollment.errors.any? ? "is-invalid" : ""}" %>
+  </div>
+</div>

@@ -24,6 +24,7 @@ import UserSettings from "../src/components/Settings";
 import attachTurboEvents from "../src/utilities/turboExtraEvents";
 import registerManager from "../src/utilities/registerComponent";
 import QuestionAnsweringTime from "../src/components/QuestionAnsweringTime";
+import Chart from "chart.js/auto";
 
 registerManager.register_component(AddCourseByCode, "#add-course-by-code");
 registerManager.register_component(CourseStatus, "#course-status");
@@ -47,6 +48,7 @@ registerManager.render_components();
 registerManager.register_hooks();
 
 window.queryClient = queryClient;
+window.Chart = Chart;
 
 import "../../assets/stylesheets/application.scss";
 import "../src/utilities/attachPopoverListeners";

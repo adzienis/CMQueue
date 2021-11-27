@@ -18,13 +18,17 @@ class Courses::FeedController < ApplicationController
 
     @question_results = Question.search(params[:q].present? ? params[:q] : "*",
                                         aggs: { tags: {} },
-                                        order: { created_at: :asc },
-                                        where: where_params.merge({ discarded_at: nil }),
-                                        limit: 1
+                                        includes: [:user, :tags, :question_states],
+                                        order: { created_at: { order: :asc, unmapped_type: :date }},
+                                                 where: where_params.merge({ discarded_at: nil, course_id: @course.id }),
+                                                 limit: 1
     )
     @questions = @question_results.results
     question = @question_results.results.first
-    question.transition_to_state("resolving", current_user.enrollment_in_course(@course).id)
+    if (error = question.resolving(enrollment_id: current_user.enrollment_in_course(@course).id))
+      flash[:error]  = error.message
+      redirect_to queue_course_path(@course) and return
+    end
 
     redirect_to answer_course_path(@course)
   end

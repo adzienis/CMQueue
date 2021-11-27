@@ -16,7 +16,8 @@ class SyncedTurboChannel < ApplicationCable::Channel
       )
       SyncedTurboChannel.broadcast_update_to user,
                                               target: "question-form",
-                                              html: ApplicationController.render(comp, layout: false)
+                                              html: ApplicationController.render(comp,
+                                                                                 layout: false)
     end
 
     SyncedTurboChannel.broadcast_replace_to course, user,
@@ -29,6 +30,10 @@ class SyncedTurboChannel < ApplicationCable::Channel
                                             html: ApplicationController
                                                     .render(Courses::QueueOpenStatusComponent.new(course: course),
                                                             layout: false))
+    QueueChannel.broadcast_to course, {
+      type: "event",
+      event: "invalidate:question-feed"
+    }
   end
 
   #
@@ -54,7 +59,19 @@ class SyncedTurboChannel < ApplicationCable::Channel
     end
   end
 
+  def request
+    connection.request_var
+  end
+
+  def set_variant
+    agent = request.user_agent
+    return request.variant = :tablet if agent =~ /(tablet|ipad)|(android(?!.*mobile))/i
+    return request.variant = :mobile if agent =~ /Mobile/
+    request.variant = :desktop
+  end
+
   def subscribed
+    set_variant
     if (stream_name = verified_stream_name_from_params).present?
       stream_from stream_name
       handle_reconnect_updates(stream_name)

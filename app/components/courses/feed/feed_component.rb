@@ -1,13 +1,16 @@
 module Courses
   module Feed
     class FeedComponent < ViewComponent::Base
-      def initialize(course:, questions:, current_user:, pagy:)
+      def initialize(search:,course:, questions:, pagy:)
         super
-
+        @search = search
         @course = course
         @questions = questions
-        @current_user = current_user
         @pagy = pagy
+      end
+
+      def tags
+        search.aggs["tags"]["buckets"].map{|k| k["key"]}
       end
 
       def available_tags
@@ -16,8 +19,7 @@ module Courses
 
       private
 
-      attr_reader :course, :questions, :current_user, :pagy
-
+      attr_reader :course, :questions, :pagy, :search
     end
   end
 end

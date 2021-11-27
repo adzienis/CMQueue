@@ -1,0 +1,19 @@
+<tr>
+  <td>
+    <div class="mb-2">
+      <%= link_to course_enrollment_path(enrollment.course, enrollment), class: "fw-bold" do %>
+        <%= enrollment.role.name.titleize %> <i class="fas fa-external-link-alt"></i>
+      <% end %>
+    </div>
+    <div>
+      <small class="fw-bold"> User: </small>
+      <span>
+      <%= enrollment.user.full_name %>
+      </span>
+    </div>
+    <%= render(Shared::Search::CardFooterComponent.new(record: enrollment, course: enrollment.course)) %>
+  </td>
+  <td>
+    <%= enrollment.created_at.strftime("%a, %x, %I:%M %p") %>
+  </td>
+</tr>

@@ -6,7 +6,16 @@ class Forms::Question::FormComponent < ViewComponent::Base
   end
 
   def question
-    question_form.question
+    @question ||= question_form.question
+  end
+
+  def course
+    @course ||= question.course
+  end
+
+  def tag_groups?
+    return false unless course.present?
+    course.tag_groups.filter{|v| v.tags.present? }.present?
   end
 
   private

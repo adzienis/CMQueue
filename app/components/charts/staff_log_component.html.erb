@@ -1,0 +1,62 @@
+<div class="card card-body shadow-sm" style="height: 600px">
+  <canvas id="staff-log-chart" style="height: 100%"></canvas>
+</div>
+<script>
+  new Chart(document.getElementById("staff-log-chart").getContext("2d"), {
+    type: "scatter",
+    data: {
+      datasets: [{
+        label: "Activity",
+        data: <%== data %>,
+        backgroundColor: <%== data_color %>,
+        borderColor: <%== data_color %>,
+        pointStyle: "line",
+        rotation: "90",
+        pointRadius: 8,
+        borderWidth: 3
+      }]
+    },
+    options: {
+      plugins: {
+        legend: {
+          display: true,
+          labels: {
+            generateLabels: () =>
+              ([{
+                text: "Resolved",
+                fillStyle: "#00ff00"
+              }, {
+                text: "Unresolved (TA put back on queue)",
+                fillStyle: "#777777"
+              }, {
+                text: "Frozen",
+                fillStyle: "#0000ff"
+              }, {
+                text: "Kicked",
+                fillStyle: "#ff0000"
+              }])
+
+          }
+        }
+      },
+      scales: {
+        x: {
+          type: "time",
+          min: <%= min_value %>,
+          max: <%= max_value %>,
+          time: {
+            unit: "minute",
+            stepSize: 20
+          }, ticks: {
+            includeBounds: true,
+            maxTicksLimit: 24,
+            align: "end"
+          }
+        },
+        y: {
+          type: "category"
+        }
+      }
+    }
+  });
+</script>

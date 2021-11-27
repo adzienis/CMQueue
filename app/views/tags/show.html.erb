@@ -11,12 +11,6 @@
     </div>
     <hr>
     <div class="mb-2">
-      <label class="fw-bold"> Id </label>
-      <div>
-        <%= @tag.id %>
-      </div>
-    </div>
-    <div class="mb-2">
       <label class="fw-bold"> Created At </label>
       <div>
         <%= @tag.created_at.to_formatted_s(:american_short) %>
@@ -30,6 +24,9 @@
     </div>
     <div class="mb-2">
       <label class="fw-bold"> Description </label>
+      <%= tag.div class: "alert alert-secondary" do %>
+        Empty
+      <% end unless @tag.description.present? %>
       <div>
         <%= @tag.description %>
       </div>
@@ -37,7 +34,7 @@
     <div class="mb-2">
       <label class="fw-bold"> Visibility </label>
       <div>
-        <%= tag.span class: "badge rounded-pill #{@tag.archived ? "bg-danger" : "bg-success"}" do %>
+        <%= tag.span class: "badge #{@tag.archived ? "bg-danger" : "bg-success"}" do %>
           <%= @tag.archived ? "Hidden" : "Visible" %>
         <% end %>
       </div>
@@ -45,13 +42,13 @@
     <div class="mb-2">
       <label class="fw-bold">
         Tag Groups
-        <span class="badge rounded-pill bg-info">
+        <span class="badge bg-secondary">
           <%= @tag.tag_groups.count %>
         </span>
       </label>
       <div>
         <% @tag.tag_groups.each do |tag_group| %>
-          <span class="badge rounded-pill bg-danger">
+          <span class="badge bg-danger">
             <%= link_to tag_group.name, course_tag_group_path(@course, tag_group), style: "text-transform: none; color: white" %>
           </span>
         <% end %>

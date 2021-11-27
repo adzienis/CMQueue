@@ -11,12 +11,6 @@
     </div>
     <hr>
     <div class="mb-2">
-      <label class="fw-bold"> Id </label>
-      <div>
-        <%= @enrollment.id %>
-      </div>
-    </div>
-    <div class="mb-2">
       <label class="fw-bold"> Created At </label>
       <div>
         <%= @enrollment.created_at.to_formatted_s(:american_short) %>
@@ -41,12 +35,12 @@
         <% end %>
         <%= link_to course_question_path(@course, currently_handled_question) do %>
           Go to #<%= currently_handled_question.id %>:
-          <%= render(Questions::QuestionStateBadgeComponent.new(state: currently_handled_question.question_state.state)) %>
+          <%= render(Questions::QuestionStateBadgeComponent.new(question_state: currently_handled_question.question_state)) %>
         <% end if currently_handled_question.present? %>
 
         <%= link_to course_question_path(@course, active_question) do %>
           Go to #<%= active_question.id %>:
-          <%= render(Questions::QuestionStateBadgeComponent.new(state: active_question.question_state.state)) %>
+          <%= render(Questions::QuestionStateBadgeComponent.new(question_state: active_question.question_state)) %>
         <% end if active_question.present? %>
       </div>
     </div>

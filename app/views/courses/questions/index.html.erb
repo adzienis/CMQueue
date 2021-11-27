@@ -1,0 +1,47 @@
+<div class="mb-3">
+  <h1 class="mb-0">
+    Questions
+  </h1>
+  <div class="text-muted">
+    All created questions.
+  </div>
+</div>
+
+
+<div>
+  <div class="card card-body">
+    <%= form_tag(course_questions_path(@course), method: :get, html: { autocomplete: "off" }) do %>
+      <%= text_field_tag(:q, params[:q] || "*") %>
+      <%= submit_tag("Search") %>
+    <% end %>
+
+
+  </div>
+  <% @results.results.each do |question| %>
+    <div class="card card-body">
+      <div>
+        <%= question.created_at.strftime("%a, %x, %I:%M") %>
+      </div>
+      <div>
+        <%= question.description %>
+      </div>
+      <div>
+        <%= question.tried %>
+      </div>
+      <div>
+        <%= question.location %>
+      </div>
+    </div>
+  <% end %>
+
+</div>
+
+
+<% if @pagy.count == 1 %>
+  <%= "#{@pagy.count} questions" %>
+<% else %>
+  <%= "#{@pagy.count} questions" %>
+<% end %>
+<div class="w-100 d-flex justify-content-center">
+  <%== render partial: "pagy/nav.html.erb", locals: { pagy: @pagy } %>
+</div>

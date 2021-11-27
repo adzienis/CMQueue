@@ -8,7 +8,9 @@ module Postgres
           SELECT questions_tags.*
           FROM questions_tags
           INNER JOIN questions ON questions_tags.question_id = questions.id
-          WHERE questions.course_id = #{course_id}
+          INNER JOIN enrollments ON questions.enrollment_id = enrollments.id
+          INNER JOIN roles ON roles.id = enrollments.role_id
+          WHERE roles.resource_id = #{course_id}
         SQL
         )
       end

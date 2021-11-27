@@ -6,9 +6,22 @@ class RoleAbility
 
     @privileged_roles = Course.find_privileged_staff_roles(user).pluck(:resource_id)
 
-    can :manage, Role, Role.where(resource_id: @privileged_roles) do |role|
+    return unless @privileged_roles.exist?
+
+    can :read, Role, Role.where(resource_id: @privileged_roles) do |role|
+      (role.new_record? && user.has_role?(:instructor, :any)) || user.instructor_of?(role.course)
+    end
+
+    can :create, Role, Role.where(resource_id: @privileged_roles) do |role|
+      (role.new_record? && user.has_role?(:instructor, :any)) || user.instructor_of?(role.course)
+    end
+
+    can :update, Role, Role.where(resource_id: @privileged_roles) do |role|
+      (role.new_record? && user.has_role?(:instructor, :any)) || user.instructor_of?(role.course)
+    end
+
+    can :destroy, Role, Role.where(resource_id: @privileged_roles) do |role|
       (role.new_record? && user.has_role?(:instructor, :any)) || user.instructor_of?(role.course)
     end
   end
 end
-

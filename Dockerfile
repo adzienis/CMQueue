@@ -11,9 +11,7 @@ RUN wget -nv https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_V
 RUN apt-get update && apt-get install -y lsb-release
 
 RUN sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
-RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
-# Rails Specific libraries
-RUN curl -sL https://deb.nodesource.com/setup_14.x  | bash -
+RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - &&  curl -sL https://deb.nodesource.com/setup_14.x  | bash -
 RUN apt-get update && apt-get install -y \
       # ActiveStorage file inspection
       file \
@@ -36,9 +34,7 @@ RUN apt-get update && apt-get install -y \
       vim \
       nodejs \
       # Allows for mimemagic gem to be installed
-      shared-mime-info
-RUN update-ca-certificates
-RUN npm install -g yarn
+      shared-mime-info && npm install -g yarn
 # Install any extra dependencies via Aptfile - These are installed on Heroku
 # COPY Aptfile /usr/src/app/Aptfile
 # RUN apk add --update $(cat /usr/src/app/Aptfile | xargs)
@@ -51,7 +47,6 @@ ENV YARN_CACHE_FOLDER /usr/src/yarn
 ENV EDITOR vim
 ENV LANG en_US.UTF-8
 ENV BUNDLE_PATH /usr/local/bundle
-ENV RAILS_LOG_TO_STDOUT enabled
 ENV HISTFILE /usr/src/app/log/.bash_history
 
 # Set build args. These let linux users not run into file permission problems

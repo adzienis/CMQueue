@@ -1,0 +1,12 @@
+<div id="question-position" class="position-relative">
+  <%= tag.a class: "position-absolute",
+            style: "right: 10px; top: 10px",
+            href: "#",
+            "data-bs-toggle": "popover",
+            title: "information",
+            "data-bs-content": info do
+  %>
+    <i class="fas fa-info-circle fa-lg"></i>
+  <% end if info.present? %>
+  <b><%= "#{title}:" %></b> <span style="<%= value_style %>"><%= value %></span>
+</div>

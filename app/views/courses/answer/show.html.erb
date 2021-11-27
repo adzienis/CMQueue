@@ -24,16 +24,73 @@
       </div>
     </div>
   </div>
-  <div class="card-footer d-flex">
-  <%= button_to "Unresolve",
-                handle_question_path(@question,
-                                     state: "unresolved",
-                                     enrollment_id: current_user.enrollment_in_course(@course)
-                ), class: "btn btn-primary", "data-disable-with": "Loading" %>
-    <%= button_to "Freeze",
-                  handle_question_path(@question,
-                                       state: "frozen",
+  <div class="card-footer d-grid" , style="grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); column-gap: 10px">
+    <%= button_to "Resolve",
+                  handle_course_question_path(@course, @question,
+                                       state: "resolved",
                                        enrollment_id: current_user.enrollment_in_course(@course)
-                  ), class: "btn btn-primary", "data-disable-with": "Loading" %>
+                  ), class: "w-100 btn btn-success", "data-disable-with": "Loading" %>
+
+    <%= button_tag "Kick", class: "btn btn-danger", "data-bs-toggle": "modal", "data-bs-target": "#kick-modal" %>
+    <% content_for :modal do %>
+      <div class="modal fade" id="kick-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <%= form_with url: handle_course_question_path(@course, @question,
+                                                state: "kicked",
+                                                enrollment_id: current_user.enrollment_in_course(@course)),
+                      html: { autocomplete: "off" } do |f| %>
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel"> Explanation for Kicking </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <label class="form-label fw-bold"> Description </label>
+                <%= f.text_area :description,
+                                class: "form-control",
+                                placeholder: "Give an explanation to the student as to why you are kicking them. " +
+                                  "They will see and have to acknowledge this question before they can create new questions." %>
+              </div>
+              <div class="modal-footer">
+                <%= f.submit "Confirm", class: "btn btn-primary", "data-disable_with": "Kicking" %>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <%= button_tag "Freeze", class: "btn btn-primary", "data-bs-toggle": "modal", "data-bs-target": "#freeze-modal" %>
+    <% content_for :modal do %>
+      <div class="modal fade" id="freeze-modal" tabindex="-1" aria-hidden="true">
+        <%= form_with url: handle_course_question_path(@course, @question,
+                                                state: "frozen",
+                                                enrollment_id: current_user.enrollment_in_course(@course)),
+                      html: { autocomplete: "off" } do |f| %>
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel"> Explanation for Freezing </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <label class="form-label fw-bold"> Description </label>
+                <%= f.text_area :description, class: "form-control",
+                                placeholder: "Give an explanation to the student as to why you are freezing them. " +
+                                  "They will see this explanation, and can unfreeze themselves after reading it." %>
+              </div>
+              <div class="modal-footer">
+                <%= f.submit "Confirm", class: "btn btn-primary", "data-disable_with": "Freezing" %>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+    <%= button_to "Unresolve",
+                  handle_course_question_path(@course, @question,
+                                       state: "unresolved",
+                                       enrollment_id: current_user.enrollment_in_course(@course)
+                  ), class: "w-100 btn btn-secondary", "data-disable-with": "Loading" %>
   </div>
 </div>

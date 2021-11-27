@@ -22,8 +22,7 @@ require './lib/postgres/views'
 
 class Course < ApplicationRecord
   include Turbo::Broadcastable
-
-  resourcify
+  include HasEnrollables
   searchkick
 
   # to prevent accidentally exposing sensitive columns
@@ -39,27 +38,29 @@ class Course < ApplicationRecord
 
   has_one :certificate
   has_many :tag_groups, dependent: :destroy
-  has_many :enrollments, through: :roles, dependent: :destroy
   has_many :settings, as: :resource, dependent: :destroy
-  has_many :users, through: :enrollments
-  has_many :questions, dependent: :destroy
+  has_many :questions, through: :enrollments
   has_many :analytics_dashboards, :class_name => 'Analytics::Dashboard'
-  has_many :unresolved_questions, -> { undiscarded.questions_by_state("unresolved") }, class_name: "Question"
+  has_many :unresolved_questions, -> { undiscarded.by_state("unresolved") }, class_name: "Question"
 
-  has_many :tas, -> { joins(:enrollments)
-                        .merge(Enrollment
-                                 .undiscarded
-                                 .with_courses(id)
-                                 .with_course_roles(["ta"]))
-  }, class_name: "Question"
-  has_many :instructors, -> { joins(:role).undiscarded.with_course_roles(["ta"]) }, class_name: "Enrollment"
-  has_many :students, -> { joins(:enrollments) }, class_name: "Question"
+  has_many :active_questions, -> { where("questions.id in (#{Question.undiscarded
+                                                                     .by_state("unresolved", "frozen", "resolving")
+                                                                     .select("questions.id")
+                                                                     .to_sql}) or " +
+                                           "questions.id in (#{Question.undiscarded
+                                                                       .by_state("kicked")
+                                                                       .unacknowledged
+                                                                       .select("questions.id")
+                                                                       .to_sql})") }, through: :enrollments, class_name: "Question", source: :questions
 
-  has_many :active_questions, -> { undiscarded
-                                     .questions_by_state("unresolved", "frozen", "resolving")
-                                     .or(undiscarded.by_state("kicked").unacknowledged) }, class_name: "Question"
-
-  has_many :questions_on_queue, -> { questions_by_state("unresolved", "frozen").undiscarded }, class_name: "Question"
+  has_many :questions_on_queue, -> { by_state("unresolved", "frozen").undiscarded },
+           through: :enrollments,
+           source: :questions,
+           class_name: "Question"
+  has_many :all_questions_on_queue, -> { by_state("unresolved", "frozen", "resolving").undiscarded },
+           through: :enrollments,
+           source: :questions,
+           class_name: "Question"
   has_many :tags, dependent: :destroy
   #has_many :announcements
 
@@ -74,6 +75,24 @@ class Course < ApplicationRecord
            dependent: :destroy
 
   has_many :applications, class_name: "Doorkeeper::Application", as: :owner
+  has_many :courses_sections, :class_name => 'Courses::Section'
+
+  has_one :ta_role, -> { where(name: "ta") },
+          class_name: "Role",
+          dependent: :destroy,
+          inverse_of: :course
+  has_one :instructor, -> { where(name: "instructor") },
+          class_name: "Role",
+          dependent: :destroy,
+          inverse_of: :course
+  has_one :lead_ta, -> { where(name: "lead_ta") },
+          class_name: "Role",
+          dependent: :destroy,
+          inverse_of: :course
+  has_one :student, -> { where(name: "student") },
+          class_name: "Role",
+          dependent: :destroy,
+          inverse_of: :course
 
   before_validation on: :create do
     self.ta_code = SecureRandom.urlsafe_base64(6) unless ta_code.present?
@@ -86,25 +105,6 @@ class Course < ApplicationRecord
   }
 
   scope :with_setting_value, ->(key, value) { joins(:settings).merge(Setting.with_key_value(key, value)) }
-
-  def active_tas
-    tas.merge(Enrollment.undiscarded)
-  end
-  def tas
-    enrollments.joins(:role).where("roles.name": "ta")
-  end
-  def active_instructors
-    instructors.merge(Enrollment.undiscarded)
-  end
-  def instructors
-    enrollments.joins(:role).where("roles.name": "instructor")
-  end
-  def active_students
-    students.merge(Enrollment.undiscarded)
-  end
-  def students
-    enrollments.joins(:role).where("roles.name": "student")
-  end
 
   def self.find_by_code?(code)
     self.find_by_code(code).present?
@@ -142,6 +142,10 @@ class Course < ApplicationRecord
     Course.find_roles([:lead_ta, :instructor], user)
   end
 
+  def answerable_questions?
+    active_questions.includes(:question_state).filter { |q| q.unresolved? }.count > 0
+  end
+
   def student_role
     roles.find_by("roles.name": "student")
   end
@@ -168,9 +172,36 @@ class Course < ApplicationRecord
 
   after_commit do
     broadcast_replace_later_to(self,
-                         target: "queue-open-status",
-                         html: ApplicationController.render(Courses::QueueOpenStatusComponent.new(course: self),
-                                                            layout: false))
+                               target: "queue-open-status",
+                               html: ApplicationController.render(Courses::QueueOpenStatusComponent.new(course: self),
+                                                                  layout: false))
+
+    if open_previously_was == false && open == true
+      CourseChannel.broadcast_to self, {
+        type: "event",
+        event: "course:open",
+        payload: {
+          course_id: id
+        }
+      }
+
+      broadcast_replace_later_to self,
+                                 target: "open-button",
+                                 html: ApplicationController.render(Courses::OpenButtonComponent.new(course: self), layout: false),
+                                 channel: SyncedTurboChannel
+    elsif open_previously_was == true && open == false
+      CourseChannel.broadcast_to self, {
+        type: "event",
+        event: "course:close",
+        payload: {
+          course_id: id
+        }
+      }
+      broadcast_replace_later_to self,
+                                 target: "open-button",
+                                 html: ApplicationController.render(Courses::OpenButtonComponent.new(course: self), layout: false),
+                                 channel: SyncedTurboChannel
+    end
   end
 
   after_create_commit do
@@ -206,6 +237,8 @@ class Course < ApplicationRecord
                          }
                        }
                      }])
+
+    roles.create([{ name: "instructor" }, { name: "ta" }, { name: "student" }, { name: "lead_ta" }])
 
   end
 

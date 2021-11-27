@@ -4,11 +4,18 @@ class UserAbility
   def initialize(user, context)
     return unless user.present?
 
-    can :manage, User, User.where(id: user.id) do |tested_user|
+    can :read, User, User.where(id: user.id) do |tested_user|
       tested_user == user
     end
-
-    can :read, User
+    can :edit, User, User.where(id: user.id) do |tested_user|
+      tested_user == user
+    end
+    can :create, User, User.where(id: user.id) do |tested_user|
+      tested_user == user
+    end
+    can :destroy, User, User.where(id: user.id) do |tested_user|
+      tested_user == user
+    end
 
     can :enroll_user, User do |u|
       user.id == u.id

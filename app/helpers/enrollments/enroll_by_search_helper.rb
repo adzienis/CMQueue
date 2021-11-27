@@ -1,0 +1,2 @@
+module Enrollments::EnrollBySearchHelper
+end

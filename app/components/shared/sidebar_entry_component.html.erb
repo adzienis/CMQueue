@@ -1,0 +1,8 @@
+<li class="d-flex align-items-center">
+  <div style="width: 16px" class="d-flex justify-content-center">
+    <%= icon %>
+  </div>
+  <%= button_to name, path,
+                class: "btn text-decoration-none #{(entry_controller_path == controller_path) ?
+                                                     "active-link" : ""}", method: :get %>
+</li>

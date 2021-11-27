@@ -1,26 +1,37 @@
 <% if agg_keys.present? %>
-  <% agg_keys.each do |category| %>
-    <% if results.aggs.dig(category, "buckets").present? || options.dig(:extra_buckets, category.to_s).present? %>
-      <h5> Filter by <%= category.to_s.humanize.titleize %></h5>
-      <%= link_to "Remove #{category.to_s.humanize.titleize} filters",
-                  polymorphic_path([:search, course, resources],
-                                   request.query_parameters.reject { |k, v| k == category.to_s })
-      %>
-      <div>
-        <hr class="m-1">
-        <div style="overflow-y: scroll; min-height: 150px; max-height: 200px">
-          <% results.aggs.dig(category, "buckets") and results.aggs.dig(category, "buckets").each do |bucket| %>
-            <div>
-              <%= render(Shared::Search::SearchPaneComponent.new(query_params: query_params,
-                                                                 bucket: bucket,
-                                                                 category: category,
-                                                                 course: course,
-                                                                 resources: resources
-              )) %>
-            </div>
-          <% end %>
-          <% if options.dig(:extra_buckets, category.to_s).present? %>
-            <% options.dig(:extra_buckets, category.to_s).each do |bucket| %>
+  <div class="card card-body shadow-sm me-2 search-pane">
+    <%= tag.div style: "background-color: #c9d7f144", class: "mb-4" do %>
+      <div class="d-flex justify-content-between">
+        <span class="fw-bold"> Active Filters </span><%= link_to "Clear All", request.path,
+                                                                 "data-turbo-frame": "_self" %>
+      </div>
+      <% request.query_parameters.entries.each do |query, value| %>
+        <% next unless agg_keys.include?(query) %>
+        <div class="mb-2">
+          <div>
+            <%= link_to "Clear #{query.humanize}",
+                        polymorphic_path([:search, course, resources],
+                                         request.query_parameters.reject { |k| k == query }),
+                        "data-turbo-frame": "_self"
+            %>
+          </div>
+          <small> <%= value.is_a?(Hash) ? value[:key] : value %> </small>
+        </div>
+      <% end %>
+    <% end if request.query_parameters.filter { |k| agg_keys.include?(k) }.present? %>
+
+    <% agg_keys.each do |category| %>
+      <% if results.aggs.dig(category, "buckets").present? || options.dig(:extra_buckets, category.to_s).present? %>
+        <h5> Filter by <%= category.to_s.humanize.titleize %></h5>
+        <%= link_to "Remove #{category.to_s.humanize.titleize} filters",
+                    polymorphic_path([:search, course, resources],
+                                     request.query_parameters.reject { |k, v| k == category.to_s }),
+                    "data-turbo-frame": "_self"
+        %>
+        <div>
+          <hr class="m-1">
+          <div style="overflow-y: scroll; min-height: 150px; max-height: 200px">
+            <% results.aggs.dig(category, "buckets") and results.aggs.dig(category, "buckets").each do |bucket| %>
               <div>
                 <%= render(Shared::Search::SearchPaneComponent.new(query_params: query_params,
                                                                    bucket: bucket,
@@ -30,10 +41,23 @@
                 )) %>
               </div>
             <% end %>
+            <% if options.dig(:extra_buckets, category.to_s).present? %>
+              <% options.dig(:extra_buckets, category.to_s).each do |bucket| %>
+                <div>
+                  <%= render(Shared::Search::SearchPaneComponent.new(query_params: query_params,
+                                                                     bucket: bucket,
+                                                                     category: category,
+                                                                     course: course,
+                                                                     resources: resources
+                  )) %>
+                </div>
+              <% end %>
 
-          <% end %>
+            <% end %>
+          </div>
         </div>
-      </div>
+      <% end %>
     <% end %>
-  <% end %>
+  </div>
+
 <% end %>

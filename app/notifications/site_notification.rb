@@ -4,8 +4,16 @@
 # SiteNotification.with(post: @post).deliver(current_user)
 
 class SiteNotification < Noticed::Base
-  deliver_by :database
-  # deliver_by :action_cable, format: :to_action_cable
+  deliver_by :database, if: :site?
+  deliver_by :action_cable, channel: NotificationChannel, format: :to_action_cable, if: :notifications?
+
+  def notifications?
+    !!recipient.settings.option_value_of_key("desktop_notifications")
+  end
+
+  def site?
+    !!params[:site]
+  end
 
   def to_action_cable
     {
@@ -16,25 +24,25 @@ class SiteNotification < Noticed::Base
 
   def self.success(target, message, delay = nil)
     if delay
-      SiteNotification.with(type: "Success", body: message, title: "Success", delay: delay).deliver_later(target)
+      SiteNotification.with(type: "success", message: message, title: "Success", delay: delay).deliver_later(target)
     else
-      SiteNotification.with(type: "Success", body: message, title: "Success").deliver_later(target)
+      SiteNotification.with(type: "success", message: message, title: "Success").deliver_later(target)
     end
   end
 
   def self.student_on_queue(target, delay = nil)
     if delay
-      SiteNotification.with(type: "Success", body: message, title: "Success", delay: delay).deliver_later(target)
+      SiteNotification.with(type: "success", message: message, title: "Success", delay: delay).deliver_later(target)
     else
-      SiteNotification.with(type: "Success", body: message, title: "Success").deliver_later(target)
+      SiteNotification.with(type: "success", message: message, title: "Success").deliver_later(target)
     end
   end
 
   def self.failure(target, message, delay = nil)
     if delay
-      SiteNotification.with(type: "Failure", body: message, title: "Failure", delay: delay).deliver_later(target)
+      SiteNotification.with(type: "failure", message: message, title: "Failure", delay: delay).deliver_later(target)
     else
-      SiteNotification.with(type: "Failure", body: message, title: "Failure").deliver_later(target)
+      SiteNotification.with(type: "failure", message: message, title: "Failure").deliver_later(target)
     end
   end
 

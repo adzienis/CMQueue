@@ -1,0 +1,10 @@
+refresh_active_staff:
+  cron: "*/10 * * * *"
+  class: "RefreshActiveStaffJob"
+  queue: default
+  retries: 0
+backup_database:
+  cron: "0 0 * * *"
+  class: "System::BackupDatabaseJob"
+  queue: default
+  retries: 0

@@ -5,8 +5,19 @@ class EnrollmentAbility
     return unless user.present?
 
     @staff_roles = Course.find_staff_roles(user).pluck(:resource_id)
+    @course = Course.find(context[:params][:course_id]) if context[:params][:course_id].present?
 
-    can [:new, :edit], Enrollment do |enrollment |
+
+    if @course.present?
+      can :import, Enrollment if user.instructor_of?(@course)
+    end
+
+    can [:new, :edit], Enrollment do |enrollment|
+      next true if (enrollment.user == user)
+      next true if user.instructor_of?(enrollment.course)
+      if context[:params][:enrollment].present?
+        next false if Role.higher_security?(Role.find(context[:params][:enrollment][:role_id]), enrollment.role)
+      end
       enrollment.new_record?
     end
 
@@ -33,4 +44,3 @@ class EnrollmentAbility
     end
   end
 end
-

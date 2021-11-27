@@ -4,11 +4,12 @@
 //const channels = require.context(".", true, /_channel\.js$/);
 //channels.keys().forEach(channels);
 
+import "./consumer.js";
+import "./notification_channel.js";
 
-import "./consumer.js"
-import "./notification_channel.js"
-
-import "./queue_channel.js"
-import "./react_student_channel.js"
-import "./site_channel.js"
-import "./student_channel.js"
+import "./queue_channel.js";
+import "./react_student_channel.js";
+import "./site_channel.js";
+import "./student_channel.js";
+import "./title_channel.js";
+import "./course_channel";

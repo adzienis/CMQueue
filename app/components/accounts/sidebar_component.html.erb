@@ -1,0 +1,19 @@
+<%= render Shared::SidebarComponent.new do |c| %>
+  <%= c.entry do %>
+    <%= render Shared::SidebarEntryComponent.new(name: "Account", path: account_path) do |c| %>
+      <%= c.icon do %>
+        <i class="fas fa-info"></i>
+      <% end %>
+    <% end %>
+  <% end %>
+  <%= c.entry do %>
+    <%= render Shared::SidebarEntryComponent.new(name: "Settings", path: account_settings_path) do |c| %>
+      <%= c.icon do %>
+        <i class="fas fa-cog"></i>
+      <% end %>
+    <% end %>
+  <% end %>
+  <%= c.body do %>
+    <%= content %>
+  <% end %>
+<% end %>

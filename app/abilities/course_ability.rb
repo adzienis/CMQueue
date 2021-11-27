@@ -7,11 +7,17 @@ class CourseAbility
     @instructor_roles = Course.find_roles([:instructor], user).pluck(:resource_id)
     @privileged_roles = Course.find_privileged_staff_roles(user).pluck(:resource_id)
     @staff_roles = Course.find_staff_roles(user).pluck(:resource_id)
+    @course = Course.find(context[:params][:course_id]) if context[:params][:course_id]
 
-    can :queue, Course
+    if @course.present?
+      if user.staff_of?(@course)
+        can :queue, Course
+        can :semester, Course
+        can :read, :staff_log
+      end
+    end
 
     can [:active_tas, :read, :search], Course
-    can :semester, Course
 
     cannot :read, Course, [:instructor_code] do |course|
       !user.instructor_of?(course.id)
@@ -44,4 +50,3 @@ class CourseAbility
 
   end
 end
-

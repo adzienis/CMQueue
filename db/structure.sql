@@ -36,6 +36,29 @@ CREATE FUNCTION public.check_duplicate_question() RETURNS trigger
             $$;
 
 
+--
+-- Name: check_state_constraint(); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.check_state_constraint() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+                  DECLARE
+                    state bigint;
+                  BEGIN
+LOCK question_states IN EXCLUSIVE MODE;
+                    state := (select question_states.state from question_states where question_states.id = 
+                    (select max(question_states.id) from question_states
+                      inner join questions on questions.id = NEW.question_id
+                      WHERE questions.discarded_at IS NOT NULL));
+                  if state IS NULL OR (state != NEW.state)  then
+                  return NEW;
+                  end if;
+                  raise exception 'question already transitioned to same state';
+                  END
+                  $$;
+
+
 SET default_tablespace = '';
 
 SET default_table_access_method = heap;
@@ -196,6 +219,48 @@ CREATE TABLE public.courses_questions (
 
 
 --
+-- Name: courses_sections; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.courses_sections (
+    id bigint NOT NULL,
+    course_id bigint,
+    name character varying,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: courses_sections_enrollments; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.courses_sections_enrollments (
+    courses_section_id bigint,
+    enrollment_id bigint
+);
+
+
+--
+-- Name: courses_sections_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.courses_sections_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: courses_sections_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.courses_sections_id_seq OWNED BY public.courses_sections.id;
+
+
+--
 -- Name: enrollments; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -206,7 +271,8 @@ CREATE TABLE public.enrollments (
     semester character varying,
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL,
-    discarded_at timestamp without time zone
+    discarded_at timestamp without time zone,
+    section character varying
 );
 
 
@@ -484,7 +550,6 @@ ALTER SEQUENCE public.question_states_id_seq OWNED BY public.question_states.id;
 
 CREATE TABLE public.questions (
     id bigint NOT NULL,
-    course_id bigint,
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL,
     title text,
@@ -764,6 +829,13 @@ ALTER TABLE ONLY public.courses ALTER COLUMN id SET DEFAULT nextval('public.cour
 
 
 --
+-- Name: courses_sections id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.courses_sections ALTER COLUMN id SET DEFAULT nextval('public.courses_sections_id_seq'::regclass);
+
+
+--
 -- Name: enrollments id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -906,6 +978,14 @@ ALTER TABLE ONLY public.certificates
 
 ALTER TABLE ONLY public.courses
     ADD CONSTRAINT courses_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: courses_sections courses_sections_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.courses_sections
+    ADD CONSTRAINT courses_sections_pkey PRIMARY KEY (id);
 
 
 --
@@ -1065,6 +1145,27 @@ CREATE INDEX index_courses_questions_on_question_id ON public.courses_questions 
 
 
 --
+-- Name: index_courses_sections_enrollments_on_courses_section_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_courses_sections_enrollments_on_courses_section_id ON public.courses_sections_enrollments USING btree (courses_section_id);
+
+
+--
+-- Name: index_courses_sections_enrollments_on_enrollment_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_courses_sections_enrollments_on_enrollment_id ON public.courses_sections_enrollments USING btree (enrollment_id);
+
+
+--
+-- Name: index_courses_sections_on_course_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_courses_sections_on_course_id ON public.courses_sections USING btree (course_id);
+
+
+--
 -- Name: index_enrollments_on_discarded_at; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1191,13 +1292,6 @@ CREATE INDEX index_question_states_on_question_id ON public.question_states USIN
 
 
 --
--- Name: index_questions_on_course_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_questions_on_course_id ON public.questions USING btree (course_id);
-
-
---
 -- Name: index_questions_on_discarded_at; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1317,6 +1411,13 @@ CREATE TRIGGER check_duplicate_question_trigger BEFORE INSERT ON public.question
 
 
 --
+-- Name: question_states check_state_constraint_trigger; Type: TRIGGER; Schema: public; Owner: -
+--
+
+CREATE TRIGGER check_state_constraint_trigger BEFORE INSERT ON public.question_states FOR EACH ROW EXECUTE FUNCTION public.check_state_constraint();
+
+
+--
 -- Name: courses_questions fk_rails_025040746f; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1413,14 +1514,6 @@ ALTER TABLE ONLY public.questions
 
 
 --
--- Name: questions fk_rails_c73562d5b6; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.questions
-    ADD CONSTRAINT fk_rails_c73562d5b6 FOREIGN KEY (course_id) REFERENCES public.courses(id);
-
-
---
 -- Name: enrollments fk_rails_d1e7d10c0a; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1483,6 +1576,10 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20210928145344'),
 ('20211003204929'),
 ('20211016001702'),
-('20211017222247');
+('20211017222247'),
+('20211114044300'),
+('20211118074023'),
+('20211119031040'),
+('20211119032313');
 
 

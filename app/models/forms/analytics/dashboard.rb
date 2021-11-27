@@ -56,6 +56,17 @@ class Forms::Analytics::Dashboard
     }
   end
 
+  def build
+    self.dashboard = Analytics::Dashboard.new(
+      course_id: course_id,
+      data: {
+        name: name,
+        dashboard_type: dashboard_type,
+        url: url,
+        metabase_id: metabase_id
+      })
+  end
+
   def save
     begin
       ActiveRecord::Base.transaction do

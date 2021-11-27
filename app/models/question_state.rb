@@ -24,14 +24,15 @@ class QuestionState < ApplicationRecord
       state: state,
       discarded_at: question.discarded_at,
       state_creator: "#{user.given_name} #{user.family_name}",
-      question_creator: "#{question.user.given_name} #{question.user.family_name}"
+      question_creator: "#{question.user.given_name} #{question.user.family_name}",
+      course_id: course.id
     }
   end
 
   include Ransackable
   include Turbo::Broadcastable
 
-  belongs_to :question, touch: true, optional: false
+  belongs_to :question, inverse_of: :question_states, optional: false, touch: true
   belongs_to :enrollment
   has_one :user, through: :enrollment
 
@@ -47,11 +48,11 @@ class QuestionState < ApplicationRecord
   end
 
   def valid_transition
-    old_qs = question.question_state
+    old_qs = question.reload.question_state&.state
 
     return unless old_qs
 
-    valid_next_states = case old_qs.state
+    valid_next_states = case old_qs
                         when "unresolved"
                           ["resolving", "frozen", "kicked"]
                         when "resolving"
@@ -64,7 +65,9 @@ class QuestionState < ApplicationRecord
                           []
                         end
 
-    errors.add(:state, "invalid action") unless valid_next_states.include? state
+    unless valid_next_states.include?(state)
+      errors.add(:state, "invalid action (can't transition #{old_qs} -> #{state})")
+    end
   end
 
   def proper_answer
@@ -114,35 +117,62 @@ class QuestionState < ApplicationRecord
   }
 
   after_commit do
-    question.reload.reindex
+    question.reload.reindex(refresh: true)
 
-    comp = Forms::Question::QuestionCreatorComponent.new(course: course,
-                                                         question_form: Forms::Question.new(question: question),
-                                                         current_user: question.user
-    )
-
+    count = course.questions_on_queue.count
+    TitleChannel.broadcast_to_staff course: course, message: count == 1 ? "#{count} question" : "#{count} questions"
+    TitleChannel.broadcast_to question.user,
+                              question.position_in_course.present? ? (question.reload.position_in_course + 1).ordinalize : "N/A"
     broadcast_replace_later_to question.user,
-                              target: "question-form",
-                              html: ApplicationController.render(comp, layout: false),
-                              channel: SyncedTurboChannel
+                               target: "question-position",
+                               html: ApplicationController
+                                       .render(Courses::QuestionPositionComponent.new(question: question), layout: false),
+                               channel: SyncedTurboChannel
+
+    if state == "resolving"
+      SiteNotification.with(message: "Your question is currently being resolved.").deliver_later(question.user)
+    end
+
+    if state == "resolved"
+      comp = Forms::Question::QuestionCreatorComponent.new(course: course,
+                                                           question_form: Forms::Question.new(question: Question.new),
+                                                           current_user: question.user
+      )
+
+      broadcast_replace_later_to question.user,
+                                 target: "question-form",
+                                 html: ApplicationController.render(comp, layout: false),
+                                 channel: SyncedTurboChannel
+    else
+      comp = Forms::Question::QuestionCreatorComponent.new(course: course,
+                                                           question_form: Forms::Question.new(question: question),
+                                                           current_user: question.user
+      )
+
+      broadcast_replace_later_to question.user,
+                                 target: "question-form",
+                                 html: ApplicationController.render(comp, layout: false),
+                                 channel: SyncedTurboChannel
+    end
 
     broadcast_replace_later_to course,
-                        target: "questions-count",
-                        html: ApplicationController.render(Courses::QuestionsCountComponent.new(course: course),
-                                                           layout: false),
-                        channel: SyncedTurboChannel
+                               target: "questions-count",
+                               html: ApplicationController.render(Courses::QuestionsCountComponent.new(course: course),
+                                                                  layout: false),
+                               channel: SyncedTurboChannel
 
-    course.active_questions.each do |question|
-      broadcast_replace_later_to question.user,
-                          target: "question-position",
-                          html: ApplicationController
-                                  .render(Courses::QuestionPositionComponent.new(question: question), layout: false),
-                          channel: SyncedTurboChannel
-    end
+    broadcast_replace_later_to course,
+                               target: "active-staff",
+                               html: ApplicationController.render(Courses::ActiveStaffComponent.new(course: course),
+                                                                  layout: false),
+                               channel: SyncedTurboChannel
+
+    Courses::UpdatePositionsJob.perform_later(course: course)
 
     QueueChannel.broadcast_to course, {
       type: "event",
       event: "invalidate:question-feed"
     }
   end
+
 end

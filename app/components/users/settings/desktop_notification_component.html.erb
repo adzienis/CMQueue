@@ -1,0 +1,14 @@
+<li data-controller="notification-setting" class="list-group-item">
+  <%= form_with model: setting, url: path, html: { "data-notification-setting-target": "form" } do |f| %>
+    <%= f.label setting.key.humanize, class: "fw-bold" %>
+    <div class="text-muted">
+      <%= setting.description %>
+    </div>
+    <div class="form-check form-switch">
+      <%= f.check_box setting.key,
+                      "data-notification-setting-target": "input",
+                      class: "form-check-input",
+                      checked: setting.option_value, autocomplete: "off", checked_value: true, unchecked_value: false %>
+    </div>
+  <% end %>
+</li>

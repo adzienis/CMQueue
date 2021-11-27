@@ -8,6 +8,8 @@
                       wrapper_html: { class: "mb-2" },
                       label_html: { class: "fw-bold form-label" }
                     } do |f| %>
+  <%= f.error_notification %>
+  <%= f.error_notification message: f.object.errors[:base].to_sentence if f.object.errors[:base].present? %>
   <%= f.full_error :course, class: "invalid-feedback d-block fw-bold", style: "font-size: 1rem" %>
   <%= f.full_error :enrollment, class: "invalid-feedback d-block fw-bold", style: "font-size: 1rem" %>
   <%= f.hidden_field :enrollment_id, value: current_user.enrollment_in_course(@course).id %>
@@ -30,11 +32,11 @@
   <%= simple_fields_for :tag_groups do |ff| %>
     <div class="mb-2">
       <h5 class="form-label fw-bold mb-0">
-        tags
+        Tags
       </h5>
 
       <div class="text-muted">
-        select tags that appropriately categorize your question. each category requires at least
+        Select tags that appropriately categorize your question. Each category requires at least
         one tag.
       </div>
     </div>

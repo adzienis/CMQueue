@@ -1,11 +1,3 @@
-<%
-  msg = if @pagy.count == 1
-          "#{@pagy.count} question in #{@results.took} ms"
-        else
-          "#{@pagy.count} questions in #{@results.took} ms"
-        end
-%>
-
 <div class="mb-3">
   <h1 class="mb-0">
     Questions
@@ -15,89 +7,28 @@
   </div>
 </div>
 
-<%= render(Shared::Search::SearchBarComponent.new(resources: :questions,
-                                                  course: @course,
-                                                  query_parameters: request.query_parameters))
-%>
-<div class="d-flex">
-  <div class="card card-body shadow-sm me-2" style="width: 300px; max-width: 300px">
-    <%= render(Shared::Search::SearchPaneComponents.new(results: @results,
-                                                        course: @course,
-                                                        query_params: request.query_parameters,
-                                                        resources: :questions,
-                                                        options: {
-                                                          sort_extra: [:created_at],
-                                                        }))
-    %>
-  </div>
+<turbo-frame id="search-container" class="search-container" data-turbo-action="advance" target="_top">
+  <%= render(Shared::Search::SearchPaneComponents.new(results: @results,
+                                                      course: @course,
+                                                      query_params: request.query_parameters,
+                                                      resources: :questions,
+                                                      options: {
+                                                        sort_extra: [:created_at],
+                                                      }))
+  %>
   <div class="w-100">
-    <h3> Results <small>(<%= msg %>)</small></h3>
-    <div class="card card-body d-flex flex-row">
-      <% if @results.aggs.present? %>
-        <div class="fw-bold">
-          Sort:
-        </div>
-        <div class="d-grid w-100" style="grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); justify-items: center">
-          <% @results.aggs.keys.each do |category| %>
-            <% if @results.aggs[category]["buckets"].present? %>
-              <div>
-                <%= render(Shared::Search::SortLinkComponent.new(category: category,
-                                                                 query_params: request.query_parameters,
-                                                                 course: @course,
-                                                                 resources: :questions)) %>
-              </div>
-            <% end %>
-          <% end %>
+    <%= render(Shared::Search::SearchBarComponent.new(resources: :questions,
+                                                      course: @course,
+                                                      query_parameters: request.query_parameters))
+    %>
+    <%= render(Shared::Search::ResultsComponent.new(course: @course, pagy: @pagy, search: @results, options: {
+      headers: [:question, created_at: :sortable]
+    })) do |c| %>
+      <% @results.results.each do |result| %>
+        <%= c.result do %>
+          <%= render(Questions::Search::ResultRow.new(question: result)) %>
+        <% end %>
       <% end %>
-      </div>
-    </div>
-    <% if @results.results.empty? %>
-      <div class="alert alert-warning">
-        No Questions
-      </div>
-    <% end %>
-    <% @results.results.each do |question| %>
-      <div class="card mb-2 shadow-sm position-relative">
-        <span class="position-absolute" style="top: -10px">
-          <%= render(Questions::QuestionStateBadgeComponent.new(state: question.question_state.state)) %>
-        </span>
-        <div class="card-body">
-          <h4>
-            <%= link_to question.user.full_name, course_question_path(@course, question) %>
-          </h4>
-          <div>
-            <label class="fw-bold"> Description </label>
-            <div>
-              <%= question.description %>
-            </div>
-          </div>
-          <div>
-            <label class="fw-bold"> What Did They Try? </label>
-            <div>
-              <%= question.tried %>
-            </div>
-          </div>
-          <div>
-            <label class="fw-bold"> Location </label>
-            <div>
-              <%= question.location %>
-            </div>
-          </div>
-          <div>
-            <label class="fw-bold"> Created At </label>
-            <div>
-              <%= question.created_at.strftime("%a, %x, %I:%M %p") %>
-            </div>
-          </div>
-          <div>
-          </div>
-        </div>
-        <%= render(Shared::Search::CardFooterComponent.new(record: question, course: @course)) %>
-      </div>
     <% end %>
   </div>
-
-</div>
-<div class="w-100 d-flex justify-content-center">
-  <%== render partial: "pagy/nav.html.erb", locals: { pagy: @pagy } %>
-</div>
+</turbo-frame>

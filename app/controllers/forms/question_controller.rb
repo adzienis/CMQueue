@@ -6,9 +6,7 @@ class Forms::QuestionController < ApplicationController
 
     @available_tags = @course.available_tags
 
-    merged_question_params = question_params.to_h.symbolize_keys.merge(tag_ids: params[:tag_groups].values.reduce { |x, y| x + y })
-    @question_form = Forms::Question.new(current_user: current_user,
-                                         question_params: merged_question_params)
+    @question_form = Forms::Question.new(current_user: current_user, question_params: question_params)
 
     @question_form.save
 
@@ -19,9 +17,7 @@ class Forms::QuestionController < ApplicationController
     @question = current_user.active_question
     @available_tags = @course.available_tags
 
-    merged_question_params = question_params.to_h.symbolize_keys.merge(tag_ids: params[:tag_groups].values.reduce { |x, y| x + y })
-
-    @question_form = Forms::Question.new(current_user: current_user, question: @question, question_params: merged_question_params)
+    @question_form = Forms::Question.new(current_user: current_user, question: @question, question_params: question_params)
 
     @question_form.save
 
@@ -60,6 +56,11 @@ class Forms::QuestionController < ApplicationController
   private
 
   def question_params
-    params.require(:question).permit(:description, :tried, :location, :enrollment_id, :course_id, tag_ids: [])
+    safe_params = params.require(:question).permit(:description, :tried, :location, :enrollment_id, tag_ids: [])
+    if params[:tag_groups].present?
+      safe_params.to_h.symbolize_keys.merge(tag_ids: params[:tag_groups].values.reduce { |x, y| x + y })
+    else
+      safe_params
+    end
   end
 end

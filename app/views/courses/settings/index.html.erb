@@ -1,29 +1,14 @@
-<% content_for :courses_content do %>
-  <h2 class="mb-3">
-    <b>
-      Course Settings
-    </b>
-  </h2>
-  <div class="card">
-    <div class="card-body">
-      <%= form_with model: @course do |form| %>
-        <div class="mb-2">
-          <%= form.label :name %>
-          <%= form.text_field :name, class: 'form-control' %>
-        </div>
-        <div class="mb-2">
-          <%= form.label :ta_code %>
-          <%= form.text_field :ta_code, class: 'form-control' %>
-        </div>
-        <div class="mb-2">
-          <%= form.label :instructor_code %>
-          <%= form.text_field :instructor_code, class: 'form-control' %>
-        </div>
-        <%= form.submit "Save", class: 'btn btn-primary' %>
+<h1>
+  Settings
+</h1>
+
+<hr>
+<div class="card">
+  <div class="card-body">
+    <ul class="list-group">
+      <% @settings.each do |setting| %>
+        <%= render(Shared::SettingComponent.new(setting: setting, record: @course)) %>
       <% end %>
-    </div>
+    </ul>
   </div>
-
-<% end %>
-
-<%= render template: 'layouts/courses' %>
+</div>

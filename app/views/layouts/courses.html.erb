@@ -7,13 +7,22 @@
     <%= turbo_stream_from @course, channel: SyncedTurboChannel%>
     <%= turbo_stream_from @course, current_user, channel: SyncedTurboChannel%>
 
-    <%= tag.div id: "course-status", data: {
-      courseId: @course.id
-    }.to_json do %>
-    <% end if current_user.staff_of?(@course) %>
+    <% if current_user.student_of?(@course) %>
+      <% content_for(:html_title) do %>
+        <% position = current_user.active_question(course: @course)&.position_in_course %>
+        <%= position.present? ? (position+ 1).ordinalize : "N/A" %>
+      <% end %>
+    <% end %>
+
 
     <div class="<%= current_user.staff_of?(@course) ? 'sidebar' : '' %>" style="display: flex; flex-direction: row; ">
       <% if current_user.staff_of?(@course) %>
+        <% content_for(:html_title) do %>
+          <% count = @course.questions_on_queue.count%>
+          <%= "#{count} questions" if count != 1 %>
+          <%= "#{count} question" if count == 1 %>
+        <% end %>
+
         <% content_for :nav_content do %>
           <div class="dropdown">
             <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -40,9 +49,6 @@
 
       <% end %>
       <div id='courses-container' style="min-height: calc(100vh - 76px);" class="<%= "#{fluid ? '' : 'container mt-4 mb-5'}" %>">
-        <turbo-frame id="flash">
-          <%= render "shared/flash" %>
-        </turbo-frame>
         <%= content_for?(:courses_content) ? yield(:courses_content) : yield %>
       </div>
     </div>

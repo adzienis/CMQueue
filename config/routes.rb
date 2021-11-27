@@ -1,8 +1,25 @@
 # frozen_string_literal: true
 require 'sidekiq/web'
+require 'sidekiq/cron/web'
 
 Rails.application.routes.draw do
-  mount Sidekiq::Web => "/sidekiq"
+  get 'accounts/index'
+  namespace :courses do
+    get 'questions/edit'
+    get 'questions/update'
+  end
+  namespace :courses do
+    namespace :queue do
+      get 'staff_log/show'
+    end
+  end
+  namespace :users do
+    get 'settings/index'
+    get 'settings/update'
+  end
+  authenticate :user, ->(u) { u.has_role? :admin} do
+    mount Sidekiq::Web => "/admin/sidekiq"
+  end
 
   namespace :analytics do
     namespace :dashboards do
@@ -11,7 +28,9 @@ Rails.application.routes.draw do
       end
     end
   end
-  resource :account, except: [:destroy, :create], controller: :account
+  resource :account, except: [:destroy, :create] do
+    resources :settings, controller: "accounts/settings"
+  end
 
   namespace :forms do
     resource :question, only: [:new, :create, :edit, :update, :destroy], controller: :question
@@ -60,7 +79,6 @@ Rails.application.routes.draw do
 
   #mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
   mount PgHero::Engine, at: 'pghero'
-  mount API => '/'
 
   resource :user, as: :current_user, user_scope: true do
     resources :enrollments, controller: 'users/enrollments'
@@ -81,6 +99,12 @@ Rails.application.routes.draw do
     member do
       patch "read", to: "notifications/read#update"
     end
+  end
+  scope module: :enrollments do
+    get 'enroll_by_search/new', to: "enroll_by_search#new", as: "new_enroll_by_search"
+    post 'enroll_by_search', to: "enroll_by_search#create", as: "enroll_by_search"
+    post 'enroll_by_code', to: "enroll_by_code#create", as: "enroll_by_code"
+    get 'enroll_by_code/new', to: "enroll_by_code#new", as: "new_enroll_by_code"
   end
 
   resources :enrollments do
@@ -107,6 +131,7 @@ Rails.application.routes.draw do
       get 'previousQuestions', to: 'questions#previous_questions'
       post 'acknowledge', to: 'questions#acknowledge'
       post 'update_state', to: 'questions#update_state'
+      patch 'acknowledge', to: "questions/acknowledge#update"
     end
     collection do
       get 'download', to: "questions#download_form"
@@ -117,21 +142,7 @@ Rails.application.routes.draw do
   resources :courses
 
   resources :users, only: [], model_name: "User" do
-    resources :questions
-    resources :courses
-    resources :enrollments
-    resources :tags do
-      collection do
-        get 'search', to: "tags/search#index"
-      end
-    end
-    resources :notifications
-    resource :settings do
-      get 'notifications', to: "settings#notifications"
-    end
-    member do
-      get "topQuestion", to: "courses#top_question"
-    end
+    resources :settings, controller: "users/settings"
   end
 
   resources :users do
@@ -140,19 +151,29 @@ Rails.application.routes.draw do
     end
     collection do
       get 'stop_impersonating', to: "users/impersonate#stop_impersonating"
+      get 'authenticated', to: "users/authenticated#show"
     end
   end
 
   resources :courses, only: [], model_name: "Course" do
+    member do
+      scope :analytics do
+        get 'dashboards/custom', to: "dashboards/custom#show"
+      end
+    end
+
     namespace :analytics do
       resources :dashboards
     end
 
-    resources :questions, except: [:new, :create] do
+    resources :questions, except: [:new, :create], controller: "courses/questions" do
       collection do
         get 'download', to: "questions#download_form"
         get 'search', to: "questions/search#index"
         get 'count', to: "questions/count#show"
+      end
+      member do
+        post 'handle', to: 'questions/handle#create'
       end
     end
 
@@ -176,13 +197,13 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :users
+    resources :users, controller: "courses/users"
 
     resources :question_states
 
     resources :messages
 
-    resources :settings
+    resources :settings, controller: "courses/settings"
 
     resources :certificates do
       collection do
@@ -222,6 +243,7 @@ Rails.application.routes.draw do
       post 'semester'
       get 'roster', to: 'courses#roster'
       get 'queue', to: 'courses/queue#show'
+      get 'queue/staff_log', to: "courses/queue/staff_log#show"
       get 'settings/queues', to: 'courses#queues'
       get 'activeTAs', to: 'courses#active_tas'
       get 'analytics', to: 'courses/analytics#index'

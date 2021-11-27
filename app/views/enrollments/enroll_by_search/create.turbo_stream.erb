@@ -1,0 +1,13 @@
+<turbo-stream action="replace" target="search-body">
+  <template>
+    <%= render(Users::Enrollments::EnrollBySearch::SearchBodyComponent.new(enrollment: @enrollment)) %>
+  </template>
+</turbo-stream>
+
+<turbo-stream action="replace" target="flash">
+  <template>
+    <turbo-frame id="flash">
+      <%= render "shared/flash" %>
+    </turbo-frame>
+  </template>
+</turbo-stream>

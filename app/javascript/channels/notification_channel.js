@@ -1,7 +1,6 @@
 import consumer from "./consumer";
-import queryClient from "../src/utilities/queryClientFile";
 
-export default consumer.subscriptions.create("Noticed::NotificationChannel", {
+consumer.subscriptions.create("NotificationChannel", {
   connected() {
     // Called when the subscription is ready for use on the server
   },
@@ -10,30 +9,15 @@ export default consumer.subscriptions.create("Noticed::NotificationChannel", {
     // Called when the subscription has been terminated by the server
   },
 
-  async received(data) {
+  received(data) {
     if (
-      "Notification" in window &&
-      Notification.permission === "granted" &&
-      window.settings?.find((v) => v.key === "Desktop_Notifications")?.value ===
-        "true"
+      Notification.permission !== "denied" &&
+      Notification.permission !== "default"
     ) {
-      switch (data.params?.type) {
-        case "QuestionState":
-          var notification = new Notification(`CMQueue: ${data.params.title}`, {
-            body: data.params.why,
-          });
-          break;
-      }
-    }
-
-    if (data.invalidate) {
-      if (process.env.NODE_ENV === "development") {
-        console.log("invalidating", data.invalidate);
-      }
-
-      await queryClient.invalidateQueries(data.invalidate);
-
-      await queryClient.refetchQueries(data.invalidate);
+      if (document.hasFocus()) return;
+      new Notification("CMQueue", {
+        body: data.params.message,
+      });
     }
   },
 });

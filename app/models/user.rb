@@ -10,7 +10,6 @@
 #  updated_at  :datetime         not null
 #
 class User < ApplicationRecord
-
   include Enrollable
 
   has_many :notifications, as: :recipient, dependent: :destroy
@@ -27,18 +26,28 @@ class User < ApplicationRecord
   #         foreign_key: :resource_owner_id,
   #         dependent: :delete_all
 
-  has_many :active_questions, -> { undiscarded.questions_by_state("unresolved", "frozen", "resolving").or(undiscarded.by_state("kicked").unacknowledged) }, through: :enrollments, source: :questions
-
+  has_many :active_enrollments, -> { undiscarded }, class_name: "Enrollment", inverse_of: :user
+  has_many :enrollments, dependent: :destroy, inverse_of: :user
+  has_many :staff_enrollments,
+           -> { undiscarded.merge(Enrollment.with_role_names(Role.staff_role_names))},
+           class_name: "Enrollment", inverse_of: :user
+  has_many :student_enrollments,
+           -> { undiscarded.merge(Enrollment.with_role_names(Role.student_role_names))},
+           class_name: "Enrollment", inverse_of: :user
+  has_many :active_questions, -> { undiscarded
+                                     .by_state("unresolved", "frozen", "resolving")
+                                     .or(undiscarded.by_state("kicked")
+                                                    .unacknowledged) }, through: :enrollments, source: :questions
   has_many :courses, through: :enrollments
-
+  has_many :other_roles, class_name: "Role"
   has_many :questions, dependent: :destroy, through: :enrollments
-
   has_many :question_states, -> { order('question_states.id DESC') }, through: :enrollments, dependent: :destroy, source: :question_states
-
   has_many :settings, as: :resource, dependent: :destroy
-
-  # add scopes for course
   has_many :applications, class_name: "Doorkeeper::Application", as: :owner, dependent: :destroy
+
+  validates :given_name, :family_name, :email, presence: true
+
+  accepts_nested_attributes_for :enrollments
 
   #has_many :oauth_applications, as: :owner
 
@@ -61,7 +70,7 @@ class User < ApplicationRecord
 
   def interacting_questions(*states)
     states = ["resolving"] if states.empty?
-    Question.latest_by_state_with_user(self, states)
+    Question.by_state_with_user(self, states)
   end
 
   def unacknowledged_kicked_question?
@@ -86,7 +95,7 @@ class User < ApplicationRecord
 
   def currently_handled_question(course: nil)
     question_state = question_states.with_courses(course).first
-    question_state&.question&.user != self && question_state&.state == "resolving" ? question_state&.question : nil
+    question_state&.state == "resolving" ? question_state&.question : nil
   end
 
   def active_question(course: nil)

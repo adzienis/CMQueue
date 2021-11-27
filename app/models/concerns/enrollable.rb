@@ -1,17 +1,6 @@
 module Enrollable
   extend ActiveSupport::Concern
 
-  included do
-    has_many :active_enrollments, -> { undiscarded }, class_name: "Enrollment"
-    has_many :enrollments, dependent: :destroy
-    has_many :staff_enrollments,
-             -> { undiscarded.merge(Enrollment.with_role_names(Role.staff_role_names))},
-             class_name: "Enrollment"
-    has_many :student_enrollments,
-             -> { undiscarded.merge(Enrollment.with_role_names(Role.student_role_names))},
-             class_name: "Enrollment"
-  end
-
   def enrolled_in_course?(course)
     enrolled_in_courses?(course)
   end

@@ -19,10 +19,11 @@ module Search
                                            })
 
       pagy_results = Question.pagy_search(params[:q].present? ? params[:q] : "*",
-                                               aggs: { tags: {} },
-                                               order: { created_at: :asc },
-                                               where: where_params.merge({ discarded_at: nil }))
-       pagy_searchkick(pagy_results, items: 10)
+                                          aggs: { tags: {} },
+                                          order: { created_at: { order: :asc, unmapped_type: :date }},
+                                          includes: [:user, :tags],
+                                          where: where_params.merge({ discarded_at: nil, course_id: course.id }))
+      pagy_searchkick(pagy_results, items: 10)
     end
 
     private

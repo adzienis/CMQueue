@@ -1,0 +1,44 @@
+<script>
+  function toggle() {
+    if (document.querySelector(".sidebar").classList.contains("open")) {
+      document.querySelector(".sidebar").classList.remove("open");
+    } else {
+      document.querySelector(".sidebar").classList.add("open");
+    }
+
+    if (document.querySelector(".sidebar-opener").classList.contains("open")) {
+      document.querySelector(".sidebar-opener").classList.remove("open");
+      document.querySelector(".sidebar-opener").innerHTML = "";
+      let i = document.createElement("i");
+      i.classList.add("fas", "fa-chevron-right");
+      document.querySelector(".sidebar-opener").appendChild(i);
+
+    } else {
+      document.querySelector(".sidebar-opener").classList.add("open");
+      document.querySelector(".sidebar-opener").innerHTML = "";
+      let i = document.createElement("i");
+      i.classList.add("fas", "fa-chevron-left");
+      document.querySelector(".sidebar-opener").appendChild(i);
+    }
+  }
+</script>
+
+<div class="sidebar" style="display: flex; flex-direction: row; ">
+  <div class="d-flex flex-column p-3 bg-white border-right" style="box-shadow: 0 0px 2px -0px #00000077; min-width: 200px; width: 200px; max-width: 200px;">
+    <h4 class="mb-0">
+      Navigation
+    </h4>
+    <hr>
+    <ul class="list-unstyled">
+      <% entries.each do |entry| %>
+        <%= entry %>
+      <% end %>
+    </ul>
+  </div>
+  <button class="btn btn-outline-secondary sidebar-opener" onclick="event.preventDefault(); toggle()">
+    <i class="fas fa-chevron-right"></i>
+  </button>
+  <div id='courses-container' class="container mt-4 mb-5 overflow-hidden" style="min-height: 100vh">
+    <%= body %>
+  </div>
+</div>

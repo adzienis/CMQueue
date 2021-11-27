@@ -45,10 +45,19 @@ class Tag < ApplicationRecord
 
   belongs_to :course
 
-  has_many :group_members, -> { where(individual_type: "Tag") }, foreign_key: :individual_id, as: :individual, inverse_of: :individual
-  has_many :tag_groups, through: :group_members, as: :group, source: :group, source_type: "TagGroup", inverse_of: :tags
+  has_many :group_members,
+           -> { where(individual_type: "Tag") },
+           foreign_key: :individual_id,
+           as: :individual,
+           inverse_of: :individual
+  has_many :tag_groups,
+           through: :group_members,
+           as: :group,
+           source: :group,
+           source_type: "TagGroup",
+           inverse_of: :tags
 
-  has_and_belongs_to_many :questions, dependent: :destroy
+  has_and_belongs_to_many :questions
 
   after_commit do
     tag_groups.reindex

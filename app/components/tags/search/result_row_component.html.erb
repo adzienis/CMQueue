@@ -1,0 +1,27 @@
+<tr>
+  <td>
+    <div class="position-relative">
+      <div class="mb-2">
+        <%= link_to course_tag_path(tag.course, tag), class: "fw-bold" do %>
+          <%= tag.name.titleize %> <i class="fas fa-external-link-alt me-1"></i>
+          <span class="badge <%= visibility_class %>"> <%= visibility_msg %></span>
+        <% end %>
+      </div>
+      <div>
+        <small class="fw-bold"> Tag Groups: </small>
+        <% if tag.tag_groups.count == 0 %>
+                <span class="badge bg-secondary">
+                  None
+                </span>
+        <% end %>
+        <% tag.tag_groups.each do |tag_group| %>
+          <%= link_to tag_group.name, course_tag_group_path(tag.course, tag_group), class: "badge bg-danger text-white" %>
+        <% end %>
+      </div>
+      <%= render(Shared::Search::CardFooterComponent.new(record: tag, course: tag.course, options: { actions: [:edit] })) %>
+    </div>
+  </td>
+  <td>
+    <%= tag.created_at.strftime("%a, %x, %I:%M %p") %>
+  </td>
+</tr>

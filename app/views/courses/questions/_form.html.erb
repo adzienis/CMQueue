@@ -1,0 +1,29 @@
+<%= simple_form_for [@course, @question], html: { autocomplete: 'off' } do |f| %>
+  <div class="card">
+    <div class="card-body">
+      <%= f.input :tried, label: "What Did They Try?" %>
+      <%= f.input :description %>
+      <%= f.input :location %>
+
+      <div data-controller="react_select">
+        <%= f.association :enrollment,
+                          collection: [@question.enrollment],
+                          disabled: true, label_method: ->(enrollment) { enrollment.user.full_name } %>
+      </div>
+      <%= f.simple_fields_for :question_state do |ff| %>
+        <div data-controller="react_select">
+          <%= ff.input :state, collection: QuestionState.states.keys, include_blank: false %>
+        </div>
+        <%= f.error :state, class: "invalid-feedback d-block" %>
+      <% end %>
+
+      <div data-controller="react_select">
+        <label class="form-label"> Tags </label>
+        <%= f.collection_select :tag_ids, @question.course.tags, :id, :name, {}, include_blank: true, multiple: true %>
+      </div>
+    </div>
+    <div class="card-footer">
+      <%= f.submit :Submit, class: "btn btn-primary", "data-disable-with": "Loading" %>
+    </div>
+  </div>
+<% end %>

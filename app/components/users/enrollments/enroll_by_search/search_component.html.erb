@@ -1,0 +1,20 @@
+<%= form_with url: enroll_by_search_path do |f| %>
+  <%= render(Shared::ModalComponent.new) do |modal| %>
+    <% modal.title do %>
+      Enroll in a Course
+    <% end %>
+    <% modal.button do %>
+      <div class="card card-body d-flex justify-content-center align-items-center mb-2 shadow-sm"
+           style="height: 110px; cursor: pointer"
+      >
+        <i class="fas fa-plus fa-3x"></i>
+      </div>
+    <% end %>
+    <% modal.body do %>
+      <%= render(Users::Enrollments::EnrollBySearch::SearchBodyComponent.new(enrollment: enrollment)) %>
+    <% end %>
+    <% modal.footer do %>
+      <%= f.submit "Add Course", class: "btn btn-primary" %>
+    <% end %>
+  <% end %>
+<% end %>

@@ -8,6 +8,10 @@ module ApplicationCable
       self.current_user = authenticate_user
     end
 
+    def request_var
+      @request
+    end
+
     private
 
     def authenticate_user

@@ -15,7 +15,7 @@ module Search
 
         { attribute => order }
       else
-        {}
+        { created_at: { order: :desc, unmapped_type: :date}}
       end
     end
 
@@ -58,8 +58,8 @@ module Search
         end
 
         return {} if parsed.instance_of?(Array) && parsed.empty?
-
         return {} unless parsed.present?
+        return { query_key => { all: parsed }} if parsed.instance_of?(Array)
 
         { query_key => parsed }
       end

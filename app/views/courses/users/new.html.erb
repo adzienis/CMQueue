@@ -1,0 +1,14 @@
+<h3>
+  New User
+</h3>
+
+<div class="card">
+  <div class="card-body">
+    <%= simple_form_for @user, url: course_users_path(@course) do |f| %>
+      <%= f.input :given_name, as: :string  %>
+      <%= f.input :family_name, as: :string %>
+      <%= f.input :email, as: :string %>
+      <%= f.submit "Submit", class: "btn btn-primary" %>
+    <% end %>
+  </div>
+</div>

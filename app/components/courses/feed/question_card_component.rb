@@ -1,9 +1,8 @@
 module Courses
   module Feed
     class QuestionCardComponent < ViewComponent::Base
-      def initialize(question:, current_user:)
+      def initialize(question:)
         @question = question
-        @current_user = current_user
       end
 
       def state
@@ -40,7 +39,7 @@ module Courses
 
       private
 
-      attr_reader :question, :current_user
+      attr_reader :question
     end
   end
 end

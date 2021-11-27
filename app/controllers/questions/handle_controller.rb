@@ -15,7 +15,9 @@ class Questions::HandleController < ApplicationController
 
   def create
     @question = Question.find(params[:question_id])
-    @question.transition_to_state(params[:state], params[:enrollment_id], description: params[:description])
+    @question.transition_to_state(params[:state],
+                                  current_user.enrollment_in_course(@course).id,
+                                  description: params[:description])
 
     redirect_to queue_course_path(@question.course)
   end

@@ -1,12 +1,3 @@
-<%
-  msg = if @pagy.count == 1
-          "#{@pagy.count} tag in #{@results.took} ms"
-        else
-          "#{@pagy.count} tags in #{@results.took} ms"
-        end
-%>
-
-
 <div class="mb-3">
   <h1 class="mb-0">
     Tags
@@ -16,92 +7,28 @@
   </div>
 </div>
 
-<%= render(Shared::Search::SearchBarComponent.new(resources: :tags,
-                                                  course: @course,
-                                                  query_parameters: request.query_parameters,
-                                                  options: {
-                                                    actions: [:new]
-                                                  })) %>
-<div class="d-flex">
-  <div class="card card-body shadow-sm me-2" style="width: 300px; max-width: 300px">
-    <%= render(Shared::Search::SearchPaneComponents.new(results: @results,
-                                                        course: @course,
-                                                        query_params: request.query_parameters,
-                                                        resources: :tags))
-    %>
-  </div>
+<turbo-frame id="search-container" class="search-container" data-turbo-action="advance" target="_top">
+  <%= render(Shared::Search::SearchPaneComponents.new(results: @results,
+                                                      course: @course,
+                                                      query_params: request.query_parameters,
+                                                      resources: :tags))
+  %>
   <div class="w-100">
-    <h3> Results <small>(<%= msg %>)</small></h3>
-    <div class="card card-body d-flex flex-row">
-      <% if @results.aggs.present? %>
-        <div class="fw-bold">
-          Sort:
-        </div>
-        <div class="d-grid w-100" style="grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); justify-items: center">
-          <% @results.aggs.keys.each do |category| %>
-            <% if @results.aggs[category]["buckets"].present? %>
-              <div>
-                <%= render(Shared::Search::SortLinkComponent.new(category: category,
-                                                                 query_params: request.query_parameters,
-                                                                 course: @course,
-                                                                 resources: :tags)) %>
-              </div>
-            <% end %>
-          <% end %>
+    <%= render(Shared::Search::SearchBarComponent.new(resources: :tags,
+                                                      course: @course,
+                                                      query_parameters: request.query_parameters,
+                                                      options: {
+                                                        actions: [:new]
+                                                      })) %>
+    <%= render(Shared::Search::ResultsComponent.new(course: @course, pagy: @pagy, search: @results, options: {
+      headers: [:tag_group, created_at: :sortable]
+    })) do |c| %>
+      <% @results.results.each do |result| %>
+        <%= c.result do %>
+          <%= render(::Tags::Search::ResultRowComponent.new(tag: result)) %>
+        <% end %>
       <% end %>
-      </div>
-    </div>
-    <% if @results.results.empty? %>
-      <div class="alert alert-warning">
-        No Tags
-      </div>
-    <% end %>
-    <% @results.results.each do |tag| %>
-      <div class="card mb-2 shadow-sm position-relative">
-        <span class="position-absolute" style="top: -10px">
-          <%= send(:tag).div class: "badge rounded-pill #{tag.archived ? "bg-danger" : "bg-success"}" do %>
-                <%= tag.archived ? "Hidden" : "Visible" %>
-              <% end %>
-        </span>
-        <div class="card-body">
-          <div class="d-flex align-items-center">
-            <h4 class="me-1">
-              <%= link_to course_tag_path(@course, tag) do %>
-                <%= tag.name %>
-              <% end %>
-            </h4>
-          </div>
-          <div>
-            <label class="fw-bold"> Created At </label>
-            <div>
-              <%= tag.created_at.strftime("%a, %x, %I:%M %p") %>
-            </div>
-          </div>
-          <div class="mb-2">
-            <label class="fw-bold">
-              Tag Groups
-              <span class="badge rounded-pill bg-danger">
-                <%= tag.tag_groups.count %>
-              </span>
-            </label>
-            <div>
-              <% if tag.tag_groups.count == 0 %>
-                <span class="badge rounded-pill bg-secondary">
-                  None
-                </span>
-              <% end %>
-              <% tag.tag_groups.each do |tag_group| %>
-                <%= link_to tag_group.name, course_tag_group_path(@course, tag_group) %>&nbsp
-              <% end %>
-            </div>
-          </div>
-        </div>
-        <%= render(Shared::Search::CardFooterComponent.new(record: tag, course: @course)) %>
-      </div>
     <% end %>
   </div>
 
-</div>
-<div class="w-100 d-flex justify-content-center">
-  <%== render partial: "pagy/nav.html.erb", locals: { pagy: @pagy } %>
-</div>
+</turbo-frame>

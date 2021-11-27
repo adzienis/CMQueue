@@ -1,12 +1,9 @@
-<%= tag.div class: "card-footer d-flex align-items-center" do %>
-  <%= link_to "To #{record.model_name.human.titleize}", polymorphic_path([course, record]) %>
-  <div style="flex: 1"></div>
-  <%= link_to "Edit #{record.model_name.human.titleize}",
-              polymorphic_path([:edit, course, record]),
-              class: "btn btn-warning me-1" if helpers.can? :edit, record %>
-  <%= link_to "Destroy #{record.model_name.human.titleize}",
-              polymorphic_path([course, record]),
-              class: "btn btn-danger",
-              method: :delete,
-              "data-confirm": "Are you sure?" if helpers.can? :destroy, record %>
-<% end %>
+<%= tag.hr class: "mb-1 mt-1" if edit? || destroy? %>
+<%= link_to "Edit #{record.model_name.human.titleize}",
+            polymorphic_path([:edit, course, record]), class: "fw-bold" if edit? %>
+<%= "|" if destroy? && edit? %>
+<%= link_to "Remove #{record.model_name.human.titleize}",
+           polymorphic_path([course, record]),
+           class: "fw-bold",
+           method: :delete,
+           "data-confirm": "Are you sure?" if destroy? %>

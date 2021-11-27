@@ -36,17 +36,11 @@ class QuestionsController < ApplicationController
       tags = JSON.parse(params[:tags])
       @questions = @questions.joins(:tags).where(tags: tags) if tags.present?
     end
-    @questions = @questions.latest_by_state(JSON.parse(params[:state])) if params[:state]
+    @questions = @questions.by_state(JSON.parse(params[:state])) if params[:state]
 
     @questions = @questions.count if params[:agg] == "count"
 
     respond_with @questions
-  end
-
-  def acknowledge
-    @question.question_state.update(acknowledged_at: DateTime.now)
-
-    redirect_to queue_course_path(@question.course)
   end
 
   def previous_questions
@@ -82,7 +76,14 @@ class QuestionsController < ApplicationController
     @question = Question.accessible_by(current_ability).find(params[:question_id])
     @enrollment = current_user.enrollment_in_course(@course)
 
-    @question.unfreeze(@enrollment.id)
+    if params[:state] == "resolved"
+      # update state to resolved with last staff that interacted
+      @question.transition_to_state("resolved",
+                                    @question.question_state.enrollment_id,
+                                    description: "resolved self")
+    else
+      @question.transition_to_state(params[:state], current_user.enrollment_in_course(@course).id)
+    end
   end
 
   def download_form

@@ -7,33 +7,47 @@ class ApplicationController < ActionController::Base
   self.responder = ApplicationResponder
 
   rescue_from CanCan::AccessDenied do |exception|
-    render inline: "Access Denied", status: 403
+    respond_to do |format|
+      format.html do
+        render inline: "Access Denied", status: 401
+      end
+      format.json do
+        render json: false, status: 401
+      end
+    end
   end
 
   include Pagy::Backend
 
   before_action :authenticate_user!, :set_course, :set_user, :restrict_routes
 
+  def set_variant
+    agent = request.user_agent
+    return request.variant = :tablet if agent =~ /(tablet|ipad)|(android(?!.*mobile))/i
+    return request.variant = :mobile if agent =~ /Mobile/
+    request.variant = :desktop
+  end
+
   def current_ability
-    @current_ability ||= Ability.new(current_user,{
+    @current_ability ||= Ability.new(current_user, {
       params: params,
       path_parameters: request.path_parameters
     })
   end
 
   def set_user
-    @user = User.accessible_by(UserAbility.new(current_user,{
+    @user = User.accessible_by(UserAbility.new(current_user, {
       params: params,
       path_parameters: request.path_parameters
     })).find_by(id: params[:user_id]) if params[:user_id]
   end
+
   def set_course
-    @course = Course.accessible_by(CourseAbility.new(current_user,{
+    @course = Course.accessible_by(CourseAbility.new(current_user, {
       params: params,
       path_parameters: request.path_parameters
     })).find_by(id: params[:course_id]) if params[:course_id]
   end
-
 
   def restrict_routes
     if request.path.include?('users/')
@@ -63,7 +77,7 @@ class ApplicationController < ActionController::Base
     if user_signed_in?
       super
     else
-      redirect_to root_path
+      redirect_to root_path, flash: { error: "Token has expired. You have been signed out." }
       ## if you want render 404 page
       ## render :file => File.join(Rails.root, 'public/404'), :formats => [:html], :status => 404, :layout => false
     end

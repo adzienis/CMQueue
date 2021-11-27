@@ -2,13 +2,17 @@ class Forms::Question
   include ActiveModel::Model
 
   attr_reader :model
-  delegate :location, :tried, :description, :tag_ids, :course_id, :enrollment_id, :tags, :course, to: :question
+  delegate :location, :tried, :description, :tag_ids, :enrollment_id, :tags, :course, to: :question
 
   attr_accessor(
     :question,
     :current_user,
     :question_params
   )
+
+  def persisted?
+    question.present?
+  end
 
   private def method_missing(symbol, *args)
     if symbol.to_s.include? "tag_group"
@@ -23,6 +27,11 @@ class Forms::Question
   end
 
   validate :tag_groups_satisfied
+  validate :question_valid?
+
+  def question_valid?
+    @question.valid?
+  end
 
   def tag_groups_satisfied
     course.tag_groups.each do |tag_group|
@@ -47,7 +56,6 @@ class Forms::Question
         else
           @question = @current_user.questions.build(question_params)
         end
-
         raise ActiveRecord::RecordInvalid.new(self) unless valid?
 
         @question.save!

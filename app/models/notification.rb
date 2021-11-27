@@ -32,14 +32,16 @@ class Notification < ApplicationRecord
     end
   end
 
+  after_create_commit do
+    broadcast_append_later_to user,
+                              target: "notifications",
+                              html: ApplicationController.render(
+                                Notifications::NotificationComponent.new(notification: self), layout: false)
+  end
+
   after_commit do
     if read_at_previously_was.nil? && read_at.present?
       broadcast_remove_to user
-    elsif read_at.nil?
-      broadcast_append_later_to user,
-                                target: "notifications",
-                                html: ApplicationController.render(
-                                  Notifications::NotificationComponent.new(notification: self), layout: false)
     end
   end
 

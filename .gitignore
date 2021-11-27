@@ -58,3 +58,6 @@ metabase-data
 /app/assets/builds/*
 !/app/assets/builds/.keep
 .sass-cache
+.env.prod.postgres
+.pgpass.prod
+

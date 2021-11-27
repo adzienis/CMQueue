@@ -28,6 +28,7 @@ module CMQueue
     config.hosts << "cmqueue.xyz"
     config.hosts << "localhost"
     config.hosts << "cmqueue-demo.herokuapp.com"
+    config.hosts << "192.168.1.183"
     Rails.application.config.action_cable.allowed_request_origins = ['http://cmqueue.xyz', 'https://cmqueue.xyz']
     config.to_prepare do
       # Only Applications list

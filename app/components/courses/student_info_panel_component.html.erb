@@ -6,10 +6,13 @@
       </button>
     </h2>
     <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
-      <div class="accordion-body d-grid" style="grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); column-gap: 10px">
-        <%= render(Courses::QueueOpenStatusComponent.new(course: course)) %>
-        <%= render(Courses::QuestionsCountComponent.new(course: course)) %>
-        <%= render(Courses::QuestionPositionComponent.new(question: question)) %>
+      <div class="accordion-body">
+        <div class="d-grid mb-1" style="grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); column-gap: 10px">
+          <%= render(Courses::QueueOpenStatusComponent.new(course: course)) %>
+          <%= render(Courses::QuestionsCountComponent.new(course: course)) %>
+          <%= render(Courses::QuestionPositionComponent.new(question: question)) %>
+        </div>
+        <%= render(Courses::ActiveStaffComponent.new(course: course)) %>
       </div>
     </div>
   </div>

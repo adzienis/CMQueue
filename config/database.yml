@@ -74,6 +74,3 @@ test:
 #
 production:
   <<: *default
-  username: postgres
-  password: postgres
-  database: production

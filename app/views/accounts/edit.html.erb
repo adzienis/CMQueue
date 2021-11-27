@@ -1,0 +1,10 @@
+<div class="card shadow-sm">
+  <div class="card-body">
+    <%= simple_form_for current_user, url: account_path do |f| %>
+      <%= f.input :given_name, as: :string %>
+      <%= f.input :family_name, as: :string %>
+      <%= f.input :email, as: :string, disabled: true %>
+      <%= f.submit "Update Account", class: "btn btn-primary" %>
+    <% end %>
+  </div>
+</div>

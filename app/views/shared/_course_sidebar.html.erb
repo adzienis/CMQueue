@@ -8,8 +8,8 @@
     </div>
     <%= link_to "Queue", queue_course_path(@course),
                   class: "btn btn-toggle align-items-center text-decoration-none
-                            #{request.path == queue_course_path(@course) ||
-                    request.path == answer_course_path(@course) ? 'active-link' : ''}" %>
+                            #{["courses/queue", "courses/answer",
+                               "courses/queue/staff_log"].include?(controller_path) ? 'active-link' : ''}" %>
   </li>
 
   <%= tag.li class:"d-flex align-items-center" do %>

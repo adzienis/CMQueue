@@ -17,9 +17,7 @@ class Role < ApplicationRecord
 
   has_many :enrollments, dependent: :delete_all
 
-
-  belongs_to :course, -> { where(roles: {resource_type: 'Course'}) }, foreign_key: 'resource_id'
-
+  belongs_to :course, -> { where(roles: {resource_type: 'Course'}) }, foreign_key: 'resource_id', optional: true
 
   scope :with_courses, ->(*courses) { where(resource: courses, resource_type: "Course") }
   scope :with_resources, ->(*resources) { where(resource: resources) }

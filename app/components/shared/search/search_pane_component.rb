@@ -38,7 +38,11 @@ module Shared
                 parsed = parsed + [key]
               end
             else
-              parsed = [parsed] + [key]
+              if query_params.find{|k,v| v == key}.present?
+                return query_params.reject{|k,v| v == key}
+              else
+                return query_params.merge(category => key)
+              end
             end
             query_params.merge(category => JSON.dump(parsed))
           end

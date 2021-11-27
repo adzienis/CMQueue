@@ -6,5 +6,7 @@
 <% end if enrollments.empty? %>
 
 <% enrollments.each do |enrollment| %>
-  <%= render(Users::Enrollments::EnrollmentComponent.new(enrollment: enrollment)) %>
+  <div class="mb-2">
+    <%= render(Users::Enrollments::EnrollmentComponent.new(enrollment: enrollment)) %>
+  </div>
 <% end %>

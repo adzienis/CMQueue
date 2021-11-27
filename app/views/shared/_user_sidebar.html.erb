@@ -1,6 +1,11 @@
-
-
 <%= render layout: "shared/sidebar" do %>
+  <li class="d-flex align-items-center">
+    <div style="width: 16px" class="d-flex justify-content-center">
+      <i class="fas fa-cog"></i>
+    </div>
+    <%= button_to "Account", user_path(current_user),
+                  class: "btn text-decoration-none #{["users"].include?(controller_path) ? "active-link" : ""}", method: :get %>
+  </li>
   <li class="d-flex align-items-center">
     <div style="width: 16px" class="d-flex justify-content-center">
       <i class="fas fa-cog"></i>
@@ -9,46 +14,4 @@
                   class: "btn text-decoration-none #{(request.path == user_settings_path(current_user)) ?
                                                        "active-link" : ""}", method: :get %>
   </li>
-  <li class="mb-1">
-    <div class=" d-flex align-items-center">
-      <div style="width: 16px" class="d-flex justify-content-center">
-        <i class="fas fa-info"></i>
-      </div>
-      <%= button_tag class: "btn btn-toggle align-items-center text-decoration-none
-                            #{(["questions", "enrollments", "courses"].include? controller_name) ? 'active-link' : ''}",
-                     data: { "bs-toggle": "collapse", "bs-target": "#course-info-collapse" } do %>
-        Information
-      <% end %>
-    </div>
-    <%= content_tag :div, id: "course-info-collapse",
-                    class: "collapse show" do %>
-      <ul class="navbar-toggler list-unstyled pb-1 small">
-        <li class="d-flex align-items-center">
-          <div style="width: 16px" class="d-flex justify-content-center">
-            <i class="fas fa-question"></i>
-          </div>
-          <%= button_to "Questions", user_questions_path(current_user),
-                        class: "btn text-decoration-none #{(request.path == user_questions_path(current_user)) ?
-                                                             "active-link" : ""}", method: :get %>
-        </li>
-
-        <li class="d-flex align-items-center">
-          <div style="width: 16px" class="d-flex justify-content-center">
-            <i class="fas fa-user"></i>
-          </div>
-          <%= button_to "Enrollments", user_enrollments_path(current_user),
-                        class: "btn text-decoration-none #{(request.path == user_enrollments_path(current_user)) ?
-                                                             "active-link" : ""}", method: :get %>
-        </li>
-        <%= tag.li class: "d-flex align-items-center" do %>
-        <div style="width: 16px" class="d-flex justify-content-center">
-          <i class="fas fa-book"></i>
-        </div>
-        <%= button_to "Courses", user_courses_path(current_user),
-                      class: "btn text-decoration-none #{(request.path == user_courses_path(current_user)) ?
-                                                           "active-link" : ""}", method: :get %>
-
-        <% end if can? :create, Course %>
-      </ul>
-    <% end %>
 <% end %>

@@ -46,7 +46,7 @@ class Question < ApplicationRecord
     }
   end
 
-  belongs_to :enrollment
+  belongs_to :enrollment, inverse_of: :questions
   has_one :course, through: :enrollment
   has_one :user, through: :enrollment
   # this basically alias question_state
@@ -62,18 +62,28 @@ class Question < ApplicationRecord
   has_many :tag_groups, through: :tags
   has_many :question_states, dependent: :destroy
 
-  accepts_nested_attributes_for :question_state
-
   validates :location, :description, :tried, presence: true
 
   validate :duplicate_question, on: :create
   validate :course_queue_open, on: :create
-  validate :has_at_least_one_tag
-  ######### Handle at least one tag with '='
-  # We have to manually override the assignment since we don't have callbacks
-  # that accurately represent the count of the number of tags before we destroy
-  # them (using '=').
-  attr_accessor :tags_validator
+  # validate :has_at_least_one_tag
+
+  accepts_nested_attributes_for :question_state
+  validates_associated :question_state
+
+  def create_question_state(*params)
+    guard_db(association: :question_state) do
+      qs = question_states.build(*params)
+      qs.save!
+    end
+  end
+
+  def unsafely_create_question_state(*params)
+    guard_db(association: :question_state) do
+      qs = question_states.build(*params)
+      qs.save!(validate: false)
+    end
+  end
 
   def total_time_to_resolve
     questions_states.order('min(id) DESC')
@@ -91,9 +101,6 @@ class Question < ApplicationRecord
   end
 
   def course_queue_open
-    course = Course.find_by(id: course_id)
-    return unless course
-
     errors.add(:course, "is closed.") if !course.open
   end
 
@@ -117,7 +124,7 @@ class Question < ApplicationRecord
   scope :unacknowledged, -> { where(id: joins(:question_states).where("question_states.acknowledged_at": nil)) }
   scope :with_courses, ->(*courses) { joins(enrollment: :role).merge(Role.with_courses(courses)) }
   scope :with_courses, ->(*courses) { joins(enrollment: :role).merge(Role.with_courses(courses)) }
-  scope :unresolved, ->{ by_state("unresolved") }
+  scope :unresolved, -> { by_state("unresolved") }
 
   scope :by_state, lambda { |*states|
     joins(:question_state)
@@ -126,27 +133,15 @@ class Question < ApplicationRecord
       .where("question_states.state": states)
   }
 
-  scope :latest_by_state, lambda { |*states|
+  scope :by_state_with_user, lambda { |user, *states|
     where(id:
             QuestionState.where(id:
                                   QuestionState
-                                    .select('max(id) as max')
-                                    .group(:question_id))
-                         .where(state: states)
-                         .pluck(:question_id)
-    )
-
-  }
-
-  scope :latest_by_state_with_user, lambda { |user, *states|
-    where(id:
-            QuestionState.where(id:
-                                  QuestionState
-                                    .joins(:user)
-                                    .where(users: user)
                                     .select('max(question_states.id) as max')
                                     .group(:question_id))
                          .where(state: states)
+                         .joins(:user)
+                         .where(users: user)
                          .pluck(:question_id)
     )
 
@@ -159,7 +154,7 @@ class Question < ApplicationRecord
     joins(:enrollment)
       .where('questions.created_at < ?', q.created_at)
       .where("enrollments.user_id": q.enrollment.user_id)
-      .where(course_id: q.course_id)
+      .where(course: course)
   }
 
   scope :with_today, -> {
@@ -171,7 +166,7 @@ class Question < ApplicationRecord
   }
 
   def position_in_course
-    course.questions.undiscarded.order(created_at: :asc).latest_by_state("unresolved").pluck(:id).index(id)
+    course.questions.undiscarded.order(created_at: :asc).by_state("unresolved").pluck(:id).index(id)
   end
 
   def resolved?
@@ -199,7 +194,7 @@ class Question < ApplicationRecord
   end
 
   def answer(enrollment_id)
-    resolving(enrollment_id)
+    resolving(enrollment_id: enrollment_id)
   end
 
   def resolve(enrollment_id)
@@ -210,23 +205,23 @@ class Question < ApplicationRecord
     return false if errors.any?
 
     guard_db do
-      question_states.create!(enrollment_id: enrollment_id, state: state, description: description)
+      question_states.lock.create!(enrollment_id: enrollment_id, state: state, description: description)
     end
   end
 
-  def resolving(enrollment_id)
+  def resolving(enrollment_id: self.enrollment_id)
     transition_to_state("resolving", enrollment_id)
   end
 
-  def kick(enrollment_id)
+  def kick(enrollment_id: self.enrollment_id)
     transition_to_state("kicked", enrollment_id)
   end
 
-  def freeze_question(enrollment_id)
+  def freeze_question(enrollment_id: self.enrollment_id)
     transition_to_state("frozen", enrollment_id)
   end
 
-  def unfreeze(enrollment_id)
+  def unfreeze(enrollment_id: self.enrollment_id)
     transition_to_state("unresolved", enrollment_id)
   end
 
@@ -234,138 +229,51 @@ class Question < ApplicationRecord
     %i[previous_questions]
   end
 
-  after_update do
-    QueueChannel.broadcast_to user, {
-      invalidate: ['courses',
-                   course_id,
-                   'questions']
-    }
-
-    ActionCable.server.broadcast "#{course.id}#ta", {
-      invalidate: ['courses',
-                   course_id,
-                   'questions']
-    }
-
-    ActionCable.server.broadcast "#{course.id}#instructor", {
-      invalidate: ['courses',
-                   course_id,
-                   'questions']
-    }
-
-    ActionCable.server.broadcast "#{course.id}#ta", {
-      invalidate: ['courses', course_id, 'topQuestion']
-    }
-
-    ActionCable.server.broadcast "#{course.id}#instructor", {
-      invalidate: ['courses', course_id, 'topQuestion']
-    }
-
-    ActionCable.server.broadcast "#{course.id}#ta", {
-      invalidate: ['courses', course_id, 'paginatedQuestions']
-    }
-    ActionCable.server.broadcast "#{course.id}#instructor", {
-      invalidate: ['courses', course_id, 'paginatedQuestions']
-    }
-
-    ActionCable.server.broadcast "#{course.id}#ta", {
-      invalidate: ['courses', course_id, 'paginatedPastQuestions']
-    }
-    ActionCable.server.broadcast "#{course.id}#instructor", {
-      invalidate: ['courses', course_id, 'paginatedPastQuestions']
-    }
-  end
-
-  after_create do
-
-    QueueChannel.broadcast_to user, {
-      invalidate: ['courses',
-                   course_id,
-                   'current_question']
-    }
-
-    ActionCable.server.broadcast "#{course.id}#ta", {
-      invalidate: ['courses', course_id, 'paginatedQuestions']
-    }
-    ActionCable.server.broadcast "#{course.id}#instructor", {
-      invalidate: ['courses', course_id, 'paginatedQuestions']
-    }
-
-    ActionCable.server.broadcast "#{course.id}#ta", {
-      invalidate: ['courses', course_id, 'paginatedPastQuestions']
-    }
-    ActionCable.server.broadcast "#{course.id}#instructor", {
-      invalidate: ['courses', course_id, 'paginatedPastQuestions']
-    }
-  end
-
-  after_create_commit do
-    update!(question_state: QuestionState.create!(question_id: id, enrollment_id: enrollment_id))
-  end
-
-  after_destroy do
-
-    ActionCable.server.broadcast "#{course.id}#ta", {
-      invalidate:
-        ['courses', course_id, 'questions']
-    }
-    ActionCable.server.broadcast "#{course.id}#instructor", {
-      invalidate:
-        ['courses', course_id, 'questions']
-    }
-
-    QueueChannel.broadcast_to user, {
-      invalidate: ['courses',
-                   course_id,
-                   'questions']
-    }
-  end
-
   after_discard do
-    QueueChannel.broadcast_to user, {
-      invalidate: ['courses',
-                   course_id,
-                   'current_question']
-    }
+    comp = Forms::Question::QuestionCreatorComponent.new(course: course,
+                                                         question_form: Forms::Question.new(question: Question.new),
+                                                         current_user: user
+    )
 
-    ActionCable.server.broadcast "#{course.id}#ta", {
-      invalidate:
-        ['courses', course_id, 'questions']
-    }
-    ActionCable.server.broadcast "#{course.id}#instructor", {
-      invalidate:
-        ['courses', course_id, 'questions']
-    }
+    SyncedTurboChannel.broadcast_replace_later_to user,
+                               target: "question-form",
+                               html: ApplicationController.render(comp, layout: false)
 
-    QueueChannel.broadcast_to user, {
-      invalidate: ['courses',
-                   course_id,
-                   'questions']
-    }
-
-  end
-
-  after_commit do
-    tags.reindex
-    self.reindex(refresh: true)
-    broadcast_replace_later_to course,
+    SyncedTurboChannel.broadcast_replace_later_to course,
                                target: "questions-count",
                                html: ApplicationController.render(Courses::QuestionsCountComponent.new(course: course),
-                                                                  layout: false),
-                               channel: SyncedTurboChannel
+                                                                  layout: false)
 
-    course.active_questions.each do |question|
-      broadcast_replace_later_to question.user,
-                                 target: "question-position",
-                                 html: ApplicationController
-                                         .render(Courses::QuestionPositionComponent.new(question: question), layout: false),
-                                 channel: SyncedTurboChannel
-    end
+    Courses::UpdatePositionsJob.perform_later(course: course)
+    component = Courses::QuestionPositionComponent.new(question: self)
+    SyncedTurboChannel.broadcast_replace_later_to user,
+                                                  target: "question-position",
+                                                  html: ApplicationController.render(component, layout: false)
+    TitleChannel.broadcast_to user, position_in_course&.ordinalize
 
     QueueChannel.broadcast_to course, {
       type: "event",
       event: "invalidate:question-feed"
     }
+  end
+
+  after_create_commit do
+    update!(question_state: QuestionState.create!(question_id: id, enrollment_id: enrollment_id))
+    if course.active_questions.count == 1
+      course.staff.each do |member|
+        SiteNotification.with(message: "New question on the queue").deliver_later(member.user)
+      end
+    end
+  end
+
+  after_update_commit do
+    SyncedTurboChannel.broadcast_replace_later_to self,
+                                                  target: self,
+                                                  html: ApplicationController.render(Courses::Feed::QuestionCardComponent.new(question: self), layout: false)
+  end
+
+  after_commit do
+    self.reindex(refresh: true)
   end
 
   singleton_class.send(:alias_attribute, :current_state, :question_state)

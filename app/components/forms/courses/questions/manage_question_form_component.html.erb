@@ -1,0 +1,56 @@
+<%= simple_form_for manage_question_form, as: :question,
+                    url: url,
+                    method: params[:action] == "new" || params[:action] == "create" ? :post : :patch,
+                    html: {
+                      class: "card card-body w-100", id: dom_id(question),
+                      data: { controller: "form" },
+                      autocomplete: "off"
+                    },
+                    defaults: {
+                      wrapper_html: { class: "mb-2" },
+                      label_html: { class: "fw-bold form-label" }
+                    } do |f| %>
+  <%= f.full_error :course, class: "invalid-feedback d-block fw-bold", style: "font-size: 1rem" %>
+  <%= f.full_error :enrollment, class: "invalid-feedback d-block fw-bold", style: "font-size: 1rem" %>
+  <%= f.hidden_field :enrollment_id, value: current_user.enrollment_in_course(course).id %>
+  <%= f.input :tried, label: "What did they try?"
+  %>
+  <%= f.input :description,
+              as: :text,
+              label: "Description"
+  %>
+  <%= f.input :location,
+              as: :text,
+              label: "Location/Zoom link"
+  %>
+
+  <div data-controller="react_select">
+
+    <%= f.label "Tags" %>
+    <%= f.collection_select :tag_ids,
+                            @course.available_tags,
+                            :id,
+                            :name,
+                            {
+                              selected: question.tags.filter { |tag| question.tags.include? tag }.map { |tag| tag.id }
+                            },
+                            multiple: true,
+                            class: "form-control",
+                            autocomplete: false
+    %>
+  </div>
+
+  <%= f.select :question_state,
+               QuestionState.states
+
+  %>
+
+  <div>
+    <%= f.submit (question.new_record? ? :Submit : :Update),
+                 class: "btn btn-success mt-2",
+                 data: {
+                   "disable-with": "Loading",
+                   "form-target": "submit"
+                 } %>
+  </div>
+<% end %>

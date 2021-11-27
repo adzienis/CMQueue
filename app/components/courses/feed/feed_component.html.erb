@@ -1,39 +1,26 @@
 <turbo-frame id="feed">
   <div class="d-flex mb-3">
-    <%= submit_tag "Answer", "data-turbo-frame": "_top",
-                   form: "answer-form",
-                   class: "btn btn-primary me-2 w-100 queue-button",
-                   "data-disable-with": "Answering",
-                   disabled: questions.filter { |question| question.unresolved? }.count == 0 %>
+    <%= form_with id: "answer-form", url: feed_answer_course_url(course, tags: params[:tags]), html: { target: "_top" }, class: "me-2 w-100" do |f| %>
+      <%= f.hidden_field :tags, value: params[:tags]&.split(" "), multiple: true if params[:tags]&.split(" ").present? %>
+      <%= f.submit "Answer", "data-turbo-frame": "_top",
+                     class: "btn btn-primary w-100 queue-button",
+                     "data-disable-with": "Answering",
+                     disabled: !course.answerable_questions? %>
 
+  <% end %>
     <%= render(Courses::OpenButtonComponent.new(course: course)) %>
   </div>
 
-  <%= form_with method: :get, data: { controller: 'autosave', autosave_delay_value: '0' } do |f| %>
-    <div data-controller="react_select" class="mb-4">
-      <label class="fw-bold"> Select Tags to Filter Questions By </label>
-      <%= f.collection_select :tags,
-                              available_tags,
-                              :name,
-                              :name,
-                              { selected: params[:tags],
-                                include_blank: false, include_hidden: false },
-                              { multiple: true, data: { action: 'autosave#save' } } %>
-    </div>
-  <% end %>
-
-  <%= form_with id: "answer-form", url: feed_answer_course_url(course, tags: params[:tags]), html: { target: "_top" } do |f| %>
-    <%= f.hidden_field :tags, value: params[:tags]&.split(" "), multiple: true if params[:tags]&.split(" ").present? %>
-  <% end %>
+  <%= render(Courses::Feed::TagFilterComponent.new(search: search)) %>
 
   <% if questions.count == 0 %>
-    <div class="alert alert-warning">
-      <h3 class="fw-bold"> No Questions </h3>
+    <div class="alert alert-warning shadow-sm">
+      <h5 class="fw-bold"> No Questions </h5>
     </div>
   <% end %>
 
   <% questions.each do |question| %>
-    <%= render(Courses::Feed::QuestionCardComponent.new(question: question, current_user: current_user)) %>
+    <%= render(Courses::Feed::QuestionCardComponent.new(question: question)) %>
   <% end %>
 
   <div class="w-100 d-flex justify-content-center">

@@ -6,7 +6,7 @@ class SummariesController < ApplicationController
     @tags = Tag.accessible_by(current_ability)
     @tags = @tags.with_courses(params[:course_id])
     @tags = @tags.undiscarded
-    @tags = @tags.joins(:questions).merge(Question.undiscarded.latest_by_state(JSON.parse(params[:state]))) if params[:state]
+    @tags = @tags.joins(:questions).merge(Question.undiscarded.by_state(JSON.parse(params[:state]))) if params[:state]
     @tags = @tags.where(id: params[:tags]) if params[:tags]
     @tags = @tags.group(:id).count
 

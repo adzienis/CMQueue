@@ -8,9 +8,13 @@ class Shared::Search::SearchPaneComponents < ViewComponent::Base
   end
 
   def agg_keys
-    @agg_keys = results.aggs&.keys || []
+    @agg_keys = results.aggs.filter { |k, v| v["buckets"].count > 0 }.keys || []
     @agg_keys += options[:extra_aggs] if options[:extra_aggs]
     @agg_keys
+  end
+
+  def render?
+    results.aggs&.filter { |k, v| v["doc_count"] > 0 }.present?
   end
 
   def sort_link(category)
@@ -24,21 +28,26 @@ class Shared::Search::SearchPaneComponents < ViewComponent::Base
         if order == "desc"
           link_to "Sort by #{category}",
                   polymorphic_path([:search, course, resources],
-                                   query_params.merge(sort: "#{category}_asc"))
+                                   query_params.merge(sort: "#{category}_asc")),
+                  "data-turbo-frame": "_self"
         else
           link_to "Sort by #{category}",
                   polymorphic_path([:search, course, resources],
-                                   query_params.merge(sort: "#{category}_desc"))
+                                   query_params.merge(sort: "#{category}_desc")),
+                  "data-turbo-frame": "_self"
+
         end
       else
         link_to "Sort by #{category}",
                 polymorphic_path([:search, course, resources],
-                                 query_params.merge(sort: "#{category}_desc"))
+                                 query_params.merge(sort: "#{category}_desc")),
+                "data-turbo-frame": "_self"
       end
     else
       link_to "Sort by #{category}",
               polymorphic_path([:search, course, resources],
-                               query_params.merge(sort: "#{category}_desc"))
+                               query_params.merge(sort: "#{category}_desc")),
+              "data-turbo-frame": "_self"
     end
   end
 

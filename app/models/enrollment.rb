@@ -26,10 +26,13 @@ class Enrollment < ApplicationRecord
     {
       id: id,
       user_id: user_id,
-      user_full_name: user.full_name,
+      full_name: user.full_name,
       role_name: role.name,
       semester: semester,
-      discarded_at: discarded_at
+      discarded_at: discarded_at,
+      created_at: created_at,
+      course_id: course&.id,
+      sections: courses_sections.map(&:name),
     }
   end
 
@@ -41,8 +44,9 @@ class Enrollment < ApplicationRecord
   belongs_to :role, optional: false
   has_one :course, through: :role
   has_one :question_state, -> { order('question_states.id DESC') }
+  has_and_belongs_to_many :courses_sections, :class_name => 'Courses::Section', association_foreign_key: :courses_section_id
   has_many :question_states, dependent: :destroy
-  has_many :questions, dependent: :destroy
+  has_many :questions, inverse_of: :enrollment, dependent: :destroy
 
   validate :unique_enrollment_in_course_per_semester, on: :create
   validate :semester_valid
@@ -91,13 +95,41 @@ class Enrollment < ApplicationRecord
   end
 
   after_discard do
-    ActionCable.server.broadcast 'react-students', {
-      invalidate: ['users', user.id, 'enrollments']
-    }
+    if role.name == "student"
+      broadcast_update_later_to user,
+                                target: "student-enrollments",
+                                html: ApplicationController
+                                        .render(Users::Enrollments::EnrollmentsComponent
+                                                  .new(enrollments: user.student_enrollments),
+                                                layout: false)
+    else
+      broadcast_update_later_to user,
+                                target: "staff-enrollments",
+                                html: ApplicationController
+                                        .render(Users::Enrollments::EnrollmentsComponent
+                                                  .new(enrollments: user.staff_enrollments),
+                                                layout: false)
+    end
   end
 
   after_commit do
     self.reindex(refresh: true)
+
+    if role.name == "student"
+      broadcast_update_later_to user,
+                                target: "student-enrollments",
+                                html: ApplicationController
+                                        .render(Users::Enrollments::EnrollmentsComponent
+                                                  .new(enrollments: user.student_enrollments),
+                                                layout: false)
+    else
+      broadcast_update_later_to user,
+                                target: "staff-enrollments",
+                                html: ApplicationController
+                                        .render(Users::Enrollments::EnrollmentsComponent
+                                                  .new(enrollments: user.staff_enrollments),
+                                                layout: false)
+    end
   end
 
   def student?
@@ -110,6 +142,22 @@ class Enrollment < ApplicationRecord
 
   def privileged?
     Role.privileged_role_names.include?(role.name) && role.resource_type == "Course"
+  end
+
+  def student_role
+    roles.find_by(name: "student")
+  end
+
+  def ta_role
+    roles.find_by(name: "ta")
+  end
+
+  def instructor_role
+    roles.find_by(name: "instructor")
+  end
+
+  def lead_ta_role
+    roles.find_by(name: "lead_ta")
   end
 
   private

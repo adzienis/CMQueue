@@ -11,12 +11,6 @@
     </div>
     <hr>
     <div class="mb-2">
-      <label class="fw-bold"> Id </label>
-      <div>
-        <%= @tag_group.id %>
-      </div>
-    </div>
-    <div class="mb-2">
       <label class="fw-bold"> Created At </label>
       <div>
         <%= @tag_group.created_at.to_formatted_s(:american_short) %>
@@ -31,13 +25,13 @@
     <div class="mb-2">
       <label class="fw-bold">
         Tags
-        <span class="badge rounded-pill bg-info">
+        <span class="badge bg-secondary">
           <%= @tag_group.tags.count %>
         </span>
       </label>
       <div>
         <% @tag_group.tags.each do |tag| %>
-        <span class="badge rounded-pill bg-danger">
+        <span class="badge bg-danger">
           <%= link_to tag.name, course_tag_path(@course, tag), style: "color: white" %>&nbsp
         </span>
         <% end %>

@@ -7,9 +7,11 @@
     <%= f.association :user, disabled: !@enrollment.new_record?, collection: User.all, label_method: ->(user) { "#{user.given_name} #{user.family_name}" } %>
   </div>
   <div data-controller="react_select">
-    <%= f.association :role, collection: @course.roles, label_method: ->(role){ role.name } %>
+    <%= f.association :role, collection: @course.roles, label_method: ->(role){ role.name.titleize } %>
   </div>
 
-  <p class="text-muted"> Does the user not exist? Add them. </p>
+  <%= tag.p class: "text-muted" do %>
+    Does the user not exist? <%= link_to "Add them", new_course_user_path(@course), class: "fw-bold" %>.
+  <% end if @enrollment.new_record? %>
   <%= f.submit :Submit, class: "btn btn-primary", "data-disable-with": "Loading" %>
 <% end %>

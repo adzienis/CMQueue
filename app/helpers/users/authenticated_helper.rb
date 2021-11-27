@@ -1,0 +1,2 @@
+module Users::AuthenticatedHelper
+end

@@ -10,6 +10,10 @@ class Shared::Search::SearchBarComponent < ViewComponent::Base
     @actions ||= options[:actions] || {}
   end
 
+  def resource_class
+    @resource_class ||= resource.to_s.classify.constantize
+  end
+
   def resource
     @resource ||= resources.to_s.singularize.to_sym
   end

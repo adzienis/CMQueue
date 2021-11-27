@@ -2,10 +2,25 @@
 
 module Courses
   class SettingsController < ApplicationController
-    def index
-      @course = Course.find(params[:id])
+    load_and_authorize_resource id_param: :setting_id
 
-      @tags = Course.find(params[:id]).tags
+    def current_ability
+      @current_ability ||= Courses::SettingAbility.new(current_user,{
+        params: params,
+        path_parameters: request.path_parameters
+      })
+    end
+
+    def index
+      @settings = @course.settings
+    end
+
+    def update
+      @setting = Setting.find(params[:setting_id])
+
+      @setting.set_value(params[:setting][@setting.key] == "1" ? true : false)
+
+      @setting.save!
     end
   end
 end
