@@ -60,4 +60,4 @@ metabase-data
 .sass-cache
 .env.prod.postgres
 .pgpass.prod
-
+nginx/certs

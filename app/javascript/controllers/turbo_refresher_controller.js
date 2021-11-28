@@ -6,7 +6,13 @@ export default class extends Controller {
 
   initialize() {
     document.addEventListener(this.eventNameValue, (event) => {
-      this.frameTarget.reload();
+      console.log("listening", this.eventNameValue);
+      if (this.frameTarget.src == null) {
+        this.frameTarget.src = null;
+        this.frameTarget.src = "/courses/1/feed";
+      } else {
+        this.frameTarget.reload();
+      }
     });
   }
 }

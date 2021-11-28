@@ -123,56 +123,35 @@ class QuestionState < ApplicationRecord
     TitleChannel.broadcast_to_staff course: course, message: count == 1 ? "#{count} question" : "#{count} questions"
     TitleChannel.broadcast_to question.user,
                               question.position_in_course.present? ? (question.reload.position_in_course + 1).ordinalize : "N/A"
-    broadcast_replace_later_to question.user,
-                               target: "question-position",
-                               html: ApplicationController
-                                       .render(Courses::QuestionPositionComponent.new(question: question), layout: false),
-                               channel: SyncedTurboChannel
+
+    RenderComponentJob.perform_later("Courses::QuestionPositionComponent",
+                                     question.user,
+                                     opts: { target: "question-position" },
+                                     component_args: { question: question })
 
     if state == "resolving"
       SiteNotification.with(message: "Your question is currently being resolved.").deliver_later(question.user)
     end
 
-    if state == "resolved"
-      comp = Forms::Question::QuestionCreatorComponent.new(course: course,
-                                                           question_form: Forms::Question.new(question: Question.new),
-                                                           current_user: question.user
-      )
+    RenderComponentJob.perform_later("Forms::Question::QuestionCreatorComponent",
+                                     question.user,
+                                     opts: { target: "question-form" },
+                                     component_args: { course: course,
+                                                       question: question,
+                                                       current_user: question.user
+                                     })
 
-      broadcast_replace_later_to question.user,
-                                 target: "question-form",
-                                 html: ApplicationController.render(comp, layout: false),
-                                 channel: SyncedTurboChannel
-    else
-      comp = Forms::Question::QuestionCreatorComponent.new(course: course,
-                                                           question_form: Forms::Question.new(question: question),
-                                                           current_user: question.user
-      )
+    RenderComponentJob.perform_later("Courses::QuestionsCountComponent",
+                                     course,
+                                     opts: { target: "questions-count" },
+                                     component_args: { course: course })
 
-      broadcast_replace_later_to question.user,
-                                 target: "question-form",
-                                 html: ApplicationController.render(comp, layout: false),
-                                 channel: SyncedTurboChannel
-    end
-
-    broadcast_replace_later_to course,
-                               target: "questions-count",
-                               html: ApplicationController.render(Courses::QuestionsCountComponent.new(course: course),
-                                                                  layout: false),
-                               channel: SyncedTurboChannel
-
-    broadcast_replace_later_to course,
-                               target: "active-staff",
-                               html: ApplicationController.render(Courses::ActiveStaffComponent.new(course: course),
-                                                                  layout: false),
-                               channel: SyncedTurboChannel
+    RenderComponentJob.perform_later("Courses::ActiveStaffComponent",
+                                     course,
+                                     opts: { target: "active-staff" },
+                                     component_args: { course: course })
 
     Courses::UpdatePositionsJob.perform_later(course: course)
-
-    QueueChannel.broadcast_to course, {
-      type: "event",
-      event: "invalidate:question-feed"
-    }
   end
 
 end

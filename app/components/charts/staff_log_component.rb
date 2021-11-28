@@ -11,13 +11,13 @@ module Charts
     end
 
     def round_nearest(raw, value)
-      (raw/value).floor * value
+      (raw / value).floor * value
     end
 
     def min_value
       if data.present?
-        data_min = (data.min{|a,b| a[0] <=> b[0]}[0])
-        return round_nearest(data_min, 60*60*1000)
+        data_min = (data.min { |a, b| a[0] <=> b[0] }[0])
+        return round_nearest(data_min, 60 * 60 * 1000)
       end
 
       date.beginning_of_day.to_time.to_i * 1000
@@ -65,15 +65,15 @@ module Charts
     end
 
     def labels
-      @label ||= raw_data.map{|v| label_map(v[0])}
+      @label ||= raw_data.map { |v| label_map(v[0]) }
     end
 
     def data_color
-      @data_color ||= raw_data.map{|v| color_map(v[0])}
+      @data_color ||= raw_data.map { |v| color_map(v[0]) }
     end
 
     def data
-      @data ||= raw_data.map{|v| [v[1], v[2]]}
+      @data ||= raw_data.map { |v| [v[1], v[2]] }
     end
 
     def date_range
@@ -81,7 +81,17 @@ module Charts
     end
 
     def date
-      @date ||= options[:date].present? ? options[:date] : DateTime.current
+      return @date if defined?(@date)
+
+      @date = if options[:date].present?
+                if options[:date].today?
+                  DateTime.current
+                else
+                  options[:date].to_time
+                end
+              else
+                DateTime.current
+              end
     end
 
     def raw_data
@@ -89,7 +99,7 @@ module Charts
                                                                    .joins(:question_states, :user)
                                                                    .group("users.given_name", "question_states.created_at", "question_states.state")
                                                                    .where("question_states.created_at": date_range,
-                                                                          "question_states.state": [0,2,3,4]).limit(10).to_sql).rows
+                                                                          "question_states.state": [0, 2, 3, 4]).to_sql).rows
     end
 
     private

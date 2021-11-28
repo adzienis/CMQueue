@@ -12,7 +12,7 @@
   </li>
 </ul>
 
-<turbo-frame id="log">
+<turbo-frame id="log" data-turbo-action="advance">
   <div class="mb-2">
     <% if @date.present? && @date > DateTime.current %>
       <p> Please enter a valid date. </p>
@@ -27,7 +27,9 @@
                 html: { style: "width: min-content", autocomplete: "off" },
                 data: { controller: 'autosave', autosave_delay_value: '0' } do |f| %>
     <%= f.label "Select Date", class: "fw-bold" %>
-    <%= f.date_field :date, class: "form-control", value: params[:date] || Date.current.strftime("%Y-%m-%d"),
+    <%= f.date_field :date,
+                     class: "form-control",
+                     value: params[:date] || Date.current.strftime("%Y-%m-%d"),
                      data: { action: 'autosave#save' } %>
   <% end %>
 </turbo-frame>

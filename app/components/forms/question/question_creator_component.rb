@@ -1,12 +1,17 @@
 class Forms::Question::QuestionCreatorComponent < ViewComponent::Base
-  def initialize(course:, question_form:, current_user:)
-    @course = course
+  def initialize(course:, current_user:, question_form: nil, question: nil)
+    @course        = course
     @question_form = question_form
-    @current_user = current_user
+    @current_user  = current_user
+    @question      = question
   end
 
   def question
-    question_form.question
+    @question || question_form&.question
+  end
+
+  def question_form
+    @question_form || Forms::Question.new(question: question)
   end
 
   def creator_classes
@@ -18,5 +23,5 @@ class Forms::Question::QuestionCreatorComponent < ViewComponent::Base
 
   private
 
-  attr_reader :course, :question_form, :current_user
+  attr_reader :course, :current_user
 end

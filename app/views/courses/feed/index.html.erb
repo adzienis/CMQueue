@@ -1,4 +1,7 @@
-<%= render(Courses::Feed::FeedComponent.new(course: @course,
+
+  <turbo-frame id="feed" class="w-100" data-turbo-refresher-target="frame">
+    <%= render(Courses::Feed::FeedComponent.new(course: @course,
                                             questions: @questions,
                                             pagy: @pagy,
                                             search: @results)) %>
+  </turbo-frame>

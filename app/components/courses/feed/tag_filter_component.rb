@@ -1,9 +1,10 @@
 module Courses
   module Feed
     class TagFilterComponent < ViewComponent::Base
-      def initialize(search:)
+      def initialize(search:, course:)
         super
         @search = search
+        @course = course
       end
       def tags
         search.aggs["tags"]["buckets"].map{|k| k["key"]}
@@ -28,7 +29,7 @@ module Courses
 
       private
 
-      attr_reader :search
+      attr_reader :search, :course
     end
   end
 end

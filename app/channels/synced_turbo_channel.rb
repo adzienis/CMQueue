@@ -30,7 +30,7 @@ class SyncedTurboChannel < ApplicationCable::Channel
                                             html: ApplicationController
                                                     .render(Courses::QueueOpenStatusComponent.new(course: course),
                                                             layout: false))
-    QueueChannel.broadcast_to course, {
+    CourseChannel.broadcast_to user, {
       type: "event",
       event: "invalidate:question-feed"
     }

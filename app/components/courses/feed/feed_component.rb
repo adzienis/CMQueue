@@ -1,7 +1,7 @@
 module Courses
   module Feed
     class FeedComponent < ViewComponent::Base
-      def initialize(search:,course:, questions:, pagy:)
+      def initialize(search:, course:, questions:, pagy:)
         super
         @search = search
         @course = course
@@ -10,7 +10,7 @@ module Courses
       end
 
       def tags
-        search.aggs["tags"]["buckets"].map{|k| k["key"]}
+        search.aggs["tags"]["buckets"].map { |k| k["key"] }
       end
 
       def available_tags

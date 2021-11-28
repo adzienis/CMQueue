@@ -21,7 +21,7 @@ export default class extends Controller {
     });
 
     if (resp.status === 401 && window.location.pathname !== "/") {
-      //Turbo.visit("/");
+      Turbo.visit("/");
     }
   }
 

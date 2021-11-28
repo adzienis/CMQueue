@@ -1,30 +1,28 @@
-<turbo-frame id="feed">
-  <div class="d-flex mb-3">
-    <%= form_with id: "answer-form", url: feed_answer_course_url(course, tags: params[:tags]), html: { target: "_top" }, class: "me-2 w-100" do |f| %>
-      <%= f.hidden_field :tags, value: params[:tags]&.split(" "), multiple: true if params[:tags]&.split(" ").present? %>
-      <%= f.submit "Answer", "data-turbo-frame": "_top",
+    <div class="d-flex mb-3">
+      <%= form_with id: "answer-form", url: feed_answer_course_url(course, tags: params[:tags]), html: { target: "_top" }, class: "me-2 w-100" do |f| %>
+        <%= f.hidden_field :tags, value: params[:tags]&.split(" "), multiple: true if params[:tags]&.split(" ").present? %>
+        <%= f.submit "Answer", "data-turbo-frame": "_top",
                      class: "btn btn-primary w-100 queue-button",
                      "data-disable-with": "Answering",
-                     disabled: !course.answerable_questions? %>
+                     "data-turbo": false,
+                     disabled: !course.answerable_questions?(tag_names: params[:tags]) %>
 
-  <% end %>
-    <%= render(Courses::OpenButtonComponent.new(course: course)) %>
-  </div>
-
-  <%= render(Courses::Feed::TagFilterComponent.new(search: search)) %>
-
-  <% if questions.count == 0 %>
-    <div class="alert alert-warning shadow-sm">
-      <h5 class="fw-bold"> No Questions </h5>
+      <% end %>
+      <%= render(Courses::OpenButtonComponent.new(course: course)) %>
     </div>
-  <% end %>
 
-  <% questions.each do |question| %>
-    <%= render(Courses::Feed::QuestionCardComponent.new(question: question)) %>
-  <% end %>
+    <%= render(Courses::Feed::TagFilterComponent.new(search: search, course: course)) %>
 
-  <div class="w-100 d-flex justify-content-center">
-    <%== render partial: "pagy/nav.html.erb", locals: { pagy: pagy } %>
-  </div>
+    <% if questions.count == 0 %>
+      <div class="alert alert-warning shadow-sm">
+        <h5 class="fw-bold"> No Questions </h5>
+      </div>
+    <% end %>
 
-</turbo-frame>
+    <% questions.each do |question| %>
+      <%= render(Courses::Feed::QuestionCardComponent.new(question: question)) %>
+    <% end %>
+
+    <div class="w-100 d-flex justify-content-center">
+      <%== render partial: "pagy/nav.html.erb", locals: { pagy: pagy } %>
+    </div>

@@ -1,13 +1,13 @@
 <% cache question do %>
   <%= helpers.turbo_stream_from question, channel: SyncedTurboChannel %>
   <turbo-frame id="<%= dom_id(question) %>">
-  <div class="card shadow-sm mb-3 position-relative">
-    <div class="position-absolute" style="top: -15px; left: 0">
-      <% question.tags.each do |tag| %>
+    <div class="card shadow-sm mb-3 position-relative">
+      <div class="position-absolute" style="top: -15px; left: 0">
+        <% question.tags.each do |tag| %>
         <span class="badge bg-danger">
           <%= tag.name %>
         </span>
-      <% end %>
+        <% end %>
       </div>
       <div class="card-body">
         <div class="card-title fw-bold">
@@ -20,11 +20,11 @@
         <%= question.description %>
       </div>
       <%= tag.div class: "card-footer" do %>
-      <%= button_to "Unfreeze",
-                    handle_question_path(question, state: "unresolved"),
-                    class: "btn btn-primary",
-                    "data-disable-with": "Unfreezing" if question.frozen? %>
+        <%= button_to "Unfreeze",
+                      handle_question_path(question, state: "unresolved"),
+                      class: "btn btn-primary",
+                      "data-disable-with": "Unfreezing" if question.frozen? %>
       <% end if footer? %>
-      </div>
-      </turbo-frame>
+    </div>
+  </turbo-frame>
 <% end %>

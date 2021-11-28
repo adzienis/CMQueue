@@ -15,15 +15,22 @@
 <div
   style="display: flex; flex-direction: column; align-items: center" class="w-100">
 
-  <%= render(Courses::StaffInfoPanelComponent.new(course: @course)) %>
-
+      <%= render(Courses::StaffInfoPanelComponent.new(course: @course)) %>
   <div class="w-100"
        data-controller="turbo-refresher"
        data-turbo-refresher-event-name-value="invalidate:question-feed">
-    <turbo-frame id="feed" class="w-100" data-turbo-refresher-target="frame" src="<%= feed_course_path(@course) %>">
-      <% q = Courses::FeedController.new;  q.set_request!(request); q.set_response!(response); %>
+    <turbo-frame
+      id="feed"
+      class="w-100"
+      data-turbo-refresher-target="frame"
+      src="<%= feed_course_path(@course, tags: session[:selected_tags]) %>"
+    >
+      <% q = Courses::FeedController.new;  q.set_request!(request); q.set_response!(response) %>
+      <% q.params = q.params.merge(tags: session[:selected_tags]) %>
       <% q.process(:index) %>
       <%= q.render_to_string(layout: false) %>
+
     </turbo-frame>
   </div>
+
 </div>

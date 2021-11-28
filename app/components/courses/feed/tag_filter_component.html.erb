@@ -5,7 +5,7 @@
                             tags,
                             :itself,
                             ->(v) { tag_label_method(v) },
-                            { selected: params[:tags],
+                            { selected: session[:selected_tags] == [""] ? nil : session[:selected_tags],
                               include_blank: false, include_hidden: false },
                             { multiple: true, data: { action: 'autosave#save' } } %>
   </div>

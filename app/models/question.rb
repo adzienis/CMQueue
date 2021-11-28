@@ -55,12 +55,13 @@ class Question < ApplicationRecord
           dependent: :destroy,
           inverse_of: :question
 
-  has_and_belongs_to_many :tags, dependent: :destroy, autosave: true, inverse_of: :questions
+  has_many :question_tags
+  has_many :tags, through: :question_tags, dependent: :destroy, autosave: true, inverse_of: :questions
 
   #has_many :notifications, as: :recipient
 
   has_many :tag_groups, through: :tags
-  has_many :question_states, dependent: :destroy
+  has_many :question_states, dependent: :destroy, inverse_of: :question
 
   validates :location, :description, :tried, presence: true
 
@@ -229,6 +230,10 @@ class Question < ApplicationRecord
     %i[previous_questions]
   end
 
+  def just_added_to_queue?
+    question_states.count == 1 && question_state.unresolved?
+  end
+
   after_discard do
     comp = Forms::Question::QuestionCreatorComponent.new(course: course,
                                                          question_form: Forms::Question.new(question: Question.new),
@@ -250,11 +255,6 @@ class Question < ApplicationRecord
                                                   target: "question-position",
                                                   html: ApplicationController.render(component, layout: false)
     TitleChannel.broadcast_to user, position_in_course&.ordinalize
-
-    QueueChannel.broadcast_to course, {
-      type: "event",
-      event: "invalidate:question-feed"
-    }
   end
 
   after_create_commit do
@@ -264,16 +264,22 @@ class Question < ApplicationRecord
         SiteNotification.with(message: "New question on the queue").deliver_later(member.user)
       end
     end
+
   end
 
   after_update_commit do
-    SyncedTurboChannel.broadcast_replace_later_to self,
-                                                  target: self,
-                                                  html: ApplicationController.render(Courses::Feed::QuestionCardComponent.new(question: self), layout: false)
+    RenderComponentJob.perform_later("Courses::Feed::QuestionCardComponent",
+                                     self,
+                                     opts: {target: self},
+                                     component_args: { question: self })
   end
 
   after_commit do
     self.reindex(refresh: true)
+    CourseChannel.broadcast_to course, {
+      type: "event",
+      event: "invalidate:question-feed"
+    }
   end
 
   singleton_class.send(:alias_attribute, :current_state, :question_state)

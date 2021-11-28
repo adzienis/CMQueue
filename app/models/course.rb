@@ -142,8 +142,21 @@ class Course < ApplicationRecord
     Course.find_roles([:lead_ta, :instructor], user)
   end
 
-  def answerable_questions?
-    active_questions.includes(:question_state).filter { |q| q.unresolved? }.count > 0
+  def answerable_questions?(tag_names: nil)
+    if tag_names.present?
+      active_questions
+        .includes(:question_state)
+        .joins(:tags)
+        .where("tags.name": tag_names)
+        .group("questions.id")
+        .having("count(*) = #{tag_names.count}")
+        .filter { |q| q.unresolved? }.any?
+    else
+      active_questions
+        .includes(:question_state)
+        .joins(:tags)
+        .filter { |q| q.unresolved? }.any?
+    end
   end
 
   def student_role
@@ -171,10 +184,10 @@ class Course < ApplicationRecord
   end
 
   after_commit do
-    broadcast_replace_later_to(self,
-                               target: "queue-open-status",
-                               html: ApplicationController.render(Courses::QueueOpenStatusComponent.new(course: self),
-                                                                  layout: false))
+    RenderComponentJob.perform_later("Courses::QueueOpenStatusComponent",
+                                     self,
+                                     opts: { target: "queue-open-status" },
+                                     component_args: { course: self })
 
     if open_previously_was == false && open == true
       CourseChannel.broadcast_to self, {
@@ -185,10 +198,6 @@ class Course < ApplicationRecord
         }
       }
 
-      broadcast_replace_later_to self,
-                                 target: "open-button",
-                                 html: ApplicationController.render(Courses::OpenButtonComponent.new(course: self), layout: false),
-                                 channel: SyncedTurboChannel
     elsif open_previously_was == true && open == false
       CourseChannel.broadcast_to self, {
         type: "event",
@@ -197,10 +206,13 @@ class Course < ApplicationRecord
           course_id: id
         }
       }
-      broadcast_replace_later_to self,
-                                 target: "open-button",
-                                 html: ApplicationController.render(Courses::OpenButtonComponent.new(course: self), layout: false),
-                                 channel: SyncedTurboChannel
+    end
+
+    if open_changed?
+      RenderComponentJob.perform_later("Courses::OpenButtonComponent",
+                                       self,
+                                       opts: { target: "open-button" },
+                                       component_args: { course: self })
     end
   end
 

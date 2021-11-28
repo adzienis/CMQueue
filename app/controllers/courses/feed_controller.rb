@@ -4,6 +4,8 @@ class Courses::FeedController < ApplicationController
   def index
     @pagy, @results = Search::FeedSearch.new(params: params, course: @course).search
 
+    session[:selected_tags] = params[:tags] || nil
+
     @questions = @results.results
   end
 
@@ -19,14 +21,14 @@ class Courses::FeedController < ApplicationController
     @question_results = Question.search(params[:q].present? ? params[:q] : "*",
                                         aggs: { tags: {} },
                                         includes: [:user, :tags, :question_states],
-                                        order: { created_at: { order: :asc, unmapped_type: :date }},
-                                                 where: where_params.merge({ discarded_at: nil, course_id: @course.id }),
-                                                 limit: 1
+                                        order: { created_at: { order: :asc, unmapped_type: :date } },
+                                        where: where_params.merge({ discarded_at: nil, course_id: @course.id }),
+                                        limit: 1
     )
     @questions = @question_results.results
     question = @question_results.results.first
     if (error = question.resolving(enrollment_id: current_user.enrollment_in_course(@course).id))
-      flash[:error]  = error.message
+      flash[:error] = error.message
       redirect_to queue_course_path(@course) and return
     end
 

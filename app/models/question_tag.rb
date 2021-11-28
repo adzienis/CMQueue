@@ -8,6 +8,7 @@
 #
 class QuestionTag < ApplicationRecord
   self.table_name = "questions_tags"
-  belongs_to :question
+  belongs_to :question, touch: true
+  has_one :course, through: :question
   belongs_to :tag
 end
