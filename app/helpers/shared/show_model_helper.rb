@@ -18,29 +18,28 @@ module Shared
       end
 
       def path(child_model)
-
-        begin
         if @params[:course_id]
-          if @model.class.name == "Course"
+          if @model.instance_of?(Course)
             polymorphic_path([Course.find(@params[:course_id]), child_model.name])
           else
             polymorphic_path([Course.find(@params[:course_id]), child_model.name],
-                             {
-                               "q[#{child_model.options.dig(:through) ? child_model.options.dig(:through).to_s.singularize + '_' : ''}" +
-                                 "#{@model.class.name.underscore}_id_eq]" => @model.id })
+              {
+                "q[#{child_model.options.dig(:through) ? child_model.options.dig(:through).to_s.singularize + "_" : ""}" \
+                  "#{@model.class.name.underscore}_id_eq]" => @model.id
+              })
           end
         elsif @params[:user_id]
-          if @model.class.name == "User"
+          if @model.instance_of?(User)
             polymorphic_path([User.find(@params[:user_id]), child_model.name])
           else
             polymorphic_path([User.find(@params[:user_id]), child_model.name],
-                             {
-                               "q[#{child_model.options.dig(:through) ? child_model.options.dig(:through).to_s.singularize + '_' : ''}" +
-                                 "#{@model.class.name.underscore}_id_eq]" => @model.id })
+              {
+                "q[#{child_model.options.dig(:through) ? child_model.options.dig(:through).to_s.singularize + "_" : ""}" \
+                  "#{@model.class.name.underscore}_id_eq]" => @model.id
+              })
           end
         end
-        rescue NoMethodError
-        end
+      rescue NoMethodError
       end
 
       def models_from_has_many
@@ -67,7 +66,6 @@ module Shared
           .flatten
           .reject { |v| @options&.dig(:except)&.include? v.name.to_sym }
       end
-
     end
   end
 end

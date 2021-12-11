@@ -1,7 +1,6 @@
 module Services
   module Enrollments
     class DeleteEnrollment < Services::Service
-
       def initialize(enrollment_id)
         super()
 

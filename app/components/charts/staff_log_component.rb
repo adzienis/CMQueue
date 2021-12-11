@@ -16,7 +16,7 @@ module Charts
 
     def min_value
       if data.present?
-        data_min = (data.min { |a, b| a[0] <=> b[0] }[0])
+        data_min = (data.min_by { |a| a[0] }[0])
         return round_nearest(data_min, 60 * 60 * 1000)
       end
 
@@ -84,14 +84,14 @@ module Charts
       return @date if defined?(@date)
 
       @date = if options[:date].present?
-                if options[:date].today?
-                  DateTime.current
-                else
-                  options[:date].to_time
-                end
-              else
-                DateTime.current
-              end
+        if options[:date].today?
+          DateTime.current
+        else
+          options[:date].to_time
+        end
+      else
+        DateTime.current
+      end
     end
 
     def raw_data
@@ -99,7 +99,7 @@ module Charts
                                                                    .joins(:question_states, :user)
                                                                    .group("users.given_name", "question_states.created_at", "question_states.state")
                                                                    .where("question_states.created_at": date_range,
-                                                                          "question_states.state": [0, 2, 3, 4]).to_sql).rows
+                                                                     "question_states.state": [0, 2, 3, 4]).to_sql).rows
     end
 
     private

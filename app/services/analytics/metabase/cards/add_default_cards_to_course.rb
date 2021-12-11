@@ -13,24 +13,24 @@ module Analytics
 
           card = Analytics::Metabase::Questions::
               AvgTimeForQuestionAnsweredGroupedByUser.new(database_id: db.id,
-                                                          course_schema: course.custom_schema,
-                                                          collection_id: course.base_collection.id,
-                                                          date_field_id: fields(table_name: "Questions")["Created At"]["id"],
-                                                          full_name_field_id: fields(table_name: "Users")["Given Name"]["id"]).call
+                course_schema: course.custom_schema,
+                collection_id: course.base_collection.id,
+                date_field_id: fields(table_name: "Questions")["Created At"]["id"],
+                full_name_field_id: fields(table_name: "Users")["Given Name"]["id"]).call
           create_card(card)
 
           card = Analytics::Metabase::Questions::AvgTimePerTag.new(database_id: db.id,
-                                                                   course_schema: course.custom_schema,
-                                                                   collection_id: course.base_collection.id).call
+            course_schema: course.custom_schema,
+            collection_id: course.base_collection.id).call
           create_card(card)
 
           card = Analytics::Metabase::Questions::GroupedByDate.new(course: course,
-                                                                   collection_id: course.base_collection.id).call
+            collection_id: course.base_collection.id).call
 
           create_card(card)
 
           card = Analytics::Metabase::Questions::CreatedThisWeekCount.new(course: course,
-                                                                   collection_id: course.base_collection.id).call
+            collection_id: course.base_collection.id).call
 
           create_card(card)
         end
@@ -43,7 +43,7 @@ module Analytics
           fields = metabase.database_fields(db.id)
           fields = fields.filter { |v| v["table_name"] == table_name } if table_name.present?
           fields = fields.filter { |v| v["schema"] == course.custom_schema }
-          fields.map { |v| [v["name"], v.entries.filter { |k, v| k != "name" }.to_h] }.to_h
+          fields.map { |v| [v["name"], v.entries.except("name").to_h] }.to_h
         end
 
         def create_card(card_json)

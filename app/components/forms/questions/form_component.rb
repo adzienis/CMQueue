@@ -15,7 +15,7 @@ class Forms::Questions::FormComponent < ViewComponent::Base
 
   def tag_groups?
     return false unless course.present?
-    course.tag_groups.filter{|v| v.tags.present? }.present?
+    course.tag_groups.filter { |v| v.tags.present? }.present?
   end
 
   private

@@ -6,7 +6,6 @@ class CreateCoursesSections < ActiveRecord::Migration[6.1]
       t.timestamps
     end
 
-
     create_table :courses_sections_enrollments, id: false do |t|
       t.belongs_to :courses_section
       t.belongs_to :enrollment

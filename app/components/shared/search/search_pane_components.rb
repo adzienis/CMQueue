@@ -19,7 +19,7 @@ class Shared::Search::SearchPaneComponents < ViewComponent::Base
 
   def sort_link(category)
     if query_params[:sort]
-      split = query_params[:sort].split('_')
+      split = query_params[:sort].split("_")
 
       attribute = split[..-2].join("_")
       order = split[-1]
@@ -27,27 +27,27 @@ class Shared::Search::SearchPaneComponents < ViewComponent::Base
       if attribute == category.to_s
         if order == "desc"
           link_to "Sort by #{category}",
-                  polymorphic_path([:search, course, resources],
-                                   query_params.merge(sort: "#{category}_asc")),
-                  "data-turbo-frame": "_self"
+            polymorphic_path([:search, course, resources],
+              query_params.merge(sort: "#{category}_asc")),
+            "data-turbo-frame": "_self"
         else
           link_to "Sort by #{category}",
-                  polymorphic_path([:search, course, resources],
-                                   query_params.merge(sort: "#{category}_desc")),
-                  "data-turbo-frame": "_self"
+            polymorphic_path([:search, course, resources],
+              query_params.merge(sort: "#{category}_desc")),
+            "data-turbo-frame": "_self"
 
         end
       else
         link_to "Sort by #{category}",
-                polymorphic_path([:search, course, resources],
-                                 query_params.merge(sort: "#{category}_desc")),
-                "data-turbo-frame": "_self"
+          polymorphic_path([:search, course, resources],
+            query_params.merge(sort: "#{category}_desc")),
+          "data-turbo-frame": "_self"
       end
     else
       link_to "Sort by #{category}",
-              polymorphic_path([:search, course, resources],
-                               query_params.merge(sort: "#{category}_desc")),
-              "data-turbo-frame": "_self"
+        polymorphic_path([:search, course, resources],
+          query_params.merge(sort: "#{category}_desc")),
+        "data-turbo-frame": "_self"
     end
   end
 

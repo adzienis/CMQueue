@@ -1,7 +1,7 @@
 class Analytics::Metabase::Cards::Create
   include Metabaseable
 
-  def initialize(json: )
+  def initialize(json:)
     @json = json
   end
 

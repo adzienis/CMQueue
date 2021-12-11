@@ -2,7 +2,7 @@
 
 class ReactStudentChannel < ApplicationCable::Channel
   def subscribed
-    stream_from 'react-students'
+    stream_from "react-students"
   end
 
   def unsubscribed

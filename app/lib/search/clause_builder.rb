@@ -6,16 +6,15 @@ module Search
     end
 
     def build_order_clauses(query_params)
-
       if query_params[:sort]
-        split = query_params[:sort].split('_')
+        split = query_params[:sort].split("_")
 
         attribute = split[..-2].join("_")
         order = split[-1]
 
-        { attribute => order }
+        {attribute => order}
       else
-        { created_at: { order: :desc, unmapped_type: :date}}
+        {created_at: {order: :desc, unmapped_type: :date}}
       end
     end
 
@@ -41,9 +40,9 @@ module Search
           new_p = new_p.merge({gte: h[:from]}) if h[:from]
           new_p = new_p.merge({lte: h[:to]}) if h[:to]
 
-          { query_key => new_p }
+          {query_key => new_p}
         else
-          { query_key => params[query_key].to_unsafe_h}
+          {query_key => params[query_key].to_unsafe_h}
         end
 
       else
@@ -59,12 +58,11 @@ module Search
 
         return {} if parsed.instance_of?(Array) && parsed.empty?
         return {} unless parsed.present?
-        return { query_key => { all: parsed }} if parsed.instance_of?(Array)
+        return {query_key => {all: parsed}} if parsed.instance_of?(Array)
 
-        { query_key => parsed }
+        {query_key => parsed}
       end
     end
-
 
     attr_reader :attributes, :params
   end

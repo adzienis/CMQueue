@@ -7,8 +7,8 @@ module Analytics
 
       def dashboards
         @dashboards ||= Analytics::Metabase::Dashboards::GetCourseDashboards.new(course: @course)
-                                                                            .call
-                                                                            .filter{|d| d.enable_embedding }
+          .call
+          .filter { |d| d.enable_embedding }
       end
 
       private

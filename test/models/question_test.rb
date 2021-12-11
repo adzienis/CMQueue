@@ -16,17 +16,16 @@
 #  discarded_at  :datetime
 #  enrollment_id :bigint           not null
 #
-require 'test_helper'
+require "test_helper"
 
 class QuestionTest < ActiveSupport::TestCase
-
   setup do
     @student_418 = enrollments(:student_418)
     @ta_418 = enrollments(:ta_418)
     @tag_malloc = tags(:malloc)
   end
 
-  test 'is valid with valid attributes' do
+  test "is valid with valid attributes" do
     question = Question.create(description: "foo", location: "foo", tried: "test", enrollment: @student_418, tags: [@tag_malloc])
 
     assert question.errors.empty?
@@ -57,13 +56,12 @@ class QuestionTest < ActiveSupport::TestCase
   end
 
   test "can't create duplicate question for same enrollment" do
-
     Question.create(description: "foo", location: "foo", tried: "test", enrollment: @student_418, tags: [@tag_malloc])
 
     begin
       Question.create!(description: "foo", location: "foo", tried: "test", enrollment: @student_418, tags: [@tag_malloc])
     rescue ActiveRecord::StatementInvalid => e
-      assert(e.message.include? "question already exists")
+      assert(e.message.include?("question already exists"))
     end
   end
 
@@ -291,5 +289,4 @@ class QuestionTest < ActiveSupport::TestCase
 
     assert ret.instance_of? ActiveRecord::RecordInvalid
   end
-
 end

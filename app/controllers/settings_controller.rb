@@ -5,14 +5,14 @@ class SettingsController < ApplicationController
 
   respond_to :html, :json
 
-  #include ResourceInitializable
-  #include ResourceAuthorizable
-  #include PolymorphicFilterable
-  #include PolyScopedByParent
+  # include ResourceInitializable
+  # include ResourceAuthorizable
+  # include PolymorphicFilterable
+  # include PolyScopedByParent
 
   def restrict_routes
     if @course
-      raise CanCan::AccessDenied unless current_user.has_any_role?({ name: :instructor, resource: @course })
+      raise CanCan::AccessDenied unless current_user.has_any_role?({name: :instructor, resource: @course})
     elsif @user
       raise CanCan::AccessDenied unless @user.id == current_user.id
     end
@@ -38,7 +38,7 @@ class SettingsController < ApplicationController
   end
 
   def update
-    @setting.set_value(setting_params[:value]) if setting_params.keys.include? "value"
+    @setting.set_value(setting_params[:value]) if setting_params.key?("value")
 
     @setting.save
 

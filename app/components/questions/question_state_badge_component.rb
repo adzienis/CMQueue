@@ -9,16 +9,16 @@ class Questions::QuestionStateBadgeComponent < ViewComponent::Base
 
   def class_param
     bg_class = if state == "unresolved"
-                 "bg-unresolved"
-               elsif state == "resolving"
-                 "bg-resolving"
-               elsif state == "frozen"
-                 "bg-frozen"
-               elsif state == "kicked"
-                 "bg-kicked"
-               elsif state == "resolved"
-                 "bg-resolved"
-               end
+      "bg-unresolved"
+    elsif state == "resolving"
+      "bg-resolving"
+    elsif state == "frozen"
+      "bg-frozen"
+    elsif state == "kicked"
+      "bg-kicked"
+    elsif state == "resolved"
+      "bg-resolved"
+    end
 
     "badge #{bg_class}"
   end

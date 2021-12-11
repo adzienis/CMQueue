@@ -8,5 +8,4 @@ class Analytics::Metabase::SetupJob < ApplicationJob
 
     Analytics::Metabase::Cards::AddDefaultCardsToCourse.new(course: course).call
   end
-
 end

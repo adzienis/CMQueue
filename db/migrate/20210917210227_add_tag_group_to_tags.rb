@@ -1,6 +1,5 @@
 class AddTagGroupToTags < ActiveRecord::Migration[6.1]
   def up
-
     add_reference :tags, :tag_group, index: true, foreign_key: true
   end
 

@@ -9,7 +9,6 @@ class Forms::EnrollBySearch
 
   validates :course_id, presence: true
 
-
   def promote_errors(child)
     child.errors.each do |attribute, message|
       errors.add(attribute, message)
@@ -32,5 +31,4 @@ class Forms::EnrollBySearch
 
     promote_errors(@enrollment)
   end
-
 end

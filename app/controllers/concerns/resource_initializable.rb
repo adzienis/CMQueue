@@ -8,7 +8,6 @@ module ResourceInitializable
   private
 
   def set_resource_initialized
-
     resources = proc { instance_variable_get("@#{controller_name}") }
     set_resources = proc { |value| instance_variable_set("@#{controller_name}", value) }
     set_resource = proc { |value| instance_variable_set("@#{controller_name.singularize}", value) }

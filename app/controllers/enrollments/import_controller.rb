@@ -8,7 +8,6 @@ class Enrollments::ImportController < ApplicationController
       json = JSON.parse(file)
 
       ImportEnrollmentsJob.perform_later(json: json, course: @course, current_user: current_user)
-
     rescue JSON::ParserError
       flash.now[:error] = "Failed to import file: failed to parse file (make sure to upload a valid json file)."
       render(:index, status: 400) and return

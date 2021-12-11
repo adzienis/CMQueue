@@ -1,5 +1,4 @@
 class Questions::HandledByComponent < ViewComponent::Base
-
   delegate :question_state, to: :question
 
   def initialize(question:)
@@ -8,16 +7,16 @@ class Questions::HandledByComponent < ViewComponent::Base
 
   def class_param
     bg_class = if state == "unresolved"
-                 "bg-unresolved"
-               elsif state == "resolving"
-                 "bg-resolving"
-               elsif state == "frozen"
-                 "bg-frozen"
-               elsif state == "kicked"
-                 "bg-kicked"
-               elsif state == "resolved"
-                 "bg-resolved"
-               end
+      "bg-unresolved"
+    elsif state == "resolving"
+      "bg-resolving"
+    elsif state == "frozen"
+      "bg-frozen"
+    elsif state == "kicked"
+      "bg-kicked"
+    elsif state == "resolved"
+      "bg-resolved"
+    end
 
     "badge rounded-pill #{bg_class}"
   end
@@ -36,7 +35,7 @@ class Questions::HandledByComponent < ViewComponent::Base
 
   def render?
     question_state.user != question.user &&
-    question_state.state != "unresolved"
+      question_state.state != "unresolved"
   end
 
   def user_name

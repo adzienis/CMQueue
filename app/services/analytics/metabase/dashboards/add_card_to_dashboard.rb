@@ -8,7 +8,7 @@ class Analytics::Metabase::Dashboards::AddCardToDashboard
 
   def call
     metabase.post_dashboard_cards(dashboard_id: dashboard_id,
-                                  json: json)
+      json: json)
   end
 
   private

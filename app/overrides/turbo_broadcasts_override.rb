@@ -6,13 +6,12 @@
 #
 Turbo::Streams::Broadcasts.module_eval do
   def broadcast_action_to(*streamables, action:, target: nil, targets: nil, **rendering)
-    safe_rendering = rendering.map{|k,v| v.respond_to?(:html_safe) ? [k,v.html_safe] : [k,v]}.to_h
+    safe_rendering = rendering.map { |k, v| v.respond_to?(:html_safe) ? [k, v.html_safe] : [k, v] }.to_h
 
     broadcast_stream_to(*streamables,
-                        content: turbo_stream_action_tag(action,
-                                                         target: target,
-                                                         targets: targets,
-                                                         template:  rendering.delete(:content) || (rendering.any? ? render_format(:html, **safe_rendering) : nil)
-    ))
+      content: turbo_stream_action_tag(action,
+        target: target,
+        targets: targets,
+        template: rendering.delete(:content) || (rendering.any? ? render_format(:html, **safe_rendering) : nil)))
   end
 end

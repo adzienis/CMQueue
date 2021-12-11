@@ -1,9 +1,7 @@
 class Forms::QuestionController < ApplicationController
-
   respond_to :html, :json
 
   def create
-
     @available_tags = @course.available_tags
 
     @question_form = Forms::Question.new(current_user: current_user, question_params: question_params)

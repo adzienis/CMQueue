@@ -13,20 +13,19 @@ class QuestionAbility
     end
 
     can :update_state, Question, Question.joins(:course, :enrollment).where(courses: @staff_roles)
-                                 .or(Question.where("enrollments.user_id": user.id)) do |question|
+      .or(Question.where("enrollments.user_id": user.id)) do |question|
       user.staff_of?(question.course) || question.user == user
     end
 
     # return if context[:path_parameters][:course_id].present? && !@staff_roles.include?(context[:params][:course_id].to_i)
     can :read, Question, Question.joins(:course, :enrollment).where(courses: @staff_roles)
-                                   .or(Question.where("enrollments.user_id": user.id)) do |question|
+      .or(Question.where("enrollments.user_id": user.id)) do |question|
       user.staff_of?(question.course) || question.user == user
     end
 
     can [:create, :update, :destroy, :position], Question, Question.joins(:course, :enrollment)
-                                   .where(courses: @privileged_roles).or(Question.where("enrollments.user_id": user.id)) do |question|
+      .where(courses: @privileged_roles).or(Question.where("enrollments.user_id": user.id)) do |question|
       user.staff_of?(question.course) || question.user == user
     end
   end
 end
-

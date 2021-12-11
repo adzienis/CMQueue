@@ -6,23 +6,21 @@ module Users
     include Devise::Controllers::SignInOut
 
     def google_oauth2
-      @user = User.from_omniauth(request.env['omniauth.auth'])
+      @user = User.from_omniauth(request.env["omniauth.auth"])
       if @user.persisted?
         session[:user_id] = @user.id
 
         # refactor demo part of app
-        if ENV['DEMO']
+        if ENV["DEMO"]
           first_course = Course.first
           second_course = Course.second
           begin
             @user.add_role(:instructor, first_course) if first_course
           rescue ActiveRecord::RecordInvalid
-
           end
           begin
             @user.add_role(:student, second_course) if second_course
           rescue ActiveRecord::RecordInvalid
-
           end
         end
 

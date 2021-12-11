@@ -16,8 +16,8 @@ class CoursesController < ApplicationController
 
     authorize! :read, top_question
 
-    respond_with top_question  do |format|
-      format.json { render json: top_question.as_json(include: [:user, :tags, :question_state])}
+    respond_with top_question do |format|
+      format.json { render json: top_question.as_json(include: [:user, :tags, :question_state]) }
     end
   end
 
@@ -36,7 +36,7 @@ class CoursesController < ApplicationController
 
     if params[:name]
       @courses = @courses.where("name LIKE ?", "#{params[:name]}%")
-      @courses = @courses.with_setting_value('searchable', 'true')
+      @courses = @courses.with_setting_value("searchable", "true")
     end
 
     @courses_ransack = @courses.ransack(params[:q])
@@ -58,19 +58,21 @@ class CoursesController < ApplicationController
     # should refactor into a form object
     current_user.add_role :instructor, @course
 
-    render turbo_stream: (turbo_stream.replace @course, partial: "shared/new_form", locals: { model_instance: @course,options: {
-      except: [:settings,
-               :roles,
-               :enrollments,
-               :users,
-               :questions,
-               :unresolved_questions,
-               :active_questions,
-               :tags,
-               :access_grants,
-               :access_tokens,
-               :applications,]
-    }  }) and return unless @course.errors.count == 0
+    unless @course.errors.count == 0
+      render turbo_stream: (turbo_stream.replace @course, partial: "shared/new_form", locals: {model_instance: @course, options: {
+        except: [:settings,
+          :roles,
+          :enrollments,
+          :users,
+          :questions,
+          :unresolved_questions,
+          :active_questions,
+          :tags,
+          :access_grants,
+          :access_tokens,
+          :applications]
+      }}) and return
+    end
 
     redirect_to user_courses_path(@current_user)
   end

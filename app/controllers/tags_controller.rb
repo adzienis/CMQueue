@@ -10,7 +10,6 @@ class TagsController < ApplicationController
   end
 
   def index
-
     @tags = @tags.undiscarded.order("tags.created_at": :desc).where(course_id: params[:course_id]) if params[:course_id]
     @tags = @tags.where(archived: params[:archived]) if params[:archived]
     @tags_ransack = @tags.ransack(params[:q])
@@ -23,7 +22,7 @@ class TagsController < ApplicationController
 
   def import
     CSV.foreach(params[:csv_file], headers: true) do |row|
-      tag = Tag.find_or_create_by!(row.to_hash.to_hash.merge({ course_id: params[:course_id] }))
+      tag = Tag.find_or_create_by!(row.to_hash.to_hash.merge({course_id: params[:course_id]}))
     end
 
     SiteNotification.with(type: "Success", body: "Successfully imported file.", title: "Success", delay: 2).deliver(current_user)

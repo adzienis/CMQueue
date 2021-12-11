@@ -1,5 +1,5 @@
 class Shared::Search::SearchBarComponent < ViewComponent::Base
-  def initialize(resources:, course:, query_parameters:, options:{})
+  def initialize(resources:, course:, query_parameters:, options: {})
     @resources = resources
     @course = course
     @query_parameters = query_parameters

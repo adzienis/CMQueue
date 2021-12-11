@@ -17,9 +17,7 @@ module HasConnections
     end
 
     def channels
-      pubsub.send(:redis_connection).pubsub('channels', "#{channel_with_prefix}:*")
+      pubsub.send(:redis_connection).pubsub("channels", "#{channel_with_prefix}:*")
     end
   end
-
-
 end

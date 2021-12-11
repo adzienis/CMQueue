@@ -10,7 +10,7 @@
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
 #
-require 'pagy/extras/searchkick'
+require "pagy/extras/searchkick"
 
 class TagGroup < ApplicationRecord
   extend Pagy::Searchkick
@@ -37,7 +37,6 @@ class TagGroup < ApplicationRecord
   validates :name, presence: true
 
   after_commit do
-    self.reindex(refresh: true)
+    reindex(refresh: true)
   end
-
 end

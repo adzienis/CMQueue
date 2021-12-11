@@ -143,5 +143,4 @@ class EnrollmentsControllerTest < ControllerTest
     }
     assert_response :forbidden
   end
-
 end

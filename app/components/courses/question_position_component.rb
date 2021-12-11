@@ -23,7 +23,7 @@ module Courses
     def value
       return "N/A" if question.destroyed?
       return "N/A" unless wrapped_position.present?
-      (wrapped_position+1).ordinalize
+      (wrapped_position + 1).ordinalize
     end
 
     def wrapped_position

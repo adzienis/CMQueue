@@ -15,7 +15,7 @@ class Courses::QuestionsController < ApplicationController
 
     if question_state_params.present? && question_state_params[:state] != @question.question_state.state
       @question.unsafely_create_question_state(question_state_params
-                                                 .merge({ enrollment_id: current_user.enrollment_in_course(@course).id }))
+                                                 .merge({enrollment_id: current_user.enrollment_in_course(@course).id}))
     end
     @question.update!(updated_at: Time.current)
 
@@ -26,15 +26,14 @@ class Courses::QuestionsController < ApplicationController
 
   def question_params
     params.require(:question).permit(:course_id,
-                                     :description,
-                                     :tried,
-                                     :location,
-                                     :user_id,
-                                     :title,
-                                     :enrollment_id,
-                                     :notes,
-                                     tag_ids: [])
-
+      :description,
+      :tried,
+      :location,
+      :user_id,
+      :title,
+      :enrollment_id,
+      :notes,
+      tag_ids: [])
   end
 
   def question_state_params

@@ -13,7 +13,7 @@
 #  enrollment_id   :bigint           not null
 #  acknowledged_at :datetime
 #
-require 'test_helper'
+require "test_helper"
 
 class QuestionStateTest < ActiveSupport::TestCase
   # test "the truth" do

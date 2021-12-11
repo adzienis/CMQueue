@@ -1,5 +1,4 @@
 class Postgres::CleanupEnrollments
-
   #
   # Removes all enrollments that aren't the most recent one.s
   #
@@ -15,5 +14,4 @@ class Postgres::CleanupEnrollments
       )
     end
   end
-
 end

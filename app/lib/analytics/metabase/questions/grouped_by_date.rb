@@ -1,7 +1,7 @@
 class Analytics::Metabase::Questions::GroupedByDate
   include Metabaseable
 
-  def initialize(course:,database_id: mb.root_db.id,  collection_id: nil, default_semester: "F21")
+  def initialize(course:, database_id: mb.root_db.id, collection_id: nil, default_semester: "F21")
     @database_id = database_id
     @course = course
     @collection_id = collection_id
@@ -19,40 +19,41 @@ class Analytics::Metabase::Questions::GroupedByDate
 
   def call
     {
-      "name": "Questions Grouped By Date",
-      "dataset_query": {
-        "type": "native",
-        "native": {
-          "query": query,
+      name: "Questions Grouped By Date",
+      dataset_query: {
+        type: "native",
+        native: {
+          query: query,
           "template-tags": {
-            "date": {
-              "id": "3252771c-119b-8e8c-5168-c6f07345eb87",
-              "name": "date",
+            date: {
+              id: "3252771c-119b-8e8c-5168-c6f07345eb87",
+              name: "date",
               "display-name": "Date",
-              "type": "dimension",
-              "dimension": ["field", metabase.schema_fields(table_name: "Questions", schema: course.mb_schema)["Created At"]["id"], nil],
+              type: "dimension",
+              dimension: ["field", metabase.schema_fields(table_name: "Questions", schema: course.mb_schema)["Created At"]["id"], nil],
               "widget-type": "date/all-options",
-              "required": false
+              required: false
             },
-            "semester": {
-              "id": "0ff46fb5-3703-8338-841b-eff198c8d712",
-              "name": "semester",
+            semester: {
+              id: "0ff46fb5-3703-8338-841b-eff198c8d712",
+              name: "semester",
               "display-name": "Semester",
-              "type": "dimension",
-              "dimension": ["field", metabase.schema_fields(table_name: "Enrollments", schema: course.mb_schema)["Semester"]["id"], nil],
+              type: "dimension",
+              dimension: ["field", metabase.schema_fields(table_name: "Enrollments", schema: course.mb_schema)["Semester"]["id"], nil],
               "widget-type": "category",
-              "default": default_semester
+              default: default_semester
             }
           }
         },
-        "database": database_id },
-      "display": "line",
-      "description": nil,
-      "visualization_settings": {
+        database: database_id
+      },
+      display: "line",
+      description: nil,
+      visualization_settings: {
         "graph.dimensions": ["created_at"],
         "graph.metrics": ["count"]
       },
-      "collection_id": collection_id
+      collection_id: collection_id
     }
   end
 

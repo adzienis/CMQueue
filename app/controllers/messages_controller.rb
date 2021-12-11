@@ -17,8 +17,8 @@ class MessagesController < ApplicationController
       format.json do
         if params[:question_id]
           @messages = @messages
-                      .left_joins(:question_state)
-                      .where("question_states.question_id = #{params[:question_id]}")
+            .left_joins(:question_state)
+            .where("question_states.question_id = #{params[:question_id]}")
         end
 
         render json: @messages, include: :question_state
@@ -49,7 +49,8 @@ class MessagesController < ApplicationController
     @course = @message.course
   end
 
-  def destroy; end
+  def destroy
+  end
 
   private
 

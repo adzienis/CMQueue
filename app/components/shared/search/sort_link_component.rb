@@ -13,7 +13,7 @@ class Shared::Search::SortLinkComponent < ViewComponent::Base
   def selected?
     return false unless query_params[:sort].present?
 
-    split = query_params[:sort].split('_')
+    split = query_params[:sort].split("_")
 
     attribute = split[..-2].join("_")
 
@@ -25,7 +25,7 @@ class Shared::Search::SortLinkComponent < ViewComponent::Base
 
     return @direction = :desc unless query_params[:sort]
 
-    split = query_params[:sort].split('_')
+    split = query_params[:sort].split("_")
 
     attribute = split[..-2].join("_")
     order = split[-1]

@@ -2,7 +2,8 @@
 
 module Users
   class CoursesController < ApplicationController
-    def show; end
+    def show
+    end
 
     def index
       @peep ||= false

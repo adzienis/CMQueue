@@ -42,8 +42,8 @@ class QuestionState < ApplicationRecord
 
   def as_json(options = {})
     super(options.merge({
-                          include: [:user]
-                        }))
+      include: [:user]
+    }))
   end
 
   def valid_transition
@@ -62,7 +62,7 @@ class QuestionState < ApplicationRecord
                           ["unresolved"]
                         else
                           []
-                        end
+    end
 
     unless valid_next_states.include?(state)
       if old_qs == "resolving" && resolving?
@@ -78,12 +78,12 @@ class QuestionState < ApplicationRecord
     errors.add(:user, "is already handling another question") if user.question_state.resolving? && question.id != user.question_state.question.id
   end
 
-  enum state: { unresolved: 0, resolving: 1, resolved: 2, frozen: 3, kicked: 4 }, _default: :unresolved
+  enum state: {unresolved: 0, resolving: 1, resolved: 2, frozen: 3, kicked: 4}, _default: :unresolved
 
-  scope :with_courses, ->(course) { joins(enrollment: { role: :course }).where("courses.id": course.id) }
+  scope :with_courses, ->(course) { joins(enrollment: {role: :course}).where("courses.id": course.id) }
   scope :with_user, ->(user_id) { joins(:enrollment).where("enrollments.user_id": user_id) }
 
-  #has_many :messages, dependent: :destroy
+  # has_many :messages, dependent: :destroy
 
   has_one :course, through: :question
 
@@ -101,11 +101,11 @@ class QuestionState < ApplicationRecord
     return none unless q
 
     where(question_id: Question
-                         .where('questions.created_at < ?', q.created_at)
+                         .where("questions.created_at < ?", q.created_at)
                          .where(user_id: q.user_id)
                          .where(course_id: q.course_id)
-                         .order('questions.created_at DESC')
-                         .pluck('questions.id'))
+                         .order("questions.created_at DESC")
+                         .pluck("questions.id"))
   }
 
   after_commit do
@@ -114,12 +114,12 @@ class QuestionState < ApplicationRecord
     count = course.questions_on_queue.count
     TitleChannel.broadcast_to_staff course: course, message: count == 1 ? "#{count} question" : "#{count} questions"
     TitleChannel.broadcast_to question.user,
-                              question.position_in_course.present? ? (question.reload.position_in_course + 1).ordinalize : "N/A"
+      question.position_in_course.present? ? (question.reload.position_in_course + 1).ordinalize : "N/A"
 
     RenderComponentJob.perform_later("Courses::QuestionPositionComponent",
-                                     question.user,
-                                     opts: { target: "question-position" },
-                                     component_args: { question: question })
+      question.user,
+      opts: {target: "question-position"},
+      component_args: {question: question})
 
     if resolving?
       SiteNotification.with(message: "Your question is currently being resolved.").deliver_later(question.user)
@@ -129,34 +129,31 @@ class QuestionState < ApplicationRecord
 
       if resolved?
         RenderComponentJob.perform_later("Forms::Questions::QuestionCreatorComponent",
-                                         question.user,
-                                         opts: { target: "form" },
-                                         component_args: { course: course,
-                                                           question: nil,
-                                                           current_user: question.user
-                                         })
+          question.user,
+          opts: {target: "form"},
+          component_args: {course: course,
+                           question: nil,
+                           current_user: question.user})
       else
         RenderComponentJob.perform_later("Forms::Questions::QuestionCreatorComponent",
-                                         question.user,
-                                         opts: { target: "form" },
-                                         component_args: { course: course,
-                                                           question: question,
-                                                           current_user: question.user
-                                         })
+          question.user,
+          opts: {target: "form"},
+          component_args: {course: course,
+                           question: question,
+                           current_user: question.user})
       end
     end
 
     RenderComponentJob.perform_later("Courses::QuestionsCountComponent",
-                                     course,
-                                     opts: { target: "questions-count" },
-                                     component_args: { course: course })
+      course,
+      opts: {target: "questions-count"},
+      component_args: {course: course})
 
     RenderComponentJob.perform_later("Courses::ActiveStaffComponent",
-                                     course,
-                                     opts: { target: "active-staff" },
-                                     component_args: { course: course })
+      course,
+      opts: {target: "active-staff"},
+      component_args: {course: course})
 
     Courses::UpdatePositionsJob.perform_later(course: course)
   end
-
 end

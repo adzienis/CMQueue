@@ -1,7 +1,5 @@
 class Forms::EnrollByCodeController < ApplicationController
-
   respond_to :html, :json
-
 
   rescue_from ActiveRecord::RecordInvalid, with: :validator
 
@@ -10,7 +8,6 @@ class Forms::EnrollByCodeController < ApplicationController
   end
 
   def new
-
   end
 
   def create

@@ -12,13 +12,13 @@
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
 #
-require './lib/postgres/views/course'
-require './lib/postgres/views/question'
-require './lib/postgres/views/tag'
-require './lib/postgres/views/enrollment'
-require './lib/postgres/views/user'
-require './lib/postgres/views/question_state'
-require './lib/postgres/views'
+require "./lib/postgres/views/course"
+require "./lib/postgres/views/question"
+require "./lib/postgres/views/tag"
+require "./lib/postgres/views/enrollment"
+require "./lib/postgres/views/user"
+require "./lib/postgres/views/question_state"
+require "./lib/postgres/views"
 
 class Course < ApplicationRecord
   include Turbo::Broadcastable
@@ -41,59 +41,61 @@ class Course < ApplicationRecord
   has_many :tag_groups, dependent: :destroy
   has_many :settings, as: :resource, dependent: :destroy
   has_many :questions, through: :enrollments
-  has_many :analytics_dashboards, :class_name => 'Analytics::Dashboard'
+  has_many :analytics_dashboards, class_name: "Analytics::Dashboard"
   has_many :unresolved_questions, -> { undiscarded.by_state("unresolved") }, class_name: "Question"
 
-  has_many :active_questions, -> { where("questions.id in (#{Question.undiscarded
+  has_many :active_questions, -> {
+                                where("questions.id in (#{Question.undiscarded
                                                                      .by_state("unresolved", "frozen", "resolving")
                                                                      .select("questions.id")
-                                                                     .to_sql}) or " +
+                                                                     .to_sql}) or " \
                                            "questions.id in (#{Question.undiscarded
                                                                        .by_state("kicked")
                                                                        .unacknowledged
                                                                        .select("questions.id")
-                                                                       .to_sql})") }, through: :enrollments, class_name: "Question", source: :questions
+                                                                       .to_sql})")
+                              }, through: :enrollments, class_name: "Question", source: :questions
 
   has_many :questions_on_queue, -> { by_state("unresolved", "frozen").undiscarded },
-           through: :enrollments,
-           source: :questions,
-           class_name: "Question"
+    through: :enrollments,
+    source: :questions,
+    class_name: "Question"
   has_many :all_questions_on_queue, -> { by_state("unresolved", "frozen", "resolving").undiscarded },
-           through: :enrollments,
-           source: :questions,
-           class_name: "Question"
+    through: :enrollments,
+    source: :questions,
+    class_name: "Question"
   has_many :tags, dependent: :destroy
-  #has_many :announcements
+  # has_many :announcements
 
   has_many :access_grants,
-           class_name: 'Doorkeeper::AccessGrant',
-           foreign_key: :resource_owner_id,
-           dependent: :destroy
+    class_name: "Doorkeeper::AccessGrant",
+    foreign_key: :resource_owner_id,
+    dependent: :destroy
 
   has_many :access_tokens,
-           class_name: 'Doorkeeper::AccessToken',
-           foreign_key: :resource_owner_id,
-           dependent: :destroy
+    class_name: "Doorkeeper::AccessToken",
+    foreign_key: :resource_owner_id,
+    dependent: :destroy
 
   has_many :applications, class_name: "Doorkeeper::Application", as: :owner
-  has_many :courses_sections, :class_name => 'Courses::Section'
+  has_many :courses_sections, class_name: "Courses::Section"
 
   has_one :ta_role, -> { where(name: "ta") },
-          as: :resource,
-          class_name: "Role",
-          inverse_of: :course
+    as: :resource,
+    class_name: "Role",
+    inverse_of: :course
   has_one :instructor_role, -> { where(name: "instructor") },
-          as: :resource,
-          class_name: "Role",
-          inverse_of: :course
+    as: :resource,
+    class_name: "Role",
+    inverse_of: :course
   has_one :lead_ta_role, -> { where(name: "lead_ta") },
-          as: :resource,
-          class_name: "Role",
-          inverse_of: :course
+    as: :resource,
+    class_name: "Role",
+    inverse_of: :course
   has_one :student_role, -> { where(name: "student") },
-          as: :resource,
-          class_name: "Role",
-          inverse_of: :course
+    as: :resource,
+    class_name: "Role",
+    inverse_of: :course
 
   before_validation on: :create do
     self.ta_code = SecureRandom.urlsafe_base64(6) unless ta_code.present?
@@ -108,7 +110,7 @@ class Course < ApplicationRecord
   scope :with_setting_value, ->(key, value) { joins(:settings).merge(Setting.with_key_value(key, value)) }
 
   def self.find_by_code?(code)
-    self.find_by_code(code).present?
+    find_by_code(code).present?
   end
 
   def connected_staff
@@ -116,14 +118,13 @@ class Course < ApplicationRecord
   end
 
   def self.find_by_code(code)
-
     ta_course = Course.find_by(ta_code: code)
     instructor_course = Course.find_by(instructor_code: code)
 
     return ta_course, :ta if ta_course
     return instructor_course, :instructor if instructor_course
 
-    return nil
+    nil
   end
 
   def setting(key)
@@ -131,12 +132,12 @@ class Course < ApplicationRecord
   end
 
   # Course Roles Finders
-  ######################################################3
+  # #####################################################3
 
   def self.find_staff_roles(user = nil)
     Role.joins(enrollments: :user).where("users.id": user)
-        .where("roles.resource_type": "Course", name: [:ta, :lead_ta, :instructor])
-        .merge(Enrollment.undiscarded)
+      .where("roles.resource_type": "Course", name: [:ta, :lead_ta, :instructor])
+      .merge(Enrollment.undiscarded)
   end
 
   def self.find_unprivileged_roles(user = nil)
@@ -190,9 +191,9 @@ class Course < ApplicationRecord
 
   after_commit do
     RenderComponentJob.perform_later("Courses::QueueOpenStatusComponent",
-                                     self,
-                                     opts: { target: "queue-open-status" },
-                                     component_args: { course: self })
+      self,
+      opts: {target: "queue-open-status"},
+      component_args: {course: self})
 
     if open_previously_was == false && open == true
       CourseChannel.broadcast_to self, {
@@ -215,9 +216,9 @@ class Course < ApplicationRecord
 
     if open_previously_changed?
       RenderComponentJob.perform_later("Courses::OpenButtonComponent",
-                                       self,
-                                       opts: { target: "open-button" },
-                                       component_args: { course: self })
+        self,
+        opts: {target: "open-button"},
+        component_args: {course: self})
     end
   end
 
@@ -230,38 +231,28 @@ class Course < ApplicationRecord
     Analytics::Metabase::SetupJob.set(wait: 1.minute).perform_later(course: self)
 
     settings.create([{
-                       value: {
-                         searchable: {
-                           label: "Searchable",
-                           value: false,
-                           description: "Allow students to search for this course.",
-                           type: "boolean",
-                           category: "General"
-                         }
-                       }
-                     }, {
-                       value: {
-                         searchable_enrollment: {
-                           label: "Searchable Enrollment",
-                           value: false,
-                           description: "Allow enrollment by searching for this course.",
-                           type: "boolean",
-                           category: "Enrollment"
-                         }
-                       }
-                     }, {
-                       value: {
-                         allow_enrollment: {
-                           label: "Allow Enrollment",
-                           value: false,
-                           description: "Allow students to enroll in the course.",
-                           type: "boolean",
-                           category: "Enrollment"
-                         }
-                       }
-                     }])
+      value: {
+        searchable: {
+          label: "Searchable",
+          value: false,
+          description: "Allow students to search for this course.",
+          type: "boolean",
+          category: "General"
+        }
+      }
+    }, {
+      value: {
+        allow_enrollment: {
+          label: "Allow Enrollment",
+          value: false,
+          description: "Allow users to enroll in the course.",
+          type: "boolean",
+          category: "Enrollment"
+        }
+      }
+    }])
 
-    roles.create([{ name: "instructor" }, { name: "ta" }, { name: "student" }, { name: "lead_ta" }])
+    roles.create([{name: "instructor"}, {name: "ta"}, {name: "student"}, {name: "lead_ta"}])
   end
 
   after_destroy_commit do

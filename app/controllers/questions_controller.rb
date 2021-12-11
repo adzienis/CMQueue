@@ -5,7 +5,7 @@ class QuestionsController < ApplicationController
   respond_to :html, :json, :csv
 
   def current_ability
-    @current_ability ||= ::QuestionAbility.new(current_user,{
+    @current_ability ||= ::QuestionAbility.new(current_user, {
       params: params,
       path_parameters: request.path_parameters
     })
@@ -29,7 +29,7 @@ class QuestionsController < ApplicationController
   end
 
   def index
-    @questions = @questions.undiscarded.order(:created_at) #.order("max(question_states.state) desc").group("questions.id")
+    @questions = @questions.undiscarded.order(:created_at) # .order("max(question_states.state) desc").group("questions.id")
     @questions = @questions.with_courses(params[:course_id]) if params[:course_id]
     @questions = @questions.with_users(params[:user_id]) if params[:user_id]
     if params[:tags].present?
@@ -79,8 +79,8 @@ class QuestionsController < ApplicationController
     if params[:state] == "resolved"
       # update state to resolved with last staff that interacted
       @question.transition_to_state("resolved",
-                                    @question.question_state.enrollment_id,
-                                    description: "resolved self")
+        @question.question_state.enrollment_id,
+        description: "resolved self")
     else
       @question.transition_to_state(params[:state], current_user.enrollment_in_course(@course).id)
     end
@@ -101,13 +101,13 @@ class QuestionsController < ApplicationController
   def paginated_previous_questions
     @question = @questions.find(params[:question_id])
     @paginated_past_questions = Question
-                                  .left_joins(:question_state)
-                                  .where("question_states.state = #{QuestionState.states['resolved']}")
-                                  .where('questions.created_at < ?', @question.created_at)
-                                  .where(user_id: @question.user_id)
-                                  .where(course_id: @question.course_id)
-                                  .order('question_states.created_at DESC')
-                                  .limit(5)
+      .left_joins(:question_state)
+      .where("question_states.state = #{QuestionState.states["resolved"]}")
+      .where("questions.created_at < ?", @question.created_at)
+      .where(user_id: @question.user_id)
+      .where(course_id: @question.course_id)
+      .order("question_states.created_at DESC")
+      .limit(5)
     respond_to do |format|
       format.html
       format.json { render json: @paginated_past_questions, include: :question_state }
@@ -124,14 +124,14 @@ class QuestionsController < ApplicationController
 
   def question_params
     params.require(:question).permit(:course_id,
-                                     :description,
-                                     :tried,
-                                     :location,
-                                     :user_id,
-                                     :title,
-                                     :enrollment_id,
-                                     :notes,
-                                     question_state_attributes: [:id, :state],
-                                     tag_ids: [])
+      :description,
+      :tried,
+      :location,
+      :user_id,
+      :title,
+      :enrollment_id,
+      :notes,
+      question_state_attributes: [:id, :state],
+      tag_ids: [])
   end
 end

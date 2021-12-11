@@ -1,5 +1,11 @@
-require: rubocop-rails
 require: standard
 
 inherit_gem:
   standard: config/base.yml
+
+AllCops:
+  TargetRubyVersion: 3.0.1
+  Exclude:
+    - 'node_modules/**/*'
+    - 'vendor/**/*'
+

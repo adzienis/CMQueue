@@ -3,7 +3,7 @@ class Accounts::SettingsController < ApplicationController
   respond_to :html
 
   def current_ability
-    @current_ability ||= Users::SettingAbility.new(current_user,{
+    @current_ability ||= Users::SettingAbility.new(current_user, {
       params: params,
       path_parameters: request.path_parameters
     })
@@ -14,9 +14,15 @@ class Accounts::SettingsController < ApplicationController
   end
 
   def update
-    @setting.set_value(params[:setting][@setting.key] == "1" ? true : false)
+    @setting.set_value(params[:setting][@setting.key] == "1")
     @setting.save
 
     respond_with :account, @setting, status: 303
+  end
+
+  private
+
+  def flash_interpolation_options
+    { resource_name: @setting.label }
   end
 end

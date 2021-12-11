@@ -40,21 +40,21 @@ module Shared
           @options[:actions].include?(:new) && @current_user.privileged_staff_of?(@course)
         end
       end
-
     end
 
     def filter_dropdown(options, model)
-
       associations = gen_associations(options, model)
 
       tag.div id: "dropdown-filter", data: {
         base: request.path,
         except: options[:except],
         columns: {
-          root: model.columns.map { |v| { v.name => {
-            type: v.type,
-            label: v.name.humanize
-          } } }.inject(:merge),
+          root: model.columns.map { |v|
+                  {v.name => {
+                    type: v.type,
+                    label: v.name.humanize
+                  }}
+                }.inject(:merge),
           associations: associations
         }, queries: params[:q],
         reset: request.path
@@ -65,16 +65,18 @@ module Shared
     private
 
     def gen_associations(options, model)
-
       other_filters = options[:other_filters]
 
       other_filters.empty? ? [] :
-        other_filters.keys.map { |e| { e => other_filters[e].map { |ee| { "#{ee}" => {
-          type: get_associations(model).map { |v| { v.name => v.klass } }.inject(:merge)[e].columns_hash[ee].type,
-          label: "#{ee.to_s.humanize}",
-          ass: e
-        } } } } }
+        other_filters.keys.map { |e|
+          {e => other_filters[e].map { |ee|
+                  {ee.to_s => {
+                    type: get_associations(model).map { |v| {v.name => v.klass} }.inject(:merge)[e].columns_hash[ee].type,
+                    label: ee.to_s.humanize.to_s,
+                    ass: e
+                  }}
+                }}
+        }
     end
-
   end
 end

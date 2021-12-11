@@ -1,4 +1,4 @@
-require 'pagy/extras/searchkick'
+require "pagy/extras/searchkick"
 
 module Search
   class FeedSearch
@@ -20,20 +20,19 @@ module Search
       builder = Search::ClauseBuilder.new(attributes: [:tags], params: params)
 
       where_params = builder.build_clauses(params,
-                                           extra_params: {
-                                             course_id: course.id,
-                                             state: ["unresolved", "frozen"],
-                                           })
+        extra_params: {
+          course_id: course.id,
+          state: ["unresolved", "frozen"]
+        })
 
       pagy_results = Question.pagy_search(params[:q].present? ? params[:q] : "*",
-                                          aggs: { tags: {} },
-                                          order: { created_at: { order: :asc, unmapped_type: :date }},
-                                          includes: [:user, :tags],
-                                          where: where_params.merge({ discarded_at: nil, course_id: course.id }))
+        aggs: {tags: {}},
+        order: {created_at: {order: :asc, unmapped_type: :date}},
+        includes: [:user, :tags],
+        where: where_params.merge({discarded_at: nil, course_id: course.id}))
       pagy_searchkick(pagy_results, items: 10)
     end
 
     attr_reader :params, :course
-
   end
 end

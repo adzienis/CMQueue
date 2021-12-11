@@ -1,5 +1,4 @@
 class Users::EnrollmentsController < ApplicationController
-
   respond_to :html, :json
 
   def index

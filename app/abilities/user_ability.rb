@@ -20,6 +20,5 @@ class UserAbility
     can :enroll_user, User do |u|
       user.id == u.id
     end
-
   end
 end

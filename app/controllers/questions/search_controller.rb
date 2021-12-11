@@ -17,24 +17,22 @@ class Questions::SearchController < ApplicationController
     order_params = builder.build_order_clauses(params)
 
     @question_results = Question.pagy_search(params[:q].present? ? params[:q] : "*",
-                                             fields: [:user_name, :description, :location, :tried],
-                                             aggs: { state: {},
-                                                     user_name: {},
-                                                     resolved_by: {},
-                                                     tags: {},
-                                                     created_at: {
-                                                       date_ranges: [{ from: DateTime.current.beginning_of_day,
-                                                                  to: DateTime.current.end_of_day, key: 'Today' },
-                                                                { from: DateTime.current.beginning_of_day - 1,
-                                                                  to: DateTime.current.end_of_day - 1, key: 'Yesterday' },
-                                                                { from: DateTime.current.beginning_of_day - 7,
-                                                                  to: DateTime.current.end_of_day, key: 'Past Week' }
-                                                       ]
-                                                     }
-                                             },
-                                             order: order_params,
-                                             match: :text_start,
-                                             where: where_params.merge({ discarded_at: nil, course_id: @course.id }))
+      fields: [:user_name, :description, :location, :tried],
+      aggs: {state: {},
+             user_name: {},
+             resolved_by: {},
+             tags: {},
+             created_at: {
+               date_ranges: [{from: DateTime.current.beginning_of_day,
+                              to: DateTime.current.end_of_day, key: "Today"},
+                 {from: DateTime.current.beginning_of_day - 1,
+                  to: DateTime.current.end_of_day - 1, key: "Yesterday"},
+                 {from: DateTime.current.beginning_of_day - 7,
+                  to: DateTime.current.end_of_day, key: "Past Week"}]
+             }},
+      order: order_params,
+      match: :text_start,
+      where: where_params.merge({discarded_at: nil, course_id: @course.id}))
     @pagy, @results = pagy_searchkick(@question_results, items: 10)
   end
 end

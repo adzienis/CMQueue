@@ -35,7 +35,6 @@ class Forms::Analytics::Dashboard
       self.metabase_id ||= dashboard.data["metabase_id"]
       self.course_id ||= dashboard.course_id
     end
-
   end
 
   def promote_errors(child)
@@ -64,44 +63,43 @@ class Forms::Analytics::Dashboard
         dashboard_type: dashboard_type,
         url: url,
         metabase_id: metabase_id
-      })
+      }
+    )
   end
 
   def save
-    begin
-      ActiveRecord::Base.transaction do
-        raise Exception.new("invalid") unless valid?
+    ActiveRecord::Base.transaction do
+      raise StandardError.new("invalid") unless valid?
 
-        if dashboard
-          dashboard.assign_attributes(dashboard_params_adapter)
-        else
-          self.dashboard = Analytics::Dashboard.new(
-            course_id: course_id,
-            data: {
-              name: name,
-              dashboard_type: dashboard_type,
-              url: url,
-              metabase_id: metabase_id
-            })
-        end
-
-        dashboard.save!
+      if dashboard
+        dashboard.assign_attributes(dashboard_params_adapter)
+      else
+        self.dashboard = Analytics::Dashboard.new(
+          course_id: course_id,
+          data: {
+            name: name,
+            dashboard_type: dashboard_type,
+            url: url,
+            metabase_id: metabase_id
+          }
+        )
       end
-    rescue ActiveRecord::RecordInvalid => e
-      promote_errors(e.record) and return false
-    rescue Exception => e
-      return false
-    ensure
-      true
+
+      dashboard.save!
     end
+  rescue ActiveRecord::RecordInvalid => e
+    promote_errors(e.record) and return false
+  rescue Exception => e
+    false
+  ensure
+    true
 
-    #course, role = Course.find_by_code(@code)
+    # course, role = Course.find_by_code(@code)
 
-    #@enrollment = @current_user.enrollments.build(role: course.roles.find_or_create_by(name: role))
+    # @enrollment = @current_user.enrollments.build(role: course.roles.find_or_create_by(name: role))
 
-    #@enrollment.save
+    # @enrollment.save
 
-    #promote_errors(@enrollment)
+    # promote_errors(@enrollment)
   end
-
 end

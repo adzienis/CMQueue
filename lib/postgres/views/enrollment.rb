@@ -2,7 +2,6 @@ module Postgres
   module Views
     module Enrollment
       def self.create(course_id)
-
         ActiveRecord::Base.connection.execute(
           <<-SQL
         CREATE OR REPLACE VIEW course_#{course_id}.enrollments AS

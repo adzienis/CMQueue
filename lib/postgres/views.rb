@@ -1,41 +1,40 @@
-require "./lib/postgres/views/role.rb"
-require "./lib/postgres/views/course.rb"
-require "./lib/postgres/views/enrollment.rb"
-require "./lib/postgres/views/question.rb"
-require "./lib/postgres/views/question_state.rb"
-require "./lib/postgres/views/tag.rb"
-require "./lib/postgres/views/user.rb"
-require "./lib/postgres/views/question_tag.rb"
+require "./lib/postgres/views/role"
+require "./lib/postgres/views/course"
+require "./lib/postgres/views/enrollment"
+require "./lib/postgres/views/question"
+require "./lib/postgres/views/question_state"
+require "./lib/postgres/views/tag"
+require "./lib/postgres/views/user"
+require "./lib/postgres/views/question_tag"
 
 module Postgres
   module Views
-
     def self.destroy_all_course_views
       courses = ::Course.all
 
       courses.each do |course|
-        self.destroy_course_schema(course.id)
+        destroy_course_schema(course.id)
       end
     end
 
     def self.destroy_course_schema(course_id)
-        ActiveRecord::Base.connection.execute(
-          <<-SQL
+      ActiveRecord::Base.connection.execute(
+        <<-SQL
             DROP SCHEMA IF EXISTS course_#{course_id} CASCADE;
         SQL
-        )
+      )
     end
 
     def self.create_all_course_views
       courses = ::Course.all
 
       courses.each do |course|
-        self.create_course_views(course.id)
+        create_course_views(course.id)
       end
     end
 
     def self.create_course_views(course_id)
-      self.create_views_schema(course_id)
+      create_views_schema(course_id)
       Course.create(course_id)
       Question.create(course_id)
       Tag.create(course_id)
@@ -53,8 +52,8 @@ module Postgres
       SQL
       )
 
-      self.create_user(course_id)
-      self.grant_privileges(course_id)
+      create_user(course_id)
+      grant_privileges(course_id)
     end
 
     def self.create_user(course_id)

@@ -2,7 +2,7 @@
 
 class StudentChannel < ApplicationCable::Channel
   def subscribed
-    stream_from 'students'
+    stream_from "students"
   end
 
   def unsubscribed

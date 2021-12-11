@@ -10,7 +10,7 @@
 #  updated_at   :datetime         not null
 #  discarded_at :datetime
 #
-require 'pagy/extras/searchkick'
+require "pagy/extras/searchkick"
 
 class Enrollment < ApplicationRecord
   include Discard::Model
@@ -33,19 +33,19 @@ class Enrollment < ApplicationRecord
       discarded_at: discarded_at,
       created_at: created_at,
       course_id: course&.id,
-      sections: courses_sections.map(&:name),
+      sections: courses_sections.map(&:name)
     }
   end
 
-  enum semester: { Su21: "Su21", F21: "F21" }
+  enum semester: {Su21: "Su21", F21: "F21"}
 
   validates :user_id, :role_id, :semester, presence: true
 
   belongs_to :user, optional: false
   belongs_to :role, optional: false
   has_one :course, through: :role
-  has_one :question_state, -> { order('question_states.id DESC') }
-  has_and_belongs_to_many :courses_sections, :class_name => 'Courses::Section', association_foreign_key: :courses_section_id
+  has_one :question_state, -> { order("question_states.id DESC") }
+  has_and_belongs_to_many :courses_sections, class_name: "Courses::Section", association_foreign_key: :courses_section_id
   has_many :question_states, dependent: :destroy
   has_many :questions, inverse_of: :enrollment, dependent: :destroy
 
@@ -60,18 +60,17 @@ class Enrollment < ApplicationRecord
     return if user_id.nil? || role_id.nil? || semester.nil?
 
     found = Enrollment
-              .undiscarded
-              .joins(:role)
-              .where("roles.resource_id": role.resource_id, "roles.resource_type": "Course", user_id: user_id, semester: semester)
+      .undiscarded
+      .joins(:role)
+      .where("roles.resource_id": role.resource_id, "roles.resource_type": "Course", user_id: user_id, semester: semester)
 
     unless found.empty?
-      errors.add(:base, "already exists in course.")
+      errors.add(:base, :already_exists)
     end
-
   end
 
   before_validation do
-    self.semester = Enrollment.default_semester if self.semester.nil?
+    self.semester = Enrollment.default_semester if semester.nil?
   end
 
   scope :with_role, ->(role_id) { joins(:role).where("roles.id": role_id) }
@@ -84,7 +83,7 @@ class Enrollment < ApplicationRecord
   scope :with_course_roles, ->(*roles) { joins(:role).where("roles.name": roles, "roles.resource_type": "Course") }
 
   after_commit do
-    self.reindex(refresh: true)
+    reindex(refresh: true)
   end
 
   def student?

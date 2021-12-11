@@ -11,15 +11,14 @@ class Ability
         can :read, :dashboard
         can :access, :rails_admin
       end
-      #can :manage, Message, question_state: { question: { user: { id: user.id } } }
+      # can :manage, Message, question_state: { question: { user: { id: user.id } } }
 
       @instructor_roles = Course.find_roles([:instructor], user).pluck(:resource_id)
       @privileged_roles = Course.find_privileged_staff_roles(user).pluck(:resource_id)
       @staff_roles = Course.find_staff_roles(user).pluck(:resource_id)
 
       can :manage, Certificate, Certificate
-                                  .where(course_id: @instructor_roles
-                                  )
+        .where(course_id: @instructor_roles)
 
       can :queue, Course
 
@@ -42,7 +41,7 @@ class Ability
       end
 
       can :manage, Setting, Setting.where(resource_id: user.id, resource_type: "User")
-                                   .or(Setting.where(resource_id: @instructor_roles, resource_type: "Course")) do |setting|
+        .or(Setting.where(resource_id: @instructor_roles, resource_type: "Course")) do |setting|
         case setting.resource_type
         when "User"
           user.id == setting.resource_id
@@ -51,28 +50,28 @@ class Ability
         end
       end
 
-      #can :read, Enrollment, Enrollment.joins(:role)
+      # can :read, Enrollment, Enrollment.joins(:role)
       #                                 .where("roles.resource_id": Course
       #                                                               .where("courses.id": Course.find_roles([:ta], user)
       #                                                                                          .pluck(:resource_id))
       #                                                               .pluck(:id)) do |enrollment|
       #  false
-      #end
+      # end
 
-      can [:new, :edit], Enrollment do |enrollment |
+      can [:new, :edit], Enrollment do |enrollment|
         enrollment.new_record?
       end
 
       can :create, Enrollment do |enrollment|
-        (enrollment.user == user && enrollment.role.name == "student") || (user.instructor_of?(enrollment.course))
+        (enrollment.user == user && enrollment.role.name == "student") || user.instructor_of?(enrollment.course)
       end
 
       can :read, Enrollment, Enrollment.joins(:role).where(user: user).or(Enrollment.where("roles.resource_id": @staff_roles)) do |enrollment|
-        (enrollment.user == user) ||  user.staff_of?(enrollment.course)
+        (enrollment.user == user) || user.staff_of?(enrollment.course)
       end
 
       can :destroy, Enrollment, Enrollment.joins(:role).where(user: user).or(Enrollment.where("roles.resource_id": @staff_roles)) do |enrollment|
-        (enrollment.user == user) ||  user.instructor_of?(enrollment.course)
+        (enrollment.user == user) || user.instructor_of?(enrollment.course)
       end
 
       can [:update], Enrollment, Enrollment.joins(:role).where(user: user).or(Enrollment.where("roles.resource_id": @staff_roles)) do |enrollment|
@@ -83,7 +82,7 @@ class Ability
         (enrollment.user == user)
       end
 
-      #can :manage, Message, Message.joins(:question_state).joins(question_state: :question)
+      # can :manage, Message, Message.joins(:question_state).joins(question_state: :question)
       #                                .where("questions.course_id": Course
       #                         enrollment                                     .where("courses.id": Course.find_roles([:instructor], user)
       #                                                                                         .pluck(:resource_id))
@@ -104,7 +103,7 @@ class Ability
       ###############################################
 
       can [:course_info, :roster, :open,
-           :update, :top_question, :answer, :answer_page], Course, Course.where(id: @staff_roles) do |course|
+        :update, :top_question, :answer, :answer_page], Course, Course.where(id: @staff_roles) do |course|
         user.staff_of?(course)
       end
 
@@ -121,18 +120,18 @@ class Ability
       end
 
       can :manage, QuestionState, QuestionState.joins(:question)
-                                               .where("questions.course_id": @staff_roles)
-                                               .or(QuestionState.where("question_states.enrollment_id": user.enrollments.pluck(:id)))
-                                               .or(QuestionState.where("questions.enrollment_id": user.enrollments.pluck(:id))) do |state|
+        .where("questions.course_id": @staff_roles)
+        .or(QuestionState.where("question_states.enrollment_id": user.enrollments.pluck(:id)))
+        .or(QuestionState.where("questions.enrollment_id": user.enrollments.pluck(:id))) do |state|
         user.staff_of?(state.course) || state.question.user == user
       end
 
-      #can :manage, Message, Message.all do |message|
+      # can :manage, Message, Message.all do |message|
       #  user.has_any_role?({ name: :ta, resource: message.question_state.question.course}, {name: :instructor, resource: message.question_state.question.course})
-      #end
+      # end
 
       can :read, Tag
-      can :create, Tag if (user.roles.where(name: ['ta', 'instructor', 'lead_ta'])).exists?
+      can :create, Tag if user.roles.where(name: ["ta", "instructor", "lead_ta"]).exists?
 
       can :manage, Role, Role.where(resource_id: @privileged_roles) do |role|
         (role.new_record? && user.has_role?(:instructor, :any)) || user.instructor_of?(role.course)
@@ -163,7 +162,7 @@ class Ability
       end
 
       can :manage, Question, Question.joins(:course, :enrollment)
-                                     .where(courses: @staff_roles).or(Question.where("enrollments.user_id": user.id)) do |question|
+        .where(courses: @staff_roles).or(Question.where("enrollments.user_id": user.id)) do |question|
         user.staff_of?(question.course) || question.user == user
       end
 

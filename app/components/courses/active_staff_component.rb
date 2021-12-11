@@ -21,7 +21,7 @@ module Courses
     end
 
     def value
-      course.actively_answering_staff.map{|e| e.user.full_name}.join(", ")
+      course.actively_answering_staff.map { |e| e.user.full_name }.join(", ")
     end
 
     private

@@ -29,45 +29,47 @@ module Analytics
 
         def call
           {
-            "name": "Questions Created This Week",
-            "dataset_query": {
-              "type": "native",
-              "native": {
-                "query": query,
+            name: "Questions Created This Week",
+            dataset_query: {
+              type: "native",
+              native: {
+                query: query,
                 "template-tags": {
-                  "semester": {
-                    "id": "b22e71db-d584-ddfb-33a9-6f0fc6209e2e",
-                    "name": "semester",
+                  semester: {
+                    id: "b22e71db-d584-ddfb-33a9-6f0fc6209e2e",
+                    name: "semester",
                     "display-name": "Semester",
-                    "type": "dimension",
-                    "dimension": ["field", semester_field_id, nil],
+                    type: "dimension",
+                    dimension: ["field", semester_field_id, nil],
                     "widget-type": "category",
-                    "default": nil },
-                  "date": {
-                    "id": "4e54949f-81cd-aa51-3f2c-c3142c58a392",
-                    "name": "date",
+                    default: nil
+                  },
+                  date: {
+                    id: "4e54949f-81cd-aa51-3f2c-c3142c58a392",
+                    name: "date",
                     "display-name": "Date",
-                    "type": "dimension",
-                    "dimension": ["field", created_at_field_id, nil],
-                    "widget-type": "date/all-options", "default": "thisweek"
+                    type: "dimension",
+                    dimension: ["field", created_at_field_id, nil],
+                    "widget-type": "date/all-options", default: "thisweek"
                   }
                 }
               },
-              "database": database_id
+              database: database_id
             },
-            "display": "scalar",
-            "description": nil,
-            "visualization_settings": {
+            display: "scalar",
+            description: nil,
+            visualization_settings: {
               "graph.dimensions": ["created_at"],
               "graph.metrics": ["count"],
-              "column_settings": { "[\"name\",\"count\"]": {} },
+              column_settings: {"[\"name\",\"count\"]": {}},
               "table.columns": [{
-                                  "name": "count",
-                                  "fieldRef": ["field", "count", { "base-type": "type/BigInteger" }],
-                                  "enabled": true
-                                }],
-              "scalar.field": "count" },
-            "collection_id": collection_id
+                name: "count",
+                fieldRef: ["field", "count", {"base-type": "type/BigInteger"}],
+                enabled: true
+              }],
+              "scalar.field": "count"
+            },
+            collection_id: collection_id
           }
         end
 

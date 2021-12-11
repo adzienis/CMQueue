@@ -44,7 +44,7 @@ module Courses
       end
 
       def total_tag_count
-        @total_tag_count ||= available_tags.map{|tag| tag_count(tag.name)}.sum
+        @total_tag_count ||= available_tags.map { |tag| tag_count(tag.name) }.sum
       end
 
       def tag_count(tag_name)
@@ -54,7 +54,7 @@ module Courses
       end
 
       def bucket_for_tag(tag_name)
-        search.aggs["tags"]["buckets"].find{|k| k["key"] == tag_name} || { "doc_count" => 0 }
+        search.aggs["tags"]["buckets"].find { |k| k["key"] == tag_name } || {"doc_count" => 0}
       end
 
       def pagy

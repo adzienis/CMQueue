@@ -13,10 +13,10 @@ Doorkeeper.configure do
     if current_user
       if params[:scope].present?
         case params[:scope]
-        when 'user'
+        when "user"
           redirect_to routes.root_path and return
-          #current_user # || warden.authenticate!(scope: :user)
-        when 'course'
+          # current_user # || warden.authenticate!(scope: :user)
+        when "course"
           course = Course.find(params[:course_id])
           if params[:course_id].present? && current_user.has_role?(:ta, course)
             return course
@@ -35,8 +35,7 @@ Doorkeeper.configure do
   #
   admin_authenticator do
     raise CanCan::AccessDenied unless current_user&.has_any_role?(:admin, {name: :instructor, resource: :any}) ||
-                                (params.has_key?(:course_id) && current_user&.has_role?(:instructor, Course.find(params[:course_id])))
-
+      (params.has_key?(:course_id) && current_user&.has_role?(:instructor, Course.find(params[:course_id])))
   end
 
   # You can use your own model classes if you need to extend (or even override) default

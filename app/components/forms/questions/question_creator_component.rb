@@ -1,9 +1,9 @@
 class Forms::Questions::QuestionCreatorComponent < ViewComponent::Base
   def initialize(course:, current_user:, question_form: nil, question: nil)
-    @course        = course
+    @course = course
     @question_form = question_form
-    @current_user  = current_user
-    @question      = question
+    @current_user = current_user
+    @question = question
   end
 
   def question

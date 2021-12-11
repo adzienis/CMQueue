@@ -1,5 +1,5 @@
 module Courses
   def self.table_name_prefix
-    'courses_'
+    "courses_"
   end
 end

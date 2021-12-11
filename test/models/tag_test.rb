@@ -13,7 +13,7 @@
 #  description  :text             default("")
 #  discarded_at :datetime
 #
-require 'test_helper'
+require "test_helper"
 
 class TagTest < ActiveSupport::TestCase
   # test "the truth" do

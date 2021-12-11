@@ -23,16 +23,16 @@ class ApplicationController < ActionController::Base
 
   def default_url_options
     if Rails.env.development? || Rails.env.test?
-      { host: "dev-cmqueue.xyz", protocol: "https" }
+      {host: "dev-cmqueue.xyz", protocol: "https"}
     elsif Rails.env.production?
-      { host: "cmqueue.xyz", protocol: "https" }
+      {host: "cmqueue.xyz", protocol: "https"}
     end
   end
 
   def set_variant
     agent = request.user_agent
-    return request.variant = :tablet if agent =~ /(tablet|ipad)|(android(?!.*mobile))/i
-    return request.variant = :mobile if agent =~ /Mobile/
+    return request.variant = :tablet if /(tablet|ipad)|(android(?!.*mobile))/i.match?(agent)
+    return request.variant = :mobile if /Mobile/.match?(agent)
     request.variant = :desktop
   end
 
@@ -44,10 +44,12 @@ class ApplicationController < ActionController::Base
   end
 
   def set_user
-    @user = User.accessible_by(UserAbility.new(current_user, {
-      params: params,
-      path_parameters: request.path_parameters
-    })).find_by(id: params[:user_id]) if params[:user_id]
+    if params[:user_id]
+      @user = User.accessible_by(UserAbility.new(current_user, {
+        params: params,
+        path_parameters: request.path_parameters
+      })).find_by(id: params[:user_id])
+    end
   end
 
   def set_course
@@ -59,10 +61,12 @@ class ApplicationController < ActionController::Base
   end
 
   def restrict_routes
-    if request.path.include?('users/')
+    if request.path.include?("users/")
       # raise CanCan::AccessDenied unless current_user.id == params[:user_id].to_i if params[:user_id]
-    elsif request.path.include?('courses/')
-      raise CanCan::AccessDenied unless current_user.enrolled_in_course?(@course) if @course
+    elsif request.path.include?("courses/")
+      if @course
+        raise CanCan::AccessDenied unless current_user.enrolled_in_course?(@course)
+      end
     end
   end
 
@@ -78,7 +82,8 @@ class ApplicationController < ActionController::Base
     stored_location_for(resource_or_scope) || current_user_enrollments_path
   end
 
-  def swagger; end
+  def swagger
+  end
 
   protected
 
@@ -86,7 +91,7 @@ class ApplicationController < ActionController::Base
     if user_signed_in?
       super
     else
-      redirect_to root_path, flash: { error: "Token has expired. You have been signed out." }
+      redirect_to root_path, flash: {error: "Token has expired. You have been signed out."}
       ## if you want render 404 page
       ## render :file => File.join(Rails.root, 'public/404'), :formats => [:html], :status => 404, :layout => false
     end

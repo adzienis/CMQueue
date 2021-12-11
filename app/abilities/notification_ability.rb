@@ -9,4 +9,3 @@ class NotificationAbility
     end
   end
 end
-

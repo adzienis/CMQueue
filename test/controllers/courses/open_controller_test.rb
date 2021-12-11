@@ -1,7 +1,6 @@
 require "test_helper"
 
 class Courses::OpenControllerTest < ControllerTest
-
   test "can get show if instructor" do
     sign_in @instructor
 
@@ -78,5 +77,4 @@ class Courses::OpenControllerTest < ControllerTest
 
     assert_response :success
   end
-
 end

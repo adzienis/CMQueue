@@ -14,9 +14,9 @@ class Enrollments::EnrollBySearchController < ApplicationController
       flash.now[:success] = "Successfully enrolled in #{@course.name} as a #{@enrollment.role.name}"
 
       RenderComponentJob.perform_later("Users::Enrollments::EnrollmentsComponent",
-                                       current_user,
-                                       opts: { target: "student-enrollments" },
-                                       component_args: { enrollments: current_user.student_enrollments.to_a })
+        current_user,
+        opts: {target: "student-enrollments"},
+        component_args: {enrollments: current_user.student_enrollments.to_a})
     end
   end
 

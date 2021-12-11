@@ -17,11 +17,11 @@ class User < ApplicationRecord
   alias_attribute :current_state, :question_state
   attr_accessor :question_state
 
-  #has_many :access_grants,
+  # has_many :access_grants,
   #         class_name: 'Doorkeeper::AccessGrant',
   #         foreign_key: :resource_owner_id,
   #         dependent: :delete_all
-  #has_many :access_tokens,
+  # has_many :access_tokens,
   #         class_name: 'Doorkeeper::AccessToken',
   #         foreign_key: :resource_owner_id,
   #         dependent: :delete_all
@@ -29,19 +29,21 @@ class User < ApplicationRecord
   has_many :active_enrollments, -> { undiscarded }, class_name: "Enrollment", inverse_of: :user
   has_many :enrollments, dependent: :destroy, inverse_of: :user
   has_many :staff_enrollments,
-           -> { undiscarded.merge(Enrollment.with_role_names(Role.staff_role_names))},
-           class_name: "Enrollment", inverse_of: :user
+    -> { undiscarded.merge(Enrollment.with_role_names(Role.staff_role_names)) },
+    class_name: "Enrollment", inverse_of: :user
   has_many :student_enrollments,
-           -> { undiscarded.merge(Enrollment.with_role_names(Role.student_role_names))},
-           class_name: "Enrollment", inverse_of: :user
-  has_many :active_questions, -> { undiscarded
-                                     .by_state("unresolved", "frozen", "resolving")
-                                     .or(undiscarded.by_state("kicked")
-                                                    .unacknowledged) }, through: :enrollments, source: :questions
+    -> { undiscarded.merge(Enrollment.with_role_names(Role.student_role_names)) },
+    class_name: "Enrollment", inverse_of: :user
+  has_many :active_questions, -> {
+                                undiscarded
+                                  .by_state("unresolved", "frozen", "resolving")
+                                  .or(undiscarded.by_state("kicked")
+                                                    .unacknowledged)
+                              }, through: :enrollments, source: :questions
   has_many :courses, through: :enrollments
   has_many :other_roles, class_name: "Role"
   has_many :questions, dependent: :destroy, through: :enrollments
-  has_many :question_states, -> { order('question_states.id DESC') }, through: :enrollments, dependent: :destroy, source: :question_states
+  has_many :question_states, -> { order("question_states.id DESC") }, through: :enrollments, dependent: :destroy, source: :question_states
   has_many :settings, as: :resource, dependent: :destroy
   has_many :applications, class_name: "Doorkeeper::Application", as: :owner, dependent: :destroy
 
@@ -49,15 +51,13 @@ class User < ApplicationRecord
 
   accepts_nested_attributes_for :enrollments
 
-  #has_many :oauth_applications, as: :owner
+  # has_many :oauth_applications, as: :owner
 
   def last_active_question(course)
     if course.instance_of? Course
       question_states.with_courses(course).order(created_at: :desc).first
     elsif course.instance_of? Integer
       question_states.with_courses(course).order(created_at: :desc).first
-    else
-      nil
     end
   end
 
@@ -105,7 +105,7 @@ class User < ApplicationRecord
   end
 
   def question_state
-    question_states.order('question_states.id DESC').first
+    question_states.order("question_states.id DESC").first
   end
 
   def self.ransackable_scopes(_auth_object = nil)
@@ -122,11 +122,11 @@ class User < ApplicationRecord
 
   scope :resolved_questions, lambda {
     joins(:question_states)
-      .where("question_states.state": 'resolved')
+      .where("question_states.state": "resolved")
   }
 
   scope :with_role_ransack, lambda { |role|
-    if role.to_s == 'any'
+    if role.to_s == "any"
       joins(:roles).distinct
     else
       joins(:roles).where("roles.name": role.to_s).distinct
@@ -134,18 +134,18 @@ class User < ApplicationRecord
   }
 
   scope :with_any_roles, lambda { |*names|
-    where(id: joins(:roles).where('roles.name IN (?)', names).merge(Role.undiscarded))
+    where(id: joins(:roles).where("roles.name IN (?)", names).merge(Role.undiscarded))
   }
 
   scope :active_tas_by_date, lambda { |states, date, course|
     joins(:question_state)
       .where("question_states.state in (#{states.map do |x|
         QuestionState.states[x]
-      end.join(',')})")
-      .where('question_states.created_at >= ?', date.beginning_of_day)
-      .where('question_states.created_at <= ?', date.end_of_day)
+      end.join(",")})")
+      .where("question_states.created_at >= ?", date.beginning_of_day)
+      .where("question_states.created_at <= ?", date.end_of_day)
       .with_role(:ta, course)
-      .distinct('users.id')
+      .distinct("users.id")
   }
 
   def full_name
@@ -169,7 +169,7 @@ class User < ApplicationRecord
   end
 
   def self.to_csv
-    attributes = %w{id given_name family_name}
+    attributes = %w[id given_name family_name]
 
     CSV.generate(headers: true) do |csv|
       csv << attributes
@@ -182,26 +182,26 @@ class User < ApplicationRecord
 
   after_create_commit do
     settings.create([{
-                       value: {
-                         desktop_notifications: {
-                           label: "Desktop Notifications",
-                           value: false,
-                           description: "Allow notifications to appear natively on your desktop.",
-                           type: "boolean",
-                           category: "Notifications"
-                         }
-                       }
-                     }, {
-                       value: {
-                         site_notifications: {
-                           label: "Site Notifications",
-                           value: true,
-                           description: "Allow notifications to appear on the site.",
-                           type: "boolean",
-                           category: "Notifications"
-                         }
-                       }
-                     }])
+      value: {
+        desktop_notifications: {
+          label: "Desktop Notifications",
+          value: false,
+          description: "Allow notifications to appear natively on your desktop.",
+          type: "boolean",
+          category: "Notifications"
+        }
+      }
+    }, {
+      value: {
+        site_notifications: {
+          label: "Site Notifications",
+          value: true,
+          description: "Allow notifications to appear on the site.",
+          type: "boolean",
+          category: "Notifications"
+        }
+      }
+    }])
   end
 
   rolify has_many_through: :enrollments

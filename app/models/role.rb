@@ -12,7 +12,6 @@
 #  updated_at    :datetime         not null
 #
 class Role < ApplicationRecord
-
   include FindableByCourseRoles
 
   has_many :enrollments, dependent: :destroy
@@ -23,17 +22,17 @@ class Role < ApplicationRecord
   scope :with_resources, ->(*resources) { where(resource: resources) }
 
   belongs_to :resource,
-             polymorphic: true,
-             optional: true
+    polymorphic: true,
+    optional: true
 
   validates :resource_type,
-            inclusion: { in: Rolify.resource_types },
-            allow_nil: true
+    inclusion: {in: Rolify.resource_types},
+    allow_nil: true
   validates :name, presence: true
 
-  scope :privileged_roles, ->{where(name: ["lead_ta", "instructor"])}
-  scope :staff_roles, ->{where(name: ["ta", "lead_ta", "instructor"])}
-  scope :undiscarded, ->{joins(:enrollments).merge(Enrollment.undiscarded)}
+  scope :privileged_roles, -> { where(name: ["lead_ta", "instructor"]) }
+  scope :staff_roles, -> { where(name: ["ta", "lead_ta", "instructor"]) }
+  scope :undiscarded, -> { joins(:enrollments).merge(Enrollment.undiscarded) }
 
   def self.role_security_value(role_name)
     case role_name

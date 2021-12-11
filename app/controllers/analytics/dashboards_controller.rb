@@ -2,7 +2,7 @@ class Analytics::DashboardsController < ApplicationController
   load_and_authorize_resource id_param: :dashboard_id, param_method: :dashboard_params
 
   def current_ability
-    @current_ability ||= Analytics::DashboardAbility.new(current_user,{
+    @current_ability ||= Analytics::DashboardAbility.new(current_user, {
       params: params,
       path_parameters: request.path_parameters
     })
@@ -45,11 +45,12 @@ class Analytics::DashboardsController < ApplicationController
   end
 
   private
-    def set_dashboard
-      @dashboard = Analytics::Dashboard.find(params[:dashboard_id])
-    end
 
-    def dashboard_params
-      params.require(:dashboard).permit(:url, :title, :course_id)
-    end
+  def set_dashboard
+    @dashboard = Analytics::Dashboard.find(params[:dashboard_id])
+  end
+
+  def dashboard_params
+    params.require(:dashboard).permit(:url, :title, :course_id)
+  end
 end

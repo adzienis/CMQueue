@@ -6,7 +6,7 @@ class Analytics::Metabase::Dashboards::GetCourseDashboards
   end
 
   def call
-    collection = metabase.collections.find{|c| c.name == course.name}
+    collection = metabase.collections.find { |c| c.name == course.name }
 
     return [] if collection.nil?
 
@@ -14,7 +14,7 @@ class Analytics::Metabase::Dashboards::GetCourseDashboards
 
     return [] if items.nil?
 
-    items["data"].filter{|item| item["model"] == "dashboard"}.map{|v| Analytics::Metabase::API::Dashboard.new(dashboard: v)}
+    items["data"].filter { |item| item["model"] == "dashboard" }.map { |v| Analytics::Metabase::API::Dashboard.new(dashboard: v) }
   end
 
   private

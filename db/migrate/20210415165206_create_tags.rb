@@ -6,8 +6,8 @@ class CreateTags < ActiveRecord::Migration[6.1]
       t.belongs_to :course, foreign_key: true
       t.timestamps
       t.boolean :archived, default: true
-      t.text :name, default: ''
-      t.text :description, default: ''
+      t.text :name, default: ""
+      t.text :description, default: ""
     end
   end
 end

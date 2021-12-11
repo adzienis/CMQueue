@@ -1,5 +1,4 @@
 class Questions::HandleController < ApplicationController
-
   respond_to :json, :html
 
   before_action :set_resource, only: :create
@@ -17,10 +16,10 @@ class Questions::HandleController < ApplicationController
     @question = Question.find(params[:question_id])
 
     update_state = ::Questions::UpdateState.new(question: @question,
-                               enrollment: current_user.enrollment_in_course(@question.course),
-                               state: params[:state],
-                               description: params[:description],
-                               options: { update_creator?: true })
+      enrollment: current_user.enrollment_in_course(@question.course),
+      state: params[:state],
+      description: params[:description],
+      options: {update_creator?: true})
     update_state.call
 
     if update_state.error.present?

@@ -7,7 +7,7 @@ class Analytics::Metabase::Dashboards::ArchiveDashboard
 
   def call
     metabase.put_dashboard(dashboard_id: dashboard_id,
-                           json: json)
+      json: json)
   end
 
   private

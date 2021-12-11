@@ -1,7 +1,6 @@
 require "application_system_test_case"
 
 class Users::EnrollmentsTest < ApplicationSystemTestCase
-
   test "visiting the index" do
     sign_in users(:arthur)
 

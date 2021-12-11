@@ -19,5 +19,4 @@ class AccountsController < ApplicationController
   def account_params
     params.require(:user).permit(:given_name, :family_name, :email)
   end
-
 end

@@ -59,13 +59,13 @@ class ImportEnrollmentsJob < ApplicationJob
           case type
           when "StudentEnrollment"
             user.enrollments.create(role: course.student_role,
-                                    courses_section_ids: student_sections.map { |v| pres_sections_h[v["name"]] })
+              courses_section_ids: student_sections.map { |v| pres_sections_h[v["name"]] })
           when "TaEnrollment"
             user.enrollments.create(role: course.ta_role,
-                                    courses_section_ids: student_sections.map { |v| pres_sections_h[v["name"]] })
+              courses_section_ids: student_sections.map { |v| pres_sections_h[v["name"]] })
           when "TeacherEnrollment"
             user.enrollments.create(role: course.instructor_role,
-                                    courses_section_ids: student_sections.map { |v| pres_sections_h[v["name"]] })
+              courses_section_ids: student_sections.map { |v| pres_sections_h[v["name"]] })
           end
         end
       else
@@ -73,13 +73,13 @@ class ImportEnrollmentsJob < ApplicationJob
         case type
         when "StudentEnrollment"
           user.enrollments.create(role: course.student_role,
-                                  courses_section_ids: student_sections.map { |v| pres_sections_h[v["name"]] })
+            courses_section_ids: student_sections.map { |v| pres_sections_h[v["name"]] })
         when "TaEnrollment"
           user.enrollments.create(role: course.ta_role,
-                                  courses_section_ids: student_sections.map { |v| pres_sections_h[v["name"]] })
+            courses_section_ids: student_sections.map { |v| pres_sections_h[v["name"]] })
         when "TeacherEnrollment"
           user.enrollments.create(role: course.instructor_role,
-                                  courses_section_ids: student_sections.map { |v| pres_sections_h[v["name"]] })
+            courses_section_ids: student_sections.map { |v| pres_sections_h[v["name"]] })
         else
           new_imports -= 1
         end

@@ -16,54 +16,52 @@ module Analytics
           dashboards: -> { "#{BASE_URL}/api/dashboard/" },
           dashboard: ->(dashboard_id) { "#{BASE_URL}/api/dashboard/#{dashboard_id}" },
           databases: -> { "#{BASE_URL}/api/database/" },
-          database_fields: ->(database_id) {"#{BASE_URL}/api/database/#{database_id}/fields"},
-          sync_database: ->(database_id) { "#{BASE_URL}/api/database/#{database_id}/sync_schema"}
+          database_fields: ->(database_id) { "#{BASE_URL}/api/database/#{database_id}/fields" },
+          sync_database: ->(database_id) { "#{BASE_URL}/api/database/#{database_id}/sync_schema" }
         }
 
         def initialize(username: Rails.application.credentials.metabase[:username],
-                       password: Rails.application.credentials.metabase[:password])
+          password: Rails.application.credentials.metabase[:password])
           @@username = username
           @@password = password
         end
 
         # @return [Hash, NilClass]
         def guard_response_and_convert
-          begin
-            login unless defined?(@@session)
+          login unless defined?(@@session)
 
+          resp = yield
+
+          if resp.status == 401
+            login(status: resp.status)
             resp = yield
-
-            if resp.status == 401
-              login(status: resp.status)
-              resp = yield
-            elsif !resp.status.success?
-              raise Exception.new(resp.status)
-            end
-
-            JSON.parse(resp.to_s)
+          elsif !resp.status.success?
+            raise StandardError.new(resp.status)
           end
+
+          JSON.parse(resp.to_s)
         end
 
-        def login(status:nil)
+        def login(status: nil)
           remove_class_variable(@@session) if status.present? && status.status == 401
           return @@session if defined?(@@session)
 
           resp = HTTP.headers("Content-Type": "application/json")
-                     .post(URL_MAPPING[:session].call,
-                           body: {
-                             username: @@username,
-                             password: @@password
-                           }.to_json)
+            .post(URL_MAPPING[:session].call,
+              body: {
+                username: @@username,
+                password: @@password
+              }.to_json)
 
-          raise Exception.new(resp.status) unless resp.status.success?
+          raise StandardError.new(resp.status) unless resp.status.success?
 
           json = JSON.parse(resp.to_s)
 
-          @@session = json&.fetch('id', nil)
+          @@session = json&.fetch("id", nil)
         end
 
         def root_collection
-          @root_collection ||= collections.find{|v| v.id == "root"}
+          @root_collection ||= collections.find { |v| v.id == "root" }
         end
 
         def collections
@@ -136,19 +134,20 @@ module Analytics
         end
 
         def root_db
-          @db ||= databases.find{|v| v.name == "local" }
+          @db ||= databases.find { |v| v.name == "local" }
         end
 
         def schema_fields(table_name: nil, schema: nil)
           fields = database_fields(root_db.id)
           fields = fields.filter { |v| v["table_name"] == table_name } if table_name.present?
           fields = fields.filter { |v| v["schema"] == schema } if schema.present?
-          fields.map { |v| [v["name"], v.entries.filter { |k, v| k != "name" }.to_h] }.to_h
+          fields.map { |v| [v["name"], v.entries.except("name").to_h] }.to_h
         end
 
         private
 
-        def login_request(username, password) end
+        def login_request(username, password)
+        end
       end
     end
   end

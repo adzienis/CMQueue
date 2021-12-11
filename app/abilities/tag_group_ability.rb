@@ -19,4 +19,3 @@ class TagGroupAbility
     can :read, TagGroup
   end
 end
-

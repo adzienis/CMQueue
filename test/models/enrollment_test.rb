@@ -12,7 +12,7 @@
 #  updated_at   :datetime         not null
 #  discarded_at :datetime
 #
-require 'test_helper'
+require "test_helper"
 
 class EnrollmentTest < ActiveSupport::TestCase
   # test "the truth" do

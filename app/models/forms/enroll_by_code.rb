@@ -37,5 +37,4 @@ class Forms::EnrollByCode
 
     promote_errors(@enrollment)
   end
-
 end

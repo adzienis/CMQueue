@@ -1,5 +1,4 @@
 class Courses::HandleQuestionController < ApplicationController
-
   respond_to :json
 
   def create

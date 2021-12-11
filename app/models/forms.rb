@@ -1,5 +1,5 @@
 module Forms
   def self.table_name_prefix
-    'forms_'
+    "forms_"
   end
 end

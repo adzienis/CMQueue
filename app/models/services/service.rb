@@ -1,7 +1,6 @@
 module Services
   class Service
     def initialize
-
     end
 
     def set_current_ability(current_ability)
@@ -20,7 +19,6 @@ module Services
     end
 
     def perform
-
     end
   end
 end

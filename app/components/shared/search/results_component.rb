@@ -5,9 +5,9 @@ module Shared
 
       def initialize(course:, pagy:, search:, options: {})
         super
-        @course  = course
-        @pagy    = pagy
-        @search  = search
+        @course = course
+        @pagy = pagy
+        @search = search
         @options = options
       end
 
@@ -34,7 +34,6 @@ module Shared
       private
 
       attr_reader :search, :course, :pagy, :options
-
     end
   end
 end

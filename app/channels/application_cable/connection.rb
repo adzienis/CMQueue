@@ -15,7 +15,7 @@ module ApplicationCable
     private
 
     def authenticate_user
-      if user = env['warden'].user
+      if user = env["warden"].user
         user
       else
         reject_unauthorized_connection

@@ -2,7 +2,6 @@ require "./lib/responders/csv_responder"
 
 module ActionController
   class Responder
-
     # override api_behavior so patches/puts return modified object
     def api_behavior
       raise MissingRenderer.new(format) unless has_renderer?

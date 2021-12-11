@@ -28,7 +28,7 @@ class CourseAbility
     end
 
     can [:course_info, :roster, :open,
-         :update, :top_question, :answer, :answer_page], Course, Course.where(id: @staff_roles) do |course|
+      :update, :top_question, :answer, :answer_page], Course, Course.where(id: @staff_roles) do |course|
       user.staff_of?(course)
     end
 
@@ -47,6 +47,5 @@ class CourseAbility
     can :index_database, Course do |course|
       user.privileged_staff_of?(course)
     end
-
   end
 end

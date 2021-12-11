@@ -26,19 +26,19 @@ class Analytics::Metabase::API::Collection
   end
 
   def cards
-    data.filter{|v| v["model"] == "card" }.map do |v|
+    data.filter { |v| v["model"] == "card" }.map do |v|
       Analytics::Metabase::API::Card.new(card: v)
     end
   end
 
   def dashboards
-    data.filter{|v| v["model"] == "dashboard" }.map do |v|
+    data.filter { |v| v["model"] == "dashboard" }.map do |v|
       Analytics::Metabase::API::Dashboard.new(dashboard: v)
     end
   end
 
   def collections
-    data.filter{|v| v["model"] == "collection"}.map do |v|
+    data.filter { |v| v["model"] == "collection" }.map do |v|
       Analytics::Metabase::API::Collection.new(collection: v)
     end
   end

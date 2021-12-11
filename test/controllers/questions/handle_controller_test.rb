@@ -4,7 +4,6 @@ class Questions::HandleControllerTest < ControllerTest
   test "can post create if instructor" do
     sign_in @instructor
 
-
     post handle_question_path(@question), params: {
       format: :json,
       state: "resolving",
@@ -37,5 +36,4 @@ class Questions::HandleControllerTest < ControllerTest
 
     assert_response :forbidden
   end
-
 end

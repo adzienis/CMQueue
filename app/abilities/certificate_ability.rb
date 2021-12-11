@@ -9,4 +9,3 @@ class CertificateAbility
     can :manage, Certificate, Certificate.where(course_id: @instructor_roles)
   end
 end
-

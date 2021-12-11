@@ -10,10 +10,9 @@ class TagAbility
     can :search, Tag if @staff_roles.any?
 
     can :read, Tag
-    can :create, Tag if (user.roles.where(name: ['ta', 'instructor', 'lead_ta'])).exists?
+    can :create, Tag if user.roles.where(name: ["ta", "instructor", "lead_ta"]).exists?
     can [:read, :create, :edit, :destroy], Tag, Tag.where(course_id: @privileged_roles) do |tag|
       user.privileged_staff_of?(tag.course)
     end
   end
 end
-

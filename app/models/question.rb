@@ -16,10 +16,9 @@
 #  discarded_at  :datetime
 #  enrollment_id :bigint           not null
 #
-require 'pagy/extras/searchkick'
+require "pagy/extras/searchkick"
 
 class Question < ApplicationRecord
-
   include Discard::Model
   include Ransackable
   include Exportable
@@ -50,15 +49,15 @@ class Question < ApplicationRecord
   has_one :course, through: :enrollment
   has_one :user, through: :enrollment
   # this basically alias question_state
-  has_one :question_state, -> { order('max(id) DESC').group("question_states.id") },
-          class_name: "QuestionState",
-          dependent: :destroy,
-          inverse_of: :question
+  has_one :question_state, -> { order("max(id) DESC").group("question_states.id") },
+    class_name: "QuestionState",
+    dependent: :destroy,
+    inverse_of: :question
 
   has_many :question_tags
   has_many :tags, through: :question_tags, dependent: :destroy, autosave: true, inverse_of: :questions
 
-  #has_many :notifications, as: :recipient
+  # has_many :notifications, as: :recipient
 
   has_many :tag_groups, through: :tags
   has_many :question_states, dependent: :destroy, inverse_of: :question
@@ -87,7 +86,7 @@ class Question < ApplicationRecord
   end
 
   def total_time_to_resolve
-    questions_states.order('min(id) DESC')
+    questions_states.order("min(id) DESC")
   end
 
   def time_to_resolve
@@ -102,7 +101,7 @@ class Question < ApplicationRecord
   end
 
   def course_queue_open
-    errors.add(:course, "is closed.") if !course.open
+    errors.add(:course, "is closed.") unless course.open
   end
 
   def has_at_least_one_tag
@@ -115,8 +114,8 @@ class Question < ApplicationRecord
     return unless question_state
 
     if question_state.state == "resolving" ||
-      question_state.state == "unresolved" ||
-      question_state.state == "frozen"
+        question_state.state == "unresolved" ||
+        question_state.state == "frozen"
       errors.add(:question, "already exists.")
     end
   end
@@ -138,14 +137,12 @@ class Question < ApplicationRecord
     where(id:
             QuestionState.where(id:
                                   QuestionState
-                                    .select('max(question_states.id) as max')
+                                    .select("max(question_states.id) as max")
                                     .group(:question_id))
                          .where(state: states)
                          .joins(:user)
                          .where(users: user)
-                         .pluck(:question_id)
-    )
-
+                         .pluck(:question_id))
   }
 
   scope :previous_questions, lambda { |question = nil|
@@ -153,7 +150,7 @@ class Question < ApplicationRecord
     return Question.none unless q
 
     joins(:enrollment)
-      .where('questions.created_at < ?', q.created_at)
+      .where("questions.created_at < ?", q.created_at)
       .where("enrollments.user_id": q.enrollment.user_id)
       .where(course: course)
   }
@@ -237,24 +234,23 @@ class Question < ApplicationRecord
 
   after_discard do
     comp = Forms::Questions::QuestionCreatorComponent.new(course: course,
-                                                         question_form: Forms::Question.new(question: Question.new),
-                                                         current_user: user
-    )
+      question_form: Forms::Question.new(question: Question.new),
+      current_user: user)
 
     SyncedTurboChannel.broadcast_replace_later_to user,
-                                                  target: "question-form",
-                                                  html: ApplicationController.render(comp, layout: false)
+      target: "question-form",
+      html: ApplicationController.render(comp, layout: false)
 
     SyncedTurboChannel.broadcast_replace_later_to course,
-                                                  target: "questions-count",
-                                                  html: ApplicationController.render(Courses::QuestionsCountComponent.new(course: course),
-                                                                                     layout: false)
+      target: "questions-count",
+      html: ApplicationController.render(Courses::QuestionsCountComponent.new(course: course),
+        layout: false)
 
     Courses::UpdatePositionsJob.perform_later(course: course)
     component = Courses::QuestionPositionComponent.new(question: self)
     SyncedTurboChannel.broadcast_replace_later_to user,
-                                                  target: "question-position",
-                                                  html: ApplicationController.render(component, layout: false)
+      target: "question-position",
+      html: ApplicationController.render(component, layout: false)
     TitleChannel.broadcast_to user, position_in_course&.ordinalize
   end
 
@@ -265,18 +261,17 @@ class Question < ApplicationRecord
         SiteNotification.with(message: "New question on the queue").deliver_later(member.user)
       end
     end
-
   end
 
   after_update_commit do
     RenderComponentJob.perform_later("Courses::Feed::QuestionCardComponent",
-                                     self,
-                                     opts: { target: self },
-                                     component_args: { question: self })
+      self,
+      opts: {target: self},
+      component_args: {question: self})
   end
 
   after_commit do
-    self.reindex(refresh: true)
+    reindex(refresh: true)
     Courses::UpdateFeedJob.perform_later(course: course)
   end
 

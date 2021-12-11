@@ -22,33 +22,29 @@ module Enrollable
       enrollments.undiscarded.joins(:role).where("roles.resource": course).order(created_at: :desc).first
     elsif course.instance_of? Integer
       enrollments.undiscarded.joins(:role).where("roles.resource_id": course, "roles.resource_type": "Course").order(created_at: :desc).first
-    else
-      nil
     end
   end
 
   class_methods do
     def with_staff_of(course)
       joins(:enrollments, enrollments: :role).merge(Enrollment.undiscarded)
-                                             .where("roles.resource_type": "Course", "roles.resource_id": course.id,
-                                                    "roles.name": "ta")
-                                             .or(where("roles.resource_type": "Course", "roles.resource_id": course.id,
-                                                       "roles.name": "instructor"))
+        .where("roles.resource_type": "Course", "roles.resource_id": course.id,
+          "roles.name": "ta")
+        .or(where("roles.resource_type": "Course", "roles.resource_id": course.id,
+          "roles.name": "instructor"))
     end
   end
 
-
   [:ta, :lead_ta, :instructor, :student].each do |role|
-    self.define_method("#{role}_of?") do |obj|
+    define_method("#{role}_of?") do |obj|
       if obj.instance_of? Course
-        has_any_role?({ name: role.to_sym, resource: obj })
+        has_any_role?({name: role.to_sym, resource: obj})
       elsif obj.instance_of? Integer
         course = Course.find(obj)
-        has_any_role?({ name: role.to_sym, resource: course })
+        has_any_role?({name: role.to_sym, resource: course})
       else
         false
       end
     end
   end
-
 end

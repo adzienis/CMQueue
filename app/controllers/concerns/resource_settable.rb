@@ -1,5 +1,4 @@
 class ResourceSettable < Module
-
   def initialize(resource)
     resources = resource.to_s.underscore.pluralize
     resource_name = resource.to_s.underscore.singularize
@@ -12,5 +11,4 @@ class ResourceSettable < Module
       instance_variable_set("@#{resource_name}", value)
     end
   end
-
 end

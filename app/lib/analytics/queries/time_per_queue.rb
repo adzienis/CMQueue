@@ -6,13 +6,11 @@ class Analytics::Queries::TimePerQueue
   def call
     query = ->(state) do
       QuestionState.where("question_id = questions.id")
-                   .where("enrollment_id = enrollments.id")
-                   .where(state: state)
+        .where("enrollment_id = enrollments.id")
+        .where(state: state)
     end
 
     grouped = Tag.joins(:questions).group("tags.id")
-
-
   end
 
   attr_reader :course

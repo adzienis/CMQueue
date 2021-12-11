@@ -1,6 +1,5 @@
 module Shared
   module Search
-
     class SearchPaneComponent < ViewComponent::Base
       def initialize(query_params:, bucket:, category:, course:, resources:)
         @query_params = query_params
@@ -22,8 +21,7 @@ module Shared
             new_p["from"] = bucket["from"] if bucket["from"].present?
             new_p["to"] = bucket["to"] if bucket["to"].present?
 
-
-            return query_params.merge(category => new_p)
+            query_params.merge(category => new_p)
           else
             begin
               parsed = JSON.parse(query_params[category])
@@ -32,30 +30,26 @@ module Shared
             end
 
             if parsed.instance_of? Array
-              if parsed.include? key
-                parsed = parsed - [key]
+              parsed = if parsed.include? key
+                parsed - [key]
               else
-                parsed = parsed + [key]
+                parsed + [key]
               end
+            elsif query_params.find { |k, v| v == key }.present?
+              return query_params.reject { |k, v| v == key }
             else
-              if query_params.find{|k,v| v == key}.present?
-                return query_params.reject{|k,v| v == key}
-              else
-                return query_params.merge(category => key)
-              end
+              return query_params.merge(category => key)
             end
             query_params.merge(category => JSON.dump(parsed))
           end
+        elsif bucket["to"] || bucket["from"]
+          new_p = {}
+          new_p = new_p.merge({to: bucket["to"]}) if bucket["to"]
+          new_p = new_p.merge({from: bucket["from"]}) if bucket["from"]
+          new_p = new_p.merge({key: bucket["key"]}) if bucket["key"]
+          query_params.merge(category => new_p)
         else
-          if bucket["to"] || bucket["from"]
-            new_p = {}
-            new_p = new_p.merge({ to: bucket["to"] }) if bucket["to"]
-            new_p = new_p.merge({ from: bucket["from"] }) if bucket["from"]
-            new_p = new_p.merge({ key: bucket["key"] }) if bucket["key"]
-            query_params.merge(category => new_p)
-          else
-            query_params.merge(category => key)
-          end
+          query_params.merge(category => key)
         end
       end
 
@@ -87,7 +81,6 @@ module Shared
       private
 
       attr_reader :query_params, :bucket, :category, :course, :resources
-
     end
   end
 end

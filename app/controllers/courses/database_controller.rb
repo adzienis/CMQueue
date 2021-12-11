@@ -1,5 +1,4 @@
 class Courses::DatabaseController < ApplicationController
-
   before_action :authorize
 
   def authorize

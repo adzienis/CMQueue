@@ -17,20 +17,18 @@ module Questions
 
       if state == "resolved"
         RenderComponentJob.perform_later("Forms::Questions::QuestionCreatorComponent",
-                                         question.user,
-                                         opts: { target: "form" },
-                                         component_args: { course: course,
-                                                           question: nil,
-                                                           current_user: question.user
-                                         })
+          question.user,
+          opts: {target: "form"},
+          component_args: {course: course,
+                           question: nil,
+                           current_user: question.user})
       else
         RenderComponentJob.perform_later("Forms::Questions::QuestionCreatorComponent",
-                                         question.user,
-                                         opts: { target: "form" },
-                                         component_args: { course: course,
-                                                           question: question,
-                                                           current_user: question.user
-                                         })
+          question.user,
+          opts: {target: "form"},
+          component_args: {course: course,
+                           question: question,
+                           current_user: question.user})
       end
       nil
     end

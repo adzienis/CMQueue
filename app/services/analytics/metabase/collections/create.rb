@@ -14,10 +14,10 @@ class Analytics::Metabase::Collections::Create
 
   def json
     {
-      "name": name,
-      "description": nil,
-      "color": "#509EE3",
-      "parent_id": parent_id
+      name: name,
+      description: nil,
+      color: "#509EE3",
+      parent_id: parent_id
     }
   end
 

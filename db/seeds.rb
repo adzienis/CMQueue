@@ -2,27 +2,26 @@
 
 5.times do |v|
   @course0 = Course.create! name: "Course ##{v}",
-                            open: true,
-                            ta_code: SecureRandom.urlsafe_base64(6),
-                            instructor_code: SecureRandom.urlsafe_base64(6),
-                            student_code: SecureRandom.urlsafe_base64(6)
+    open: true,
+    ta_code: SecureRandom.urlsafe_base64(6),
+    instructor_code: SecureRandom.urlsafe_base64(6),
+    student_code: SecureRandom.urlsafe_base64(6)
 end
 
 10.times do |v|
   user = User.create(
     given_name: "arthur ##{v}",
     family_name: "family ##{v}",
-    email: "arthur_#{v}@gmail.com",
+    email: "arthur_#{v}@gmail.com"
   )
 end
 
 Course.all.each do |course|
-
   5.times do |v|
     tag = course.tags.create! course_id: course.id,
-                              name: "Tag ##{5*course.id + v}",
-                              description: SecureRandom.urlsafe_base64(30),
-                              archived: false
+      name: "Tag ##{5 * course.id + v}",
+      description: SecureRandom.urlsafe_base64(30),
+      archived: false
   end
 
   User.all.each do |user|

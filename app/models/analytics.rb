@@ -1,5 +1,5 @@
 module Analytics
   def self.table_name_prefix
-    'analytics_'
+    "analytics_"
   end
 end

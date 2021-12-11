@@ -5,12 +5,10 @@ module Search
     end
 
     def search
-
     end
 
     private
 
     attr_reader :params
-
   end
 end

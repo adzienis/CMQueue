@@ -1,19 +1,17 @@
 # frozen_string_literal: true
 
-require 'test_helper'
-
+require "test_helper"
 
 def log_errors(page)
   errors = page.driver.browser.manage.logs.get(:browser)
   if errors.any?
     errors.each do |error|
-      STDERR.puts error.message
+      warn error.message
     end
   end
 end
 
 class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
-
   include Devise::Test::IntegrationHelpers
 
   fixtures(:all)

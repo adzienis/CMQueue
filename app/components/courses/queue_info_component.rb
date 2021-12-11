@@ -1,6 +1,5 @@
 module Courses
   class QueueInfoComponent < ViewComponent::Base
-
     def info
       raise NotImplementedError
     end

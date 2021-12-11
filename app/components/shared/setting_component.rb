@@ -3,7 +3,7 @@ module Shared
     def initialize(setting:, record:)
       super
       @setting = setting
-      @record  = record
+      @record = record
     end
 
     private

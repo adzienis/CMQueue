@@ -16,10 +16,10 @@ module Analytics
 
       def payload
         @payload ||= {
-          :resource => { dashboard: dashboard_id.to_i },
-          :params => {
+          resource: {dashboard: dashboard_id.to_i},
+          params: {
           },
-          :exp => Time.now.to_i + (60 * 100) # 10 minute expiration
+          exp: Time.now.to_i + (60 * 100) # 10 minute expiration
         }
       end
 

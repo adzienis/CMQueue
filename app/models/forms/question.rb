@@ -35,9 +35,9 @@ class Forms::Question
 
   def tag_groups_satisfied
     course.tag_groups.each do |tag_group|
-      if tag_group.tags.count > 0 and (tag_ids & tag_group.tags.map { |tag| tag.id }).empty?
+      if (tag_group.tags.count > 0) && (tag_ids & tag_group.tags.map { |tag| tag.id }).empty?
         errors.add("tag_group_#{tag_group.id}".to_sym,
-                   "#{tag_group.name} missing tag")
+          "#{tag_group.name} missing tag")
       end
     end
   end
@@ -49,22 +49,19 @@ class Forms::Question
   end
 
   def save
-    begin
-      ActiveRecord::Base.transaction do
-        if @question
-          @question.assign_attributes(question_params)
-        else
-          @question = @current_user.questions.build(question_params)
-        end
-        raise ActiveRecord::RecordInvalid.new(self) unless valid?
-
-        @question.save!
+    ActiveRecord::Base.transaction do
+      if @question
+        @question.assign_attributes(question_params)
+      else
+        @question = @current_user.questions.build(question_params)
       end
-    rescue
-      promote_errors(@question) and return false
-    ensure
-      true
-    end
-  end
+      raise ActiveRecord::RecordInvalid.new(self) unless valid?
 
+      @question.save!
+    end
+  rescue
+    promote_errors(@question) and return false
+  ensure
+    true
+  end
 end

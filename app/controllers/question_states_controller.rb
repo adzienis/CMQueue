@@ -17,7 +17,8 @@ class QuestionStatesController < ApplicationController
     respond_with @question_states.includes(:user)
   end
 
-  def edit; end
+  def edit
+  end
 
   def create
     @question_state = QuestionState.create(create_params)

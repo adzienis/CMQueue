@@ -7,13 +7,15 @@ class EnrollmentsController < ApplicationController
 
   def index
     @enrollments = @enrollments
-                     .undiscarded
-                     .joins(:user, :role, :course)
-                     .order("enrollments.created_at": :desc)
+      .undiscarded
+      .joins(:user, :role, :course)
+      .order("enrollments.created_at": :desc)
     @enrollments = @enrollments.where(user_id: params[:user_id]) if params[:user_id]
-    @enrollments = @enrollments
-                     .joins(:role)
-                     .where("roles.resource_id": params[:course_id]) if params[:course_id]
+    if params[:course_id]
+      @enrollments = @enrollments
+        .joins(:role)
+        .where("roles.resource_id": params[:course_id])
+    end
     @enrollments = @enrollments.with_course_roles(JSON.parse(params[:role])) if params[:role]
 
     @enrollments_ransack = @enrollments.ransack(params[:q])
@@ -26,7 +28,7 @@ class EnrollmentsController < ApplicationController
       format.js { render inline: "window.open('#{URI::HTTP.build(path: "#{request.path}.csv", query: request.query_parameters.to_query, format: :csv)}', '_blank')" }
       format.csv {
         send_data Enrollment.to_csv(params[:enrollment].to_unsafe_h, @enrollments_ransack.result),
-                  filename: helpers.csv_download_name(controller_name.classify.constantize)
+          filename: helpers.csv_download_name(controller_name.classify.constantize)
       }
     end
   end
@@ -50,7 +52,7 @@ class EnrollmentsController < ApplicationController
         # create a new user if they don't already exist
 
         user = User.find_by(email: email)
-        user = User.find_or_create_by(email: email, given_name: given_name, family_name: family_name) unless user
+        user ||= User.find_or_create_by(email: email, given_name: given_name, family_name: family_name)
 
         return if user == current_user
 

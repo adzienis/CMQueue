@@ -4,5 +4,4 @@ class Forms::Courses::UserInvitation
 
   attribute :given_name, :string
   attribute :family_name, :string
-
 end

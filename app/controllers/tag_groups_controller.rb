@@ -7,7 +7,6 @@ class TagGroupsController < ApplicationController
     @tag_groups_ransack = @tag_groups.ransack(params[:q])
 
     @pagy, @records = pagy @tag_groups_ransack.result
-
   end
 
   def new

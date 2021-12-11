@@ -11,7 +11,7 @@
 #  description  :text             default("")
 #  discarded_at :datetime
 #
-require 'pagy/extras/searchkick'
+require "pagy/extras/searchkick"
 
 class Tag < ApplicationRecord
   include Discard::Model
@@ -46,21 +46,21 @@ class Tag < ApplicationRecord
   belongs_to :course
 
   has_many :group_members,
-           -> { where(individual_type: "Tag") },
-           foreign_key: :individual_id,
-           as: :individual,
-           inverse_of: :individual
+    -> { where(individual_type: "Tag") },
+    foreign_key: :individual_id,
+    as: :individual,
+    inverse_of: :individual
   has_many :tag_groups,
-           through: :group_members,
-           as: :group,
-           source: :group,
-           source_type: "TagGroup",
-           inverse_of: :tags
+    through: :group_members,
+    as: :group,
+    source: :group,
+    source_type: "TagGroup",
+    inverse_of: :tags
 
   has_and_belongs_to_many :questions
 
   after_commit do
     tag_groups.reindex
-    self.reindex(refresh: true)
+    reindex(refresh: true)
   end
 end

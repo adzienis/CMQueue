@@ -16,7 +16,7 @@ class Oauth::ApplicationsController < Doorkeeper::ApplicationsController
     @application.owner = Course.find(params[:course_id]) if params[:course_id]
 
     if @application.save
-      redirect_to oauth_course_application_url(Course.find(params[:course_id]),@application)
+      redirect_to oauth_course_application_url(Course.find(params[:course_id]), @application)
     else
       render :new
     end
@@ -36,7 +36,7 @@ class Oauth::ApplicationsController < Doorkeeper::ApplicationsController
         format.json do
           errors = @application.errors.full_messages
 
-          render json: { errors: errors }, status: :unprocessable_entity
+          render json: {errors: errors}, status: :unprocessable_entity
         end
       end
     end
@@ -57,5 +57,4 @@ class Oauth::ApplicationsController < Doorkeeper::ApplicationsController
     @application = current_user.applications.find_by(id: params[:id]) unless params[:course_id]
     @application = Doorkeeper::Application.where(owner_id: params[:course_id], owner_type: "Course").find(params[:id]) if params[:course_id]
   end
-
 end

@@ -6,7 +6,7 @@ class Courses::QueueController < ApplicationController
   end
 
   def current_ability
-    @current_ability ||= ::CourseAbility.new(current_user,{
+    @current_ability ||= ::CourseAbility.new(current_user, {
       params: params,
       path_parameters: request.path_parameters
     })

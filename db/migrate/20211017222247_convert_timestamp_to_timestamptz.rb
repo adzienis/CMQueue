@@ -4,7 +4,6 @@ class ConvertTimestampToTimestamptz < ActiveRecord::Migration[6.1]
     change_column :question_states, :updated_at, :timestamptz
     change_column :question_states, :acknowledged_at, :timestamptz
 
-
     change_column :analytics_dashboards, :created_at, :timestamptz
     change_column :analytics_dashboards, :updated_at, :timestamptz
 

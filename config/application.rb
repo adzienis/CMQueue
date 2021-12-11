@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-require_relative 'boot'
-require 'devise'
+require_relative "boot"
+require "devise"
 
-require 'rails/all'
+require "rails/all"
 
-require 'action_view'
+require "action_view"
 # require 'haml'
 
 # Require the gems listed in Gemfile, including any gems
@@ -19,27 +19,27 @@ module CMQueue
 
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 6.1
-    config.assets.paths << Rails.root.join('app', 'assets', 'fonts')
+    config.assets.paths << Rails.root.join("app", "assets", "fonts")
     config.autoload_paths << "#{Rails.root}/lib/search"
-    config.eager_load_paths += %W( #{Rails.root}/poros/concerns )
+    config.eager_load_paths += %W[#{Rails.root}/poros/concerns]
     config.active_model.i18n_customize_full_message = true
     config.active_record.schema_format = :sql
-    config.time_zone = 'Eastern Time (US & Canada)'
+    config.time_zone = "Eastern Time (US & Canada)"
 
     config.hosts << "cmqueue.xyz"
     config.hosts << "localhost"
     config.hosts << "cmqueue-demo.herokuapp.com"
     config.hosts << "192.168.1.183"
-    Rails.application.config.action_cable.allowed_request_origins = ['http://cmqueue.xyz', 'https://cmqueue.xyz', 'https://dev-cmqueue.xyz']
+    Rails.application.config.action_cable.allowed_request_origins = ["http://cmqueue.xyz", "https://cmqueue.xyz", "https://dev-cmqueue.xyz"]
     config.to_prepare do
       # Only Applications list
-      Doorkeeper::ApplicationsController.layout 'layouts/doorkeeper/application'
+      Doorkeeper::ApplicationsController.layout "layouts/doorkeeper/application"
 
       # Only Authorization endpoint
       # Doorkeeper::AuthorizationsController.layout "my_layout"
 
       # Only Authorized Applications
-      Doorkeeper::AuthorizedApplicationsController.layout 'layouts/doorkeeper/admin'
+      Doorkeeper::AuthorizedApplicationsController.layout "layouts/doorkeeper/admin"
     end
 
     # overrides

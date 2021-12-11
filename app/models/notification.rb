@@ -25,18 +25,17 @@ class Notification < ApplicationRecord
   def user
     return @user if defined?(@user)
 
-    if recipient_type == "User"
-      @user = User.find(recipient_id)
-    else
-      @user = nil
+    @user = if recipient_type == "User"
+      User.find(recipient_id)
     end
   end
 
   after_create_commit do
     broadcast_append_later_to user,
-                              target: "notifications",
-                              html: ApplicationController.render(
-                                Notifications::NotificationComponent.new(notification: self), layout: false)
+      target: "notifications",
+      html: ApplicationController.render(
+        Notifications::NotificationComponent.new(notification: self), layout: false
+      )
   end
 
   after_commit do
@@ -44,5 +43,4 @@ class Notification < ApplicationRecord
       broadcast_remove_to user
     end
   end
-
 end

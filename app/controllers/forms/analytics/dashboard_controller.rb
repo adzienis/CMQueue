@@ -2,7 +2,7 @@ class Forms::Analytics::DashboardController < ApplicationController
   respond_to :html
 
   def current_ability
-    @current_ability ||= Analytics::DashboardAbility.new(current_user,{
+    @current_ability ||= Analytics::DashboardAbility.new(current_user, {
       params: params,
       path_parameters: request.path_parameters
     })

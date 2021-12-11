@@ -1,39 +1,40 @@
 class SyncedTurboChannel < ApplicationCable::Channel
-  extend Turbo::Streams::Broadcasts, Turbo::Streams::StreamName
+  extend Turbo::Streams::StreamName
+  extend Turbo::Streams::Broadcasts
   include Turbo::Streams::StreamName::ClassMethods
 
-  def handle_course_updates(course) end
+  def handle_course_updates(course)
+  end
 
-  def handle_user_updates(user) end
+  def handle_user_updates(user)
+  end
 
   def unsubscribed
   end
-
 
   def handle_course_user_updates(course, user)
     active_question = user.active_question(course: course)
 
     if active_question.present?
       comp = Forms::Questions::QuestionCreatorComponent.new(course: course,
-                                                           question_form: Forms::Question.new(question: active_question),
-                                                           current_user: user
-      )
+        question_form: Forms::Question.new(question: active_question),
+        current_user: user)
       SyncedTurboChannel.broadcast_update_to user,
-                                              target: "question-form",
-                                              html: ApplicationController.render(comp,
-                                                                                 layout: false)
+        target: "question-form",
+        html: ApplicationController.render(comp,
+          layout: false)
     end
 
     SyncedTurboChannel.broadcast_replace_to course, user,
-                                            target: "questions-count",
-                                            html: ApplicationController
-                                                    .render(Courses::QuestionsCountComponent.new(course: course),
-                                                            layout: false)
+      target: "questions-count",
+      html: ApplicationController
+        .render(Courses::QuestionsCountComponent.new(course: course),
+          layout: false)
     SyncedTurboChannel.broadcast_replace_to(course, user,
-                                            target: "queue-open-status",
-                                            html: ApplicationController
-                                                    .render(Courses::QueueOpenStatusComponent.new(course: course),
-                                                            layout: false))
+      target: "queue-open-status",
+      html: ApplicationController
+              .render(Courses::QueueOpenStatusComponent.new(course: course),
+                layout: false))
 
     if user.staff_of?(course)
       Enrollments::UpdateFeedJob.perform_later(enrollment: user.enrollment_in_course(course))
@@ -49,7 +50,7 @@ class SyncedTurboChannel < ApplicationCable::Channel
   # @param [String] stream_name
   #
   def handle_reconnect_updates(stream_name)
-    gids = stream_name.split(':')
+    gids = stream_name.split(":")
     resources = gids.map { |gid| GlobalID::Locator.locate gid }.compact
 
     if resources.count == 1
@@ -74,8 +75,8 @@ class SyncedTurboChannel < ApplicationCable::Channel
 
   def set_variant
     agent = request.user_agent
-    return request.variant = :tablet if agent =~ /(tablet|ipad)|(android(?!.*mobile))/i
-    return request.variant = :mobile if agent =~ /Mobile/
+    return request.variant = :tablet if /(tablet|ipad)|(android(?!.*mobile))/i.match?(agent)
+    return request.variant = :mobile if /Mobile/.match?(agent)
     request.variant = :desktop
   end
 

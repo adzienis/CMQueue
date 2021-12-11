@@ -18,7 +18,7 @@ class SiteNotification < Noticed::Base
   def to_action_cable
     {
       type: self.class.name,
-      params: params,
+      params: params
     }
   end
 

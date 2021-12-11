@@ -16,5 +16,4 @@ class Courses::UsersController < ApplicationController
   def user_params
     params.require(:user).permit(:given_name, :family_name, :email)
   end
-
 end

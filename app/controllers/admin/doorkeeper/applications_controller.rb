@@ -16,8 +16,6 @@ module Admin::Doorkeeper
     #   Foo.find_by!(slug: param)
     # end
 
-
-
     # The result of this lookup will be available as `requested_resource`
 
     # Override this if you have certain roles that require a subset

@@ -1,7 +1,6 @@
 require "test_helper"
 
 class SettingsControllerTest < ControllerTest
-
   test "can index own settings" do
     sign_in @student
 
@@ -53,7 +52,7 @@ class SettingsControllerTest < ControllerTest
     @course.settings.create
 
     patch course_setting_path(@course, @course.settings.first), params: {
-      setting:  {
+      setting: {
         value: 1
       }
     }
@@ -70,12 +69,11 @@ class SettingsControllerTest < ControllerTest
     })
 
     patch course_setting_path(@course, @course.settings.first), params: {
-      setting:  {
+      setting: {
         value: 1
       }
     }
 
     assert_response :forbidden
   end
-
 end

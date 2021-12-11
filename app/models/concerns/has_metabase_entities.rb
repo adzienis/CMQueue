@@ -2,7 +2,7 @@ module HasMetabaseEntities
   include Metabaseable
 
   def base_collection
-    metabase.collections.find{|v| v.name == name}
+    metabase.collections.find { |v| v.name == name }
   end
 
   def mb_dashboards
