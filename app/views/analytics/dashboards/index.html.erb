@@ -4,43 +4,12 @@
     Integrate analytics dashboards to get better insights on your data.
   </div>
 </div>
-<div class="card card-body">
-  <table class="table table-hover table-striped">
-    <thead>
-    <tr>
-      <th>Title</th>
-      <th>Dashboard Type</th>
-      <th colspan="3"></th>
-    </tr>
-    </thead>
 
-    <tbody>
-    <% @dashboards.each do |analytics_dashboard| %>
-      <tr>
-        <% if analytics_dashboard.data["dashboard_type"] == "metabase" %>
-          <td><%= link_to analytics_dashboard.data["name"], course_analytics_dashboard_path(@course, analytics_dashboard) %></td>
-          <td><%= analytics_dashboard.data["dashboard_type"] %></td>
-        <% end %>
-        <td class="d-flex">
-          <div style="flex: 1"></div>
-          <div class="dropdown">
-            <button class="btn btn-outline-primary dropdown-toggle" type="button" id="dropdownMenu2" data-bs-toggle="dropdown" aria-expanded="false">
-              Actions
-            </button>
-            <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
-              <li><%= link_to 'Show', course_analytics_dashboard_path(@course, analytics_dashboard), class: "dropdown-item" %></li>
-              <li><%= link_to 'Edit', edit_course_forms_analytics_dashboard_path(@course, analytics_dashboard), class: "dropdown-item" %></li>
-              <li><%= link_to 'Destroy', course_analytics_dashboard_path(@course, analytics_dashboard), method: :delete, data: { confirm: 'Are you sure?' }, class: "dropdown-item" %></li>
-            </ul>
-          </div>
-        </td>
-      </tr>
-    <% end %>
-    </tbody>
-  </table>
-  <div class="d-flex">
-    <div style="flex:1 "></div>
-    <%= link_to 'New Analytics Dashboard', new_course_forms_analytics_dashboard_path(@course), class: "btn btn-primary" %>
+<turbo-frame id="dashboards" src="<%= analytics_metabase_dashboards_path(course_id: @course) %>">
+  <div class="w-100 d-flex justify-content-center">
+
+    <div class="spinner-border" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
   </div>
-</div>
-
+</turbo-frame>

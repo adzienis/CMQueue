@@ -6,7 +6,6 @@ class EnrollmentsController < ApplicationController
   respond_to :html, :json
 
   def index
-
     @enrollments = @enrollments
                      .undiscarded
                      .joins(:user, :role, :course)

@@ -13,6 +13,8 @@ consumer.subscriptions.create("CourseChannel", {
 
   disconnected() {
     document.removeEventListener("turbo:load", this.update_course_channel);
+    consumer.subscriptions.remove(this.general_channel);
+    consumer.subscriptions.remove(this.role_channel);
   },
 
   received(data) {},
@@ -52,7 +54,7 @@ consumer.subscriptions.create("CourseChannel", {
 
       if (
         this.role_channel === null ||
-        JSON.parse(this.role_channel.identifier).room !== parseInt(match[1], 10)
+        JSON.parse(this.role_channel.identifier).room !== match[1]
       ) {
         if (this.role_channel !== null)
           consumer.subscriptions.remove(this.role_channel);

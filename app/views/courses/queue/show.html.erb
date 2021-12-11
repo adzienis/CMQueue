@@ -12,24 +12,17 @@
   </li>
 </ul>
 
-<div
-  style="display: flex; flex-direction: column; align-items: center" class="w-100">
+<div style="display: flex; flex-direction: column; align-items: center" class="w-100">
 
-      <%= render(Courses::StaffInfoPanelComponent.new(course: @course)) %>
-  <div class="w-100"
-       data-controller="turbo-refresher"
-       data-turbo-refresher-event-name-value="invalidate:question-feed">
+  <%= render(Courses::StaffInfoPanelComponent.new(course: @course)) %>
+  <div class="w-100">
     <turbo-frame
       id="feed"
       class="w-100"
-      data-turbo-refresher-target="frame"
-      src="<%= feed_course_path(@course, tags: session[:selected_tags]) %>"
     >
-      <% q = Courses::FeedController.new;  q.set_request!(request); q.set_response!(response) %>
-      <% q.params = q.params.merge(tags: session[:selected_tags]) %>
-      <% q.process(:index) %>
-      <%= q.render_to_string(layout: false) %>
-
+      <%= render(Courses::Feed::FeedComponent.new(course: @course,
+                                                  options: { where: { tags: @current_enrollment.selected_tags } },
+                                                  selected_tags: @current_enrollment.selected_tags )) %>
     </turbo-frame>
   </div>
 

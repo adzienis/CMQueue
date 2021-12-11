@@ -22,10 +22,8 @@ Rails.application.routes.draw do
   end
 
   namespace :analytics do
-    namespace :dashboards do
-      namespace :metabase do
-        get 'dashboards', to: "dashboards#index"
-      end
+    namespace :metabase do
+      resources :dashboards
     end
   end
   resource :account, except: [:destroy, :create] do

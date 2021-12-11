@@ -6,6 +6,16 @@
       <% end %>
     </div>
     <div>
+      <small class="fw-bold"> Description: </small>
+      <div>
+        <% if tag_group.description.present? %>
+          <%= tag_group.description %>
+        <% else %>
+          <i> No description </i>
+        <% end %>
+      </div>
+    </div>
+    <div>
       <small class="fw-bold"> Tags: </small>
       <% tag_group.tags.map do |tag| %>
         <%= link_to(tag.name, course_tag_path(tag_group.course, tag), class: "badge bg-danger text-white") %>

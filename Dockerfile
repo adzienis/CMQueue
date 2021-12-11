@@ -117,7 +117,6 @@ COPY --chown=appuser:appgroup . /usr/src/app
 
 # Precompile the assets, yarn relay & bootsnap
 RUN RAILS_SERVE_STATIC_FILES=enabled \
-      SECRET_KEY_BASE=secret-key-base \
       bundle exec rake assets:precompile \
       && bundle exec bootsnap precompile --gemfile app/ lib/
 

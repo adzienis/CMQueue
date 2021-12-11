@@ -30,6 +30,15 @@ x-app: &app
     - redis
     - elastic-search
 services:
+  nginx:
+    image: nginx
+    volumes:
+      - ./nginx:/etc/nginx/
+    ports:
+      - "0.0.0.0:80:80"
+      - "0.0.0.0:443:443"
+    depends_on:
+      - web
   elastic-search:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.15.1
     volumes:
@@ -40,11 +49,13 @@ services:
       - ES_JAVA_OPTS=-Xms750m -Xmx750m
       - xpack.security.enabled=true
   metabase:
-    image: metabase/metabase:v0.41.0
+    image: metabase/metabase:v0.41.3.1
     ports:
       - 3010:3000
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    env_file:
+      .env
     environment:
       MB_DB_FILE: /metabase-data/metabase.db
       MB_SEND_EMAIL_ON_FIRST_LOGIN_FROM_NEW_DEVICE: FALSE
@@ -97,4 +108,3 @@ volumes:
   yarn_cache:
   letter_opener:
   data01:
-

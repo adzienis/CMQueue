@@ -23,6 +23,7 @@ require './lib/postgres/views'
 class Course < ApplicationRecord
   include Turbo::Broadcastable
   include HasEnrollables
+  include HasMetabaseEntities
   searchkick
 
   # to prevent accidentally exposing sensitive columns
@@ -78,20 +79,20 @@ class Course < ApplicationRecord
   has_many :courses_sections, :class_name => 'Courses::Section'
 
   has_one :ta_role, -> { where(name: "ta") },
+          as: :resource,
           class_name: "Role",
-          dependent: :destroy,
           inverse_of: :course
-  has_one :instructor, -> { where(name: "instructor") },
+  has_one :instructor_role, -> { where(name: "instructor") },
+          as: :resource,
           class_name: "Role",
-          dependent: :destroy,
           inverse_of: :course
-  has_one :lead_ta, -> { where(name: "lead_ta") },
+  has_one :lead_ta_role, -> { where(name: "lead_ta") },
+          as: :resource,
           class_name: "Role",
-          dependent: :destroy,
           inverse_of: :course
-  has_one :student, -> { where(name: "student") },
+  has_one :student_role, -> { where(name: "student") },
+          as: :resource,
           class_name: "Role",
-          dependent: :destroy,
           inverse_of: :course
 
   before_validation on: :create do
@@ -108,6 +109,10 @@ class Course < ApplicationRecord
 
   def self.find_by_code?(code)
     self.find_by_code(code).present?
+  end
+
+  def connected_staff
+    Enrollment.where(id: Cmq::ActionCable::Connections.connected_enrollments_for_room("course:#{id}:staff").members)
   end
 
   def self.find_by_code(code)
@@ -146,7 +151,7 @@ class Course < ApplicationRecord
     if tag_names.present?
       active_questions
         .includes(:question_state)
-        .joins(:tags)
+        .left_joins(:tags)
         .where("tags.name": tag_names)
         .group("questions.id")
         .having("count(*) = #{tag_names.count}")
@@ -154,7 +159,7 @@ class Course < ApplicationRecord
     else
       active_questions
         .includes(:question_state)
-        .joins(:tags)
+        .left_joins(:tags)
         .filter { |q| q.unresolved? }.any?
     end
   end
@@ -208,7 +213,7 @@ class Course < ApplicationRecord
       }
     end
 
-    if open_changed?
+    if open_previously_changed?
       RenderComponentJob.perform_later("Courses::OpenButtonComponent",
                                        self,
                                        opts: { target: "open-button" },
@@ -216,7 +221,13 @@ class Course < ApplicationRecord
     end
   end
 
+  after_create do
+    Postgres::Views.create_course_views(id)
+  end
+
   after_create_commit do
+    Analytics::Metabase::SyncDatabaseJob.perform_later
+    Analytics::Metabase::SetupJob.set(wait: 1.minute).perform_later(course: self)
 
     settings.create([{
                        value: {
@@ -251,7 +262,6 @@ class Course < ApplicationRecord
                      }])
 
     roles.create([{ name: "instructor" }, { name: "ta" }, { name: "student" }, { name: "lead_ta" }])
-
   end
 
   after_destroy_commit do

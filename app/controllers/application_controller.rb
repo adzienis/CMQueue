@@ -19,7 +19,15 @@ class ApplicationController < ActionController::Base
 
   include Pagy::Backend
 
-  before_action :authenticate_user!, :set_course, :set_user, :restrict_routes
+  before_action :authenticate_user!, :set_course, :set_user, :restrict_routes, :set_enrollment
+
+  def default_url_options
+    if Rails.env.development? || Rails.env.test?
+      { host: "dev-cmqueue.xyz", protocol: "https" }
+    elsif Rails.env.production?
+      { host: "cmqueue.xyz", protocol: "https" }
+    end
+  end
 
   def set_variant
     agent = request.user_agent
@@ -43,10 +51,11 @@ class ApplicationController < ActionController::Base
   end
 
   def set_course
-    @course = Course.accessible_by(CourseAbility.new(current_user, {
-      params: params,
-      path_parameters: request.path_parameters
-    })).find_by(id: params[:course_id]) if params[:course_id]
+    @course = Course.find_by(id: params[:course_id]) if params[:course_id]
+  end
+
+  def set_enrollment
+    @current_enrollment = current_user.enrollment_in_course(@course) if @course.present?
   end
 
   def restrict_routes

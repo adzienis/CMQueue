@@ -2,11 +2,7 @@ class Courses::FeedController < ApplicationController
   respond_to :html, :json
 
   def index
-    @pagy, @results = Search::FeedSearch.new(params: params, course: @course).search
-
-    session[:selected_tags] = params[:tags] || nil
-
-    @questions = @results.results
+    @current_enrollment.selected_tags = params[:tags]
   end
 
   def answer
@@ -27,9 +23,17 @@ class Courses::FeedController < ApplicationController
     )
     @questions = @question_results.results
     question = @question_results.results.first
-    if (error = question.resolving(enrollment_id: current_user.enrollment_in_course(@course).id))
-      flash[:error] = error.message
-      redirect_to queue_course_path(@course) and return
+
+    update_state = ::Questions::UpdateState.new(question: question,
+                                 enrollment: @current_enrollment,
+                                 state: "resolving",
+                                 description: "",
+                                 options: { update_creator?: true })
+    update_state.call
+
+    if update_state.error.present?
+      flash[:error] = update_state.error.message
+      return redirect_back(fallback_location: queue_course_path(@course))
     end
 
     redirect_to answer_course_path(@course)

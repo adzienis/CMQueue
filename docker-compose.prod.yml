@@ -22,6 +22,14 @@ x-app: &app
     - redis
     - elastic-search
 services:
+  web:
+    build:
+      context: .
+      target: production
+    env_file: .env.prod
+    networks:
+      - prod
+    container_name: web
   nginx:
     image: nginx
     volumes:
@@ -31,6 +39,8 @@ services:
       - "0.0.0.0:443:443"
     networks:
       - prod
+    depends_on:
+      - web
   elastic-search:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.15.1
     volumes:
@@ -54,7 +64,9 @@ services:
     container_name:
       mb_prod
     volumes:
-      - $PWD/metabase-data:/metabase-data/metabase.db
+      - $PWD/metabase-data/prod:/metabase-data
+    env_file:
+      .env.prod
     networks:
       - prod
   postgres:
@@ -66,10 +78,13 @@ services:
     env_file:
       .env.prod.postgres
     restart: on-failure
+    volumes:
+      - ./postgres-config/postgresql.conf:/etc/postgresql.conf
     networks:
       - prod
     container_name:
       pg_prod
+    command: postgres -c config_file=/etc/postgresql.conf
   redis:
     image: redis:6.0.12-alpine
     volumes:
@@ -81,6 +96,15 @@ services:
       redis_prod
     networks:
       - prod
+  worker:
+    build:
+      context: .
+      target: production
+    env_file: .env.prod
+    networks:
+      - prod
+    container_name: worker
+    command: bundle exec sidekiq
 volumes:
   postgresql:
   redis:

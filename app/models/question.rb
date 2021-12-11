@@ -206,7 +206,8 @@ class Question < ApplicationRecord
     return false if errors.any?
 
     guard_db do
-      question_states.lock.create!(enrollment_id: enrollment_id, state: state, description: description)
+      Postgres::Locks.pg_advisory_xact_lock(id)
+      question_states.create!(enrollment_id: enrollment_id, state: state, description: description)
     end
   end
 
@@ -235,19 +236,19 @@ class Question < ApplicationRecord
   end
 
   after_discard do
-    comp = Forms::Question::QuestionCreatorComponent.new(course: course,
+    comp = Forms::Questions::QuestionCreatorComponent.new(course: course,
                                                          question_form: Forms::Question.new(question: Question.new),
                                                          current_user: user
     )
 
     SyncedTurboChannel.broadcast_replace_later_to user,
-                               target: "question-form",
-                               html: ApplicationController.render(comp, layout: false)
+                                                  target: "question-form",
+                                                  html: ApplicationController.render(comp, layout: false)
 
     SyncedTurboChannel.broadcast_replace_later_to course,
-                               target: "questions-count",
-                               html: ApplicationController.render(Courses::QuestionsCountComponent.new(course: course),
-                                                                  layout: false)
+                                                  target: "questions-count",
+                                                  html: ApplicationController.render(Courses::QuestionsCountComponent.new(course: course),
+                                                                                     layout: false)
 
     Courses::UpdatePositionsJob.perform_later(course: course)
     component = Courses::QuestionPositionComponent.new(question: self)
@@ -270,16 +271,13 @@ class Question < ApplicationRecord
   after_update_commit do
     RenderComponentJob.perform_later("Courses::Feed::QuestionCardComponent",
                                      self,
-                                     opts: {target: self},
+                                     opts: { target: self },
                                      component_args: { question: self })
   end
 
   after_commit do
     self.reindex(refresh: true)
-    CourseChannel.broadcast_to course, {
-      type: "event",
-      event: "invalidate:question-feed"
-    }
+    Courses::UpdateFeedJob.perform_later(course: course)
   end
 
   singleton_class.send(:alias_attribute, :current_state, :question_state)

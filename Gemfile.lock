@@ -255,6 +255,9 @@ GEM
     jsbundling-rails (0.1.9)
       railties (>= 6.0.0)
     jwt (2.2.3)
+    kredis (1.0.0)
+      activesupport (>= 6.0.0)
+      redis (~> 4.2)
     libv8-node (15.14.0.1-x86_64-linux)
     listen (3.6.0)
       rb-fsevent (~> 0.10, >= 0.10.3)
@@ -418,6 +421,8 @@ GEM
     standard (1.1.7)
       rubocop (= 1.18.4)
       rubocop-performance (= 1.11.4)
+    standardrb (1.0.0)
+      standard
     thor (1.1.0)
     tzinfo (2.0.4)
       concurrent-ruby (~> 1.0)
@@ -470,6 +475,7 @@ DEPENDENCIES
   jbuilder (~> 2.7)
   jsbundling-rails (~> 0.1.9)
   jwt (~> 2.2)
+  kredis (~> 1.0)
   listen (~> 3.3)
   mini_racer
   newrelic_rpm (~> 8.0)
@@ -501,6 +507,7 @@ DEPENDENCIES
   simple_form (~> 5.1)
   spring
   standard
+  standardrb (~> 1.0)
   turbo-rails!
   tzinfo-data
   view_component (~> 2.41)

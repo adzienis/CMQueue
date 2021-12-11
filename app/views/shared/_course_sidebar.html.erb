@@ -38,16 +38,6 @@
     <%= content_tag :div, id: "course-info-collapse",
                     class: "collapse show" do %>
       <ul class="navbar-toggler list-unstyled pb-1 small">
-        <% if current_user.has_role? :instructor, @course %>
-          <% tag.li class: "d-flex align-items-center" do %>
-            <div style="width: 16px" class="d-flex justify-content-center">
-              <i class="fas fa-bowling-ball"></i>
-            </div>
-            <%= link_to "Applications", oauth_course_applications_path,
-                          class: "btn text-decoration-none #{(request.path == oauth_course_applications_path(@course)) ?
-                                                               "active-link" : ""}" %>
-          <% end %>
-        <% end %>
         <%= tag.li class: "d-flex align-items-center" do %>
           <div style="width: 16px" class="d-flex justify-content-center">
             <i class="fas fa-book"></i>

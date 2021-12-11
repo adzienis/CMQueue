@@ -141,6 +141,7 @@ html, body {
 }
 
 .flash-messages {
+  position: fixed;
   animation: 1s ease-out 4s 1 fadeOut;
   animation-fill-mode: forwards;
 }
@@ -186,6 +187,10 @@ html, body {
 }
 
 @media (max-width: 768px) {
+
+  .flash-messages {
+    width: 90%;
+  }
 
   .search-container {
     flex-direction: column;
@@ -265,6 +270,9 @@ a {
 .queue-button {
   font-size: 30px;
   height: 70px;
+}
+
+html {
 }
 
 html, body {

@@ -15,9 +15,9 @@ class Role < ApplicationRecord
 
   include FindableByCourseRoles
 
-  has_many :enrollments, dependent: :delete_all
-
-  belongs_to :course, -> { where(roles: {resource_type: 'Course'}) }, foreign_key: 'resource_id', optional: true
+  has_many :enrollments, dependent: :destroy
+  has_one :self_ref, class_name: "Role", foreign_key: :id
+  has_one :course, through: :self_ref, source: :resource, source_type: "Course"
 
   scope :with_courses, ->(*courses) { where(resource: courses, resource_type: "Course") }
   scope :with_resources, ->(*resources) { where(resource: resources) }
@@ -34,10 +34,6 @@ class Role < ApplicationRecord
   scope :privileged_roles, ->{where(name: ["lead_ta", "instructor"])}
   scope :staff_roles, ->{where(name: ["ta", "lead_ta", "instructor"])}
   scope :undiscarded, ->{joins(:enrollments).merge(Enrollment.undiscarded)}
-
-  def course
-    Course.find(resource_id) if resource_type == "Course"
-  end
 
   def self.role_security_value(role_name)
     case role_name

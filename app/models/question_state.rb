@@ -37,7 +37,6 @@ class QuestionState < ApplicationRecord
   has_one :user, through: :enrollment
 
   validates_presence_of :question, :enrollment
-  validate :proper_answer, on: :create
   validate :not_handling_another, on: :create
   validate :valid_transition, on: :create
 
@@ -66,24 +65,17 @@ class QuestionState < ApplicationRecord
                         end
 
     unless valid_next_states.include?(state)
-      errors.add(:state, "invalid action (can't transition #{old_qs} -> #{state})")
+      if old_qs == "resolving" && resolving?
+        errors.add(:base, "Another staff member just answered this question.")
+      else
+        errors.add(:base, "invalid action (can't transition #{old_qs} -> #{state})")
+      end
     end
-  end
-
-  def proper_answer
-    return unless question
-
-    old_qs = question.question_state
-
-    return unless old_qs
-
-    errors.add(:question, "already answered") if (old_qs.state != "unresolved") && state == "resolving"
-    errors.add(:action, "already occurred") if old_qs.state == state
   end
 
   def not_handling_another
     return unless user&.question_state && question
-    errors.add(:user, "already handling another question") if user.question_state.state == "resolving" && question.id != user.question_state.question.id
+    errors.add(:user, "is already handling another question") if user.question_state.resolving? && question.id != user.question_state.question.id
   end
 
   enum state: { unresolved: 0, resolving: 1, resolved: 2, frozen: 3, kicked: 4 }, _default: :unresolved
@@ -129,17 +121,30 @@ class QuestionState < ApplicationRecord
                                      opts: { target: "question-position" },
                                      component_args: { question: question })
 
-    if state == "resolving"
+    if resolving?
       SiteNotification.with(message: "Your question is currently being resolved.").deliver_later(question.user)
     end
 
-    RenderComponentJob.perform_later("Forms::Question::QuestionCreatorComponent",
-                                     question.user,
-                                     opts: { target: "question-form" },
-                                     component_args: { course: course,
-                                                       question: question,
-                                                       current_user: question.user
-                                     })
+    if false
+
+      if resolved?
+        RenderComponentJob.perform_later("Forms::Questions::QuestionCreatorComponent",
+                                         question.user,
+                                         opts: { target: "form" },
+                                         component_args: { course: course,
+                                                           question: nil,
+                                                           current_user: question.user
+                                         })
+      else
+        RenderComponentJob.perform_later("Forms::Questions::QuestionCreatorComponent",
+                                         question.user,
+                                         opts: { target: "form" },
+                                         component_args: { course: course,
+                                                           question: question,
+                                                           current_user: question.user
+                                         })
+      end
+    end
 
     RenderComponentJob.perform_later("Courses::QuestionsCountComponent",
                                      course,

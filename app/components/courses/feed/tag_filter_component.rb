@@ -1,19 +1,29 @@
 module Courses
   module Feed
     class TagFilterComponent < ViewComponent::Base
-      def initialize(search:, course:)
+      def initialize(search:, course:, selected_tags:[])
         super
         @search = search
         @course = course
+        @selected_tags = selected_tags
       end
+
+      def render?
+        course.available_tags.exists?
+      end
+
       def tags
-        search.aggs["tags"]["buckets"].map{|k| k["key"]}
+        course.available_tags.map(&:name)
       end
 
       def tag_count(tag_name)
         bucket = bucket_for_tag(tag_name)
 
         bucket["doc_count"]
+      end
+
+      def bucket_for_tag(tag_name)
+        search.aggs["tags"]["buckets"].find{|k| k["key"] == tag_name} || { "doc_count" => 0 }
       end
 
       def tag_label_method(tag_name)
@@ -23,13 +33,9 @@ module Courses
         msg
       end
 
-      def bucket_for_tag(tag_name)
-        search.aggs["tags"]["buckets"].find{|k| k["key"] == tag_name}
-      end
-
       private
 
-      attr_reader :search, :course
+      attr_reader :search, :course, :selected_tags
     end
   end
 end

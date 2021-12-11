@@ -20,6 +20,7 @@ class Enrollment < ApplicationRecord
   extend Pagy::Searchkick
 
   searchkick
+  kredis_hash "course_state"
   scope :search_import, -> { includes(:role) }
 
   def search_data
@@ -82,54 +83,8 @@ class Enrollment < ApplicationRecord
 
   scope :with_course_roles, ->(*roles) { joins(:role).where("roles.name": roles, "roles.resource_type": "Course") }
 
-  after_create do
-    ActionCable.server.broadcast 'react-students', {
-      invalidate: ['users', user.id, 'enrollments']
-    }
-  end
-
-  after_destroy do
-    ActionCable.server.broadcast 'react-students', {
-      invalidate: ['users', user.id, 'enrollments']
-    }
-  end
-
-  after_discard do
-    if role.name == "student"
-      broadcast_update_later_to user,
-                                target: "student-enrollments",
-                                html: ApplicationController
-                                        .render(Users::Enrollments::EnrollmentsComponent
-                                                  .new(enrollments: user.student_enrollments),
-                                                layout: false)
-    else
-      broadcast_update_later_to user,
-                                target: "staff-enrollments",
-                                html: ApplicationController
-                                        .render(Users::Enrollments::EnrollmentsComponent
-                                                  .new(enrollments: user.staff_enrollments),
-                                                layout: false)
-    end
-  end
-
   after_commit do
     self.reindex(refresh: true)
-
-    if role.name == "student"
-      broadcast_update_later_to user,
-                                target: "student-enrollments",
-                                html: ApplicationController
-                                        .render(Users::Enrollments::EnrollmentsComponent
-                                                  .new(enrollments: user.student_enrollments),
-                                                layout: false)
-    else
-      broadcast_update_later_to user,
-                                target: "staff-enrollments",
-                                html: ApplicationController
-                                        .render(Users::Enrollments::EnrollmentsComponent
-                                                  .new(enrollments: user.staff_enrollments),
-                                                layout: false)
-    end
   end
 
   def student?
@@ -158,6 +113,16 @@ class Enrollment < ApplicationRecord
 
   def lead_ta_role
     roles.find_by(name: "lead_ta")
+  end
+
+  def selected_tags=(tags)
+    course_state[:selected_tags] = JSON.dump(tags)
+  end
+
+  def selected_tags
+    selected_tags = course_state[:selected_tags]
+    return JSON.parse(selected_tags) if selected_tags.present? && JSON.parse(selected_tags).present?
+    course_state[:selected_tags] = []
   end
 
   private

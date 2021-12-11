@@ -2,7 +2,7 @@ class Courses::UpdatePositionsJob < ApplicationJob
   queue_as :course_queue
 
   def perform(course:)
-    course.questions_on_queue.includes(:user)
+    course.questions.undiscarded.by_state("unresolved").includes(:user)
           .order(created_at: :asc)
           .each_with_index.each do |question, i|
       component = Courses::QuestionPositionComponent.new(question: question, position: i)

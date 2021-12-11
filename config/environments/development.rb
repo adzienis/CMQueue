@@ -31,7 +31,7 @@ Rails.application.configure do
     config.action_controller.perform_caching = true
     config.action_controller.enable_fragment_cache_logging = true
 
-    config.cache_store = :redis_cache_store, { url: ENV['REDIS_URL']} #:memory_store
+    config.cache_store = :redis_cache_store, { url: ENV['REDIS_URL'] } #:memory_store
     config.public_file_server.headers = {
       'Cache-Control' => "public, max-age=#{2.days.to_i}"
     }
@@ -62,6 +62,13 @@ Rails.application.configure do
     :authentication => :cram_md5
   }
   config.action_mailer.perform_deliveries = true
+  routes.default_url_options = {
+    host: "dev-cmqueue.xyz",
+    protocol: "https"
+  }
+
+  config.hosts << "analytics.dev-cmqueue.xyz"
+  config.hosts << "dev-cmqueue.xyz"
 
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log

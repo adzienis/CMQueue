@@ -21,6 +21,7 @@ module CMQueue
     config.load_defaults 6.1
     config.assets.paths << Rails.root.join('app', 'assets', 'fonts')
     config.autoload_paths << "#{Rails.root}/lib/search"
+    config.eager_load_paths += %W( #{Rails.root}/poros/concerns )
     config.active_model.i18n_customize_full_message = true
     config.active_record.schema_format = :sql
     config.time_zone = 'Eastern Time (US & Canada)'
@@ -29,7 +30,7 @@ module CMQueue
     config.hosts << "localhost"
     config.hosts << "cmqueue-demo.herokuapp.com"
     config.hosts << "192.168.1.183"
-    Rails.application.config.action_cable.allowed_request_origins = ['http://cmqueue.xyz', 'https://cmqueue.xyz']
+    Rails.application.config.action_cable.allowed_request_origins = ['http://cmqueue.xyz', 'https://cmqueue.xyz', 'https://dev-cmqueue.xyz']
     config.to_prepare do
       # Only Applications list
       Doorkeeper::ApplicationsController.layout 'layouts/doorkeeper/application'

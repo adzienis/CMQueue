@@ -1,6 +1,6 @@
 <%= render(Courses::StudentInfoPanelComponent.new(course: @course, question: @question_form.question)) %>
 
-<%= render(Forms::Question::QuestionCreatorComponent.new(course: @course,
+<%= render(Forms::Questions::QuestionCreatorComponent.new(course: @course,
                                                          question_form: @question_form,
                                                          current_user: current_user
 )) %>

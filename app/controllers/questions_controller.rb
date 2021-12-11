@@ -84,6 +84,8 @@ class QuestionsController < ApplicationController
     else
       @question.transition_to_state(params[:state], current_user.enrollment_in_course(@course).id)
     end
+
+    redirect_to edit_course_forms_question_path(@course)
   end
 
   def download_form

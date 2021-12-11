@@ -61,3 +61,9 @@ metabase-data
 .env.prod.postgres
 .pgpass.prod
 nginx/certs
+metabase.db
+!/metabase.db/.keep
+
+/config/credentials/development.key
+
+/config/credentials/production.key

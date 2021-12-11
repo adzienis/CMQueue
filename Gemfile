@@ -137,3 +137,7 @@ gem "sidekiq-cron", "~> 1.2"
 gem "chartkick", "~> 4.1"
 
 gem "sidekiq-failures", "~> 1.0"
+
+gem "kredis", "~> 1.0"
+
+gem "standardrb", "~> 1.0"

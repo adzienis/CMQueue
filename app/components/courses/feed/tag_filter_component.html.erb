@@ -1,11 +1,14 @@
-<%= form_with url: "/courses/1/feed", method: :get, data: { controller: 'autosave', autosave_delay_value: '0' } do |f| %>
+<%= form_with url: feed_course_path(course),
+              method: :get,
+              data: { controller: 'autosave', autosave_delay_value: '0' },
+              html: { autocomplete: "off" } do |f| %>
   <div data-controller="react_select" class="mb-4">
     <label class="fw-bold"> Select Tags to Filter Questions By </label>
     <%= f.collection_select :tags,
                             tags,
                             :itself,
                             ->(v) { tag_label_method(v) },
-                            { selected: session[:selected_tags] == [""] ? nil : session[:selected_tags],
+                            { selected: selected_tags,
                               include_blank: false, include_hidden: false },
                             { multiple: true, data: { action: 'autosave#save' } } %>
   </div>

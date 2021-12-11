@@ -8,6 +8,16 @@
         <% end %>
       </div>
       <div>
+        <small class="fw-bold"> Description: </small>
+        <div>
+          <% if tag.description.present? %>
+            <%= tag.description %>
+          <% else %>
+            <i> No description </i>
+          <% end %>
+        </div>
+      </div>
+      <div>
         <small class="fw-bold"> Tag Groups: </small>
         <% if tag.tag_groups.count == 0 %>
                 <span class="badge bg-secondary">

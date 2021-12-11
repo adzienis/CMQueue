@@ -3,7 +3,8 @@ module HasEnrollables
   included do
     resourcify
 
-    has_many :enrollments, through: :roles, dependent: :destroy
+    has_many :roles, as: :resource, dependent: :destroy
+    has_many :enrollments, through: :roles
     has_many :users, through: :enrollments
     has_many :instructors, -> { joins(:role).undiscarded.with_course_roles("instructor") },
              class_name: "Enrollment",

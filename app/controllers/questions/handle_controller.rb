@@ -15,9 +15,18 @@ class Questions::HandleController < ApplicationController
 
   def create
     @question = Question.find(params[:question_id])
-    @question.transition_to_state(params[:state],
-                                  current_user.enrollment_in_course(@question.course).id,
-                                  description: params[:description])
+
+    update_state = ::Questions::UpdateState.new(question: @question,
+                               enrollment: current_user.enrollment_in_course(@question.course),
+                               state: params[:state],
+                               description: params[:description],
+                               options: { update_creator?: true })
+    update_state.call
+
+    if update_state.error.present?
+      flash[:error] = update_state.error.message
+      return redirect_back(fallback_location: queue_course_path(@question.course))
+    end
 
     redirect_to queue_course_path(@question.course)
   end

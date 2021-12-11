@@ -6,11 +6,15 @@ class SyncedTurboChannel < ApplicationCable::Channel
 
   def handle_user_updates(user) end
 
+  def unsubscribed
+  end
+
+
   def handle_course_user_updates(course, user)
     active_question = user.active_question(course: course)
 
     if active_question.present?
-      comp = Forms::Question::QuestionCreatorComponent.new(course: course,
+      comp = Forms::Questions::QuestionCreatorComponent.new(course: course,
                                                            question_form: Forms::Question.new(question: active_question),
                                                            current_user: user
       )
@@ -30,6 +34,11 @@ class SyncedTurboChannel < ApplicationCable::Channel
                                             html: ApplicationController
                                                     .render(Courses::QueueOpenStatusComponent.new(course: course),
                                                             layout: false))
+
+    if user.staff_of?(course)
+      Enrollments::UpdateFeedJob.perform_later(enrollment: user.enrollment_in_course(course))
+    end
+
     CourseChannel.broadcast_to user, {
       type: "event",
       event: "invalidate:question-feed"
@@ -41,7 +50,7 @@ class SyncedTurboChannel < ApplicationCable::Channel
   #
   def handle_reconnect_updates(stream_name)
     gids = stream_name.split(':')
-    resources = gids.map { |gid| GlobalID::Locator.locate gid }
+    resources = gids.map { |gid| GlobalID::Locator.locate gid }.compact
 
     if resources.count == 1
       resource = resources.first
@@ -71,7 +80,7 @@ class SyncedTurboChannel < ApplicationCable::Channel
   end
 
   def subscribed
-    set_variant
+    # set_variant
     if (stream_name = verified_stream_name_from_params).present?
       stream_from stream_name
       handle_reconnect_updates(stream_name)

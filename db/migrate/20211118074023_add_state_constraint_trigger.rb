@@ -7,7 +7,7 @@ class AddStateConstraintTrigger < ActiveRecord::Migration[6.1]
                   DECLARE
                     state bigint;
                   BEGIN
-LOCK question_states IN EXCLUSIVE MODE;
+LOCK question_states IN ACCESS EXCLUSIVE MODE;
                     state := (select question_states.state from question_states where question_states.id =#{' '}
                     (select max(question_states.id) from question_states
                       inner join questions on questions.id = NEW.question_id

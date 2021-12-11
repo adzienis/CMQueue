@@ -3,7 +3,7 @@ module GuardableTransactions
 
   private
 
-  def promote_errors(association:nil, child:)
+  def promote_errors(association: nil, child:)
     child.errors.each do |attribute, message|
       if association.present?
         send(association).errors.add(attribute, message)
@@ -14,7 +14,7 @@ module GuardableTransactions
     end
   end
 
-  def guard_db(association:nil, &block)
+  def guard_db(association: nil, &block)
     result = begin
                ActiveRecord::Base.transaction do
                  yield

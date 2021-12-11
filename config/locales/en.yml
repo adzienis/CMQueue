@@ -31,3 +31,9 @@
 
 en:
   hello: "Hello world"
+  activerecord:
+    errors:
+      messages:
+        record_invalid: "%{errors}"
+  errors:
+    format: "%{message}"

@@ -1,7 +1,8 @@
 class Analytics::Metabase::Questions::AvgTimePerTag
-  def initialize(database_id:, course_schema:)
+  def initialize(database_id:, course_schema:, collection_id: nil)
     @database_id = database_id
     @course_schema = course_schema
+    @collection_id = collection_id
   end
 
   def call
@@ -33,12 +34,12 @@ class Analytics::Metabase::Questions::AvgTimePerTag
         "graph.metrics": ["time_to_resolve", "questions_count"],
         "graph.dimensions": ["name"],
         "graph.show_values": true },
-      "collection_id": nil,
+      "collection_id": collection_id,
     }
   end
 
   private
 
-  attr_reader :database_id, :course_schema
+  attr_reader :database_id, :course_schema, :collection_id
 
 end

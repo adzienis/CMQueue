@@ -6,6 +6,6 @@ class RenderComponentJob < ApplicationJob
 
     rendered_component = ApplicationController.render(component_class.new(**component_args), layout: false)
 
-    SyncedTurboChannel.broadcast_replace_later_to *streamables, **opts, html: rendered_component
+    SyncedTurboChannel.broadcast_replace_later_to *streamables, html: rendered_component, **opts
   end
 end

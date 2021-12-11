@@ -3,17 +3,15 @@
 </h1>
 
 <hr>
-<div class="card">
-  <div class="card-body">
-    <ul class="list-group">
-      <%= render(Users::Settings::DesktopNotificationComponent.new(setting: current_user
-        .settings
-        .with_key("desktop_notifications")
-        .first,
-                                                                   record: current_user))
-      %>
-      <%= render(Shared::SettingComponent.new(setting: current_user.settings.with_key("site_notifications").first,
-                                              record: current_user)) %>
-    </ul>
-  </div>
+<div class="shadow-sm">
+  <ul class="list-group">
+    <%= render(Users::Settings::DesktopNotificationComponent.new(setting: current_user
+      .settings
+      .with_key("desktop_notifications")
+      .first,
+                                                                 record: current_user))
+    %>
+    <%= render(Shared::SettingComponent.new(setting: current_user.settings.with_key("site_notifications").first,
+                                            record: current_user)) %>
+  </ul>
 </div>

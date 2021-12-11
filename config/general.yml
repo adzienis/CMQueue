@@ -1,8 +1,12 @@
 shared: &shared
   analytics_url: https://analytics.cmqueue.xyz
+  external_analytics_url: https://analytics.cmqueue.xyz
 
 development:
   <<: *shared
+  analytics_url: http://metabase:3000
+  external_analytics_url: https://analytics.dev-cmqueue.xyz
+  mb_encryption_secret_key:
 
 staging:
   <<: *shared

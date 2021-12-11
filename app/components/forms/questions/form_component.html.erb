@@ -1,0 +1,101 @@
+<%= simple_form_for question_form, as: :question, url: course_forms_question_path(course),
+                    html: {
+                      class: "w-100", id: dom_id(question),
+                      data: { controller: "form" },
+                      autocomplete: "off"
+                    },
+                    defaults: {
+                      wrapper_html: { class: "mb-2" },
+                      label_html: { class: "fw-bold form-label" }
+                    } do |f| %>
+  <%= f.error_notification %>
+  <%= f.error_notification message: f.object.errors[:base].to_sentence if f.object.errors[:base].present? %>
+  <%= f.full_error :course, class: "invalid-feedback d-block fw-bold", style: "font-size: 1rem" %>
+  <%= f.full_error :enrollment, class: "invalid-feedback d-block fw-bold", style: "font-size: 1rem" %>
+  <%= f.hidden_field :enrollment_id, value: current_user.enrollment_in_course(course).id %>
+  <%= f.hidden_field :course_id, value: course.id %>
+  <%= f.input :tried, label: "What have you tried?",
+              as: :text,
+              placeholder: 'Describe what steps you have taken so far to solve your question.'
+  %>
+  <%= f.input :description,
+              as: :text,
+              label: "Description",
+              placeholder: "Describe your current problem that you are trying to solve, as well as the context."
+  %>
+  <%= f.input :location,
+              as: :text,
+              label: "Location/Zoom link",
+              placeholder: "Use the short Zoom link."
+  %>
+  <%= simple_fields_for :tag_groups do |ff| %>
+    <hr class="mt-4">
+    <div class="mb-2">
+      <h5 class="form-label fw-bold mb-0">
+        Tags
+      </h5>
+
+      <div class="text-muted">
+        Select tags that appropriately categorize your question. Each category requires at least
+        one tag.
+      </div>
+    </div>
+    <% course.tag_groups.each do |tag_group| %>
+      <% if tag_group.tags.any? %>
+        <div data-controller="react_select" class="mb-3">
+          <label class="form-label fw-bold">
+            <%= tag_group.name %>
+          </label>
+          <%= ff.collection_select tag_group.id,
+                                   tag_group.tags,
+                                   :id,
+                                   :name,
+                                   {
+                                     selected: question.tags.filter { |tag| tag_group.tags.include? tag }.map { |tag| tag.id }
+                                   },
+                                   multiple: true,
+                                   class: "invisible form-control",
+                                   autocomplete: false
+          %>
+          <%= f.error "tag_group_#{tag_group.id}", class: "invalid-feedback d-block" %>
+        </div>
+      <% end %>
+    <% end %>
+  <% end if tag_groups? %>
+
+
+  <%= f.submit (question.new_record? ? :Submit : :Update),
+               class: "btn btn-success",
+               data: {
+                 "disable-with": "Loading",
+                 "form-target": "submit"
+               } %>
+
+  <%= tag.button :Unfreeze,
+                 type: "submit",
+                 form: "unfreeze",
+                 class: "btn btn-primary",
+                 data: { "disable-with": "loading",
+                 } if question.frozen? %>
+  <%= tag.button "Finish Resolving",
+                 type: "submit",
+                 form: "resolve",
+                 class: "btn btn-success",
+                 data: { "disable-with": "loading",
+                 } if question.resolving? %>
+  <%= tag.button :Delete, type: "Submit", form: "delete", class: "btn btn-danger",
+                 data: { "disable-with" => "Loading" } unless question.new_record? %>
+<% end %>
+
+<%= form_with url: update_state_question_path(question), id: "unfreeze" do |f| %>
+  <%= f.hidden_field :course_id, value: question.course.id %>
+  <%= f.hidden_field :state, value: "unresolved" %>
+<% end unless question.new_record? %>
+<%= form_with url: course_forms_question_path(course), id: "delete", method: :delete do |f| %>
+  <%= f.hidden_field :course_id, value: question.course.id %>
+  <%= f.hidden_field :state, value: "unresolved" %>
+<% end unless question.new_record? %>
+<%= form_with url: update_state_question_path(question), id: "resolve" do |f| %>
+  <%= f.hidden_field :course_id, value: question.course.id %>
+  <%= f.hidden_field :state, value: "resolved" %>
+<% end unless question.new_record? %>
