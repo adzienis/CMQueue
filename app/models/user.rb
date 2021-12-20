@@ -133,6 +133,8 @@ class User < ApplicationRecord
     end
   }
 
+  scope :with_setting, ->(key, value) { joins(:settings).merge(Setting.with_key(key).with_value(value)) }
+
   scope :with_any_roles, lambda { |*names|
     where(id: joins(:roles).where("roles.name IN (?)", names).merge(Role.undiscarded))
   }
@@ -150,6 +152,10 @@ class User < ApplicationRecord
 
   def full_name
     "#{given_name} #{family_name}"
+  end
+
+  def setting(key)
+    settings.find_by_key(key)
   end
 
   def self.from_omniauth(auth)
@@ -182,24 +188,13 @@ class User < ApplicationRecord
 
   after_create_commit do
     settings.create([{
-      value: {
-        desktop_notifications: {
-          label: "Desktop Notifications",
-          value: false,
-          description: "Allow notifications to appear natively on your desktop.",
-          type: "boolean",
-          category: "Notifications"
-        }
-      }
-    }, {
-      value: {
-        site_notifications: {
-          label: "Site Notifications",
-          value: true,
-          description: "Allow notifications to appear on the site.",
-          type: "boolean",
-          category: "Notifications"
-        }
+      bag: {
+        key: "notifications",
+        label: "Notifications",
+        value: "false",
+        description: "Allow notifications.",
+        type: "boolean",
+        category: "Notifications"
       }
     }])
   end

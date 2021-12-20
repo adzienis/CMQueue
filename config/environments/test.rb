@@ -66,4 +66,5 @@ Rails.application.configure do
 
   config.hosts << "127.0.0.1"
   config.hosts << "www.example.com"
+  config.minitest_spec_rails.mini_shoulda = true
 end

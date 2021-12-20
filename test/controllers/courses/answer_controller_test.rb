@@ -1,36 +1,23 @@
 require "test_helper"
 
 class Courses::AnswerControllerTest < ActionDispatch::IntegrationTest
-  include Devise::Test::IntegrationHelpers
-
-  setup do
-    @course = courses(:class_418)
-    @ta = users(:arthur)
-    @instructor = users(:brian)
-    @student = users(:jason)
+  before do
+    sign_in user
   end
 
-  test "can access if instructor" do
-    sign_in @instructor
+  let(:user) { create(:user) }
+  let(:course) { create(:course) }
 
-    get answer_course_path(@course)
+  context "when not handling question" do
+    subject { get answer_course_path(course) }
 
-    assert_response :success
-  end
+    context "#get show" do
+      with_roles_should("redirects to course's queue", :instructor, :ta) do
+        subject
+        assert_redirected_to queue_course_path(course)
+      end
 
-  test "can access if ta" do
-    sign_in @ta
-
-    get answer_course_path(@course)
-
-    assert_response :success
-  end
-
-  test "cannot access if student" do
-    sign_in @student
-
-    get answer_course_path(@course)
-
-    assert_response :forbidden
+      unauthorized_with_roles(:student) { subject }
+    end
   end
 end

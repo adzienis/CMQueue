@@ -31,16 +31,6 @@ module CMQueue
     config.hosts << "cmqueue-demo.herokuapp.com"
     config.hosts << "192.168.1.183"
     Rails.application.config.action_cable.allowed_request_origins = ["http://cmqueue.xyz", "https://cmqueue.xyz", "https://dev-cmqueue.xyz"]
-    config.to_prepare do
-      # Only Applications list
-      Doorkeeper::ApplicationsController.layout "layouts/doorkeeper/application"
-
-      # Only Authorization endpoint
-      # Doorkeeper::AuthorizationsController.layout "my_layout"
-
-      # Only Authorized Applications
-      Doorkeeper::AuthorizedApplicationsController.layout "layouts/doorkeeper/admin"
-    end
 
     # overrides
     overrides = "#{Rails.root}/app/overrides"

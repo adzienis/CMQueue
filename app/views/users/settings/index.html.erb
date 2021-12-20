@@ -7,7 +7,7 @@
   <ul class="list-group">
     <%= render(Users::Settings::DesktopNotificationComponent.new(setting: current_user
       .settings
-      .with_key("desktop_notifications")
+      .with_key("notifications")
       .first,
                                                                  record: current_user))
     %>

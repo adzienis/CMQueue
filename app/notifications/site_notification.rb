@@ -8,7 +8,7 @@ class SiteNotification < Noticed::Base
   deliver_by :action_cable, channel: NotificationChannel, format: :to_action_cable, if: :notifications?
 
   def notifications?
-    !!recipient.settings.option_value_of_key("desktop_notifications")
+    !!recipient.setting("notifications").value
   end
 
   def site?

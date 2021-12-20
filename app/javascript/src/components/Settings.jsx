@@ -100,7 +100,7 @@ export default (props) => {
                 const settingName = Object.keys(setting.value)[0];
                 const values = setting.value[settingName];
 
-                if (settingName === "desktop_notifications") {
+                if (settingName === "notifications") {
                   return (
                     <li className="list-group-item d-flex justify-content-between align-items-center">
                       <div

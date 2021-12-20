@@ -1,5 +1,6 @@
 class CourseChannel < ApplicationCable::Channel
   def subscribed
+    super
     stream_for current_user unless params[:room]
 
     if params[:room]

@@ -107,7 +107,7 @@ class Course < ApplicationRecord
     joins(:enrollments).merge(Enrollment.undiscarded.with_user(user_id))
   }
 
-  scope :with_setting_value, ->(key, value) { joins(:settings).merge(Setting.with_key_value(key, value)) }
+  scope :with_setting, ->(key, value) { joins(:settings).merge(Setting.with_key(key).with_value(value)) }
 
   def self.find_by_code?(code)
     find_by_code(code).present?
@@ -128,7 +128,7 @@ class Course < ApplicationRecord
   end
 
   def setting(key)
-    settings.option_value_of_key(key)
+    settings.find_by_key(key)
   end
 
   # Course Roles Finders
@@ -231,24 +231,22 @@ class Course < ApplicationRecord
     Analytics::Metabase::SetupJob.set(wait: 1.minute).perform_later(course: self)
 
     settings.create([{
-      value: {
-        searchable: {
-          label: "Searchable",
-          value: false,
-          description: "Allow students to search for this course.",
-          type: "boolean",
-          category: "General"
-        }
+      bag: {
+        label: "Searchable",
+        key: "searchable",
+        value: "false",
+        description: "Allow students to search for this course.",
+        type: "boolean",
+        category: "General"
       }
     }, {
-      value: {
-        allow_enrollment: {
-          label: "Allow Enrollment",
-          value: false,
-          description: "Allow users to enroll in the course.",
-          type: "boolean",
-          category: "Enrollment"
-        }
+      bag: {
+        label: "Allow Enrollment",
+        key: "allow_enrollment",
+        value: "false",
+        description: "Allow users to enroll in the course.",
+        type: "boolean",
+        category: "Enrollment"
       }
     }])
 
@@ -260,7 +258,6 @@ class Course < ApplicationRecord
     Postgres::Views::Question.destroy(id)
     Postgres::Views::Tag.destroy(id)
     Postgres::Views::Enrollment.destroy(id)
-
     Postgres::Views.destroy_user(id)
   end
 end

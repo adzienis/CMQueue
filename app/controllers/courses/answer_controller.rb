@@ -6,7 +6,7 @@ class Courses::AnswerController < ApplicationController
   end
 
   def show
-    redirect_to queue_course_path(@course) and return unless current_user.handling_question?(course: @course)
+    return redirect_to queue_course_path(@course) unless current_user.handling_question?(course: @course)
 
     question_state = current_user.question_state
     @question = question_state&.question

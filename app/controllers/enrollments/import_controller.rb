@@ -1,8 +1,18 @@
 class Enrollments::ImportController < ApplicationController
+  def current_ability
+    @current_ability ||= ::EnrollmentAbility.new(current_user, {
+      params: params,
+      path_parameters: request.path_parameters
+    })
+  end
+
   def index
+    authorize! :import, Enrollment
   end
 
   def create
+    authorize! :import, Enrollment
+
     begin
       file = params[:file].read
       json = JSON.parse(file)

@@ -219,15 +219,7 @@ Rails.application.routes.draw do
       end
     end
     resources :roles
-
-    use_doorkeeper do
-      controllers applications: "oauth/applications"
-    end
   end
-
-  # use_doorkeeper do
-  #  controllers applications: "oauth/applications"
-  # end
 
   resources :certificates
 

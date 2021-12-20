@@ -20,7 +20,6 @@ require "pagy/extras/searchkick"
 
 class Question < ApplicationRecord
   include Discard::Model
-  include Ransackable
   include Exportable
   include GuardableTransactions
   extend Pagy::Searchkick

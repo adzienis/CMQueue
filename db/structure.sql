@@ -46,7 +46,7 @@ CREATE FUNCTION public.check_state_constraint() RETURNS trigger
                   DECLARE
                     state bigint;
                   BEGIN
-LOCK question_states IN EXCLUSIVE MODE;
+LOCK question_states IN ACCESS EXCLUSIVE MODE;
                     state := (select question_states.state from question_states where question_states.id = 
                     (select max(question_states.id) from question_states
                       inner join questions on questions.id = NEW.question_id
@@ -661,9 +661,9 @@ CREATE TABLE public.settings (
     id bigint NOT NULL,
     resource_type character varying,
     resource_id bigint,
-    value json,
     created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL
+    updated_at timestamp with time zone NOT NULL,
+    bag jsonb DEFAULT '{}'::jsonb
 );
 
 
@@ -1580,6 +1580,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20211114044300'),
 ('20211118074023'),
 ('20211119031040'),
-('20211119032313');
+('20211119032313'),
+('20211211052838');
 
 

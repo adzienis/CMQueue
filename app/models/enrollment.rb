@@ -14,12 +14,11 @@ require "pagy/extras/searchkick"
 
 class Enrollment < ApplicationRecord
   include Discard::Model
-  include Ransackable
   include Exportable
   include Turbo::Broadcastable
   extend Pagy::Searchkick
 
-  searchkick
+  searchkick index_prefix: -> {}
   kredis_hash "course_state"
   scope :search_import, -> { includes(:role) }
 

@@ -36,7 +36,6 @@ gem "standard", group: [:development, :test]
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
-  gem "byebug", platforms: %i[mri mingw x64_mingw]
 
   gem "rails-erd"
 end
@@ -60,6 +59,9 @@ group :test do
   gem "selenium-webdriver"
   # Easy installation and use of web drivers to run system tests with browsers
   gem "webdrivers"
+  gem "standardrb", "~> 1.0"
+  gem "factory_bot_rails", "~> 6.2"
+  gem "mocha", "~> 1.13"
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
@@ -75,17 +77,9 @@ gem "pg", "~> 1.2"
 
 gem "pagy"
 
-gem "ransack", "~> 2.4"
-
 gem "simple_form", "~> 5.1"
 
 gem "pghero", "~> 2.8"
-
-gem "grape", "~> 1.5"
-
-gem "grape-swagger", "~> 1.4"
-
-gem "doorkeeper", "~> 5.5"
 
 gem "rubocop", "~> 1.17"
 
@@ -93,27 +87,19 @@ gem "rubocop-rails", "~> 2.10"
 
 gem "discard", "~> 1.2"
 
-gem "doorkeeper-i18n", "~> 5.2"
-
 gem "noticed", "~> 1.4"
 
 gem "sidekiq", "~> 6.2"
 
-gem "whenever", "~> 1.0"
-
 gem "ransack_search_element", "~> 0.1.0.pre.alpha"
 
 gem "responders", "~> 3.0", github: "heartcombo/responders"
-
-gem "anycable-rails", "~> 1.1"
 
 gem "jsbundling-rails", "~> 0.1.9"
 
 gem "cssbundling-rails", "~> 0.2.4"
 
 gem "newrelic_rpm", "~> 8.0"
-
-gem "jwt", "~> 2.2"
 
 gem "http", "~> 5.0"
 
@@ -135,4 +121,6 @@ gem "sidekiq-failures", "~> 1.0"
 
 gem "kredis", "~> 1.0"
 
-gem "standardrb", "~> 1.0"
+gem "minitest-spec-rails", "~> 6.1"
+
+gem "ffaker", "~> 2.20"

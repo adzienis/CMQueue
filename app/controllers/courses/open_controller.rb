@@ -15,14 +15,15 @@ class Courses::OpenController < ApplicationController
   end
 
   def update
-    authorize! :open, @course
+    authorize! :update_open, @course
 
-    @course.update(open_params)
+    @course.update!(open_params)
 
     respond_with @course, flash: false
   end
 
   def show
+    authorize! :read_open, @course
     @course.open
     respond_with @course.open
   end

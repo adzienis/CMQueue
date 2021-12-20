@@ -22,7 +22,7 @@ module Search
       where_params = {}
 
       attributes.each do |attribute|
-        where_params = where_params.merge(build_clause(attribute)) if params[attribute]
+        where_params = where_params.merge(build_clause(attribute)) if params[attribute].present?
       end
 
       where_params.merge(extra_params)

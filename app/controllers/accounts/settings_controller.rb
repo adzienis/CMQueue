@@ -15,7 +15,7 @@ class Accounts::SettingsController < ApplicationController
 
   def update
     @setting.set_value(params[:setting][@setting.key] == "1")
-    @setting.save
+    @setting.save!
 
     respond_with :account, @setting, status: 303
   end
@@ -23,6 +23,6 @@ class Accounts::SettingsController < ApplicationController
   private
 
   def flash_interpolation_options
-    { resource_name: @setting.label }
+    {resource_name: @setting.label}
   end
 end

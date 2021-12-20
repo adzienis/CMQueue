@@ -15,7 +15,6 @@ require "pagy/extras/searchkick"
 
 class Tag < ApplicationRecord
   include Discard::Model
-  include Ransackable
   extend Pagy::Searchkick
 
   searchkick

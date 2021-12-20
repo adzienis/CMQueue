@@ -29,7 +29,7 @@ module Courses
     private
 
     def flash_interpolation_options
-      { resource_name: @setting.label }
+      {resource_name: @setting.label}
     end
   end
 end

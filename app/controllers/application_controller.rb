@@ -19,7 +19,7 @@ class ApplicationController < ActionController::Base
 
   include Pagy::Backend
 
-  before_action :authenticate_user!, :set_course, :set_user, :restrict_routes, :set_enrollment
+  before_action :authenticate_user!, :set_course, :set_user, :set_enrollment
 
   def default_url_options
     if Rails.env.development? || Rails.env.test?
@@ -58,16 +58,6 @@ class ApplicationController < ActionController::Base
 
   def set_enrollment
     @current_enrollment = current_user.enrollment_in_course(@course) if @course.present?
-  end
-
-  def restrict_routes
-    if request.path.include?("users/")
-      # raise CanCan::AccessDenied unless current_user.id == params[:user_id].to_i if params[:user_id]
-    elsif request.path.include?("courses/")
-      if @course
-        raise CanCan::AccessDenied unless current_user.enrolled_in_course?(@course)
-      end
-    end
   end
 
   def new_session_path(_scope)

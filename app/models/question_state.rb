@@ -29,7 +29,6 @@ class QuestionState < ApplicationRecord
     }
   end
 
-  include Ransackable
   include Turbo::Broadcastable
 
   belongs_to :question, inverse_of: :question_states, optional: false, touch: true

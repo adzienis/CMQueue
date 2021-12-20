@@ -11,29 +11,18 @@ class CourseAbility
 
     if @course.present?
       if user.staff_of?(@course)
+        can [:read_open, :update_open, :answer], @course
         can :queue, Course
         can :semester, Course
         can :read, :staff_log
       end
     end
 
-    can [:active_tas, :read, :search], Course
-
-    cannot :read, Course, [:instructor_code] do |course|
-      !user.instructor_of?(course.id)
-    end
-
-    cannot :read, Course, [:ta_code] do |course|
-      !user.staff_of?(course)
-    end
+    can :active_tas, Course
 
     can [:course_info, :roster, :open,
       :update, :top_question, :answer, :answer_page], Course, Course.where(id: @staff_roles) do |course|
       user.staff_of?(course)
-    end
-
-    can :manage, Course, Course.where(id: @instructor_roles) do |course|
-      user.instructor_of?(course)
     end
 
     can :queue_show, Course, Course.where(id: @staff_roles) do |course|

@@ -1,7 +1,7 @@
 <div id='search-body'>
   <%= label_tag "Select a Course" %>
   <div>
-    <%= collection_select :enrollment, :course_id, Course.with_setting_value("searchable", true), :id, :name, { selected: enrollment.role&.resource_id },
+    <%= collection_select :enrollment, :course_id, Course.with_setting("searchable", true), :id, :name, { selected: enrollment.role&.resource_id },
                           class: "form-control #{enrollment.errors.any? ? "is-invalid" : ""}" %>
   </div>
   <div>

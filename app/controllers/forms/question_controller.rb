@@ -12,7 +12,7 @@ class Forms::QuestionController < ApplicationController
   end
 
   def update
-    @question = current_user.active_question
+    @question = current_user.active_question(course: @course)
     @available_tags = @course.available_tags
 
     @question_form = Forms::Question.new(current_user: current_user, question: @question, question_params: question_params)

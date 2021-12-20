@@ -69,22 +69,18 @@ class SyncedTurboChannel < ApplicationCable::Channel
     end
   end
 
-  def request
-    connection.request_var
-  end
-
-  def set_variant
-    agent = request.user_agent
-    return request.variant = :tablet if /(tablet|ipad)|(android(?!.*mobile))/i.match?(agent)
-    return request.variant = :mobile if /Mobile/.match?(agent)
-    request.variant = :desktop
+  def reconnected?(stream_name)
+    last_connected_at = Kredis.datetime(stream_name).value
+    last_connected_at.nil? || last_connected_at > 2.minutes.ago
   end
 
   def subscribed
-    # set_variant
+    super
     if (stream_name = verified_stream_name_from_params).present?
+      SpecialLogger.info stream_name
       stream_from stream_name
-      handle_reconnect_updates(stream_name)
+      # handle_reconnect_updates(stream_name) if reconnected?(stream_name)
+      # Kredis.datetime(stream_name).value = DateTime.current
     else
       reject
     end

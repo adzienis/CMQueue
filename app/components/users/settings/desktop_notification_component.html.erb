@@ -8,7 +8,7 @@
       <%= f.check_box setting.key,
                       "data-notification-setting-target": "input",
                       class: "form-check-input",
-                      checked: setting.option_value, autocomplete: "off", checked_value: true, unchecked_value: false %>
+                      checked: setting.value == "true", autocomplete: "off", checked_value: true, unchecked_value: false %>
     </div>
   <% end %>
 </li>

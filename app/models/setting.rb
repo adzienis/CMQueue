@@ -17,42 +17,31 @@ class Setting < ApplicationRecord
   has_one :course, through: :self_ref, source: :resource, source_type: "Course"
   has_one :user, through: :self_ref, source: :resource, source_type: "User"
 
-  scope :with_type, ->(type) { where(resource_type: type) }
-  scope :with_user, ->(user_id) { where(resource_id: user_id, resource_type: "User") }
-  scope :with_courses, ->(course_id) { where(resource_id: course_id, resource_type: "Course") }
-  scope :with_parent_type, ->(parent_type) { where(resource_type: parent_type) }
-  scope :with_parent_id, ->(parent_id) { where(resource_id: parent_id) }
+  scope :with_key, ->(key) { where("bag::jsonb @> '{ \"key\": \"#{key}\"}'") }
+  scope :with_value, ->(value) { where("bag::jsonb @> '{ \"value\": \"#{value}\"}'") }
 
-  scope :with_key, ->(key) { where(id: from(Setting.select("*, jsonb_object_keys(value::jsonb) json_key"), :settings).where(json_key: key).pluck(:id)) }
-  scope :with_key_value, ->(key, value) { where("value -> '#{key}' ->> 'value' = '#{value}'") }
-
-  scope :update_all_json, ->(path, value) {
-    update_all("value = jsonb_set(value::jsonb, '#{path}', '#{value}'::jsonb)::jsonb")
-  }
-
-  # scope like method to find a setting with key
   def self.find_by_key(key)
     with_key(key).first
   end
 
   def self.option_value_of_key(key)
-    find_by_key(key).option_value
+    find_by_key(key).value
   end
 
   def description
-    value[key]["description"]
-  end
-
-  def self.course
-    Course.find(resource_id) if resource_type == "Course"
+    bag["description"]
   end
 
   def key
-    value.keys[0]
+    bag["key"]
   end
 
   def label
-    value[key]["label"]
+    bag["label"]
+  end
+
+  def value
+    bag["value"]
   end
 
   def option_value
@@ -60,27 +49,6 @@ class Setting < ApplicationRecord
   end
 
   def set_value(new_value)
-    value[key]["value"] = new_value
-  end
-
-  def update_json(path, value)
-    update("value = jsonb_set(value::jsonb, '{#{path}}', '#{value}'::jsonb)::jsonb")
-  end
-
-  def update_all_json(path, value)
-    Setting.update_all("value = jsonb_set(value::jsonb, '{#{path}}', '#{value}'::jsonb)::jsonb")
-  end
-
-  after_update do
-    case resource_type
-    when "Course"
-      QueueChannel.broadcast_to resource_type.constantize.find(resource_id), {
-        invalidate: ["settings"]
-      }
-    when "User"
-      SiteChannel.broadcast_to resource_type.constantize.find(resource_id), {
-        invalidate: ["settings"]
-      }
-    end
+    bag["value"] = new_value.to_s
   end
 end
