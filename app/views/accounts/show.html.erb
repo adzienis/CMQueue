@@ -12,11 +12,13 @@
         <%= current_user.email %>
       </div>
     </div>
-    <hr>
-    <h4>
-      Quick Stats
-    </h4>
-    <%= render(Charts::Accounts::TotalQuestionsAskedComponent.new(user: current_user)) %>
+    <% if false %>
+      <hr>
+      <h4>
+        Quick Stats
+      </h4>
+      <%= render(Charts::Accounts::TotalQuestionsAskedComponent.new(user: current_user)) %>
+    <% end  %>
   </div>
   <div class="card-footer">
     <%= button_to "Edit", edit_account_path, method: :get, class: "btn btn-warning" %>
