@@ -89,8 +89,6 @@ services:
     image: redis:6.0.12-alpine
     volumes:
       - redis:/data:delegated
-    #ports:
-      #- "127.0.0.1:6379:6379"
     restart: on-failure
     container_name:
       redis_prod

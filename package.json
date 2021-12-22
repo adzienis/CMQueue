@@ -3,39 +3,28 @@
   "private": true,
   "dependencies": {
     "@babel/preset-react": "^7.14.5",
-    "@hookform/error-message": "^2.0.0",
     "@hotwired/turbo": "^7.0.1",
     "@hotwired/turbo-rails": "^7.0.1",
     "@popperjs/core": "^2.10.1",
     "@rails/actioncable": "^6.0.0",
     "@rails/activestorage": "^6.0.0",
     "@rails/ujs": "^6.1.4-1",
-    "@rails/webpacker": "5.2.1",
     "@types/react": "^17.0.3",
     "@types/react-select": "^4.0.15",
-    "@types/semantic-ui": "^2.2.7",
-    "babel-plugin-transform-react-remove-prop-types": "^0.4.24",
     "bootstrap": "^5.1.0",
     "chart.js": "^3.6.0",
-    "chartkick": "^4.1.0",
-    "cookie": "^0.4.1",
     "esbuild-sass-plugin": "^1.6.1",
-    "formik": "^2.2.9",
     "jquery": "^3.6.0",
-    "prop-types": "^15.7.2",
-    "qs": "^6.10.1",
+    "lodash": "^4.17.21",
     "rails-ujs": "^5.2.6",
     "react": "^17.0.2",
     "react-datepicker": "^4.1.1",
     "react-dom": "^17.0.2",
-    "react-hook-form": "^7.15.4",
     "react-query": "^3.21.1",
     "react-select": "^4.3.1",
-    "recharts": "^2.0.9",
     "sass": "^1.42.1",
     "stimulus": "^3.0.1",
-    "stimulus-rails-autosave": "^4.0.0",
-    "swagger-ui-react": "^4.0.0-beta.2"
+    "stimulus-rails-autosave": "^4.0.0"
   },
   "version": "0.1.0",
   "devDependencies": {
@@ -45,8 +34,8 @@
     "webpack-dev-server": "^3.11.2"
   },
   "scripts": {
-    "build": "npx node es.js",
+    "build": "node es.js",
     "build:css": ":",
-    "watch": "npx node es_watch.js"
+    "watch": "node es_watch.js"
   }
 }

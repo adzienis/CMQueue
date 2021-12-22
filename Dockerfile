@@ -1,4 +1,4 @@
-FROM ruby:3.0.1 AS builder
+FROM ruby:3.0.1-alpine AS builder
 LABEL maintainer="Mike Rogers <me@mikerogers.io>"
 ARG RAILS_MASTER_KEY
 
@@ -8,11 +8,12 @@ RUN wget -nv https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_V
     && tar -C /usr/local/bin -xzvf dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
     && rm dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz
 
-RUN apt-get update && apt-get install -y lsb-release
-
-RUN sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
-RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - &&  curl -sL https://deb.nodesource.com/setup_14.x  | bash -
-RUN apt-get update && apt-get install -y \
+RUN apk add \
+       nodejs \
+       yarn \
+       build-base \
+       postgresql-client \
+       postgresql-dev \
       # ActiveStorage file inspection
       file \
       # Time zone data
@@ -24,17 +25,12 @@ RUN apt-get update && apt-get install -y \
       imagemagick \
       # Nice to have
       bash \
-      postgresql-13\
-      postgresql-client-13 \
-      postgresql-contrib \
-      ca-certificates \
       chromium \
       git \
       # VIM is a handy editor for editing credentials
       vim \
-      nodejs \
       # Allows for mimemagic gem to be installed
-      shared-mime-info && npm install -g yarn
+      shared-mime-info
 # Install any extra dependencies via Aptfile - These are installed on Heroku
 # COPY Aptfile /usr/src/app/Aptfile
 # RUN apk add --update $(cat /usr/src/app/Aptfile | xargs)
