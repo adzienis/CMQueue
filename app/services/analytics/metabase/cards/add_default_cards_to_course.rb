@@ -43,6 +43,7 @@ module Analytics
           fields = metabase.database_fields(db.id)
           fields = fields.filter { |v| v["table_name"] == table_name } if table_name.present?
           fields = fields.filter { |v| v["schema"] == course.custom_schema }
+
           fields.map { |v| [v["name"], v.except("name")] }.to_h
         end
 
