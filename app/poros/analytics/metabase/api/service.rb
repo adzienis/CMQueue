@@ -141,7 +141,7 @@ module Analytics
           fields = database_fields(root_db.id)
           fields = fields.filter { |v| v["table_name"] == table_name } if table_name.present?
           fields = fields.filter { |v| v["schema"] == schema } if schema.present?
-          fields.map { |v| [v["name"], v.entries.except("name").to_h] }.to_h
+          fields.map { |v| [v["name"], v.except("name").to_h] }.to_h
         end
 
         private
