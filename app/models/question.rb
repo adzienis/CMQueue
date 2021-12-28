@@ -5,7 +5,6 @@
 # Table name: questions
 #
 #  id            :bigint           not null, primary key
-#  course_id     :bigint
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
 #  title         :text
@@ -40,7 +39,8 @@ class Question < ApplicationRecord
       user_name: "#{user.given_name} #{user.family_name}",
       resolved_by: question_state&.state == "resolved" ? question_state.user.given_name : nil,
       tags: tags.map(&:name),
-      course_id: course.id
+      course_id: course.id,
+      semester: enrollment.semester
     }
   end
 

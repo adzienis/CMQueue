@@ -1,10 +1,6 @@
 require "test_helper"
 
 class Analytics::DashboardsControllerTest < ActionDispatch::IntegrationTest
-  setup do
-    @analytics_dashboard = analytics_dashboards(:one)
-  end
-
   test "should get index" do
   end
 

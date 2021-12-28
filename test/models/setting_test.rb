@@ -5,9 +5,9 @@
 #  id            :bigint           not null, primary key
 #  resource_type :string
 #  resource_id   :bigint
-#  value         :json
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
+#  bag           :jsonb
 #
 require "test_helper"
 

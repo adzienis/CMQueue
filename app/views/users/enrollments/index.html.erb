@@ -34,7 +34,6 @@
           <div class="text-muted mb-3">
             All the courses in which you are currently enrolled as a TA or instructor.
           </div>
-
           <div id="staff-enrollments">
             <%= render(Users::Enrollments::EnrollmentsComponent.new(enrollments: current_user.staff_enrollments)) %>
           </div>

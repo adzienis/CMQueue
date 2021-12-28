@@ -11,8 +11,8 @@
             <% if header.is_a?(Hash) && header.values.first == :sortable %>
               <%= render(Shared::Search::SortLinkComponent.new(category: header.keys.first,
                                                                query_params: request.query_parameters,
-                                                               course: course,
-                                                               resources: search.klass.name.pluralize.underscore.to_sym)) %>
+                                                               parent: parent,
+                                                               resources: search.klass.name.demodulize.pluralize.underscore.to_sym)) %>
             <% elsif !header.is_a?(Hash) %>
               <%= header.to_s.titleize %>
             <% end %>

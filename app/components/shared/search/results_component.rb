@@ -3,20 +3,20 @@ module Shared
     class ResultsComponent < ViewComponent::Base
       renders_many :results
 
-      def initialize(course:, pagy:, search:, options: {})
+      def initialize(parent:, pagy:, search:, options: {})
         super
-        @course = course
+        @parent = parent
         @pagy = pagy
         @search = search
         @options = options
       end
 
       def resources
-        search.klass.name.pluralize.underscore.to_sym
+        search.klass.name.demodulize.pluralize.underscore.to_sym
       end
 
       def resource
-        search.klass.name.underscore.to_sym
+        search.klass.name.demodulize.underscore.to_sym
       end
 
       def msg
@@ -33,7 +33,7 @@ module Shared
 
       private
 
-      attr_reader :search, :course, :pagy, :options
+      attr_reader :search, :parent, :pagy, :options
     end
   end
 end

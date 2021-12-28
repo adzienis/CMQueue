@@ -1,5 +1,12 @@
-<div class="card card-body shadow-sm" style="height: 400px; width: 500px">
-  <canvas id="total-questions-asked" style="height: 100%; width: 100%"></canvas>
+<div class="card card-body shadow-sm text-center" style="height: 400px; width: 500px">
+  <h5 class="fw-bold"> Total Questions Asked Per Course </h5>
+  <div class="d-flex justify-content-center align-items-center h-100 w-100">
+    <% if enrollments_with_questions.length == 0 %>
+      <h5> No Results </h5>
+    <% else %>
+      <canvas id="total-questions-asked" style="height: 100%; width: 100%"></canvas>
+    <% end %>
+  </div>
 </div>
 <script>
   new Chart(document.getElementById("total-questions-asked").getContext("2d"), {
@@ -8,35 +15,43 @@
       labels: <%== enrollments_with_questions.map{|v| v.course_name} %>,
       datasets: [{
         label: "Questions Asked Per Course",
-        data: <%== enrollments_with_questions.map{|v| v.count} %>,
+        data: <%== enrollments_with_questions.map{|v| v.total } %>,
         backgroundColor: [
-          'rgba(255, 99, 132, 0.2)',
-          'rgba(255, 159, 64, 0.2)',
-          'rgba(255, 205, 86, 0.2)',
-          'rgba(75, 192, 192, 0.2)',
-          'rgba(54, 162, 235, 0.2)',
-          'rgba(153, 102, 255, 0.2)',
-          'rgba(201, 203, 207, 0.2)'
+          "rgba(255, 99, 132, 0.2)",
+          "rgba(255, 159, 64, 0.2)",
+          "rgba(255, 205, 86, 0.2)",
+          "rgba(75, 192, 192, 0.2)",
+          "rgba(54, 162, 235, 0.2)",
+          "rgba(153, 102, 255, 0.2)",
+          "rgba(201, 203, 207, 0.2)"
         ],
         borderColor: [
-          'rgb(255, 99, 132)',
-          'rgb(255, 159, 64)',
-          'rgb(255, 205, 86)',
-          'rgb(75, 192, 192)',
-          'rgb(54, 162, 235)',
-          'rgb(153, 102, 255)',
-          'rgb(201, 203, 207)'
-        ],
+          "rgb(255, 99, 132)",
+          "rgb(255, 159, 64)",
+          "rgb(255, 205, 86)",
+          "rgb(75, 192, 192)",
+          "rgb(54, 162, 235)",
+          "rgb(153, 102, 255)",
+          "rgb(201, 203, 207)"
+        ]
       }]
     },
     options: {
+      plugins: {
+        legend: {
+          display: false
+        }
+      },
       scales: {
         y: {
           beginAtZero: true,
-
           ticks: {
             beginAtZero: true,
-            callback: function(value) {if (value % 1 === 0) {return value;}}
+            callback: function(value) {
+              if (value % 1 === 0) {
+                return value;
+              }
+            }
           }
         }
       }

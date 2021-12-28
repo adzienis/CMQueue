@@ -1,12 +1,16 @@
 module Shared
   module Search
     class SearchPaneComponent < ViewComponent::Base
-      def initialize(query_params:, bucket:, category:, course:, resources:)
+      def initialize(query_params:, bucket:, category:, resources:, resource_path:)
         @query_params = query_params
         @bucket = bucket
         @category = category
-        @course = course
         @resources = resources
+        @resource_path = resource_path
+      end
+
+      def bucket_key
+        bucket["key_as_string"] || bucket["key"]
       end
 
       def build_parameters(category, key)
@@ -14,10 +18,10 @@ module Shared
           if query_params[category].instance_of? ActiveSupport::HashWithIndifferentAccess
 
             hash = query_params[category]
-            return query_params.except(category) if hash["key"] == bucket["key"]
+            return query_params.except(category) if hash["key"] == bucket_key
 
             new_p = {}
-            new_p["key"] = bucket["key"]
+            new_p["key"] = bucket_key
             new_p["from"] = bucket["from"] if bucket["from"].present?
             new_p["to"] = bucket["to"] if bucket["to"].present?
 
@@ -46,7 +50,7 @@ module Shared
           new_p = {}
           new_p = new_p.merge({to: bucket["to"]}) if bucket["to"]
           new_p = new_p.merge({from: bucket["from"]}) if bucket["from"]
-          new_p = new_p.merge({key: bucket["key"]}) if bucket["key"]
+          new_p = new_p.merge({key: bucket_key}) if bucket_key
           query_params.merge(category => new_p)
         else
           query_params.merge(category => key)
@@ -57,7 +61,7 @@ module Shared
         if query_params[category].present?
 
           if query_params[category].instance_of? ActiveSupport::HashWithIndifferentAccess
-            return "fw-bold" if bucket["key"] == query_params[category]["key"]
+            return "fw-bold" if bucket_key == query_params[category]["key"]
 
             ""
           else
@@ -80,7 +84,7 @@ module Shared
 
       private
 
-      attr_reader :query_params, :bucket, :category, :course, :resources
+      attr_reader :query_params, :bucket, :category, :resources, :resource_path
     end
   end
 end

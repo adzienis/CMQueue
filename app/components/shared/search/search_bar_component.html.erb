@@ -1,6 +1,6 @@
 <div class="card shadow-sm mb-2">
   <div class="card-body">
-    <%= form_tag(polymorphic_path([:search, course, resources], query_parameters), method: :get, autocomplete: "off", "data-turbo-frame": "_self") do %>
+    <%= form_tag(polymorphic_path([:search, parent, resources].flatten, query_parameters), method: :get, autocomplete: "off", "data-turbo-frame": "_self") do %>
       <div class="mb-2">
         <%= text_field_tag(:q, params[:q], class: "form-control") %>
       </div>
@@ -10,9 +10,9 @@
 
   <%= tag.div class: "card-footer" do %>
     <%= link_to "Import #{resources.to_s.titleize}",
-                polymorphic_path([:import, course, resources]),
+                polymorphic_path([:import, parent, resources].flatten),
                 "data-turbo-target": "_top",
                 class: "btn btn-primary" if actions.include?(:import) && helpers.can?(:import, resource_class) %>
-    <%= link_to "New #{resource.to_s.titleize}", polymorphic_path([:new, course, resource]), class: "btn btn-primary" if actions.include? :new %>
+    <%= link_to "New #{resource.to_s.titleize}", polymorphic_path([:new, parent, resource].flatten), class: "btn btn-primary" if actions.include? :new %>
   <% end if actions.any? %>
 </div>

@@ -1,10 +1,10 @@
 class Shared::Search::SearchPaneComponents < ViewComponent::Base
-  def initialize(results:, course:, query_params:, resources:, options: {})
+  def initialize(results:, query_params:, resources:, resource_path:, options: {})
     @results = results
-    @course = course
     @query_params = query_params
     @resources = resources
     @options = options
+    @resource_path = resource_path
   end
 
   def agg_keys
@@ -14,7 +14,7 @@ class Shared::Search::SearchPaneComponents < ViewComponent::Base
   end
 
   def render?
-    results.aggs&.filter { |k, v| v["doc_count"] > 0 }.present?
+    results.aggs&.present?
   end
 
   def sort_link(category)
@@ -27,25 +27,25 @@ class Shared::Search::SearchPaneComponents < ViewComponent::Base
       if attribute == category.to_s
         if order == "desc"
           link_to "Sort by #{category}",
-            polymorphic_path([:search, course, resources],
+            polymorphic_path(resource_path,
               query_params.merge(sort: "#{category}_asc")),
             "data-turbo-frame": "_self"
         else
           link_to "Sort by #{category}",
-            polymorphic_path([:search, course, resources],
+            polymorphic_path(resource_path,
               query_params.merge(sort: "#{category}_desc")),
             "data-turbo-frame": "_self"
 
         end
       else
         link_to "Sort by #{category}",
-          polymorphic_path([:search, course, resources],
+          polymorphic_path(resource_path,
             query_params.merge(sort: "#{category}_desc")),
           "data-turbo-frame": "_self"
       end
     else
       link_to "Sort by #{category}",
-        polymorphic_path([:search, course, resources],
+        polymorphic_path(resource_path,
           query_params.merge(sort: "#{category}_desc")),
         "data-turbo-frame": "_self"
     end
@@ -53,5 +53,5 @@ class Shared::Search::SearchPaneComponents < ViewComponent::Base
 
   private
 
-  attr_reader :results, :course, :query_params, :resources, :options
+  attr_reader :results, :query_params, :resources, :options, :resource_path
 end

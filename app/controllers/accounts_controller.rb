@@ -19,7 +19,7 @@ class AccountsController < ApplicationController
   private
 
   def account_params
-    params.require(:user).permit(:given_name, :family_name, :email)
+    params.require(:user).permit(:given_name, :family_name)
   end
 
   def flash_interpolation_options

@@ -9,18 +9,18 @@
 
 <turbo-frame id="search-container" class="search-container" data-turbo-action="advance" target="_top">
   <%= render(Shared::Search::SearchPaneComponents.new(results: @results,
-                                                      course: @course,
                                                       query_params: request.query_parameters,
+                                                      resource_path: [:search, @course, :tags],
                                                       resources: :tags))
   %>
   <div class="w-100">
     <%= render(Shared::Search::SearchBarComponent.new(resources: :tags,
-                                                      course: @course,
+                                                      parent: @course,
                                                       query_parameters: request.query_parameters,
                                                       options: {
                                                         actions: [:new]
                                                       })) %>
-    <%= render(Shared::Search::ResultsComponent.new(course: @course, pagy: @pagy, search: @results, options: {
+    <%= render(Shared::Search::ResultsComponent.new(parent: @course, pagy: @pagy, search: @results, options: {
       headers: [:tag_group, created_at: :sortable]
     })) do |c| %>
       <% @results.results.each do |result| %>

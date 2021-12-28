@@ -1,7 +1,7 @@
 class Shared::Search::SearchBarComponent < ViewComponent::Base
-  def initialize(resources:, course:, query_parameters:, options: {})
+  def initialize(resources:, parent:, query_parameters:, options: {})
     @resources = resources
-    @course = course
+    @parent = parent
     @query_parameters = query_parameters
     @options = options
   end
@@ -20,5 +20,5 @@ class Shared::Search::SearchBarComponent < ViewComponent::Base
 
   private
 
-  attr_reader :resources, :course, :query_parameters, :options
+  attr_reader :resources, :parent, :query_parameters, :options
 end

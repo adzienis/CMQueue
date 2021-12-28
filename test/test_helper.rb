@@ -18,6 +18,7 @@ module ActiveSupport
       Question.reindex
       Enrollment.reindex
       QuestionState.reindex
+      Courses::Registration.reindex
 
       # and disable callbacks
       Searchkick.disable_callbacks
@@ -25,9 +26,6 @@ module ActiveSupport
 
     # Run tests in parallel with specified workers
     parallelize(workers: :number_of_processors)
-
-    # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
-    fixtures :all
 
     def method_missing(symbol, *args)
       raise StandardError.new("Missing method '#{symbol}'")
@@ -40,6 +38,20 @@ module ActiveSupport
             create(:enrollment, user: user, role: create(:role, role, resource: course))
             instance_exec(&block)
           end
+        end
+      end
+    end
+
+    def self.with_roles_should_ctxt(*roles, &block)
+      roles.each do |role|
+        context role do
+          let(:enrollment) { create(:enrollment, user: user, role: create(:role, role, resource: course)) }
+
+          before do
+            enrollment
+          end
+
+          instance_exec(&block)
         end
       end
     end

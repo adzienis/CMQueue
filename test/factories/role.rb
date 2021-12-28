@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :role do
-    association :resource
+    name { "default" }
 
     trait :instructor do
       name { "instructor" }

@@ -10,7 +10,7 @@
         <div class="mb-2">
           <div>
             <%= link_to "Clear #{query.humanize}",
-                        polymorphic_path([:search, course, resources],
+                        polymorphic_path(resource_path,
                                          request.query_parameters.reject { |k| k == query }),
                         "data-turbo-frame": "_self"
             %>
@@ -24,7 +24,7 @@
       <% if results.aggs.dig(category, "buckets").present? || options.dig(:extra_buckets, category.to_s).present? %>
         <h5> Filter by <%= category.to_s.humanize.titleize %></h5>
         <%= link_to "Remove #{category.to_s.humanize.titleize} filters",
-                    polymorphic_path([:search, course, resources],
+                    polymorphic_path(resource_path,
                                      request.query_parameters.reject { |k, v| k == category.to_s }),
                     "data-turbo-frame": "_self"
         %>
@@ -36,8 +36,8 @@
                 <%= render(Shared::Search::SearchPaneComponent.new(query_params: query_params,
                                                                    bucket: bucket,
                                                                    category: category,
-                                                                   course: course,
-                                                                   resources: resources
+                                                                   resources: resources,
+                                                                   resource_path: resource_path
                 )) %>
               </div>
             <% end %>
@@ -47,8 +47,8 @@
                   <%= render(Shared::Search::SearchPaneComponent.new(query_params: query_params,
                                                                      bucket: bucket,
                                                                      category: category,
-                                                                     course: course,
-                                                                     resources: resources
+                                                                     resources: resources,
+                                                                     resource_path: resource_path
                   )) %>
                 </div>
               <% end %>
