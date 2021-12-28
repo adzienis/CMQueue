@@ -1,0 +1,23 @@
+<turbo-frame id="search-container" class="search-container" data-turbo-action="advance" target="_top">
+  <%= render(Shared::Search::SearchPaneComponents.new(results: @results,
+                                                      query_params: request.query_parameters,
+                                                      resource_path: [:admin, :courses, :registrations],
+                                                      resources: :registrations))
+  %>
+  <div class="w-100">
+    <%= render(Shared::Search::SearchBarComponent.new(resources: :registrations,
+                                                      parent: [:admin, :courses],
+                                                      query_parameters: request.query_parameters
+                                                      )) %>
+    <%= render(Shared::Search::ResultsComponent.new(parent: [:admin, :courses], pagy: @pagy, search: @results, options: {
+      headers: [:tag_group, created_at: :sortable]
+    })) do |c| %>
+      <% @results.results.each do |result| %>
+        <%= c.result do %>
+          <%= render(::Admin::Courses::Registrations::Search::ResultRowComponent.new(registration: result)) %>
+        <% end %>
+      <% end %>
+    <% end %>
+  </div>
+
+</turbo-frame>

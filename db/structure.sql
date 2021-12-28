@@ -10,6 +10,27 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
+-- Name: course_1; Type: SCHEMA; Schema: -; Owner: -
+--
+
+CREATE SCHEMA course_1;
+
+
+--
+-- Name: course_2; Type: SCHEMA; Schema: -; Owner: -
+--
+
+CREATE SCHEMA course_2;
+
+
+--
+-- Name: course_3; Type: SCHEMA; Schema: -; Owner: -
+--
+
+CREATE SCHEMA course_3;
+
+
+--
 -- Name: check_duplicate_question(); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -62,6 +83,474 @@ LOCK question_states IN ACCESS EXCLUSIVE MODE;
 SET default_tablespace = '';
 
 SET default_table_access_method = heap;
+
+--
+-- Name: courses; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.courses (
+    id bigint NOT NULL,
+    name character varying,
+    course_code character varying,
+    student_code character varying,
+    ta_code character varying,
+    instructor_code character varying,
+    open boolean DEFAULT false,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
+);
+
+
+--
+-- Name: courses; Type: VIEW; Schema: course_1; Owner: -
+--
+
+CREATE VIEW course_1.courses AS
+ SELECT courses.id,
+    courses.name,
+    courses.course_code,
+    courses.student_code,
+    courses.ta_code,
+    courses.instructor_code,
+    courses.open,
+    courses.created_at,
+    courses.updated_at
+   FROM public.courses
+  WHERE (courses.id = 1);
+
+
+--
+-- Name: enrollments; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.enrollments (
+    id bigint NOT NULL,
+    user_id bigint,
+    role_id bigint,
+    semester character varying,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL,
+    discarded_at timestamp without time zone,
+    section character varying
+);
+
+
+--
+-- Name: roles; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.roles (
+    id bigint NOT NULL,
+    name character varying,
+    resource_type character varying,
+    resource_id bigint,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
+);
+
+
+--
+-- Name: enrollments; Type: VIEW; Schema: course_1; Owner: -
+--
+
+CREATE VIEW course_1.enrollments AS
+ SELECT enrollments.id,
+    enrollments.user_id,
+    enrollments.role_id,
+    enrollments.semester,
+    enrollments.created_at,
+    enrollments.updated_at,
+    enrollments.discarded_at,
+    enrollments.section
+   FROM (public.enrollments
+     JOIN public.roles ON ((roles.id = enrollments.role_id)))
+  WHERE (roles.resource_id = 1);
+
+
+--
+-- Name: question_states; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.question_states (
+    id bigint NOT NULL,
+    question_id bigint,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL,
+    description text,
+    state integer NOT NULL,
+    enrollment_id bigint NOT NULL,
+    acknowledged_at timestamp with time zone
+);
+
+
+--
+-- Name: question_states; Type: VIEW; Schema: course_1; Owner: -
+--
+
+CREATE VIEW course_1.question_states AS
+ SELECT question_states.id,
+    question_states.question_id,
+    question_states.created_at,
+    question_states.updated_at,
+    question_states.description,
+    question_states.state,
+    question_states.enrollment_id,
+    question_states.acknowledged_at
+   FROM ((public.question_states
+     JOIN public.enrollments ON ((question_states.enrollment_id = enrollments.id)))
+     JOIN public.roles ON ((enrollments.role_id = roles.id)))
+  WHERE (((roles.resource_type)::text = 'Course'::text) AND (roles.resource_id = 1));
+
+
+--
+-- Name: questions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.questions (
+    id bigint NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL,
+    title text,
+    tried text,
+    description text,
+    notes text,
+    location text,
+    discarded_at timestamp without time zone,
+    enrollment_id bigint NOT NULL
+);
+
+
+--
+-- Name: questions; Type: VIEW; Schema: course_1; Owner: -
+--
+
+CREATE VIEW course_1.questions AS
+ SELECT questions.id,
+    questions.created_at,
+    questions.updated_at,
+    questions.title,
+    questions.tried,
+    questions.description,
+    questions.notes,
+    questions.location,
+    questions.discarded_at,
+    questions.enrollment_id
+   FROM ((public.questions
+     JOIN public.enrollments ON ((enrollments.id = questions.enrollment_id)))
+     JOIN public.roles ON ((roles.id = enrollments.role_id)))
+  WHERE ((roles.resource_id = 1) AND ((roles.resource_type)::text = 'Course'::text));
+
+
+--
+-- Name: questions_tags; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.questions_tags (
+    id bigint NOT NULL,
+    question_id bigint,
+    tag_id bigint
+);
+
+
+--
+-- Name: questions_tags; Type: VIEW; Schema: course_1; Owner: -
+--
+
+CREATE VIEW course_1.questions_tags AS
+ SELECT questions_tags.id,
+    questions_tags.question_id,
+    questions_tags.tag_id
+   FROM (((public.questions_tags
+     JOIN public.questions ON ((questions_tags.question_id = questions.id)))
+     JOIN public.enrollments ON ((questions.enrollment_id = enrollments.id)))
+     JOIN public.roles ON ((roles.id = enrollments.role_id)))
+  WHERE (roles.resource_id = 1);
+
+
+--
+-- Name: roles; Type: VIEW; Schema: course_1; Owner: -
+--
+
+CREATE VIEW course_1.roles AS
+ SELECT roles.id,
+    roles.name,
+    roles.resource_type,
+    roles.resource_id,
+    roles.created_at,
+    roles.updated_at
+   FROM public.roles
+  WHERE (((roles.resource_type)::text = 'Course'::text) AND (roles.resource_id = 1));
+
+
+--
+-- Name: tags; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.tags (
+    id bigint NOT NULL,
+    course_id bigint,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL,
+    archived boolean DEFAULT true,
+    name text DEFAULT ''::text,
+    description text DEFAULT ''::text,
+    discarded_at timestamp without time zone
+);
+
+
+--
+-- Name: tags; Type: VIEW; Schema: course_1; Owner: -
+--
+
+CREATE VIEW course_1.tags AS
+ SELECT tags.id,
+    tags.course_id,
+    tags.created_at,
+    tags.updated_at,
+    tags.archived,
+    tags.name,
+    tags.description,
+    tags.discarded_at
+   FROM public.tags
+  WHERE (tags.course_id = 1);
+
+
+--
+-- Name: users; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.users (
+    id bigint NOT NULL,
+    given_name text,
+    family_name text,
+    email text,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
+);
+
+
+--
+-- Name: users; Type: VIEW; Schema: course_1; Owner: -
+--
+
+CREATE VIEW course_1.users AS
+ SELECT users.id,
+    users.given_name,
+    users.family_name,
+    users.email,
+    users.created_at,
+    users.updated_at
+   FROM ((public.users
+     JOIN public.enrollments ON ((users.id = enrollments.user_id)))
+     JOIN public.roles ON ((enrollments.role_id = roles.id)))
+  WHERE (((roles.resource_type)::text = 'Course'::text) AND (roles.resource_id = 1));
+
+
+--
+-- Name: question_states; Type: VIEW; Schema: course_2; Owner: -
+--
+
+CREATE VIEW course_2.question_states AS
+ SELECT question_states.id,
+    question_states.question_id,
+    question_states.created_at,
+    question_states.updated_at,
+    question_states.description,
+    question_states.state,
+    question_states.enrollment_id,
+    question_states.acknowledged_at
+   FROM ((public.question_states
+     JOIN public.enrollments ON ((question_states.enrollment_id = enrollments.id)))
+     JOIN public.roles ON ((enrollments.role_id = roles.id)))
+  WHERE (((roles.resource_type)::text = 'Course'::text) AND (roles.resource_id = 2));
+
+
+--
+-- Name: questions_tags; Type: VIEW; Schema: course_2; Owner: -
+--
+
+CREATE VIEW course_2.questions_tags AS
+ SELECT questions_tags.id,
+    questions_tags.question_id,
+    questions_tags.tag_id
+   FROM (((public.questions_tags
+     JOIN public.questions ON ((questions_tags.question_id = questions.id)))
+     JOIN public.enrollments ON ((questions.enrollment_id = enrollments.id)))
+     JOIN public.roles ON ((roles.id = enrollments.role_id)))
+  WHERE (roles.resource_id = 2);
+
+
+--
+-- Name: roles; Type: VIEW; Schema: course_2; Owner: -
+--
+
+CREATE VIEW course_2.roles AS
+ SELECT roles.id,
+    roles.name,
+    roles.resource_type,
+    roles.resource_id,
+    roles.created_at,
+    roles.updated_at
+   FROM public.roles
+  WHERE (((roles.resource_type)::text = 'Course'::text) AND (roles.resource_id = 2));
+
+
+--
+-- Name: users; Type: VIEW; Schema: course_2; Owner: -
+--
+
+CREATE VIEW course_2.users AS
+ SELECT users.id,
+    users.given_name,
+    users.family_name,
+    users.email,
+    users.created_at,
+    users.updated_at
+   FROM ((public.users
+     JOIN public.enrollments ON ((users.id = enrollments.user_id)))
+     JOIN public.roles ON ((enrollments.role_id = roles.id)))
+  WHERE (((roles.resource_type)::text = 'Course'::text) AND (roles.resource_id = 2));
+
+
+--
+-- Name: courses; Type: VIEW; Schema: course_3; Owner: -
+--
+
+CREATE VIEW course_3.courses AS
+ SELECT courses.id,
+    courses.name,
+    courses.course_code,
+    courses.student_code,
+    courses.ta_code,
+    courses.instructor_code,
+    courses.open,
+    courses.created_at,
+    courses.updated_at
+   FROM public.courses
+  WHERE (courses.id = 3);
+
+
+--
+-- Name: enrollments; Type: VIEW; Schema: course_3; Owner: -
+--
+
+CREATE VIEW course_3.enrollments AS
+ SELECT enrollments.id,
+    enrollments.user_id,
+    enrollments.role_id,
+    enrollments.semester,
+    enrollments.created_at,
+    enrollments.updated_at,
+    enrollments.discarded_at,
+    enrollments.section
+   FROM (public.enrollments
+     JOIN public.roles ON ((roles.id = enrollments.role_id)))
+  WHERE (roles.resource_id = 3);
+
+
+--
+-- Name: question_states; Type: VIEW; Schema: course_3; Owner: -
+--
+
+CREATE VIEW course_3.question_states AS
+ SELECT question_states.id,
+    question_states.question_id,
+    question_states.created_at,
+    question_states.updated_at,
+    question_states.description,
+    question_states.state,
+    question_states.enrollment_id,
+    question_states.acknowledged_at
+   FROM ((public.question_states
+     JOIN public.enrollments ON ((question_states.enrollment_id = enrollments.id)))
+     JOIN public.roles ON ((enrollments.role_id = roles.id)))
+  WHERE (((roles.resource_type)::text = 'Course'::text) AND (roles.resource_id = 3));
+
+
+--
+-- Name: questions; Type: VIEW; Schema: course_3; Owner: -
+--
+
+CREATE VIEW course_3.questions AS
+ SELECT questions.id,
+    questions.created_at,
+    questions.updated_at,
+    questions.title,
+    questions.tried,
+    questions.description,
+    questions.notes,
+    questions.location,
+    questions.discarded_at,
+    questions.enrollment_id
+   FROM ((public.questions
+     JOIN public.enrollments ON ((enrollments.id = questions.enrollment_id)))
+     JOIN public.roles ON ((roles.id = enrollments.role_id)))
+  WHERE ((roles.resource_id = 3) AND ((roles.resource_type)::text = 'Course'::text));
+
+
+--
+-- Name: questions_tags; Type: VIEW; Schema: course_3; Owner: -
+--
+
+CREATE VIEW course_3.questions_tags AS
+ SELECT questions_tags.id,
+    questions_tags.question_id,
+    questions_tags.tag_id
+   FROM (((public.questions_tags
+     JOIN public.questions ON ((questions_tags.question_id = questions.id)))
+     JOIN public.enrollments ON ((questions.enrollment_id = enrollments.id)))
+     JOIN public.roles ON ((roles.id = enrollments.role_id)))
+  WHERE (roles.resource_id = 3);
+
+
+--
+-- Name: roles; Type: VIEW; Schema: course_3; Owner: -
+--
+
+CREATE VIEW course_3.roles AS
+ SELECT roles.id,
+    roles.name,
+    roles.resource_type,
+    roles.resource_id,
+    roles.created_at,
+    roles.updated_at
+   FROM public.roles
+  WHERE (((roles.resource_type)::text = 'Course'::text) AND (roles.resource_id = 3));
+
+
+--
+-- Name: tags; Type: VIEW; Schema: course_3; Owner: -
+--
+
+CREATE VIEW course_3.tags AS
+ SELECT tags.id,
+    tags.course_id,
+    tags.created_at,
+    tags.updated_at,
+    tags.archived,
+    tags.name,
+    tags.description,
+    tags.discarded_at
+   FROM public.tags
+  WHERE (tags.course_id = 3);
+
+
+--
+-- Name: users; Type: VIEW; Schema: course_3; Owner: -
+--
+
+CREATE VIEW course_3.users AS
+ SELECT users.id,
+    users.given_name,
+    users.family_name,
+    users.email,
+    users.created_at,
+    users.updated_at
+   FROM ((public.users
+     JOIN public.enrollments ON ((users.id = enrollments.user_id)))
+     JOIN public.roles ON ((enrollments.role_id = roles.id)))
+  WHERE (((roles.resource_type)::text = 'Course'::text) AND (roles.resource_id = 3));
+
 
 --
 -- Name: analytics_dashboards; Type: TABLE; Schema: public; Owner: -
@@ -173,23 +662,6 @@ ALTER SEQUENCE public.certificates_id_seq OWNED BY public.certificates.id;
 
 
 --
--- Name: courses; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.courses (
-    id bigint NOT NULL,
-    name character varying,
-    course_code character varying,
-    student_code character varying,
-    ta_code character varying,
-    instructor_code character varying,
-    open boolean DEFAULT false,
-    created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL
-);
-
-
---
 -- Name: courses_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -216,6 +688,39 @@ CREATE TABLE public.courses_questions (
     course_id bigint,
     question_id bigint
 );
+
+
+--
+-- Name: courses_registrations; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.courses_registrations (
+    id bigint NOT NULL,
+    name text NOT NULL,
+    approved boolean DEFAULT false,
+    instructor_id bigint NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: courses_registrations_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.courses_registrations_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: courses_registrations_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.courses_registrations_id_seq OWNED BY public.courses_registrations.id;
 
 
 --
@@ -258,22 +763,6 @@ CREATE SEQUENCE public.courses_sections_id_seq
 --
 
 ALTER SEQUENCE public.courses_sections_id_seq OWNED BY public.courses_sections.id;
-
-
---
--- Name: enrollments; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.enrollments (
-    id bigint NOT NULL,
-    user_id bigint,
-    role_id bigint,
-    semester character varying,
-    created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL,
-    discarded_at timestamp without time zone,
-    section character varying
-);
 
 
 --
@@ -510,22 +999,6 @@ ALTER SEQUENCE public.question_queues_id_seq OWNED BY public.question_queues.id;
 
 
 --
--- Name: question_states; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.question_states (
-    id bigint NOT NULL,
-    question_id bigint,
-    created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL,
-    description text,
-    state integer NOT NULL,
-    enrollment_id bigint NOT NULL,
-    acknowledged_at timestamp with time zone
-);
-
-
---
 -- Name: question_states_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -542,24 +1015,6 @@ CREATE SEQUENCE public.question_states_id_seq
 --
 
 ALTER SEQUENCE public.question_states_id_seq OWNED BY public.question_states.id;
-
-
---
--- Name: questions; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.questions (
-    id bigint NOT NULL,
-    created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL,
-    title text,
-    tried text,
-    description text,
-    notes text,
-    location text,
-    discarded_at timestamp without time zone,
-    enrollment_id bigint NOT NULL
-);
 
 
 --
@@ -582,17 +1037,6 @@ ALTER SEQUENCE public.questions_id_seq OWNED BY public.questions.id;
 
 
 --
--- Name: questions_tags; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.questions_tags (
-    id bigint NOT NULL,
-    question_id bigint,
-    tag_id bigint
-);
-
-
---
 -- Name: questions_tags_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -609,20 +1053,6 @@ CREATE SEQUENCE public.questions_tags_id_seq
 --
 
 ALTER SEQUENCE public.questions_tags_id_seq OWNED BY public.questions_tags.id;
-
-
---
--- Name: roles; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.roles (
-    id bigint NOT NULL,
-    name character varying,
-    resource_type character varying,
-    resource_id bigint,
-    created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL
-);
 
 
 --
@@ -721,22 +1151,6 @@ ALTER SEQUENCE public.tag_groups_id_seq OWNED BY public.tag_groups.id;
 
 
 --
--- Name: tags; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.tags (
-    id bigint NOT NULL,
-    course_id bigint,
-    created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL,
-    archived boolean DEFAULT true,
-    name text DEFAULT ''::text,
-    description text DEFAULT ''::text,
-    discarded_at timestamp without time zone
-);
-
-
---
 -- Name: tags_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -753,20 +1167,6 @@ CREATE SEQUENCE public.tags_id_seq
 --
 
 ALTER SEQUENCE public.tags_id_seq OWNED BY public.tags.id;
-
-
---
--- Name: users; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.users (
-    id bigint NOT NULL,
-    given_name text,
-    family_name text,
-    email text,
-    created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL
-);
 
 
 --
@@ -826,6 +1226,13 @@ ALTER TABLE ONLY public.certificates ALTER COLUMN id SET DEFAULT nextval('public
 --
 
 ALTER TABLE ONLY public.courses ALTER COLUMN id SET DEFAULT nextval('public.courses_id_seq'::regclass);
+
+
+--
+-- Name: courses_registrations id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.courses_registrations ALTER COLUMN id SET DEFAULT nextval('public.courses_registrations_id_seq'::regclass);
 
 
 --
@@ -978,6 +1385,14 @@ ALTER TABLE ONLY public.certificates
 
 ALTER TABLE ONLY public.courses
     ADD CONSTRAINT courses_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: courses_registrations courses_registrations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.courses_registrations
+    ADD CONSTRAINT courses_registrations_pkey PRIMARY KEY (id);
 
 
 --
@@ -1581,6 +1996,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20211118074023'),
 ('20211119031040'),
 ('20211119032313'),
-('20211211052838');
+('20211211052838'),
+('20211223235232');
 
 

@@ -14,6 +14,7 @@ class Questions::SearchController < ApplicationController
     builder = Search::ClauseBuilder.new(attributes: [:state, :user_name, :tags, :created_at], params: params)
 
     where_params = builder.build_clauses(params)
+    where_params = where_params.merge(semester: @current_semester) unless @current_semester == "all"
     order_params = builder.build_order_clauses(params)
 
     @question_results = Question.pagy_search(params[:q].present? ? params[:q] : "*",

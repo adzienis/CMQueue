@@ -1,4 +1,4 @@
-<%= link_to polymorphic_path([:search, course, resources], merged_query_params), class: html_class, "data-turbo-frame": "_self" do %>
+<%= link_to polymorphic_path([:search, parent, resources].flatten, merged_query_params), class: html_class, "data-turbo-frame": "_self" do %>
   <%= category.to_s.titleize %>
   <% if selected? %>
     <%= tag.i class: "fas fa-arrow-up" if direction == :desc %>

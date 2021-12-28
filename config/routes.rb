@@ -4,6 +4,22 @@ require "sidekiq/web"
 require "sidekiq/cron/web"
 
 Rails.application.routes.draw do
+  namespace :admin do
+    get "courses/index"
+  end
+  namespace :admin do
+    namespace :courses do
+      resources :registrations, only: [:index, :update] do
+        collection do
+          get "search", to: "registrations#index"
+        end
+      end
+    end
+  end
+
+  resource :admin do
+  end
+
   get "accounts/index"
   namespace :courses do
     get "questions/edit"
@@ -50,28 +66,6 @@ Rails.application.routes.draw do
   get "grouped_tags", to: "summaries#grouped_tags"
 
   resources :tag_groups
-
-  namespace :admin do
-    namespace :doorkeeper do
-      resources :access_grants
-      resources :access_tokens
-      resources :applications
-    end
-    resources :users
-    resources :roles do
-      get :export, on: :collection
-    end
-    resources :enrollments
-    resources :announcements
-    resources :question_states
-    resources :question_tags
-    resource :settings
-    resources :questions
-    resources :tags
-    resources :courses
-
-    root to: "users#index"
-  end
 
   get "/api/swagger", to: "application#swagger", as: :swagger
   get "/demo", to: redirect("https://cmqueue-demo.herokuapp.com/"), as: :demo
@@ -154,6 +148,10 @@ Rails.application.routes.draw do
     end
   end
 
+  namespace :courses do
+    resources :registrations, only: [:new, :create, :update], controller: "registrations"
+  end
+
   resources :courses, only: [], model_name: "Course" do
     member do
       scope :analytics do
@@ -164,7 +162,6 @@ Rails.application.routes.draw do
     namespace :analytics do
       resources :dashboards
     end
-
     resources :questions, except: [:new, :create], controller: "courses/questions" do
       collection do
         get "download", to: "questions#download_form"

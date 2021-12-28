@@ -9,6 +9,7 @@
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
 #  discarded_at :datetime
+#  section      :string
 #
 require "pagy/extras/searchkick"
 
@@ -36,7 +37,7 @@ class Enrollment < ApplicationRecord
     }
   end
 
-  enum semester: {Su21: "Su21", F21: "F21"}
+  enum semester: {Su21: "Su21", F21: "F21", S21: "S21"}
 
   validates :user_id, :role_id, :semester, presence: true
 
@@ -52,7 +53,7 @@ class Enrollment < ApplicationRecord
   validate :semester_valid
 
   def semester_valid
-    errors.add(:semester, "invalid") unless ["F21"].include? semester
+    errors.add(:semester, "invalid") unless ["F21", "S21"].include? semester
   end
 
   def unique_enrollment_in_course_per_semester
@@ -168,8 +169,12 @@ class Enrollment < ApplicationRecord
       else
         "F#{time.strftime("%y")}"
       end
-    else
+    elsif time.month < 12
       "F#{time.strftime("%y")}"
+    elsif time.day <= 15
+      "F#{time.strftime("%y")}"
+    else
+      "S#{time.strftime("%y")}"
     end
   end
 end

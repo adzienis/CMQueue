@@ -21,7 +21,7 @@ module CMQueue
     config.load_defaults 6.1
     config.assets.paths << Rails.root.join("app", "assets", "fonts")
     config.autoload_paths << "#{Rails.root}/lib/search"
-    config.eager_load_paths += %W[#{Rails.root}/poros/concerns]
+    config.eager_load_paths += %W[#{Rails.root}/lib/concerns]
     config.active_model.i18n_customize_full_message = true
     config.active_record.schema_format = :sql
     config.time_zone = "Eastern Time (US & Canada)"

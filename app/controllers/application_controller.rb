@@ -19,7 +19,7 @@ class ApplicationController < ActionController::Base
 
   include Pagy::Backend
 
-  before_action :authenticate_user!, :set_course, :set_user, :set_enrollment
+  before_action :authenticate_user!, :set_course, :set_user, :set_enrollment, :set_semester
 
   def default_url_options
     if Rails.env.development? || Rails.env.test?
@@ -76,6 +76,14 @@ class ApplicationController < ActionController::Base
   end
 
   protected
+
+  def set_semester
+    if @course.present?
+      session["course_#{@course.id}"] ||= {}
+      session["course_#{@course.id}"]["semester"] ||= Enrollment.default_semester
+      @current_semester = session["course_#{@course.id}"]["semester"]
+    end
+  end
 
   def authenticate_user!
     if user_signed_in?

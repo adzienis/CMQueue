@@ -1,8 +1,8 @@
-<%= link_to polymorphic_path([:search, course, resources], build_parameters(category, bucket["key"])),
-            class: build_class(category, bucket["key"]),
+<%= link_to polymorphic_path(resource_path, build_parameters(category, bucket_key)),
+            class: build_class(category, bucket_key),
             "data-turbo-frame": "_self" do %>
 <div class="d-flex">
-  <%= "#{bucket["key"]}" %>
+  <%= "#{bucket_key}" %>
   <div style="flex: 1"></div>
   <span class="me-1 badge bg-secondary"><%= bucket["doc_count"] %></span>
 </div>

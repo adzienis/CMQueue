@@ -5,6 +5,7 @@ consumer.subscriptions.create("CourseChannel", {
     this.update_course_channel = this.update_course_channel.bind(this);
     this.general_channel = null;
     this.role_channel = null;
+    this.enrollment_channel = nul;
 
     document.addEventListener("turbo:load", this.update_course_channel);
 
@@ -15,6 +16,7 @@ consumer.subscriptions.create("CourseChannel", {
     document.removeEventListener("turbo:load", this.update_course_channel);
     consumer.subscriptions.remove(this.general_channel);
     consumer.subscriptions.remove(this.role_channel);
+    consumer.subscriptions.remove(this.enrollment_channel);
   },
 
   received(data) {},

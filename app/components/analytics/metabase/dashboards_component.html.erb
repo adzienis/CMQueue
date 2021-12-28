@@ -30,4 +30,9 @@
     <% end %>
     </tbody>
   </table>
+  <% if dashboards.empty? %>
+    <div class="alert alert-warning">
+      No Dashboards
+    </div>
+  <% end %>
 </div>

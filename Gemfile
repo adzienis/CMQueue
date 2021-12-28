@@ -49,8 +49,6 @@ group :development do
   gem "rack-mini-profiler", "~> 2.0"
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem "spring"
-
-  gem "mini_racer", platforms: :ruby
 end
 
 group :test do
@@ -78,6 +76,7 @@ gem "pg", "~> 1.2"
 gem "pagy"
 
 gem "simple_form", "~> 5.1"
+gem "simplecov", require: false, group: :test
 
 gem "pghero", "~> 2.8"
 
@@ -124,3 +123,5 @@ gem "kredis", "~> 1.0"
 gem "minitest-spec-rails", "~> 6.1"
 
 gem "ffaker", "~> 2.20"
+
+gem "annotate", "~> 3.1"

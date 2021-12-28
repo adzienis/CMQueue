@@ -47,7 +47,8 @@ class CoursesController < ApplicationController
   end
 
   def semester
-    session[:semester] = params[:semester]
+    session["course_#{@course.id}"] ||= {}
+    session["course_#{@course.id}"]["semester"] = params[:semester]
 
     redirect_to request.referer
   end

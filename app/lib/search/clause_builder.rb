@@ -57,7 +57,7 @@ module Search
         end
 
         return {} if parsed.instance_of?(Array) && parsed.empty?
-        return {} unless parsed.present?
+        return {} if parsed.nil?
         return {query_key => {all: parsed}} if parsed.instance_of?(Array)
 
         {query_key => parsed}

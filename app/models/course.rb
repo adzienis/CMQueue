@@ -12,13 +12,6 @@
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
 #
-require "./lib/postgres/views/course"
-require "./lib/postgres/views/question"
-require "./lib/postgres/views/tag"
-require "./lib/postgres/views/enrollment"
-require "./lib/postgres/views/user"
-require "./lib/postgres/views/question_state"
-require "./lib/postgres/views"
 
 class Course < ApplicationRecord
   include Turbo::Broadcastable
@@ -67,17 +60,6 @@ class Course < ApplicationRecord
   has_many :tags, dependent: :destroy
   # has_many :announcements
 
-  has_many :access_grants,
-    class_name: "Doorkeeper::AccessGrant",
-    foreign_key: :resource_owner_id,
-    dependent: :destroy
-
-  has_many :access_tokens,
-    class_name: "Doorkeeper::AccessToken",
-    foreign_key: :resource_owner_id,
-    dependent: :destroy
-
-  has_many :applications, class_name: "Doorkeeper::Application", as: :owner
   has_many :courses_sections, class_name: "Courses::Section"
 
   has_one :ta_role, -> { where(name: "ta") },
@@ -108,6 +90,16 @@ class Course < ApplicationRecord
   }
 
   scope :with_setting, ->(key, value) { joins(:settings).merge(Setting.with_key(key).with_value(value)) }
+
+  def search_data
+    {
+      id: id,
+      name: name,
+      created_at: created_at,
+      updated_at: updated_at
+
+    }
+  end
 
   def self.find_by_code?(code)
     find_by_code(code).present?

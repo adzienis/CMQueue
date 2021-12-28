@@ -1,0 +1,28 @@
+<tr>
+  <td>
+    <h5 class="fw-bold">
+      <%= registration.name %>
+    </h5>
+    <hr>
+    <div>
+      <label class="fw-bold"> Instructor </label>
+      <div>
+        <%= registration.instructor.full_name %>
+      </div>
+    </div>
+    <div>
+      <label class="fw-bold"> Instructor Email </label>
+      <div>
+        <%= registration.instructor.email %>
+      </div>
+    </div>
+    <span class="badge <%= approval_class %>"> <%= approval_msg %></span>
+    <%= form_with model: [:admin, registration] do |f| %>
+      <%= f.hidden_field :approved, value: true %>
+      <%= f.submit "Approve", class: "btn btn-primary" %>
+    <% end unless registration.approved %>
+  </td>
+  <td>
+    <%= registration.created_at.strftime("%a, %x, %I:%M %p") %>
+  </td>
+</tr>

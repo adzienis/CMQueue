@@ -18,7 +18,7 @@
 
 <turbo-frame id="search-container" class="search-container" data-turbo-action="advance" target="_top">
   <%= render(Shared::Search::SearchPaneComponents.new(results: @results,
-                                                      course: @course,
+                                                      resource_path: [:search, @course, :enrollments],
                                                       query_params: request.query_parameters,
                                                       resources: :enrollments
   ))
@@ -26,12 +26,12 @@
 
   <div class="w-100">
     <%= render(Shared::Search::SearchBarComponent.new(resources: :enrollments,
-                                                      course: @course,
+                                                      parent: @course,
                                                       query_parameters: request.query_parameters,
                                                       options: {
                                                         actions: [:new, :import]
                                                       })) %>
-    <%= render(Shared::Search::ResultsComponent.new(course: @course, pagy: @pagy, search: @results, options: {
+    <%= render(Shared::Search::ResultsComponent.new(parent: @course, pagy: @pagy, search: @results, options: {
       headers: [:enrollment, created_at: :sortable]
     })) do |c| %>
       <% @results.results.each do |result| %>

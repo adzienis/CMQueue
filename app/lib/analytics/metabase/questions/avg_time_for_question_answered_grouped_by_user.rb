@@ -3,17 +3,8 @@ class Analytics::Metabase::Questions::AvgTimeForQuestionAnsweredGroupedByUser
     @database_id = database_id
     @course_schema = course_schema
     @collection_id = collection_id
-    @filters = filters
     @date_field_id = date_field_id
     @full_name_field_id = full_name_field_id
-  end
-
-  def build_filters(filters:)
-    @filters = {}
-
-    @filters = @filters.merge({full_name: filters[:full_name]}) if filters[:full_name].present?
-    @filters = @filters.merge({date: filters[:date]}) if filters[:date].present?
-    @filters
   end
 
   def call
@@ -43,19 +34,7 @@ class Analytics::Metabase::Questions::AvgTimeForQuestionAnsweredGroupedByUser
               default: "thisday"
             }
           },
-          query: "select #{course_schema}.users.id user_id, #{course_schema}.users.given_name || ' ' || #{course_schema}.users.family_name full_name, " \
-            "count(*) questions_count, " \
-            "extract(epoch from avg(subquery.created_at - subquery_min.created_at)) total_time from #{course_schema}.questions " \
-            "inner join #{course_schema}.enrollments on #{course_schema}.enrollments.id = #{course_schema}.questions.enrollment_id " \
-            "inner join #{course_schema}.users on #{course_schema}.users.id = #{course_schema}.enrollments.user_id " \
-            "JOIN LATERAL ((SELECT #{course_schema}.question_states.created_at FROM #{course_schema}.question_states WHERE " \
-            "(id in (SELECT max(id) FROM #{course_schema}.question_states WHERE (question_id = #{course_schema}.questions.id and state = 2))))) " \
-            "subquery ON true JOIN LATERAL ((SELECT #{course_schema}.question_states.created_at FROM #{course_schema}.question_states" \
-            " WHERE (id in (SELECT max(id) FROM #{course_schema}.question_states " \
-            "WHERE (question_id = #{course_schema}.questions.id and state = 1))))) subquery_min ON true " \
-            "where {{full_name}} and {{date}} group by #{course_schema}.users.id, " \
-            "#{course_schema}.users.given_name, #{course_schema}.users.family_name " \
-            "order by questions_count DESC limit(10)"
+          query: query
         },
         database: database_id
       },
@@ -79,5 +58,26 @@ class Analytics::Metabase::Questions::AvgTimeForQuestionAnsweredGroupedByUser
 
   private
 
-  attr_accessor :database_id, :course_schema, :filters, :collection_id, :filters, :date_field_id, :full_name_field_id
+  attr_accessor :database_id, :course_schema, :filters, :collection_id, :date_field_id, :full_name_field_id
+
+  def query
+    <<~SQL
+      SELECT #{course_schema}.users.id user_id, 
+      #{course_schema}.users.given_name || ' ' || #{course_schema}.users.family_name full_name, 
+      COUNT(*) questions_count,
+      extract(epoch from avg(subquery.created_at - subquery_min.created_at)) total_time FROM #{course_schema}.questions
+      INNER JOIN #{course_schema}.enrollments ON #{course_schema}.enrollments.id = #{course_schema}.questions.enrollment_id
+      INNER JOIN #{course_schema}.users ON #{course_schema}.users.id = #{course_schema}.enrollments.user_id
+      JOIN LATERAL ((SELECT #{course_schema}.question_states.created_at FROM #{course_schema}.question_states WHERE
+      (id IN (SELECT max(id) FROM #{course_schema}.question_states 
+      WHERE (question_id = #{course_schema}.questions.id and state = 2)))))
+      subquery ON true JOIN LATERAL ((SELECT #{course_schema}.question_states.created_at 
+      FROM #{course_schema}.question_states
+      WHERE (id in (SELECT max(id) FROM #{course_schema}.question_states
+      WHERE (question_id = #{course_schema}.questions.id and state = 1))))) subquery_min ON true
+      WHERE {{full_name}} AND {{date}} 
+      GROUP BY #{course_schema}.users.id, #{course_schema}.users.given_name, #{course_schema}.users.family_name 
+      ORDER BY questions_count DESC LIMIT 10
+    SQL
+  end
 end

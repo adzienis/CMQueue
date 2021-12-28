@@ -1,8 +1,8 @@
 class Shared::Search::SortLinkComponent < ViewComponent::Base
-  def initialize(category:, query_params:, course:, resources:)
+  def initialize(category:, query_params:, parent:, resources:)
     @category = category
     @query_params = query_params
-    @course = course
+    @parent = parent
     @resources = resources
   end
 
@@ -44,5 +44,5 @@ class Shared::Search::SortLinkComponent < ViewComponent::Base
 
   private
 
-  attr_reader :category, :query_params, :course, :resources
+  attr_reader :category, :query_params, :parent, :resources
 end
