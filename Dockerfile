@@ -110,7 +110,6 @@ RUN yarn install --frozen-lockfile --check-files
 # Chown files so non are root.
 COPY --chown=appuser:appgroup . /usr/src/app
 
-
 # Precompile the assets, yarn relay & bootsnap
 RUN RAILS_SERVE_STATIC_FILES=enabled \
       bundle exec rake assets:precompile \

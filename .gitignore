@@ -67,3 +67,5 @@ metabase.db
 /config/credentials/development.key
 
 /config/credentials/production.key
+
+/config/credentials/test.key

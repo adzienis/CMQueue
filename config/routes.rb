@@ -5,14 +5,16 @@ require "sidekiq/cron/web"
 
 Rails.application.routes.draw do
   namespace :admin do
-    get "courses/index"
-  end
-  namespace :admin do
     namespace :courses do
       resources :registrations, only: [:index, :update] do
         collection do
           get "search", to: "registrations#index"
         end
+      end
+    end
+    resources :courses do
+      collection do
+        get "search"
       end
     end
   end
