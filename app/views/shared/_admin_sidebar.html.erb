@@ -6,4 +6,11 @@
     <%= link_to "Course Registrations", admin_courses_registrations_path,
                 class: "btn btn-toggle align-items-center text-decoration-none #{["admin/courses/registrations"].include?(controller_path) ? "active-link" : ""}" %>
   </li>
+  <li class="mb-1 d-flex align-items-center">
+    <div style="width: 16px" class="d-flex justify-content-center">
+      <i class="fas fa-chalkboard-teacher"></i>
+    </div>
+    <%= link_to "Courses", admin_courses_path,
+                class: "btn btn-toggle align-items-center text-decoration-none #{["admin/courses"].include?(controller_path) ? "active-link" : ""}" %>
+  </li>
 <% end %>

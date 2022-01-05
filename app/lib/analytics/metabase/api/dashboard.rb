@@ -26,6 +26,14 @@ class Analytics::Metabase::API::Dashboard
     dashboard["enable_embedding"]
   end
 
+  def enable_embedding!
+    configure_embedding!(embedding: true)
+  end
+
+  def disable_embedding!
+    configure_embedding!(embedding: false)
+  end
+
   def dashboard
     @dashboard ||= metabase.get_dashboard(dashboard_id: dashboard_id)
   end
@@ -39,6 +47,12 @@ class Analytics::Metabase::API::Dashboard
   end
 
   private
+
+  def configure_embedding!(embedding:)
+    mb.put_dashboard(dashboard_id: id, json: {
+      enable_embedding: embedding
+    })
+  end
 
   attr_reader :dashboard_id
 end

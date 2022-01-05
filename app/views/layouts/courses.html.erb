@@ -32,7 +32,7 @@
               <li>
                 <%= link_to "All Semesters", semester_course_path(@course, semester: "all"), class: "dropdown-item", method: :post %>
               </li>
-              <% Enrollment.semesters.values.each do |sem| %>
+              <% Enrollment.semesters.each do |sem| %>
                 <li>
                   <%= link_to sem, semester_course_path(@course, semester: sem), class: "dropdown-item", method: :post %>
                 </li>

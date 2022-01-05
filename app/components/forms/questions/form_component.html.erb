@@ -47,14 +47,13 @@
             <%= tag_group.name %>
           </label>
           <%= ff.collection_select tag_group.id,
-                                   tag_group.tags,
+                                   tag_group.tags.where(archived: false),
                                    :id,
                                    :name,
                                    {
                                      selected: question.tags.filter { |tag| tag_group.tags.include? tag }.map { |tag| tag.id }
                                    },
                                    multiple: true,
-                                   class: "invisible form-control",
                                    autocomplete: false
           %>
           <%= f.error "tag_group_#{tag_group.id}", class: "invalid-feedback d-block" %>

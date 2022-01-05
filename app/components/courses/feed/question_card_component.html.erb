@@ -1,30 +1,63 @@
-<% cache question do %>
-  <%= helpers.turbo_stream_from question, channel: SyncedTurboChannel %>
-  <turbo-frame id="<%= dom_id(question) %>">
-    <div class="card shadow-sm mb-3 position-relative">
-      <div class="position-absolute" style="top: -15px; left: 0">
-        <% question.tags.each do |tag| %>
+<%= helpers.turbo_stream_from question, channel: SyncedTurboChannel %>
+<turbo-frame id="<%= dom_id(question) %>">
+  <div class="card shadow-sm mb-3 position-relative">
+    <div class="position-absolute" style="top: -15px; left: 0">
+      <% question.tags.each do |tag| %>
         <span class="badge bg-danger">
           <%= tag.name %>
         </span>
-        <% end %>
-      </div>
-      <div class="card-body">
-        <div class="card-title fw-bold">
-          <div class="fw-bold">
-            <%= tag.span status_badge_msg, class: status_badge_class %>
-            <%= question.user.full_name %>
-          </div>
-          <div class="<%= status_class %>"> <%= status_msg %></div>
+      <% end %>
+    </div>
+    <div class="card-body">
+      <div class="card-title fw-bold">
+        <div class="fw-bold">
+          <%= tag.span status_badge_msg, class: status_badge_class %>
+          <%= question.user.full_name %>
         </div>
+        <div class="<%= status_class %>"> <%= status_msg %></div>
+      </div>
+      <div>
         <%= question.description %>
       </div>
-      <%= tag.div class: "card-footer" do %>
-        <%= button_to "Unfreeze",
-                      handle_question_path(question, state: "unresolved"),
-                      class: "btn btn-primary",
-                      "data-disable-with": "Unfreezing" if question.frozen? %>
-      <% end if footer? %>
     </div>
-  </turbo-frame>
-<% end %>
+    <%= tag.div class: "card-footer" do %>
+      <%= render(Shared::ModalComponent.new(id: "#{dom_id(question)}-info-modal")) do |modal| %>
+        <% modal.title do %>
+          Question Information
+        <% end %>
+        <% modal.button do %>
+          <%= button_tag "More Information", class: "btn btn-primary" %>
+        <% end %>
+        <% modal.body do %>
+          <div>
+            <label class="fw-bold"> Related Questions</label>
+            <div style="overflow-y: scroll; max-height: 400px">
+              <% question.related_questions.each do |related_q| %>
+                <div class="card">
+                  <div class="card-body">
+                    <div>
+                      <%= related_q.description %>
+                    </div>
+                    <%= render(Questions::StatusTextComponent.new(question: related_q)) %>
+                    <div class="mb-2">
+                      <label class="fw-bold"> Current State </label>
+                      <div>
+                        <%= render(Questions::QuestionStateBadgeComponent.new(question_state: related_q.question_state)) %>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+        <% modal.footer do %>
+        <% end %>
+      <% end %>
+      <%= button_to "Unfreeze",
+                    handle_question_path(question, state: "unresolved"),
+                    class: "btn btn-primary",
+                    "data-disable-with": "Unfreezing" if question.frozen? %>
+    <% end %>
+  </div>
+</turbo-frame>

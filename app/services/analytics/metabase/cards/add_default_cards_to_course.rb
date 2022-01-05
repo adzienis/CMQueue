@@ -33,6 +33,13 @@ module Analytics
             collection_id: course.base_collection.id).call
 
           create_card(card)
+
+          all_cards = course.base_collection.cards
+
+          all_cards.each do |card|
+            Analytics::Metabase::Dashboards::AddCardToDashboard.new(dashboard_id: course.mb_dashboards.first.id,
+              card_id: card.id).call
+          end
         end
 
         private

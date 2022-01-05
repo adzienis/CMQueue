@@ -1,5 +1,5 @@
 <%= form_with url: enroll_by_search_path do |f| %>
-  <%= render(Shared::ModalComponent.new) do |modal| %>
+  <%= render(Shared::ModalComponent.new(id: "enroll-search-component")) do |modal| %>
     <% modal.title do %>
       Enroll in a Course
     <% end %>
@@ -8,6 +8,7 @@
            style="height: 110px; cursor: pointer"
       >
         <i class="fas fa-plus fa-3x"></i>
+        Enroll in a Course
       </div>
     <% end %>
     <% modal.body do %>

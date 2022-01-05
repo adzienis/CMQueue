@@ -26,7 +26,7 @@
         <%= link_to "Remove #{category.to_s.humanize.titleize} filters",
                     polymorphic_path(resource_path,
                                      request.query_parameters.reject { |k, v| k == category.to_s }),
-                    "data-turbo-frame": "_self"
+                    "data-turbo-frame": "_self" if params.keys.include?(category)
         %>
         <div>
           <hr class="m-1">

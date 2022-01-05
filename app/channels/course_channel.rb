@@ -34,6 +34,8 @@ class CourseChannel < ApplicationCable::Channel
 
   def unsubscribed
     SpecialLogger.info "unsubscribed: #{room_name}; #{current_user.email}"
-    Cmq::ActionCable::Connections.remove_enrollment_from_room(room_name, current_user.enrollment_in_course(course).id)
+    if params[:room].present?
+      Cmq::ActionCable::Connections.remove_enrollment_from_room(room_name, current_user.enrollment_in_course(course).id)
+    end
   end
 end

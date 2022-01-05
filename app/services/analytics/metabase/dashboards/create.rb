@@ -15,7 +15,8 @@ class Analytics::Metabase::Dashboards::Create
   def json
     {
       collection_id: collection_id,
-      name: name
+      name: name,
+      enable_embedding: true
     }
   end
 

@@ -15,11 +15,7 @@
             All the courses in which you are currently enrolled as a student.
           </div>
           <turbo-frame id="enroll-by-search" src="<%= new_enroll_by_search_path %>">
-            <div class="card card-body d-flex justify-content-center align-items-center mb-2 shadow-sm"
-                 style="height: 110px; cursor: pointer"
-            >
-              <i class="fas fa-plus fa-3x"></i>
-            </div>
+            <%= render(Users::Enrollments::EnrollBySearch::SearchComponent.new(enrollment: Enrollment.new)) %>
           </turbo-frame>
           <div id="student-enrollments">
             <%= render(Users::Enrollments::EnrollmentsComponent.new(enrollments: current_user.student_enrollments)) %>

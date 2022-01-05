@@ -37,8 +37,6 @@ class Enrollment < ApplicationRecord
     }
   end
 
-  enum semester: {Su21: "Su21", F21: "F21", S21: "S21"}
-
   validates :user_id, :role_id, :semester, presence: true
 
   belongs_to :user, optional: false
@@ -52,8 +50,12 @@ class Enrollment < ApplicationRecord
   validate :unique_enrollment_in_course_per_semester, on: :create
   validate :semester_valid
 
+  def self.semesters
+    (21..Time.current.strftime("%y").to_i).map { |v| ["S#{v}", "Su#{v}", "F#{v}"] }.flatten
+  end
+
   def semester_valid
-    errors.add(:semester, "invalid") unless ["F21", "S21"].include? semester
+    errors.add(:semester, "invalid") unless semesters.include?(semester)
   end
 
   def unique_enrollment_in_course_per_semester
@@ -174,7 +176,7 @@ class Enrollment < ApplicationRecord
     elsif time.day <= 15
       "F#{time.strftime("%y")}"
     else
-      "S#{time.strftime("%y")}"
+      "S#{(time + 1.year).strftime("%y")}"
     end
   end
 end

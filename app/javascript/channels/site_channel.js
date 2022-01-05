@@ -1,5 +1,4 @@
 import consumer from "./consumer";
-import queryClient from "../src/utilities/queryClientFile";
 
 consumer.subscriptions.create("SiteChannel", {
   connected() {
@@ -15,9 +14,6 @@ consumer.subscriptions.create("SiteChannel", {
       if (process.env.NODE_ENV === "development") {
         console.log("invalidating_site", data.invalidate);
       }
-      await queryClient.invalidateQueries(data.invalidate);
-
-      await queryClient.refetchQueries(data.invalidate);
     }
   },
 });

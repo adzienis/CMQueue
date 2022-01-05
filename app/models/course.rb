@@ -17,10 +17,8 @@ class Course < ApplicationRecord
   include Turbo::Broadcastable
   include HasEnrollables
   include HasMetabaseEntities
+  extend Pagy::Searchkick
   searchkick
-
-  # to prevent accidentally exposing sensitive columns
-  default_scope { select(Course.column_names - ["instructor_code", "ta_code", "student_code"]) }
 
   validates :name, presence: true, uniqueness: true
   validates :ta_code, presence: true, uniqueness: true, on: :create

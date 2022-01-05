@@ -46,6 +46,7 @@
     <div data-controller="question-form"
          data-question-form-new-record-value="<%= question.new_record? %>"
          data-question-form-course-id-value="<%= course.id %>"
+         data-question-form-course-open-value="<%= course.open? %>"
          id="question-form">
       <%= tag.div class: "card w-100 shadow-sm #{creator_classes}", "data-question-form-target": "form" do %>
         <div class="card-body">

@@ -1,0 +1,12 @@
+<tr>
+  <td>
+    <h5 class="fw-bold">
+      <%= course.name %>
+    </h5>
+    <hr>
+    <span class="badge <%= open_class %>"> <%= open_msg %></span>
+  </td>
+  <td>
+    <%= course.created_at.strftime("%a, %x, %I:%M %p") %>
+  </td>
+</tr>

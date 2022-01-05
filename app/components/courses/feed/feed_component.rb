@@ -39,7 +39,7 @@ module Courses
 
       def search
         return @search if @search.present?
-        @pagy, @search = Search::FeedSearch.new(params: helpers.params.merge(options[:where]), course: course).search
+        @pagy, @search = ::Search::FeedSearch.new(params: helpers.params.merge(options[:where]), course: course).search
         @search
       end
 

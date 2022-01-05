@@ -1,6 +1,13 @@
 <div class="card card-body shadow-sm" style="height: 600px">
-  <canvas id="staff-log-chart" style="height: 100%"></canvas>
+  <% if data.length == 0 %>
+    <div class="w-100 h-100 d-flex justify-content-center align-items-center">
+      <h5> No Activity Yet </h5>
+    </div>
+  <% else %>
+    <canvas id="staff-log-chart" style="height: 100%"></canvas>
+  <% end %>
 </div>
+
 <script>
   new Chart(document.getElementById("staff-log-chart").getContext("2d"), {
     type: "scatter",
@@ -42,8 +49,8 @@
       scales: {
         x: {
           type: "time",
-          min: <%= min_value %>,
-          max: <%= max_value %>,
+          min: new Date(<%= min_value %>),
+          max: new Date(<%= max_value %>),
           time: {
             unit: "minute",
             stepSize: 20

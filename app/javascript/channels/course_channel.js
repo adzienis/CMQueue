@@ -5,7 +5,7 @@ consumer.subscriptions.create("CourseChannel", {
     this.update_course_channel = this.update_course_channel.bind(this);
     this.general_channel = null;
     this.role_channel = null;
-    this.enrollment_channel = nul;
+    this.enrollment_channel = null;
 
     document.addEventListener("turbo:load", this.update_course_channel);
 
@@ -14,17 +14,21 @@ consumer.subscriptions.create("CourseChannel", {
 
   disconnected() {
     document.removeEventListener("turbo:load", this.update_course_channel);
-    consumer.subscriptions.remove(this.general_channel);
-    consumer.subscriptions.remove(this.role_channel);
-    consumer.subscriptions.remove(this.enrollment_channel);
+    if(this.general_channel !== null)
+      consumer.subscriptions.remove(this.general_channel);
+    if(this.role_channel !== null)
+      consumer.subscriptions.remove(this.role_channel);
+    if (this.enrollment_channel !== null)
+      consumer.subscriptions.remove(this.enrollment_channel);
   },
 
-  received(data) {},
+  received(data) {
+  },
   async handle_data(data) {
     if (data.type === "event") {
       if (typeof data.payload !== undefined) {
         const event = new CustomEvent(data.event, {
-          detail: data.payload,
+          detail: data.payload
         });
         document.dispatchEvent(event);
       } else {
@@ -49,7 +53,7 @@ consumer.subscriptions.create("CourseChannel", {
         this.general_channel = consumer.subscriptions.create({
           channel: "CourseChannel",
           room: match[1],
-          type: "general",
+          type: "general"
         });
         this.general_channel.received = this.handle_data;
       }
@@ -63,10 +67,10 @@ consumer.subscriptions.create("CourseChannel", {
         this.role_channel = consumer.subscriptions.create({
           channel: "CourseChannel",
           room: match[1],
-          type: "role",
+          type: "role"
         });
         this.role_channel.received = this.handle_data;
       }
     }
-  },
+  }
 });

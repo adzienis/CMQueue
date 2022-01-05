@@ -44,7 +44,7 @@
       </div>
     </div>
     <div class="mb-2">
-      <label class="fw-bold"> Time to Resolve/Time since Unresolved </label>
+      <label class="fw-bold"> <%= @question.resolved? || @question.kicked? ? "Time to Resolve Question " : "Time Waiting" %></label>
       <div>
         <%= "#{(@question.time_to_resolve / 3600).floor.to_s.rjust(2, "0")}:" +
               "#{(@question.time_to_resolve / 60 % 60).floor.to_s.rjust(2, "0")}:" +
@@ -60,9 +60,6 @@
     <div class="mb-2">
       <label class="fw-bold">
         Tags
-        <span class="badge bg-secondary">
-          <%= @question.tags.count %>
-        </span>
       </label>
       <div>
         <% @question.tags.each do |tag| %>

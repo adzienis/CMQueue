@@ -88,9 +88,13 @@ class Question < ApplicationRecord
     questions_states.order("min(id) DESC")
   end
 
+  def related_questions(date: created_at)
+    Question.where(enrollment: enrollment, created_at: date.all_day).where("id != ?", id)
+  end
+
   def time_to_resolve
     last_unresolved = question_states.order(created_at: :asc).where(state: "unresolved").last
-    last_resolved = question_states.order(created_at: :asc).where(state: "resolved").last
+    last_resolved = question_states.order(created_at: :asc).where(state: ["resolved", "kicked"]).last
 
     if last_resolved.present?
       last_resolved.created_at - last_unresolved.created_at

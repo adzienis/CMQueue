@@ -101,6 +101,8 @@ $toast-background-color: rgba($white, 1.0);
 :root {
   --frozen: #2145D0;
   --resolved: #19b754;
+  --resolving: rgb(0,255,0);
+  --kicked: rgb(255,0,0);
   --unresolved: rgb(70, 70, 70);
 }
 
@@ -281,6 +283,18 @@ html, body {
 
 .frozen-text {
   color: var(--frozen);
+}
+.resolving-text {
+  color: var(--resolving);
+}
+.resolved-text {
+  color: var(--resolved);
+}
+.kicked-text {
+  color: var(--kicked);
+}
+.unresolved-text {
+  color: var(--unresolved);
 }
 
 .hover-container {

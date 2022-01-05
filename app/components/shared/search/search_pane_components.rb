@@ -8,6 +8,7 @@ class Shared::Search::SearchPaneComponents < ViewComponent::Base
   end
 
   def agg_keys
+    return @agg_keys if defined?(@agg_keys)
     @agg_keys = results.aggs.filter { |k, v| v["buckets"].count > 0 }.keys || []
     @agg_keys += options[:extra_aggs] if options[:extra_aggs]
     @agg_keys

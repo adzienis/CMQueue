@@ -4,7 +4,6 @@
       <%= f.hidden_field :tags, value: selected_tags&.split(" "), multiple: true if params[:tags]&.split(" ").present? %>
       <%= f.submit "Answer", "data-turbo-frame": "_top",
                    class: "btn btn-primary w-100 queue-button",
-                   "data-disable-with": "Answering",
                    disabled: !course.answerable_questions?(tag_names: selected_tags) %>
 
     <% end %>
