@@ -1,6 +1,6 @@
 module Courses
   module Search
-    module BaseSearch
+    module BaseResults
     end
   end
 end

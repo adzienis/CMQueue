@@ -1,4 +1,4 @@
-class Admin::CoursesController < Admin::ApplicationController
+class Admin::Courses::SearchController < Admin::ApplicationController
   def index
     @registrations = Course.search "*"
     builder = Search::ClauseBuilder.new(attributes: [], params: params)
