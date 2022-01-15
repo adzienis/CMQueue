@@ -17,22 +17,13 @@ class User < ApplicationRecord
   alias_attribute :current_state, :question_state
   attr_accessor :question_state
 
-  # has_many :access_grants,
-  #         class_name: 'Doorkeeper::AccessGrant',
-  #         foreign_key: :resource_owner_id,
-  #         dependent: :delete_all
-  # has_many :access_tokens,
-  #         class_name: 'Doorkeeper::AccessToken',
-  #         foreign_key: :resource_owner_id,
-  #         dependent: :delete_all
-
   has_many :active_enrollments, -> { undiscarded }, class_name: "Enrollment", inverse_of: :user
   has_many :enrollments, dependent: :destroy, inverse_of: :user
   has_many :staff_enrollments,
-    -> { undiscarded.merge(Enrollment.with_role_names(Role.staff_role_names)) },
+    -> { active.with_role_names(Role.staff_role_names) },
     class_name: "Enrollment", inverse_of: :user
   has_many :student_enrollments,
-    -> { undiscarded.merge(Enrollment.with_role_names(Role.student_role_names)) },
+    -> { active.with_role_names(Role.student_role_names) },
     class_name: "Enrollment", inverse_of: :user
   has_many :active_questions, -> {
                                 undiscarded
@@ -113,8 +104,6 @@ class User < ApplicationRecord
   end
 
   scope :with_courses, ->(*courses) { joins(:enrollments, enrollments: :role).where("roles.resource": courses) }
-
-  scope :undiscarded_enrollments, -> { joins(:enrollments).merge(Enrollment.undiscarded) }
 
   scope :enrolled_in_course, lambda { |course|
     joins(:roles).where("roles.resource_id": course.id)

@@ -7,16 +7,25 @@
       <thead>
       <tr>
         <% headers.each do |header| %>
-          <th scope="col" style="max-width: 200px">
-            <% if header.is_a?(Hash) && header.values.first == :sortable %>
-              <%= render(Shared::Search::SortLinkComponent.new(category: header.keys.first,
-                                                               query_params: request.query_parameters,
-                                                               parent: parent,
-                                                               resources: search.klass.name.demodulize.pluralize.underscore.to_sym)) %>
-            <% elsif !header.is_a?(Hash) %>
-              <%= header.to_s.titleize %>
+          <% if header.is_a?(Hash) %>
+            <% header.each do |k, v| %>
+             <th>
+               <% if v == :sortable %>
+                 <%= render(Shared::Search::SortLinkComponent.new(category: header.keys.first,
+                                                                  query_params: request.query_parameters,
+                                                                  parent: parent,
+                                                                  resources: search.klass.name.demodulize.pluralize.underscore.to_sym)) %>
+               <% else %>
+                 <%= k.to_s.titleize %>
+               <% end %>
+             </th>
             <% end %>
+          <% end %>
+          <% if !header.is_a?(Hash) %>
+          <th scope="col" style="max-width: 200px">
+              <%= header.to_s.titleize %>
           </th>
+          <% end %>
         <% end %>
       </tr>
       </thead>

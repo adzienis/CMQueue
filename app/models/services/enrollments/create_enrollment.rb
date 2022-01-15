@@ -31,7 +31,7 @@ module Services
           role = user.add_role :student, course
         end
 
-        user.enrollments.undiscarded.with_role(role.id).first
+        user.enrollments.active.with_role(role.id).first
       end
     end
   end

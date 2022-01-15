@@ -58,6 +58,10 @@ class ApplicationController < ActionController::Base
 
   def set_enrollment
     @current_enrollment = current_user.enrollment_in_course(@course) if @course.present?
+
+    if request.path_parameters[:course_id].present? && @current_enrollment.nil?
+      raise CanCan::AccessDenied
+    end
   end
 
   def new_session_path(_scope)

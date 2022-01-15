@@ -2,7 +2,7 @@
   <%= label_tag "Select a Course" %>
   <div>
     <%= collection_select :enrollment, :course_id,
-                          Course.where("courses.id not in (#{Course.joins(:enrollments).select("courses.id").where("enrollments.user_id" => helpers.current_user.id).to_sql})"), :id, :name, { selected: enrollment.role&.resource_id },
+                          Course.where("courses.id not in (#{Course.joins(:enrollments).select("courses.id").where("enrollments.user_id" => helpers.current_user.id).merge(Enrollment.active).to_sql})"), :id, :name, { selected: enrollment.role&.resource_id },
                           class: "form-control #{enrollment.errors.any? ? "is-invalid" : ""}" %>
   </div>
   <div>

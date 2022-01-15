@@ -31,6 +31,13 @@ CREATE SCHEMA course_3;
 
 
 --
+-- Name: course_6; Type: SCHEMA; Schema: -; Owner: -
+--
+
+CREATE SCHEMA course_6;
+
+
+--
 -- Name: check_duplicate_question(); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -131,7 +138,8 @@ CREATE TABLE public.enrollments (
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL,
     discarded_at timestamp without time zone,
-    section character varying
+    section character varying,
+    archived_at timestamp without time zone
 );
 
 
@@ -550,6 +558,146 @@ CREATE VIEW course_3.users AS
      JOIN public.enrollments ON ((users.id = enrollments.user_id)))
      JOIN public.roles ON ((enrollments.role_id = roles.id)))
   WHERE (((roles.resource_type)::text = 'Course'::text) AND (roles.resource_id = 3));
+
+
+--
+-- Name: courses; Type: VIEW; Schema: course_6; Owner: -
+--
+
+CREATE VIEW course_6.courses AS
+ SELECT courses.id,
+    courses.name,
+    courses.course_code,
+    courses.student_code,
+    courses.ta_code,
+    courses.instructor_code,
+    courses.open,
+    courses.created_at,
+    courses.updated_at
+   FROM public.courses
+  WHERE (courses.id = 6);
+
+
+--
+-- Name: enrollments; Type: VIEW; Schema: course_6; Owner: -
+--
+
+CREATE VIEW course_6.enrollments AS
+ SELECT enrollments.id,
+    enrollments.user_id,
+    enrollments.role_id,
+    enrollments.semester,
+    enrollments.created_at,
+    enrollments.updated_at,
+    enrollments.discarded_at,
+    enrollments.section
+   FROM (public.enrollments
+     JOIN public.roles ON ((roles.id = enrollments.role_id)))
+  WHERE (roles.resource_id = 6);
+
+
+--
+-- Name: question_states; Type: VIEW; Schema: course_6; Owner: -
+--
+
+CREATE VIEW course_6.question_states AS
+ SELECT question_states.id,
+    question_states.question_id,
+    question_states.created_at,
+    question_states.updated_at,
+    question_states.description,
+    question_states.state,
+    question_states.enrollment_id,
+    question_states.acknowledged_at
+   FROM ((public.question_states
+     JOIN public.enrollments ON ((question_states.enrollment_id = enrollments.id)))
+     JOIN public.roles ON ((enrollments.role_id = roles.id)))
+  WHERE (((roles.resource_type)::text = 'Course'::text) AND (roles.resource_id = 6));
+
+
+--
+-- Name: questions; Type: VIEW; Schema: course_6; Owner: -
+--
+
+CREATE VIEW course_6.questions AS
+ SELECT questions.id,
+    questions.created_at,
+    questions.updated_at,
+    questions.title,
+    questions.tried,
+    questions.description,
+    questions.notes,
+    questions.location,
+    questions.discarded_at,
+    questions.enrollment_id
+   FROM ((public.questions
+     JOIN public.enrollments ON ((enrollments.id = questions.enrollment_id)))
+     JOIN public.roles ON ((roles.id = enrollments.role_id)))
+  WHERE ((roles.resource_id = 6) AND ((roles.resource_type)::text = 'Course'::text));
+
+
+--
+-- Name: questions_tags; Type: VIEW; Schema: course_6; Owner: -
+--
+
+CREATE VIEW course_6.questions_tags AS
+ SELECT questions_tags.id,
+    questions_tags.question_id,
+    questions_tags.tag_id
+   FROM (((public.questions_tags
+     JOIN public.questions ON ((questions_tags.question_id = questions.id)))
+     JOIN public.enrollments ON ((questions.enrollment_id = enrollments.id)))
+     JOIN public.roles ON ((roles.id = enrollments.role_id)))
+  WHERE (roles.resource_id = 6);
+
+
+--
+-- Name: roles; Type: VIEW; Schema: course_6; Owner: -
+--
+
+CREATE VIEW course_6.roles AS
+ SELECT roles.id,
+    roles.name,
+    roles.resource_type,
+    roles.resource_id,
+    roles.created_at,
+    roles.updated_at
+   FROM public.roles
+  WHERE (((roles.resource_type)::text = 'Course'::text) AND (roles.resource_id = 6));
+
+
+--
+-- Name: tags; Type: VIEW; Schema: course_6; Owner: -
+--
+
+CREATE VIEW course_6.tags AS
+ SELECT tags.id,
+    tags.course_id,
+    tags.created_at,
+    tags.updated_at,
+    tags.archived,
+    tags.name,
+    tags.description,
+    tags.discarded_at
+   FROM public.tags
+  WHERE (tags.course_id = 6);
+
+
+--
+-- Name: users; Type: VIEW; Schema: course_6; Owner: -
+--
+
+CREATE VIEW course_6.users AS
+ SELECT users.id,
+    users.given_name,
+    users.family_name,
+    users.email,
+    users.created_at,
+    users.updated_at
+   FROM ((public.users
+     JOIN public.enrollments ON ((users.id = enrollments.user_id)))
+     JOIN public.roles ON ((enrollments.role_id = roles.id)))
+  WHERE (((roles.resource_type)::text = 'Course'::text) AND (roles.resource_id = 6));
 
 
 --
@@ -1997,6 +2145,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20211119031040'),
 ('20211119032313'),
 ('20211211052838'),
-('20211223235232');
+('20211223235232'),
+('20220105043704');
 
 

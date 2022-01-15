@@ -32,7 +32,7 @@ class Role < ApplicationRecord
 
   scope :privileged_roles, -> { where(name: ["lead_ta", "instructor"]) }
   scope :staff_roles, -> { where(name: ["ta", "lead_ta", "instructor"]) }
-  scope :undiscarded, -> { joins(:enrollments).merge(Enrollment.undiscarded) }
+  scope :undiscarded, -> { joins(:enrollments).merge(Enrollment.active) }
 
   def self.role_security_value(role_name)
     case role_name

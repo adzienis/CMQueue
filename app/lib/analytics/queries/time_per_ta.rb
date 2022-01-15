@@ -10,7 +10,7 @@ class Analytics::Queries::TimePerTa
         .where(state: state)
     end
 
-    Enrollment.undiscarded.with_course_roles(:instructor, :ta).joins(:user, :question_states, question_states: :question)
+    Enrollment.active.with_course_roles(:instructor, :ta).joins(:user, :question_states, question_states: :question)
       .merge(Question.where(id: Question.questions_by_state(:resolved).with_today))
       .group(["enrollments.id, users.given_name, users.family_name"])
       .select(

@@ -17,11 +17,19 @@ module Enrollable
     lead_ta_of?(obj) || instructor_of?(obj)
   end
 
-  def enrollment_in_course(course)
+  def enrollment_in_course(course, active: true)
+    filtered_enrollments = if active.nil?
+                             enrollments
+                           elsif active
+                             enrollments.active
+                           else
+                             enrollments.inactive
+                           end
+
     if course.instance_of? Course
-      enrollments.undiscarded.joins(:role).where("roles.resource": course).order(created_at: :desc).first
+      filtered_enrollments.joins(:role).where("roles.resource": course).order(created_at: :desc).first
     elsif course.instance_of? Integer
-      enrollments.undiscarded.joins(:role).where("roles.resource_id": course, "roles.resource_type": "Course").order(created_at: :desc).first
+      filtered_enrollments.joins(:role).where("roles.resource_id": course, "roles.resource_type": "Course").order(created_at: :desc).first
     end
   end
 

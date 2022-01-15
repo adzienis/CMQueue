@@ -1,13 +1,23 @@
-<%= simple_form_for [@course, @enrollment], html: { autocomplete: 'off' } do |f| %>
-  <%= f.error_notification %>
-  <%= f.error_notification message: f.object.errors[:base].to_sentence if f.object.errors[:base].present? %>
+<%= simple_form_for [@course, @enrollment], html: { autocomplete: 'off' }, defaults: { wrapper: false } do |f| %>
   <%= f.hidden_field :course_id, value: params[:course_id] if params[:course_id] %>
-  <%= f.input :semester, collection: ["F21", "Su21"], include_blank: false %>
-  <div data-controller="react_select">
-    <%= f.association :user, disabled: !@enrollment.new_record?, collection: User.all, label_method: ->(user) { "#{user.given_name} #{user.family_name}" } %>
+  <div class="mb-2">
+    <label class="fw-bold"> Semester </label>
+    <div data-controller="react_select">
+      <%= f.input_field :semester, collection: Enrollment.semesters, wrapper: false, include_blank: false, html: { class: "is-invalid" } %>
+      <%= f.full_error :semester, class: "invalid-feedback d-block" %>
+    </div>
   </div>
-  <div data-controller="react_select">
-    <%= f.association :role, collection: @course.roles, label_method: ->(role){ role.name.titleize } %>
+  <div class="mb-2">
+    <label class="fw-bold"> User </label>
+    <div data-controller="react_select">
+      <%= f.collection_select :user_id, User.all, :id, ->(v){ "#{v.full_name} (#{v.email})" }, disabled: !@enrollment.new_record? %>
+    </div>
+  </div>
+  <div class="mb-2">
+    <label class="fw-bold"> Role </label>
+    <div data-controller="react_select">
+      <%= f.collection_select :role_id, @course.roles, :id, ->(v) { v.name.titleize } %>
+    </div>
   </div>
 
   <%= tag.p class: "text-muted" do %>

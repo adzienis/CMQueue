@@ -34,14 +34,15 @@ export default class extends Controller {
           this.handlePermission(permission);
         });
       } else {
-        Notification.requestPermission(function (permission) {
+        Notification.requestPermission(function(permission) {
           this.handlePermission(permission);
         });
       }
     }
   }
 
-  initialize() {}
+  initialize() {
+  }
 
   inputTargetConnected() {
     this.inputTarget.addEventListener("click", (e) => {

@@ -11,6 +11,9 @@
       <%= enrollment.user.full_name %>
       </span>
     </div>
+    <div>
+      <small class="fw-bold"> Semester: </small> <%= enrollment.semester %>
+    </div>
     <%= render(Shared::Search::CardFooterComponent.new(record: enrollment, course: enrollment.course)) %>
   </td>
   <td>

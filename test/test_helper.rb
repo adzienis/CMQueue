@@ -31,6 +31,13 @@ module ActiveSupport
       raise StandardError.new("Missing method '#{symbol}'")
     end
 
+    def self.let!(name, &block)
+      let(name, &block)
+      before do
+        send(name)
+      end
+    end
+
     def self.with_roles_should(msg, *roles, &block)
       roles.each do |role|
         context role do

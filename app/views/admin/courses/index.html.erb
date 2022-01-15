@@ -10,7 +10,7 @@
                                                       query_parameters: request.query_parameters
     )) %>
     <%= render(Shared::Search::ResultsComponent.new(parent: [:admin], pagy: @pagy, search: @results, options: {
-      headers: [:courses, created_at: :sortable]
+      headers: [:courses, created_at: :sortable, actions: nil]
     })) do |c| %>
       <% @results.results.each do |result| %>
         <%= c.result do %>

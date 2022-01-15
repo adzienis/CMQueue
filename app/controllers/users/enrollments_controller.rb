@@ -20,7 +20,7 @@ class Users::EnrollmentsController < ApplicationController
   end
 
   def destroy
-    @enrollment = current_user.enrollments.undiscarded.joins(:role).find_by("roles.resource_id": Course.find(params[:id])).discard
+    @enrollment = current_user.enrollments.active.joins(:role).find_by("roles.resource_id": Course.find(params[:id])).discard
 
     respond_to do |format|
       format.html

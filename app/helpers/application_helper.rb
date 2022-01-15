@@ -33,7 +33,7 @@ module ApplicationHelper
         .where(state: state)
     end
 
-    Enrollment.undiscarded.with_course_roles(:instructor, :ta).joins(:question_states, question_states: :question)
+    Enrollment.active.with_course_roles(:instructor, :ta).joins(:question_states, question_states: :question)
       .merge(Question.where(id: Question.questions_by_state(:resolved).with_today))
       .group(["enrollments.id", "questions.id"])
       .select("enrollments.id as enrollment_id, questions.id as question_id, avg((#{QuestionState

@@ -84,7 +84,7 @@ class Course < ApplicationRecord
   end
 
   scope :with_user, ->(user_id) {
-    joins(:enrollments).merge(Enrollment.undiscarded.with_user(user_id))
+    joins(:enrollments).merge(Enrollment.active.with_user(user_id))
   }
 
   scope :with_setting, ->(key, value) { joins(:settings).merge(Setting.with_key(key).with_value(value)) }
@@ -127,7 +127,7 @@ class Course < ApplicationRecord
   def self.find_staff_roles(user = nil)
     Role.joins(enrollments: :user).where("users.id": user)
       .where("roles.resource_type": "Course", name: [:ta, :lead_ta, :instructor])
-      .merge(Enrollment.undiscarded)
+      .merge(Enrollment.active)
   end
 
   def self.find_unprivileged_roles(user = nil)

@@ -5,8 +5,9 @@ module Shared
     renders_one :footer
     renders_one :title
 
-    def initialize(id:)
+    def initialize(id:, options: {})
       @id = id
+      @options = options
     end
 
     private

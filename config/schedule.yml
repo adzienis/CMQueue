@@ -8,3 +8,8 @@ backup_database:
   class: "System::BackupDatabaseJob"
   queue: default
   retries: 0
+migrate_enrollments:
+  cron: "0 0 18 1,5,8,12 *"
+  class: "Courses::MigrateAndArchivePastEnrollmentsJob"
+  queue: default
+  retries: 0

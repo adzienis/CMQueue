@@ -39,7 +39,7 @@
               <% end %>
             </ul>
           </div>
-        <% end %>
+        <% end if current_user.has_role? :instructor, @course %>
 
 
         <%= render partial: "shared/course_sidebar" %>

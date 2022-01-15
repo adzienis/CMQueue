@@ -57,7 +57,7 @@ class SummariesController < ApplicationController
         .where(state: state)
     end
 
-    enrollments = Enrollment.undiscarded
+    enrollments = Enrollment.active
     enrollments = enrollments.with_role(@course.id) if params[:course_id]
 
     enrollments = enrollments.with_course_roles(:instructor, :ta)

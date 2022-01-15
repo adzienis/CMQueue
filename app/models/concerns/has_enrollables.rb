@@ -42,7 +42,7 @@ module HasEnrollables
     end
 
     def active_tas
-      tas.merge(Enrollment.undiscarded)
+      tas.merge(Enrollment.active)
     end
 
     def tas
@@ -50,7 +50,7 @@ module HasEnrollables
     end
 
     def active_instructors
-      instructors.merge(Enrollment.undiscarded)
+      instructors.merge(Enrollment.active)
     end
 
     def instructors
@@ -58,7 +58,7 @@ module HasEnrollables
     end
 
     def active_students
-      students.merge(Enrollment.undiscarded)
+      students.merge(Enrollment.active)
     end
 
     def students

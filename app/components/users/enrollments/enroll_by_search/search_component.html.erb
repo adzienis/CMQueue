@@ -1,21 +1,21 @@
-<%= form_with url: enroll_by_search_path do |f| %>
-  <%= render(Shared::ModalComponent.new(id: "enroll-search-component")) do |modal| %>
-    <% modal.title do %>
+<%= render(Shared::ModalComponent.new(id: "enroll-search-component")) do |modal| %>
+  <% modal.title do %>
+    Enroll in a Course
+  <% end %>
+  <% modal.button do %>
+    <div class="card card-body d-flex justify-content-center align-items-center mb-2 shadow-sm"
+         style="height: 110px; cursor: pointer"
+    >
+      <i class="fas fa-plus fa-3x"></i>
       Enroll in a Course
-    <% end %>
-    <% modal.button do %>
-      <div class="card card-body d-flex justify-content-center align-items-center mb-2 shadow-sm"
-           style="height: 110px; cursor: pointer"
-      >
-        <i class="fas fa-plus fa-3x"></i>
-        Enroll in a Course
-      </div>
-    <% end %>
-    <% modal.body do %>
+    </div>
+  <% end %>
+  <% modal.body do %>
+    <%= form_with url: enroll_by_search_path, id: "wop" do |f| %>
       <%= render(Users::Enrollments::EnrollBySearch::SearchBodyComponent.new(enrollment: enrollment)) %>
     <% end %>
-    <% modal.footer do %>
-      <%= f.submit "Add Course", class: "btn btn-primary" %>
-    <% end %>
+  <% end %>
+  <% modal.footer do %>
+    <%= submit_tag "Add Course", class: "btn btn-primary", form: "wop" %>
   <% end %>
 <% end %>

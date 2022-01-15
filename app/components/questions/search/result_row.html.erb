@@ -29,6 +29,9 @@
         <%= question.location %>
       </div>
       <div>
+        <small class="fw-bold"> Semester: </small> <%= question.enrollment.semester %>
+      </div>
+      <div>
         <small class="fw-bold"> Tags: </small>
         <% question.tags.map do |tag| %>
           <%= link_to(tag.name, course_tag_path(question.course, tag), class: "badge bg-danger text-white") %>
