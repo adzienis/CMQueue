@@ -10,7 +10,6 @@ FactoryBot.define do
       end
 
       role { course.ta_role }
-
     end
 
     factory :instructor do
@@ -18,7 +17,6 @@ FactoryBot.define do
         course { create(:course) }
       end
       role { course.instructor_role }
-
     end
     factory :student do
       transient do

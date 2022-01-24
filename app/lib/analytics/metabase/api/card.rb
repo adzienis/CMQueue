@@ -9,6 +9,10 @@ class Analytics::Metabase::API::Card
     card["id"]
   end
 
+  def name
+    card["name"]
+  end
+
   def add_to_dashboard(dashboard_id)
     Analytics::Metabase::Dashboards::AddCardToDashboard.new(dashboard_id: dashboard_id,
       card_id: id).call

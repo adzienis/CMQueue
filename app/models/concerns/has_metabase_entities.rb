@@ -5,6 +5,10 @@ module HasMetabaseEntities
     metabase.collections.find { |v| v.name == name }
   end
 
+  def base_dashboard
+    base_collection.dashboards.find{ |v| v.name == "Main" }
+  end
+
   def mb_dashboards
     Analytics::Metabase::Dashboards::GetCourseDashboards.new(course: self).call
   end

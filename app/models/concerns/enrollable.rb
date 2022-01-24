@@ -19,12 +19,12 @@ module Enrollable
 
   def enrollment_in_course(course, active: true)
     filtered_enrollments = if active.nil?
-                             enrollments
-                           elsif active
-                             enrollments.active
-                           else
-                             enrollments.inactive
-                           end
+      enrollments
+    elsif active
+      enrollments.active
+    else
+      enrollments.inactive
+    end
 
     if course.instance_of? Course
       filtered_enrollments.joins(:role).where("roles.resource": course).order(created_at: :desc).first
@@ -46,10 +46,10 @@ module Enrollable
   [:ta, :lead_ta, :instructor, :student].each do |role|
     define_method("#{role}_of?") do |obj|
       if obj.instance_of? Course
-        has_any_role?({name: role.to_sym, resource: obj})
+        has_role?(role.to_sym, obj)
       elsif obj.instance_of? Integer
         course = Course.find(obj)
-        has_any_role?({name: role.to_sym, resource: course})
+        has_role?(role.to_sym, course)
       else
         false
       end

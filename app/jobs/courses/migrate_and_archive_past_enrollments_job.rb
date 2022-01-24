@@ -3,9 +3,9 @@ class Courses::MigrateAndArchivePastEnrollmentsJob < ApplicationJob
 
   def perform
     instructor_enrollments = Enrollment.active.joins(:role).where("enrollments.semester != ?", Enrollment.default_semester)
-                            .where("roles.name in (?)", [:instructor])
+      .where("roles.name in (?)", [:instructor])
     enrollments = Enrollment.active.joins(:role).where("enrollments.semester != ?", Enrollment.default_semester)
-                                    .where("roles.name in (?)", [:student, :ta])
+      .where("roles.name in (?)", [:student, :ta])
 
     ActiveRecord::Base.transaction do
       instructor_enrollments.each do |e|

@@ -1,0 +1,36 @@
+avg_time_per_tag:
+  name: "Avg Time Per Tag"
+  row: 3
+  col: 0
+  sizeY: 4
+  sizeX: 6
+questions_created_this_week:
+  name: "Questions Created This Week"
+  row: 0
+  col: 4
+  sizeY: 3
+  sizeX: 3
+questions_created_this_month:
+  name: "Questions Created This Month"
+  row: 0
+  col: 7
+  sizeY: 3
+  sizeX: 3
+questions_created_this_semester:
+  name: "Questions Created This Semester"
+  row: 0
+  col: 10
+  sizeY: 3
+  sizeX: 3
+questions_grouped_by_date:
+  name: "Questions Grouped By Date"
+  row: 3
+  col: 6
+  sizeY: 4
+  sizeX: 6
+avg_time_to_answer_grouped_by_user:
+  name: "Avg Time to Answer Grouped By User (Date Filter)"
+  row: 3
+  col: 12
+  sizeY: 4
+  sizeX: 6

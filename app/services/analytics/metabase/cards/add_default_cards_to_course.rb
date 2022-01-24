@@ -34,6 +34,24 @@ module Analytics
 
           create_card(card)
 
+          card = Analytics::Metabase::Questions::CreatedCurrentMonthCount.new(course: course,
+            collection_id: course.base_collection.id,
+            default_semester: Enrollment.default_semester).call
+
+          create_card(card)
+
+          card = Analytics::Metabase::Questions::CreatedCurrentSemesterCount.new(course: course,
+                                                                              collection_id: course.base_collection.id,
+                                                                              default_semester: Enrollment.default_semester).call
+
+          create_card(card)
+
+          card = Analytics::Metabase::Questions::AvgTimeForQuestionAnsweredByDay.new(course: course,
+                                                                                 collection_id: course.base_collection.id,
+                                                                                 default_semester: Enrollment.default_semester).call
+
+          create_card(card)
+
           all_cards = course.base_collection.cards
 
           all_cards.each do |card|

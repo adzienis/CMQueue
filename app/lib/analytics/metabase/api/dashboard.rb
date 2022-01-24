@@ -38,6 +38,17 @@ class Analytics::Metabase::API::Dashboard
     @dashboard ||= metabase.get_dashboard(dashboard_id: dashboard_id)
   end
 
+  def cards
+    @cards ||= dashboard["ordered_cards"].map{|v| Analytics::Metabase::API::Card.new(card: v["card"]) }
+  end
+
+  def ordered_cards
+    @ordered_cards ||= dashboard["ordered_cards"].map do |ordered_card|
+      ordered_card["card"] = Analytics::Metabase::API::Card.new(card: ordered_card["card"])
+      ordered_card
+    end
+  end
+
   def archive
     Analytics::Metabase::Dashboards::ArchiveDashboard.new(dashboard_id: id, metabase: metabase).call
   end

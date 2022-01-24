@@ -5,8 +5,15 @@ class CoursesController < ApplicationController
 
   respond_to :html, :json
 
+  def current_ability
+    @current_ability ||= ::CourseAbility.new(current_user, {
+      params: params,
+      path_parameters: request.path_parameters
+    })
+  end
+
   def edit
-    @course = Course.unscoped.accessible_by(current_ability).find(params[:course_id])
+    @course = Course.accessible_by(current_ability).find(params[:course_id])
   end
 
   def top_question
@@ -22,7 +29,7 @@ class CoursesController < ApplicationController
   end
 
   def show
-    @course = Course.unscoped.accessible_by(current_ability).find(params[:course_id])
+    @course = Course.accessible_by(current_ability).find(params[:course_id])
     redirect_to new_course_forms_question_path(@course) and return unless current_user.has_any_role?({name: :instructor, resource: @course})
   end
 

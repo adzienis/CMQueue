@@ -127,9 +127,21 @@ module Analytics
           end
         end
 
+        def get_dashboard_cards(dashboard_id:)
+          guard_response_and_convert do
+            HTTP.headers("X-Metabase-Session": @@session).get(URL_MAPPING[:dashboard_cards].call(dashboard_id))
+          end
+        end
+
         def post_dashboard_cards(dashboard_id:, json:)
           guard_response_and_convert do
             HTTP.headers("X-Metabase-Session": @@session).post(URL_MAPPING[:dashboard_cards].call(dashboard_id), json: json)
+          end
+        end
+
+        def put_dashboard_cards(dashboard_id:, json:)
+          guard_response_and_convert do
+            HTTP.headers("X-Metabase-Session": @@session).put(URL_MAPPING[:dashboard_cards].call(dashboard_id), json: json)
           end
         end
 

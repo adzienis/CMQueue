@@ -1,7 +1,7 @@
 <tr>
   <td>
     <h5 class="fw-bold">
-      <%= course.name %>
+      <%= link_to course.name, course_path(course) %>
     </h5>
     <hr>
     <span class="badge <%= open_class %>"> <%= open_msg %></span>

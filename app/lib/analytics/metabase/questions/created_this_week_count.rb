@@ -4,7 +4,7 @@ module Analytics
       class CreatedThisWeekCount
         include Metabaseable
 
-        def initialize(course:, database_id: mb.root_db.id, collection_id: nil, default_semester: "F21")
+        def initialize(course:, database_id: mb.root_db.id, collection_id: nil, default_semester: Enrollment.default_semester)
           @database_id = database_id
           @course = course
           @collection_id = collection_id
@@ -13,8 +13,8 @@ module Analytics
 
         def query
           <<~SQL
-            select count(*) from course_1.questions 
-            inner join course_1.enrollments on course_1.enrollments.id = course_1.questions.enrollment_id
+            select count(*) from #{course.mb_schema}.questions 
+            inner join #{course.mb_schema}.enrollments on #{course.mb_schema}.enrollments.id = #{course.mb_schema}.questions.enrollment_id
             where {{date}} and {{semester}}
           SQL
         end

@@ -128,6 +128,16 @@ class User < ApplicationRecord
     where(id: joins(:roles).where("roles.name IN (?)", names).merge(Role.undiscarded))
   }
 
+  def has_role?(role_name, resource = nil)
+    if resource.nil?
+      roles.where("roles.name": role_name, "roles.resource_id": nil).exists?
+    else
+      roles.joins(:enrollments).where("roles.name": role_name,
+        "roles.resource_id": resource.id,
+        "roles.resource_type": resource.class.name).merge(Enrollment.active).exists?
+    end
+  end
+
   scope :active_tas_by_date, lambda { |states, date, course|
     joins(:question_state)
       .where("question_states.state in (#{states.map do |x|

@@ -131,11 +131,15 @@ class Course < ApplicationRecord
   end
 
   def self.find_unprivileged_roles(user = nil)
-    Course.find_roles([:student], user)
+    Role.joins(enrollments: :user).where("users.id": user)
+      .where("roles.resource_type": "Course", name: [:student])
+      .merge(Enrollment.active)
   end
 
   def self.find_privileged_staff_roles(user = nil)
-    Course.find_roles([:lead_ta, :instructor], user)
+    Role.joins(enrollments: :user).where("users.id": user)
+      .where("roles.resource_type": "Course", name: [:lead_ta, :instructor])
+      .merge(Enrollment.active)
   end
 
   def answerable_questions?(tag_names: nil)

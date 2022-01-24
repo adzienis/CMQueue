@@ -19,7 +19,9 @@ class ImportEnrollmentsJob < ApplicationJob
     failure = false
 
     pres_sections = course.courses_sections.to_a
-    pres_sections_h = pres_sections.map { |v| [v[:name], v[:id]] }.to_h
+    pres_sections_h = pres_sections.map { |v| [v[:name], v[:id]] }.to_h || {}
+
+    SpecialLogger.info pres_sections_h
 
     json.each do |student|
       email = student["email"]
@@ -45,12 +47,12 @@ class ImportEnrollmentsJob < ApplicationJob
 
       enrollment = user.enrollment_in_course(course)
 
-      student_sections.each do |sec|
-        if pres_sections_h[sec["name"]].nil?
-          created = course.courses_sections.create(name: sec["name"])
-          pres_sections_h[created.name] = created.id
-        end
-      end
+      #student_sections.each do |sec|
+      #  if sec.present? && pres_sections_h[sec["name"]].nil?
+      #    created = course.courses_sections.create(name: sec["name"])
+      #    pres_sections_h[created.name] = created.id
+      #  end
+      #end
 
       if enrollment.present?
         unless role_equal?(user.enrollment_in_course(course).role.name, type)
@@ -58,28 +60,22 @@ class ImportEnrollmentsJob < ApplicationJob
           enrollment.discard
           case type
           when "StudentEnrollment"
-            user.enrollments.create(role: course.student_role,
-              courses_section_ids: student_sections.map { |v| pres_sections_h[v["name"]] })
+            user.enrollments.create(role: course.student_role)
           when "TaEnrollment"
-            user.enrollments.create(role: course.ta_role,
-              courses_section_ids: student_sections.map { |v| pres_sections_h[v["name"]] })
+            user.enrollments.create(role: course.ta_role)
           when "TeacherEnrollment"
-            user.enrollments.create(role: course.instructor_role,
-              courses_section_ids: student_sections.map { |v| pres_sections_h[v["name"]] })
+            user.enrollments.create(role: course.instructor_role)
           end
         end
       else
         new_imports += 1
         case type
         when "StudentEnrollment"
-          user.enrollments.create(role: course.student_role,
-            courses_section_ids: student_sections.map { |v| pres_sections_h[v["name"]] })
+          user.enrollments.create(role: course.student_role)
         when "TaEnrollment"
-          user.enrollments.create(role: course.ta_role,
-            courses_section_ids: student_sections.map { |v| pres_sections_h[v["name"]] })
+          user.enrollments.create(role: course.ta_role)
         when "TeacherEnrollment"
-          user.enrollments.create(role: course.instructor_role,
-            courses_section_ids: student_sections.map { |v| pres_sections_h[v["name"]] })
+          user.enrollments.create(role: course.instructor_role)
         else
           new_imports -= 1
         end
@@ -90,6 +86,7 @@ class ImportEnrollmentsJob < ApplicationJob
       failure = true
       break
     rescue Exception => e
+      SpecialLogger.info e
       message = "Failed to import file."
       failure = true
       break

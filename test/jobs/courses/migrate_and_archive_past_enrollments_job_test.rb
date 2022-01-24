@@ -22,8 +22,8 @@ class Courses::MigrateAndArchivePastEnrollmentsJobTest < ActiveJob::TestCase
     old_tas.each(&:reload)
     old_instructors.each(&:reload)
 
-    assert old_tas.filter(&:active?).count == 0
-    assert old_instructors.filter(&:active?).count == 0
-    assert old_students.filter(&:active?).count == 0
+    assert old_tas.count(&:active?) == 0
+    assert old_instructors.count(&:active?) == 0
+    assert old_students.count(&:active?) == 0
   end
 end
