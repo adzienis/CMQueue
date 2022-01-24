@@ -21,8 +21,6 @@ class ImportEnrollmentsJob < ApplicationJob
     pres_sections = course.courses_sections.to_a
     pres_sections_h = pres_sections.map { |v| [v[:name], v[:id]] }.to_h || {}
 
-    SpecialLogger.info pres_sections_h
-
     json.each do |student|
       email = student["email"]
       name = student["name"]
@@ -37,10 +35,13 @@ class ImportEnrollmentsJob < ApplicationJob
 
       user = User.find_by(email: email)
 
-      next if user == current_user
+      unless email.present?
+        next
+      end
+      next if user == current_user && current_user.present?
 
       if user.nil?
-        user = User.create(given_name: given_name, family_name: family_name, email: email)
+        user = User.create!(given_name: given_name, family_name: family_name, email: email)
       else
         user.update(given_name: given_name, family_name: family_name)
       end
@@ -86,7 +87,6 @@ class ImportEnrollmentsJob < ApplicationJob
       failure = true
       break
     rescue Exception => e
-      SpecialLogger.info e
       message = "Failed to import file."
       failure = true
       break
