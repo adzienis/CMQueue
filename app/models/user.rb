@@ -36,7 +36,6 @@ class User < ApplicationRecord
   has_many :questions, dependent: :destroy, through: :enrollments
   has_many :question_states, -> { order("question_states.id DESC") }, through: :enrollments, dependent: :destroy, source: :question_states
   has_many :settings, as: :resource, dependent: :destroy
-  has_many :applications, class_name: "Doorkeeper::Application", as: :owner, dependent: :destroy
 
   validates :given_name, :family_name, :email, presence: true
 
