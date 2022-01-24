@@ -16,6 +16,9 @@ class CourseAbility
         can :semester, Course
         can :read, :staff_log
       end
+      if user.instructor_of?(@course)
+        can :read, Course
+      end
     end
 
     can :active_tas, Course

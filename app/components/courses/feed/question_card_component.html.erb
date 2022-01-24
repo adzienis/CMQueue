@@ -20,5 +20,11 @@
         <%= question.description %>
       </div>
     </div>
+    <%= tag.div class: "card-footer d-flex" do %>
+      <%= button_to "Unfreeze",
+                    handle_question_path(question, state: "unresolved"),
+                    class: "btn btn-primary",
+                    "data-disable-with": "Unfreezing" if question.frozen? %>
+    <% end %>
   </div>
 </turbo-frame>
