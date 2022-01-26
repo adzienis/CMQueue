@@ -49,7 +49,7 @@ class Enrollment < ApplicationRecord
   validate :semester_valid
 
   def self.semesters
-    (21..Time.current.strftime("%y").to_i).map { |v| ["S#{v}", "Su#{v}", "F#{v}"] }.flatten
+    ["F21", "S22"]
   end
 
   def semester_valid
@@ -76,6 +76,14 @@ class Enrollment < ApplicationRecord
 
   def active?
     undiscarded? && archived_at.nil?
+  end
+
+  def archive!
+    transaction do
+      self.archived_at = DateTime.current
+      save!
+    end
+    reload
   end
 
   scope :active, -> { undiscarded.where(archived_at: nil) }

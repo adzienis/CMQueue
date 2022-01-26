@@ -13,17 +13,21 @@ class Enrollments::ImportController < ApplicationController
   def create
     authorize! :import, Enrollment
 
+
     begin
       file = params[:file].read
       json = JSON.parse(file)
 
-      ImportEnrollmentsJob.perform_later(json: json, course: @course, current_user: current_user)
+      new_record = @course.enrollments_import_records.create
+      new_record.record.attach(params[:file])
+
+      ImportEnrollmentsJob.perform_later(json: json, course: @course, current_user: current_user, import_record: new_record)
     rescue JSON::ParserError
-      flash.now[:error] = "Failed to import file: failed to parse file (make sure to upload a valid json file)."
-      render(:index, status: 400) and return
+      flash[:error] = "Failed to import file: failed to parse file (make sure to upload a valid json file)."
+      redirect_to import_course_enrollments_path(@course)
     rescue Exception
-      flash.now[:error] = "Failed to import file."
-      render(:index) and return
+      flash[:error] = "Failed to import file."
+      redirect_to import_course_enrollments_path(@course)
     end
     flash[:success] = "Your enrollment import has begun. You will be notified when your import is finished."
     redirect_to search_course_enrollments_path(@course)

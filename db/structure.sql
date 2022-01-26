@@ -17,27 +17,6 @@ CREATE SCHEMA course_1;
 
 
 --
--- Name: course_2; Type: SCHEMA; Schema: -; Owner: -
---
-
-CREATE SCHEMA course_2;
-
-
---
--- Name: course_3; Type: SCHEMA; Schema: -; Owner: -
---
-
-CREATE SCHEMA course_3;
-
-
---
--- Name: course_6; Type: SCHEMA; Schema: -; Owner: -
---
-
-CREATE SCHEMA course_6;
-
-
---
 -- Name: check_duplicate_question(); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -169,7 +148,8 @@ CREATE VIEW course_1.enrollments AS
     enrollments.created_at,
     enrollments.updated_at,
     enrollments.discarded_at,
-    enrollments.section
+    enrollments.section,
+    enrollments.archived_at
    FROM (public.enrollments
      JOIN public.roles ON ((roles.id = enrollments.role_id)))
   WHERE (roles.resource_id = 1);
@@ -355,349 +335,102 @@ CREATE VIEW course_1.users AS
 
 
 --
--- Name: question_states; Type: VIEW; Schema: course_2; Owner: -
+-- Name: active_storage_attachments; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE VIEW course_2.question_states AS
- SELECT question_states.id,
-    question_states.question_id,
-    question_states.created_at,
-    question_states.updated_at,
-    question_states.description,
-    question_states.state,
-    question_states.enrollment_id,
-    question_states.acknowledged_at
-   FROM ((public.question_states
-     JOIN public.enrollments ON ((question_states.enrollment_id = enrollments.id)))
-     JOIN public.roles ON ((enrollments.role_id = roles.id)))
-  WHERE (((roles.resource_type)::text = 'Course'::text) AND (roles.resource_id = 2));
+CREATE TABLE public.active_storage_attachments (
+    id bigint NOT NULL,
+    name character varying NOT NULL,
+    record_type character varying NOT NULL,
+    record_id bigint NOT NULL,
+    blob_id bigint NOT NULL,
+    created_at timestamp without time zone NOT NULL
+);
 
 
 --
--- Name: questions_tags; Type: VIEW; Schema: course_2; Owner: -
+-- Name: active_storage_attachments_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE VIEW course_2.questions_tags AS
- SELECT questions_tags.id,
-    questions_tags.question_id,
-    questions_tags.tag_id
-   FROM (((public.questions_tags
-     JOIN public.questions ON ((questions_tags.question_id = questions.id)))
-     JOIN public.enrollments ON ((questions.enrollment_id = enrollments.id)))
-     JOIN public.roles ON ((roles.id = enrollments.role_id)))
-  WHERE (roles.resource_id = 2);
+CREATE SEQUENCE public.active_storage_attachments_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
 
 
 --
--- Name: roles; Type: VIEW; Schema: course_2; Owner: -
+-- Name: active_storage_attachments_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-CREATE VIEW course_2.roles AS
- SELECT roles.id,
-    roles.name,
-    roles.resource_type,
-    roles.resource_id,
-    roles.created_at,
-    roles.updated_at
-   FROM public.roles
-  WHERE (((roles.resource_type)::text = 'Course'::text) AND (roles.resource_id = 2));
+ALTER SEQUENCE public.active_storage_attachments_id_seq OWNED BY public.active_storage_attachments.id;
 
 
 --
--- Name: users; Type: VIEW; Schema: course_2; Owner: -
+-- Name: active_storage_blobs; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE VIEW course_2.users AS
- SELECT users.id,
-    users.given_name,
-    users.family_name,
-    users.email,
-    users.created_at,
-    users.updated_at
-   FROM ((public.users
-     JOIN public.enrollments ON ((users.id = enrollments.user_id)))
-     JOIN public.roles ON ((enrollments.role_id = roles.id)))
-  WHERE (((roles.resource_type)::text = 'Course'::text) AND (roles.resource_id = 2));
-
-
---
--- Name: courses; Type: VIEW; Schema: course_3; Owner: -
---
-
-CREATE VIEW course_3.courses AS
- SELECT courses.id,
-    courses.name,
-    courses.course_code,
-    courses.student_code,
-    courses.ta_code,
-    courses.instructor_code,
-    courses.open,
-    courses.created_at,
-    courses.updated_at
-   FROM public.courses
-  WHERE (courses.id = 3);
+CREATE TABLE public.active_storage_blobs (
+    id bigint NOT NULL,
+    key character varying NOT NULL,
+    filename character varying NOT NULL,
+    content_type character varying,
+    metadata text,
+    service_name character varying NOT NULL,
+    byte_size bigint NOT NULL,
+    checksum character varying NOT NULL,
+    created_at timestamp without time zone NOT NULL
+);
 
 
 --
--- Name: enrollments; Type: VIEW; Schema: course_3; Owner: -
+-- Name: active_storage_blobs_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE VIEW course_3.enrollments AS
- SELECT enrollments.id,
-    enrollments.user_id,
-    enrollments.role_id,
-    enrollments.semester,
-    enrollments.created_at,
-    enrollments.updated_at,
-    enrollments.discarded_at,
-    enrollments.section
-   FROM (public.enrollments
-     JOIN public.roles ON ((roles.id = enrollments.role_id)))
-  WHERE (roles.resource_id = 3);
+CREATE SEQUENCE public.active_storage_blobs_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
 
 
 --
--- Name: question_states; Type: VIEW; Schema: course_3; Owner: -
+-- Name: active_storage_blobs_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-CREATE VIEW course_3.question_states AS
- SELECT question_states.id,
-    question_states.question_id,
-    question_states.created_at,
-    question_states.updated_at,
-    question_states.description,
-    question_states.state,
-    question_states.enrollment_id,
-    question_states.acknowledged_at
-   FROM ((public.question_states
-     JOIN public.enrollments ON ((question_states.enrollment_id = enrollments.id)))
-     JOIN public.roles ON ((enrollments.role_id = roles.id)))
-  WHERE (((roles.resource_type)::text = 'Course'::text) AND (roles.resource_id = 3));
+ALTER SEQUENCE public.active_storage_blobs_id_seq OWNED BY public.active_storage_blobs.id;
 
 
 --
--- Name: questions; Type: VIEW; Schema: course_3; Owner: -
+-- Name: active_storage_variant_records; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE VIEW course_3.questions AS
- SELECT questions.id,
-    questions.created_at,
-    questions.updated_at,
-    questions.title,
-    questions.tried,
-    questions.description,
-    questions.notes,
-    questions.location,
-    questions.discarded_at,
-    questions.enrollment_id
-   FROM ((public.questions
-     JOIN public.enrollments ON ((enrollments.id = questions.enrollment_id)))
-     JOIN public.roles ON ((roles.id = enrollments.role_id)))
-  WHERE ((roles.resource_id = 3) AND ((roles.resource_type)::text = 'Course'::text));
+CREATE TABLE public.active_storage_variant_records (
+    id bigint NOT NULL,
+    blob_id bigint NOT NULL,
+    variation_digest character varying NOT NULL
+);
 
 
 --
--- Name: questions_tags; Type: VIEW; Schema: course_3; Owner: -
+-- Name: active_storage_variant_records_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE VIEW course_3.questions_tags AS
- SELECT questions_tags.id,
-    questions_tags.question_id,
-    questions_tags.tag_id
-   FROM (((public.questions_tags
-     JOIN public.questions ON ((questions_tags.question_id = questions.id)))
-     JOIN public.enrollments ON ((questions.enrollment_id = enrollments.id)))
-     JOIN public.roles ON ((roles.id = enrollments.role_id)))
-  WHERE (roles.resource_id = 3);
+CREATE SEQUENCE public.active_storage_variant_records_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
 
 
 --
--- Name: roles; Type: VIEW; Schema: course_3; Owner: -
+-- Name: active_storage_variant_records_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-CREATE VIEW course_3.roles AS
- SELECT roles.id,
-    roles.name,
-    roles.resource_type,
-    roles.resource_id,
-    roles.created_at,
-    roles.updated_at
-   FROM public.roles
-  WHERE (((roles.resource_type)::text = 'Course'::text) AND (roles.resource_id = 3));
-
-
---
--- Name: tags; Type: VIEW; Schema: course_3; Owner: -
---
-
-CREATE VIEW course_3.tags AS
- SELECT tags.id,
-    tags.course_id,
-    tags.created_at,
-    tags.updated_at,
-    tags.archived,
-    tags.name,
-    tags.description,
-    tags.discarded_at
-   FROM public.tags
-  WHERE (tags.course_id = 3);
-
-
---
--- Name: users; Type: VIEW; Schema: course_3; Owner: -
---
-
-CREATE VIEW course_3.users AS
- SELECT users.id,
-    users.given_name,
-    users.family_name,
-    users.email,
-    users.created_at,
-    users.updated_at
-   FROM ((public.users
-     JOIN public.enrollments ON ((users.id = enrollments.user_id)))
-     JOIN public.roles ON ((enrollments.role_id = roles.id)))
-  WHERE (((roles.resource_type)::text = 'Course'::text) AND (roles.resource_id = 3));
-
-
---
--- Name: courses; Type: VIEW; Schema: course_6; Owner: -
---
-
-CREATE VIEW course_6.courses AS
- SELECT courses.id,
-    courses.name,
-    courses.course_code,
-    courses.student_code,
-    courses.ta_code,
-    courses.instructor_code,
-    courses.open,
-    courses.created_at,
-    courses.updated_at
-   FROM public.courses
-  WHERE (courses.id = 6);
-
-
---
--- Name: enrollments; Type: VIEW; Schema: course_6; Owner: -
---
-
-CREATE VIEW course_6.enrollments AS
- SELECT enrollments.id,
-    enrollments.user_id,
-    enrollments.role_id,
-    enrollments.semester,
-    enrollments.created_at,
-    enrollments.updated_at,
-    enrollments.discarded_at,
-    enrollments.section
-   FROM (public.enrollments
-     JOIN public.roles ON ((roles.id = enrollments.role_id)))
-  WHERE (roles.resource_id = 6);
-
-
---
--- Name: question_states; Type: VIEW; Schema: course_6; Owner: -
---
-
-CREATE VIEW course_6.question_states AS
- SELECT question_states.id,
-    question_states.question_id,
-    question_states.created_at,
-    question_states.updated_at,
-    question_states.description,
-    question_states.state,
-    question_states.enrollment_id,
-    question_states.acknowledged_at
-   FROM ((public.question_states
-     JOIN public.enrollments ON ((question_states.enrollment_id = enrollments.id)))
-     JOIN public.roles ON ((enrollments.role_id = roles.id)))
-  WHERE (((roles.resource_type)::text = 'Course'::text) AND (roles.resource_id = 6));
-
-
---
--- Name: questions; Type: VIEW; Schema: course_6; Owner: -
---
-
-CREATE VIEW course_6.questions AS
- SELECT questions.id,
-    questions.created_at,
-    questions.updated_at,
-    questions.title,
-    questions.tried,
-    questions.description,
-    questions.notes,
-    questions.location,
-    questions.discarded_at,
-    questions.enrollment_id
-   FROM ((public.questions
-     JOIN public.enrollments ON ((enrollments.id = questions.enrollment_id)))
-     JOIN public.roles ON ((roles.id = enrollments.role_id)))
-  WHERE ((roles.resource_id = 6) AND ((roles.resource_type)::text = 'Course'::text));
-
-
---
--- Name: questions_tags; Type: VIEW; Schema: course_6; Owner: -
---
-
-CREATE VIEW course_6.questions_tags AS
- SELECT questions_tags.id,
-    questions_tags.question_id,
-    questions_tags.tag_id
-   FROM (((public.questions_tags
-     JOIN public.questions ON ((questions_tags.question_id = questions.id)))
-     JOIN public.enrollments ON ((questions.enrollment_id = enrollments.id)))
-     JOIN public.roles ON ((roles.id = enrollments.role_id)))
-  WHERE (roles.resource_id = 6);
-
-
---
--- Name: roles; Type: VIEW; Schema: course_6; Owner: -
---
-
-CREATE VIEW course_6.roles AS
- SELECT roles.id,
-    roles.name,
-    roles.resource_type,
-    roles.resource_id,
-    roles.created_at,
-    roles.updated_at
-   FROM public.roles
-  WHERE (((roles.resource_type)::text = 'Course'::text) AND (roles.resource_id = 6));
-
-
---
--- Name: tags; Type: VIEW; Schema: course_6; Owner: -
---
-
-CREATE VIEW course_6.tags AS
- SELECT tags.id,
-    tags.course_id,
-    tags.created_at,
-    tags.updated_at,
-    tags.archived,
-    tags.name,
-    tags.description,
-    tags.discarded_at
-   FROM public.tags
-  WHERE (tags.course_id = 6);
-
-
---
--- Name: users; Type: VIEW; Schema: course_6; Owner: -
---
-
-CREATE VIEW course_6.users AS
- SELECT users.id,
-    users.given_name,
-    users.family_name,
-    users.email,
-    users.created_at,
-    users.updated_at
-   FROM ((public.users
-     JOIN public.enrollments ON ((users.id = enrollments.user_id)))
-     JOIN public.roles ON ((enrollments.role_id = roles.id)))
-  WHERE (((roles.resource_type)::text = 'Course'::text) AND (roles.resource_id = 6));
+ALTER SEQUENCE public.active_storage_variant_records_id_seq OWNED BY public.active_storage_variant_records.id;
 
 
 --
@@ -807,6 +540,38 @@ CREATE SEQUENCE public.certificates_id_seq
 --
 
 ALTER SEQUENCE public.certificates_id_seq OWNED BY public.certificates.id;
+
+
+--
+-- Name: courses_enrollments_import_records; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.courses_enrollments_import_records (
+    id bigint NOT NULL,
+    course_id bigint,
+    status character varying,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: courses_enrollments_import_records_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.courses_enrollments_import_records_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: courses_enrollments_import_records_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.courses_enrollments_import_records_id_seq OWNED BY public.courses_enrollments_import_records.id;
 
 
 --
@@ -1349,6 +1114,27 @@ CREATE TABLE public.users_roles (
 
 
 --
+-- Name: active_storage_attachments id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.active_storage_attachments ALTER COLUMN id SET DEFAULT nextval('public.active_storage_attachments_id_seq'::regclass);
+
+
+--
+-- Name: active_storage_blobs id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.active_storage_blobs ALTER COLUMN id SET DEFAULT nextval('public.active_storage_blobs_id_seq'::regclass);
+
+
+--
+-- Name: active_storage_variant_records id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.active_storage_variant_records ALTER COLUMN id SET DEFAULT nextval('public.active_storage_variant_records_id_seq'::regclass);
+
+
+--
 -- Name: analytics_dashboards id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -1374,6 +1160,13 @@ ALTER TABLE ONLY public.certificates ALTER COLUMN id SET DEFAULT nextval('public
 --
 
 ALTER TABLE ONLY public.courses ALTER COLUMN id SET DEFAULT nextval('public.courses_id_seq'::regclass);
+
+
+--
+-- Name: courses_enrollments_import_records id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.courses_enrollments_import_records ALTER COLUMN id SET DEFAULT nextval('public.courses_enrollments_import_records_id_seq'::regclass);
 
 
 --
@@ -1496,6 +1289,30 @@ ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_
 
 
 --
+-- Name: active_storage_attachments active_storage_attachments_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.active_storage_attachments
+    ADD CONSTRAINT active_storage_attachments_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: active_storage_blobs active_storage_blobs_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.active_storage_blobs
+    ADD CONSTRAINT active_storage_blobs_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: active_storage_variant_records active_storage_variant_records_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.active_storage_variant_records
+    ADD CONSTRAINT active_storage_variant_records_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: analytics_dashboards analytics_dashboards_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1525,6 +1342,14 @@ ALTER TABLE ONLY public.ar_internal_metadata
 
 ALTER TABLE ONLY public.certificates
     ADD CONSTRAINT certificates_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: courses_enrollments_import_records courses_enrollments_import_records_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.courses_enrollments_import_records
+    ADD CONSTRAINT courses_enrollments_import_records_pkey PRIMARY KEY (id);
 
 
 --
@@ -1680,6 +1505,34 @@ ALTER TABLE ONLY public.users
 
 
 --
+-- Name: index_active_storage_attachments_on_blob_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_active_storage_attachments_on_blob_id ON public.active_storage_attachments USING btree (blob_id);
+
+
+--
+-- Name: index_active_storage_attachments_uniqueness; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_active_storage_attachments_uniqueness ON public.active_storage_attachments USING btree (record_type, record_id, name, blob_id);
+
+
+--
+-- Name: index_active_storage_blobs_on_key; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_active_storage_blobs_on_key ON public.active_storage_blobs USING btree (key);
+
+
+--
+-- Name: index_active_storage_variant_records_uniqueness; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_active_storage_variant_records_uniqueness ON public.active_storage_variant_records USING btree (blob_id, variation_digest);
+
+
+--
 -- Name: index_analytics_dashboards_on_course_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1691,6 +1544,13 @@ CREATE INDEX index_analytics_dashboards_on_course_id ON public.analytics_dashboa
 --
 
 CREATE INDEX index_certificates_on_course_id ON public.certificates USING btree (course_id);
+
+
+--
+-- Name: index_courses_enrollments_import_records_on_course_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_courses_enrollments_import_records_on_course_id ON public.courses_enrollments_import_records USING btree (course_id);
 
 
 --
@@ -2061,6 +1921,14 @@ ALTER TABLE ONLY public.questions_tags
 
 
 --
+-- Name: active_storage_variant_records fk_rails_993965df05; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.active_storage_variant_records
+    ADD CONSTRAINT fk_rails_993965df05 FOREIGN KEY (blob_id) REFERENCES public.active_storage_blobs(id);
+
+
+--
 -- Name: oauth_access_grants fk_rails_b4b53e07b8; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2074,6 +1942,14 @@ ALTER TABLE ONLY public.oauth_access_grants
 
 ALTER TABLE ONLY public.questions
     ADD CONSTRAINT fk_rails_c35c43e10f FOREIGN KEY (enrollment_id) REFERENCES public.enrollments(id);
+
+
+--
+-- Name: active_storage_attachments fk_rails_c3b3935057; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.active_storage_attachments
+    ADD CONSTRAINT fk_rails_c3b3935057 FOREIGN KEY (blob_id) REFERENCES public.active_storage_blobs(id);
 
 
 --
@@ -2146,6 +2022,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20211119032313'),
 ('20211211052838'),
 ('20211223235232'),
-('20220105043704');
+('20220105043704'),
+('20220126050109'),
+('20220126050718');
 
 

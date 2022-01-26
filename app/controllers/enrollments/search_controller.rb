@@ -15,7 +15,7 @@ class Enrollments::SearchController < ApplicationController
 
     where_params = builder.build_clauses(params)
     where_params = where_params.merge(semester: @current_semester) unless @current_semester == "all"
-    aggs = [:user_full_name, :role_name, :sections]
+    aggs = [:user_full_name, :role_name, :sections, :semester]
     order_params = builder.build_order_clauses(request.query_parameters)
 
     @enrollment_results = Enrollment.pagy_search(params[:q].present? ? params[:q] : "*",

@@ -28,6 +28,7 @@ class Course < ApplicationRecord
   # Not required for now
   # validates :course_code, presence: true, uniqueness: true
 
+  has_many :enrollments_import_records, :class_name => 'Courses::Enrollments::ImportRecord'
   has_one :certificate
   has_many :tag_groups, dependent: :destroy
   has_many :settings, as: :resource, dependent: :destroy
@@ -39,12 +40,7 @@ class Course < ApplicationRecord
                                 where("questions.id in (#{Question.undiscarded
                                                                      .by_state("unresolved", "frozen", "resolving")
                                                                      .select("questions.id")
-                                                                     .to_sql}) or " \
-                                           "questions.id in (#{Question.undiscarded
-                                                                       .by_state("kicked")
-                                                                       .unacknowledged
-                                                                       .select("questions.id")
-                                                                       .to_sql})")
+                                                                     .to_sql})")
                               }, through: :enrollments, class_name: "Question", source: :questions
 
   has_many :questions_on_queue, -> { by_state("unresolved", "frozen").undiscarded },

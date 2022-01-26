@@ -21,14 +21,6 @@ class ApplicationController < ActionController::Base
 
   before_action :authenticate_user!, :set_course, :set_user, :set_enrollment, :set_semester
 
-  def default_url_options
-    if Rails.env.development? || Rails.env.test?
-      {host: "dev-cmqueue.xyz", protocol: "https"}
-    elsif Rails.env.production?
-      {host: "cmqueue.xyz", protocol: "https"}
-    end
-  end
-
   def set_variant
     agent = request.user_agent
     return request.variant = :tablet if /(tablet|ipad)|(android(?!.*mobile))/i.match?(agent)
