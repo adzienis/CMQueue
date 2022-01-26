@@ -14,7 +14,6 @@ class Enrollments::SearchController < ApplicationController
     builder = Search::ClauseBuilder.new(attributes: [:user_full_name, :role_name, :sections, :semester], params: params)
 
     where_params = builder.build_clauses(params)
-    where_params = where_params.merge(semester: @current_semester) unless @current_semester == "all"
     aggs = [:user_full_name, :role_name, :sections, :semester]
     order_params = builder.build_order_clauses(request.query_parameters)
 
