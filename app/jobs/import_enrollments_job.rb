@@ -31,7 +31,7 @@ class ImportEnrollmentsJob < ApplicationJob
     pres_sections = course.courses_sections.to_a
     pres_sections_h = pres_sections.map { |v| [v[:name], v[:id]] }.to_h || {}
 
-    status_file.write("name,role/error")
+    status_file.write("name,role/error\n")
 
     json.each do |student|
       email = student["email"]
@@ -48,11 +48,14 @@ class ImportEnrollmentsJob < ApplicationJob
       user = User.find_by(email: email)
 
       unless email.present?
-        status_file.write("#{user.full_name},DID NOT IMPORT (MISSING EMAIL)\n")
+        status_file.write("#{student["name"]},DID NOT IMPORT (MISSING EMAIL)\n")
         next
       end
 
-      next if user == current_user && current_user.present?
+      if user == current_user && current_user.present?
+        status_file.write("#{user.given_name}, DID NOT IMPORT/UPDATE (LOGGED IN USER)\n")
+        next
+      end
 
       if user.nil?
         user = User.create!(given_name: given_name, family_name: family_name, email: email)

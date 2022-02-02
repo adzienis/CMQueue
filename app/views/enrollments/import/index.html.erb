@@ -10,13 +10,23 @@
 
   <hr>
 
-  <%= form_with url: polymorphic_url([:import, @course, :enrollments]), method: :post, html: { autocomplete: "off"} do |f| %>
+  <%= form_with url: polymorphic_url([:import, @course, :enrollments]), method: :post, html: { autocomplete: "off", class: "mb-2"} do |f| %>
     <%= f.hidden_field :course_id, value: params[:course_id]  %>
     <div>
       <label class="form-label fw-bold"> File </label>
       <%= f.file_field :file, required: true, class: "form-control mb-3" %>
     </div>
 
-    <%= f.submit :Upload, class: "btn btn-primary", data: { "disable-with" => "Uploading..." }%>
+    <%= f.submit :Upload, class: "btn btn-primary", data: { "disable-with" => "Uploading..." } %>
+
   <% end %>
+  <h3> Logs </h3>
+
+  <div style="overflow-y: auto; max-height: 200px">
+    <% @course.enrollments_import_records.order(created_at: :desc).each do |record| %>
+      <div>
+        <%= link_to record.created_at.to_formatted_s(:american_short), rails_blob_path(record.status_log, disposition: "preview") %>
+      </div>
+    <% end %>
+  </div>
 </div>
