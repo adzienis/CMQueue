@@ -17,7 +17,7 @@ class Courses::OpenController < ApplicationController
   def update
     authorize! :update_open, @course
 
-    @course.update!(open_params)
+    Courses::UpdateQueueStatus.new(course: @course, new_status: open_params[:open], by_user: current_user).call
 
     respond_with @course, flash: false
   end

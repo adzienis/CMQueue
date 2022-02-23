@@ -969,6 +969,40 @@ ALTER SEQUENCE public.questions_tags_id_seq OWNED BY public.questions_tags.id;
 
 
 --
+-- Name: queue_status_logs; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.queue_status_logs (
+    id bigint NOT NULL,
+    course_id bigint NOT NULL,
+    new_status boolean,
+    number_students integer,
+    notes text,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: queue_status_logs_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.queue_status_logs_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: queue_status_logs_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.queue_status_logs_id_seq OWNED BY public.queue_status_logs.id;
+
+
+--
 -- Name: roles_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -1080,6 +1114,38 @@ CREATE SEQUENCE public.tags_id_seq
 --
 
 ALTER SEQUENCE public.tags_id_seq OWNED BY public.tags.id;
+
+
+--
+-- Name: user_queue_status_logs; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.user_queue_status_logs (
+    id bigint NOT NULL,
+    queue_status_log_id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: user_queue_status_logs_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.user_queue_status_logs_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: user_queue_status_logs_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.user_queue_status_logs_id_seq OWNED BY public.user_queue_status_logs.id;
 
 
 --
@@ -1254,6 +1320,13 @@ ALTER TABLE ONLY public.questions_tags ALTER COLUMN id SET DEFAULT nextval('publ
 
 
 --
+-- Name: queue_status_logs id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.queue_status_logs ALTER COLUMN id SET DEFAULT nextval('public.queue_status_logs_id_seq'::regclass);
+
+
+--
 -- Name: roles id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -1279,6 +1352,13 @@ ALTER TABLE ONLY public.tag_groups ALTER COLUMN id SET DEFAULT nextval('public.t
 --
 
 ALTER TABLE ONLY public.tags ALTER COLUMN id SET DEFAULT nextval('public.tags_id_seq'::regclass);
+
+
+--
+-- Name: user_queue_status_logs id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_queue_status_logs ALTER COLUMN id SET DEFAULT nextval('public.user_queue_status_logs_id_seq'::regclass);
 
 
 --
@@ -1457,6 +1537,14 @@ ALTER TABLE ONLY public.questions_tags
 
 
 --
+-- Name: queue_status_logs queue_status_logs_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.queue_status_logs
+    ADD CONSTRAINT queue_status_logs_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: roles roles_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1494,6 +1582,14 @@ ALTER TABLE ONLY public.tag_groups
 
 ALTER TABLE ONLY public.tags
     ADD CONSTRAINT tags_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: user_queue_status_logs user_queue_status_logs_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_queue_status_logs
+    ADD CONSTRAINT user_queue_status_logs_pkey PRIMARY KEY (id);
 
 
 --
@@ -1743,6 +1839,13 @@ CREATE INDEX index_questions_tags_on_tag_id ON public.questions_tags USING btree
 
 
 --
+-- Name: index_queue_status_logs_on_course_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_queue_status_logs_on_course_id ON public.queue_status_logs USING btree (course_id);
+
+
+--
 -- Name: index_roles_on_name; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1789,6 +1892,20 @@ CREATE INDEX index_tags_on_course_id ON public.tags USING btree (course_id);
 --
 
 CREATE INDEX index_tags_on_discarded_at ON public.tags USING btree (discarded_at);
+
+
+--
+-- Name: index_user_queue_status_logs_on_queue_status_log_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_user_queue_status_logs_on_queue_status_log_id ON public.user_queue_status_logs USING btree (queue_status_log_id);
+
+
+--
+-- Name: index_user_queue_status_logs_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_user_queue_status_logs_on_user_id ON public.user_queue_status_logs USING btree (user_id);
 
 
 --
@@ -1854,6 +1971,14 @@ ALTER TABLE ONLY public.courses_questions
 
 ALTER TABLE ONLY public.question_states
     ADD CONSTRAINT fk_rails_0b8ad6b6fb FOREIGN KEY (question_id) REFERENCES public.questions(id);
+
+
+--
+-- Name: queue_status_logs fk_rails_13fd39ec30; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.queue_status_logs
+    ADD CONSTRAINT fk_rails_13fd39ec30 FOREIGN KEY (course_id) REFERENCES public.courses(id);
 
 
 --
@@ -1961,6 +2086,22 @@ ALTER TABLE ONLY public.enrollments
 
 
 --
+-- Name: user_queue_status_logs fk_rails_dc09720249; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_queue_status_logs
+    ADD CONSTRAINT fk_rails_dc09720249 FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+
+--
+-- Name: user_queue_status_logs fk_rails_e22e8aedf0; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_queue_status_logs
+    ADD CONSTRAINT fk_rails_e22e8aedf0 FOREIGN KEY (queue_status_log_id) REFERENCES public.queue_status_logs(id);
+
+
+--
 -- Name: enrollments fk_rails_e860e0e46b; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2024,6 +2165,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20211223235232'),
 ('20220105043704'),
 ('20220126050109'),
-('20220126050718');
+('20220126050718'),
+('20220223123857'),
+('20220223123933');
 
 

@@ -224,6 +224,7 @@ Rails.application.routes.draw do
 
   resources :courses do
     resources :user_invitation, only: [:new, :create], controller: "forms/courses/user_invitation"
+    resources :queue_status_logs, only: [:index], controller: "courses/queue_status_log"
     member do
       post "feed", to: "courses/feed#index"
       get "feed", to: "courses/feed#index"

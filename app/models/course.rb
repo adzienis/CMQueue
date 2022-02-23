@@ -138,7 +138,7 @@ class Course < ApplicationRecord
       .merge(Enrollment.active)
   end
 
-  def answerable_questions?(tag_names: nil)
+  def answerable_questions(tag_names: nil)
     if tag_names.present?
       active_questions
         .includes(:question_state)
@@ -146,13 +146,17 @@ class Course < ApplicationRecord
         .where("tags.name": tag_names)
         .group("questions.id")
         .having("count(*) = #{tag_names.count}")
-        .filter { |q| q.unresolved? }.any?
+        .filter { |q| q.unresolved? }
     else
       active_questions
         .includes(:question_state)
         .left_joins(:tags)
-        .filter { |q| q.unresolved? }.any?
+        .filter { |q| q.unresolved? }
     end
+  end
+
+  def answerable_questions?(tag_names: nil)
+    answerable_questions(tag_names: tag_names).any?
   end
 
   def student_role

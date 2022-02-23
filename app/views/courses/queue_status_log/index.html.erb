@@ -1,0 +1,53 @@
+<h1>
+  <%= @course.name %>
+</h1>
+<hr>
+<ul class="nav nav-tabs mb-3">
+  <li class="nav-item">
+    <%= link_to "Queue", queue_course_path(@course), class: "nav-link" %>
+  </li>
+  <li class="nav-item">
+    <%= link_to "TA Log", queue_staff_log_course_path(@course), class: "nav-link" %>
+  </li>
+  <li class="nav-item">
+    <%= link_to "Queue Status Logs", course_queue_status_logs_path(@course, date: Date.current.strftime("%Y-%m-%d")), class: "nav-link active" %>
+  </li>
+</ul>
+
+<%= form_with url: course_queue_status_logs_path(@course),
+              method: :get,
+              html: { style: "width: min-content", autocomplete: "off" },
+              data: { controller: 'autosave', autosave_delay_value: '0' } do |f| %>
+  <%= f.label "Select Date", class: "fw-bold" %>
+  <%= f.date_field :date,
+                   class: "form-control",
+                   value: params[:date] || Date.current.strftime("%Y-%m-%d"),
+                   data: { action: 'autosave#save' } %>
+<% end %>
+
+<hr>
+
+<% if @logs.blank? %>
+  <div class="alert alert-warning">
+    No Logs
+  </div>
+<% end %>
+
+<% @logs.each do |log| %>
+  <div class="card card-body mb-2">
+    <strong><%= log.created_at.to_formatted_s(:american_short) %></strong>
+    <hr>
+    <div>
+      <strong> Status: </strong>
+      <span class="badge <%= "#{log.new_status ? "bg-success" : "bg-danger"}" %>"> <%= log.new_status ? "Open" : "Closed" %> </span>
+    </div>
+    <div>
+      <strong>Closed By:</strong>
+      <span><%= log.users.map(&:full_name).join(", ") %> </span>
+    </div>
+    <div>
+      <strong>Number of Students:</strong>
+      <span><%= log.number_students %> </span>
+    </div>
+  </div>
+<% end %>

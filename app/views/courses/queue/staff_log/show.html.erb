@@ -10,6 +10,9 @@
   <li class="nav-item">
     <%= link_to "TA Log", queue_staff_log_course_path(@course), class: "nav-link active" %>
   </li>
+  <li class="nav-item">
+    <%= link_to "Queue Status Logs", course_queue_status_logs_path(@course, date: Date.current.strftime("%Y-%m-%d")), class: "nav-link" %>
+  </li>
 </ul>
 
 <turbo-frame id="log" data-turbo-action="advance">
