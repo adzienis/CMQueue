@@ -14,6 +14,7 @@ import toast_controller from "./toast_controller";
 import modal_component_controller from "./modal_component_controller";
 import authenticated_controller from "./authenticated_controller";
 import notification_setting_controller from "./notification_setting_controller";
+import question_timer_controller from "./question_timer_controller";
 
 window.Stimulus = Application.start();
 Stimulus.register("form", form_controller);
@@ -26,3 +27,4 @@ Stimulus.register("toast", toast_controller);
 Stimulus.register("modal-component", modal_component_controller);
 Stimulus.register("authenticated", authenticated_controller);
 Stimulus.register("notification-setting", notification_setting_controller);
+Stimulus.register("question-timer", question_timer_controller);

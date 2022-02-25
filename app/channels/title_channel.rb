@@ -15,7 +15,7 @@ class TitleChannel < ApplicationCable::Channel
       role = current_user.enrollment_in_course(course).role.name
 
       stream_for course if params[:type] == "general"
-      stream_from "title:#{params[:room]}:#{role}" if params[:type] == "role"
+      stream_from "title:#{params[:room]}:#{role}" if params[:type] == "role" && role == "student"
       stream_from "title:#{params[:room]}:staff" if params[:type] == "role" && Role.staff_role_names.include?(role)
     end
   end

@@ -244,6 +244,8 @@ class Question < ApplicationRecord
       target: "question-form",
       html: ApplicationController.render(comp, layout: false)
 
+    count = course.questions_on_queue.count
+    TitleChannel.broadcast_to_staff course: course, message: count == 1 ? "#{count} question" : "#{count} questions"
     SyncedTurboChannel.broadcast_replace_later_to course,
       target: "questions-count",
       html: ApplicationController.render(Courses::QuestionsCountComponent.new(course: course),
