@@ -1,6 +1,6 @@
 <div id="feed-component">
   <div class="d-flex mb-3">
-    <%= form_with id: "answer-form", url: feed_answer_course_url(course, tags: selected_tags), html: { target: "_top" }, class: "me-2 w-100" do |f| %>
+    <%= form_with id: "answer-form", url: feed_answer_course_path(course, tags: selected_tags), html: { target: "_top" }, class: "me-2 w-100" do |f| %>
       <%= f.hidden_field :tags, value: selected_tags&.split(" "), multiple: true if params[:tags]&.split(" ").present? %>
       <%= f.submit "Answer", "data-turbo-frame": "_top",
                    class: "btn btn-primary w-100 queue-button",
