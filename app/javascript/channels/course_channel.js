@@ -1,79 +1,87 @@
 import consumer from "./consumer";
 
-consumer.subscriptions.create("CourseChannel", {
-  connected() {
-    console.log('num subs', consumer.subscriptions.subscriptions)
+async function handle_data(data) {
+  if (data.type === "event") {
+    if (typeof data.payload !== undefined) {
+      const event = new CustomEvent(data.event, {
+        detail: data.payload
+      });
+      document.dispatchEvent(event);
+    } else {
+      const event = new Event(data.event);
+      document.dispatchEvent(event);
+    }
+  }
+}
+
+class CourseChannelManager {
+  constructor() {
     this.update_course_channel = this.update_course_channel.bind(this);
     this.general_channel = null;
     this.role_channel = null;
-    this.enrollment_channel = null;
 
     document.addEventListener("turbo:load", this.update_course_channel);
 
     this.update_course_channel();
-  },
+  }
 
-  disconnected() {
-    document.removeEventListener("turbo:load", this.update_course_channel);
-    if(this.general_channel !== null)
-      consumer.subscriptions.remove(this.general_channel);
-    if(this.role_channel !== null)
-      consumer.subscriptions.remove(this.role_channel);
-    if (this.enrollment_channel !== null)
-      consumer.subscriptions.remove(this.enrollment_channel);
-  },
+  unsubscribe_from_channel(channel_name) {
+    if(this[channel_name] === null) return null
 
-  received(data) {
-  },
-  async handle_data(data) {
-    if (data.type === "event") {
-      if (typeof data.payload !== undefined) {
-        const event = new CustomEvent(data.event, {
-          detail: data.payload
-        });
-        document.dispatchEvent(event);
-      } else {
-        const event = new Event(data.event);
-        document.dispatchEvent(event);
-      }
-    }
-  },
+    consumer.subscriptions.remove(this[channel_name]);
+    this[channel_name] = null;
+  }
+
   update_course_channel() {
-    console.log('num subs', consumer.subscriptions.subscriptions.length)
-    console.log('num subs', consumer.subscriptions.subscriptions)
     const exp = /courses\/(\d+)/;
 
     const match = location.pathname.match(exp);
 
     if (match) {
+      console.log(location.pathname, consumer.subscriptions.subscriptions)
       if (
-        this.general_channel === null ||
-        JSON.parse(this.general_channel.identifier).room !== match[1]
+          this.general_channel === null ||
+          JSON.parse(this.general_channel.identifier).room !== match[1]
       ) {
-        if (this.general_channel !== null)
-          consumer.subscriptions.remove(this.general_channel);
+        this.unsubscribe_from_channel("general_channel")
+
 
         this.general_channel = consumer.subscriptions.create({
           channel: "CourseChannel",
           room: match[1],
-          type: "general"
+          type: "general",
+          time: Date.now().toString()
+        }, {
+          received(data) {
+            this.handle_data(data);
+          },
+          handle_data
         });
-        this.general_channel.received = this.handle_data;
       }
 
       if (
-        this.role_channel === null ||
-        JSON.parse(this.role_channel.identifier).room !== match[1]
+          this.role_channel === null ||
+          JSON.parse(this.role_channel.identifier).room !== match[1]
       ) {
-        if (this.role_channel !== null)
-          consumer.subscriptions.remove(this.role_channel);
+        this.unsubscribe_from_channel("role_channel")
+
         this.role_channel = consumer.subscriptions.create({
           channel: "CourseChannel",
           room: match[1],
-          type: "role"
+          type: "role",
+          time: Date.now().toString()
+        }, {
+          received(data) {
+            this.handle_data(data);
+          },
+          handle_data
         });
-        this.role_channel.received = this.handle_data;
       }
+    } else {
+      this.unsubscribe_from_channel("general_channel")
+      this.unsubscribe_from_channel("role_channel")
     }
   }
-});
+}
+
+new CourseChannelManager()

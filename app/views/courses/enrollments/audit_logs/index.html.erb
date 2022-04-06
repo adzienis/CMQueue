@@ -21,12 +21,7 @@
         </thead>
         <tbody>
         <% @enrollment.versions.order(created_at: :desc).each_with_index do |version, i| %>
-          <tr>
-            <th scope="row"><%= i %></th>
-            <td><%= version.created_at.to_formatted_s(:american_short) %></td>
-            <td><%= version.event.humanize %></td>
-            <td><%= Enrollment.find_by(id: version.whodunnit)&.user&.full_name %></td>
-          </tr>
+          <%= render(Courses::Enrollments::AuditLogs::EntryComponent.new(log: version, index: i)) %>
         <% end %>
         </tbody>
       </table>
