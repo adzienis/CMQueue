@@ -1,0 +1,27 @@
+<%= simple_form_for [@course, @enrollment], html: { autocomplete: 'off' }, defaults: { wrapper: false } do |f| %>
+  <%= f.hidden_field :course_id, value: params[:course_id] if params[:course_id] %>
+  <div class="mb-2">
+    <label class="fw-bold"> Semester </label>
+    <div data-controller="react_select">
+      <%= f.input_field :semester, collection: Enrollment.semesters, wrapper: false, include_blank: false, html: { class: "is-invalid" } %>
+      <%= f.full_error :semester, class: "invalid-feedback d-block" %>
+    </div>
+  </div>
+  <div class="mb-2">
+    <label class="fw-bold"> User </label>
+    <div data-controller="react_select">
+      <%= f.collection_select :user_id, User.all, :id, ->(v){ "#{v.full_name} (#{v.email})" }, disabled: !@enrollment.new_record? %>
+    </div>
+  </div>
+  <div class="mb-2">
+    <label class="fw-bold"> Role </label>
+    <div data-controller="react_select">
+      <%= f.collection_select :role_id, @course.roles, :id, ->(v) { v.name.titleize } %>
+    </div>
+  </div>
+
+  <%= tag.p class: "text-muted" do %>
+    Does the user not exist? <%= link_to "Add them", new_course_user_path(@course), class: "fw-bold" %>.
+  <% end if @enrollment.new_record? %>
+  <%= f.submit :Submit, class: "btn btn-primary", "data-disable-with": "Loading" %>
+<% end %>

@@ -1,30 +1,28 @@
-<%= helpers.turbo_stream_from question, channel: SyncedTurboChannel %>
-<turbo-frame id="<%= dom_id(question) %>">
-  <div class="card shadow-sm mb-3 position-relative">
-    <div class="position-absolute" style="top: -15px; left: 0">
-      <% question.tags.each do |tag| %>
+<div class="card shadow-sm mb-3 position-relative" id="<%= dom_id(question)%>">
+  <%= helpers.turbo_stream_from question, channel: SyncedTurboChannel %>
+  <div class="position-absolute" style="top: -15px; left: 0">
+    <% question.tags.each do |tag| %>
         <span class="badge bg-danger">
           <%= tag.name %>
         </span>
-      <% end %>
-    </div>
-    <div class="card-body">
-      <div class="card-title fw-bold">
-        <div class="fw-bold">
-          <%= tag.span status_badge_msg, class: status_badge_class %>
-          <%= question.user.full_name %>
-        </div>
-        <div class="<%= status_class %>"> <%= status_msg %></div>
-      </div>
-      <div>
-        <%= question.description %>
-      </div>
-    </div>
-    <%= tag.div class: "card-footer d-flex" do %>
-      <%= button_to "Unfreeze",
-                    handle_question_path(question, state: "unresolved"),
-                    class: "btn btn-primary",
-                    "data-disable-with": "Unfreezing" if question.frozen? %>
     <% end %>
   </div>
-</turbo-frame>
+  <div class="card-body">
+    <div class="card-title fw-bold">
+      <div class="fw-bold">
+        <%= tag.span status_badge_msg, class: status_badge_class %>
+        <%= question.user.full_name %>
+      </div>
+      <div class="<%= status_class %>"> <%= status_msg %></div>
+    </div>
+    <div>
+      <%= question.description %>
+    </div>
+  </div>
+  <%= tag.div class: "card-footer d-flex" do %>
+    <%= button_to "Unfreeze",
+                  handle_question_path(question, state: "unresolved"),
+                  class: "btn btn-primary",
+                  "data-disable-with": "Unfreezing" if question.frozen? %>
+  <% end %>
+</div>

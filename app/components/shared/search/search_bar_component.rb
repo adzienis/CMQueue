@@ -21,4 +21,10 @@ class Shared::Search::SearchBarComponent < ViewComponent::Base
   private
 
   attr_reader :resources, :parent, :query_parameters, :options
+
+  def new_link
+    return nil unless actions.include?(:new) && helpers.can?(:new, resource_class)
+
+    link_to("New #{resource.to_s.titleize}", polymorphic_path([:new, parent, resource].flatten), class: "btn btn-primary")
+  end
 end

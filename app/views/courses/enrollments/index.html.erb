@@ -1,0 +1,26 @@
+<div class="mb-3">
+  <h1 class="mb-0">
+    Enrollments
+  </h1>
+  <div class="text-muted">
+    All active enrollments.
+  </div>
+</div>
+
+<%= render partial: "shared/search_form",
+           locals: {
+             records: @records,
+             ransack: @enrollments_ransack,
+             course: @course,
+             pagy: @pagy,
+             options: {
+               actions: [:download, :import, :new, :destroy, :edit],
+               except: [:course_id, :user_id, :role_id, :semester_id, :discarded_at],
+               extra_columns: [{ user: :given_name }, { user: :family_name }, { role: :name }, { course: :name }],
+               other_filters: {
+                 role: Role.column_names.excluding("id", "resource_type", "resource_id", "created_at", "updated_at"),
+                 user: User.column_names.excluding("id", "created_at", "updated_at", "provider", "uid")
+               },
+               format: [:given_name, :family_name, :email]
+             }
+           } %>

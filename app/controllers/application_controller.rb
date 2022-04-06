@@ -4,6 +4,7 @@ require "application_responder"
 
 class ApplicationController < ActionController::Base
   impersonates :user
+  before_action :set_paper_trail_whodunnit
   self.responder = ApplicationResponder
 
   rescue_from CanCan::AccessDenied do |exception|

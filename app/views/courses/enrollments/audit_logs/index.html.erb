@@ -1,0 +1,35 @@
+<div class="card">
+  <div class="card-body">
+    <h3>
+      Audit Logs
+    </h3>
+
+    <% if @enrollment.versions.blank? %>
+      <div class="alert alert-warning">
+        No Logs
+      </div>
+    <% else %>
+
+      <table class="table">
+        <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Date</th>
+          <th scope="col">Type of Action</th>
+          <th scope="col">By Whom</th>
+        </tr>
+        </thead>
+        <tbody>
+        <% @enrollment.versions.order(created_at: :desc).each_with_index do |version, i| %>
+          <tr>
+            <th scope="row"><%= i %></th>
+            <td><%= version.created_at.to_formatted_s(:american_short) %></td>
+            <td><%= version.event.humanize %></td>
+            <td><%= Enrollment.find_by(id: version.whodunnit)&.user&.full_name %></td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+    <% end %>
+  </div>
+</div>

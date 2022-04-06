@@ -5,7 +5,6 @@ export default class extends Controller {
     static values = {createdAt: String};
 
     initialize() {
-        console.log(new Date(this.createdAtValue))
         this.interval = setInterval(() => {
             const seconds = Math.floor(((new Date()) - (new Date(this.createdAtValue))) / 1000)
             const output = `${Math.floor(seconds/60 % 60).toString(10).padStart(2, "0")}:${(seconds % 60).toString(10).padStart(2, "0")}`

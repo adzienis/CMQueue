@@ -69,7 +69,7 @@
           </div>
           <%= link_to "Enrollments", search_course_enrollments_path(@course),
                         class: "btn text-decoration-none #{(controller_name == "enrollments" ||
-                          ["enrollments/import", "enrollments/search"].include?(controller_path)) ?
+                          ["courses/enrollments"].map{|v| controller_path.include?(v)}.reduce(:&)) ?
                                                              "active-link" : ""}" %>
         </li>
         <li class="d-flex align-items-center">

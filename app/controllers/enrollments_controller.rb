@@ -1,9 +1,16 @@
 # frozen_string_literal: true
 
 class EnrollmentsController < ApplicationController
-  load_and_authorize_resource id_param: :enrollment_id, except: :create
+  load_and_authorize_resource id_param: :enrollment_id
 
   respond_to :html, :json
+
+  def current_ability
+    @current_ability ||= EnrollmentAbility.new(current_user, {
+      params: params,
+      path_parameters: request.path_parameters
+    })
+  end
 
   def index
     @enrollments = @enrollments

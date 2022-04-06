@@ -22,10 +22,11 @@
     <turbo-frame
       id="feed"
       class="w-100"
+      src="<%= queue_feeds_course_path(@course) %>"
     >
       <%= render(Courses::Feed::FeedComponent.new(course: @course,
                                                   options: { where: { tags: @current_enrollment.selected_tags } },
-                                                  selected_tags: @current_enrollment.selected_tags )) %>
+                                                  selected_tags: @current_enrollment.selected_tags )) %>z
     </turbo-frame>
   </div>
 

@@ -1,5 +1,5 @@
 refresh_active_staff:
-  cron: "*/10 * * * *"
+  cron: "*/5 * * * *"
   class: "RefreshActiveStaffJob"
   queue: default
   retries: 0

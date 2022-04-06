@@ -1,4 +1,4 @@
-<% if Rails.env.development? %>
+<% if Rails.env.development? || ENV["EXTRA_ENV"] == "staging" %>
   <% User.all.each do |user| %>
     <div>
       <%= link_to "Impersonate #{user.full_name}", impersonate_user_path(user), "data-turbo": false %>

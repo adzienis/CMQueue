@@ -1,0 +1,8 @@
+<turbo-frame
+  id="feed"
+  class="w-100"
+>
+  <%= render(Courses::Feed::FeedComponent.new(course: @course,
+                                              options: { where: { tags: @current_enrollment.selected_tags } },
+                                              selected_tags: @current_enrollment.selected_tags )) %>
+</turbo-frame>

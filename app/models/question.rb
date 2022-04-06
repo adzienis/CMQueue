@@ -271,7 +271,7 @@ class Question < ApplicationRecord
   after_update_commit do
     RenderComponentJob.perform_later("Courses::Feed::QuestionCardComponent",
       self,
-      opts: {target: self},
+      opts: { target: self  },
       component_args: {question: self})
   end
 

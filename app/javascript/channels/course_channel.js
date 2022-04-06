@@ -2,6 +2,7 @@ import consumer from "./consumer";
 
 consumer.subscriptions.create("CourseChannel", {
   connected() {
+    console.log('num subs', consumer.subscriptions.subscriptions)
     this.update_course_channel = this.update_course_channel.bind(this);
     this.general_channel = null;
     this.role_channel = null;
@@ -38,6 +39,8 @@ consumer.subscriptions.create("CourseChannel", {
     }
   },
   update_course_channel() {
+    console.log('num subs', consumer.subscriptions.subscriptions.length)
+    console.log('num subs', consumer.subscriptions.subscriptions)
     const exp = /courses\/(\d+)/;
 
     const match = location.pathname.match(exp);

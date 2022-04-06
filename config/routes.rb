@@ -4,6 +4,11 @@ require "sidekiq/web"
 require "sidekiq/cron/web"
 
 Rails.application.routes.draw do
+  namespace :courses do
+    namespace :enrollments do
+      get 'audit_logs/index'
+    end
+  end
   namespace :admin do
     namespace :courses do
       resources :registrations, only: [:index, :update] do
@@ -209,12 +214,13 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :enrollments do
+    resources :enrollments, controller: "courses/enrollments" do
+      resources :audit_logs, controller: "courses/enrollments/audit_logs"
       collection do
-        get "search", to: "enrollments/search#index"
-        get "import", to: "enrollments/import#index"
-        post "import", to: "enrollments/import#create"
-        get "download", to: "enrollments#download_form"
+        get "search", to: "courses/enrollments/search#index"
+        get "import", to: "courses/enrollments/import#index"
+        post "import", to: "courses/enrollments/import#create"
+        get "download", to: "courses/enrollments#download_form"
       end
     end
     resources :roles
@@ -226,6 +232,7 @@ Rails.application.routes.draw do
     resources :user_invitation, only: [:new, :create], controller: "forms/courses/user_invitation"
     resources :queue_status_logs, only: [:index], controller: "courses/queue_status_log"
     member do
+      get "queue/feeds", to: "courses/queue/feeds#show"
       post "feed", to: "courses/feed#index"
       get "feed", to: "courses/feed#index"
       post "feed/answer", to: "courses/feed#answer"

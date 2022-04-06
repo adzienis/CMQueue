@@ -17,6 +17,13 @@ CREATE SCHEMA course_1;
 
 
 --
+-- Name: course_2; Type: SCHEMA; Schema: -; Owner: -
+--
+
+CREATE SCHEMA course_2;
+
+
+--
 -- Name: check_duplicate_question(); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -332,6 +339,147 @@ CREATE VIEW course_1.users AS
      JOIN public.enrollments ON ((users.id = enrollments.user_id)))
      JOIN public.roles ON ((enrollments.role_id = roles.id)))
   WHERE (((roles.resource_type)::text = 'Course'::text) AND (roles.resource_id = 1));
+
+
+--
+-- Name: courses; Type: VIEW; Schema: course_2; Owner: -
+--
+
+CREATE VIEW course_2.courses AS
+ SELECT courses.id,
+    courses.name,
+    courses.course_code,
+    courses.student_code,
+    courses.ta_code,
+    courses.instructor_code,
+    courses.open,
+    courses.created_at,
+    courses.updated_at
+   FROM public.courses
+  WHERE (courses.id = 2);
+
+
+--
+-- Name: enrollments; Type: VIEW; Schema: course_2; Owner: -
+--
+
+CREATE VIEW course_2.enrollments AS
+ SELECT enrollments.id,
+    enrollments.user_id,
+    enrollments.role_id,
+    enrollments.semester,
+    enrollments.created_at,
+    enrollments.updated_at,
+    enrollments.discarded_at,
+    enrollments.section,
+    enrollments.archived_at
+   FROM (public.enrollments
+     JOIN public.roles ON ((roles.id = enrollments.role_id)))
+  WHERE (roles.resource_id = 2);
+
+
+--
+-- Name: question_states; Type: VIEW; Schema: course_2; Owner: -
+--
+
+CREATE VIEW course_2.question_states AS
+ SELECT question_states.id,
+    question_states.question_id,
+    question_states.created_at,
+    question_states.updated_at,
+    question_states.description,
+    question_states.state,
+    question_states.enrollment_id,
+    question_states.acknowledged_at
+   FROM ((public.question_states
+     JOIN public.enrollments ON ((question_states.enrollment_id = enrollments.id)))
+     JOIN public.roles ON ((enrollments.role_id = roles.id)))
+  WHERE (((roles.resource_type)::text = 'Course'::text) AND (roles.resource_id = 2));
+
+
+--
+-- Name: questions; Type: VIEW; Schema: course_2; Owner: -
+--
+
+CREATE VIEW course_2.questions AS
+ SELECT questions.id,
+    questions.created_at,
+    questions.updated_at,
+    questions.title,
+    questions.tried,
+    questions.description,
+    questions.notes,
+    questions.location,
+    questions.discarded_at,
+    questions.enrollment_id
+   FROM ((public.questions
+     JOIN public.enrollments ON ((enrollments.id = questions.enrollment_id)))
+     JOIN public.roles ON ((roles.id = enrollments.role_id)))
+  WHERE ((roles.resource_id = 2) AND ((roles.resource_type)::text = 'Course'::text));
+
+
+--
+-- Name: questions_tags; Type: VIEW; Schema: course_2; Owner: -
+--
+
+CREATE VIEW course_2.questions_tags AS
+ SELECT questions_tags.id,
+    questions_tags.question_id,
+    questions_tags.tag_id
+   FROM (((public.questions_tags
+     JOIN public.questions ON ((questions_tags.question_id = questions.id)))
+     JOIN public.enrollments ON ((questions.enrollment_id = enrollments.id)))
+     JOIN public.roles ON ((roles.id = enrollments.role_id)))
+  WHERE (roles.resource_id = 2);
+
+
+--
+-- Name: roles; Type: VIEW; Schema: course_2; Owner: -
+--
+
+CREATE VIEW course_2.roles AS
+ SELECT roles.id,
+    roles.name,
+    roles.resource_type,
+    roles.resource_id,
+    roles.created_at,
+    roles.updated_at
+   FROM public.roles
+  WHERE (((roles.resource_type)::text = 'Course'::text) AND (roles.resource_id = 2));
+
+
+--
+-- Name: tags; Type: VIEW; Schema: course_2; Owner: -
+--
+
+CREATE VIEW course_2.tags AS
+ SELECT tags.id,
+    tags.course_id,
+    tags.created_at,
+    tags.updated_at,
+    tags.archived,
+    tags.name,
+    tags.description,
+    tags.discarded_at
+   FROM public.tags
+  WHERE (tags.course_id = 2);
+
+
+--
+-- Name: users; Type: VIEW; Schema: course_2; Owner: -
+--
+
+CREATE VIEW course_2.users AS
+ SELECT users.id,
+    users.given_name,
+    users.family_name,
+    users.email,
+    users.created_at,
+    users.updated_at
+   FROM ((public.users
+     JOIN public.enrollments ON ((users.id = enrollments.user_id)))
+     JOIN public.roles ON ((enrollments.role_id = roles.id)))
+  WHERE (((roles.resource_type)::text = 'Course'::text) AND (roles.resource_id = 2));
 
 
 --
@@ -1180,6 +1328,41 @@ CREATE TABLE public.users_roles (
 
 
 --
+-- Name: versions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.versions (
+    id bigint NOT NULL,
+    item_type character varying NOT NULL,
+    item_id bigint NOT NULL,
+    event character varying NOT NULL,
+    whodunnit character varying,
+    object text,
+    created_at timestamp without time zone,
+    object_changes text
+);
+
+
+--
+-- Name: versions_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.versions_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: versions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.versions_id_seq OWNED BY public.versions.id;
+
+
+--
 -- Name: active_storage_attachments id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -1366,6 +1549,13 @@ ALTER TABLE ONLY public.user_queue_status_logs ALTER COLUMN id SET DEFAULT nextv
 --
 
 ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_id_seq'::regclass);
+
+
+--
+-- Name: versions id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.versions ALTER COLUMN id SET DEFAULT nextval('public.versions_id_seq'::regclass);
 
 
 --
@@ -1598,6 +1788,14 @@ ALTER TABLE ONLY public.user_queue_status_logs
 
 ALTER TABLE ONLY public.users
     ADD CONSTRAINT users_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: versions versions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.versions
+    ADD CONSTRAINT versions_pkey PRIMARY KEY (id);
 
 
 --
@@ -1930,6 +2128,13 @@ CREATE INDEX index_users_roles_on_user_id_and_role_id ON public.users_roles USIN
 
 
 --
+-- Name: index_versions_on_item_type_and_item_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_versions_on_item_type_and_item_id ON public.versions USING btree (item_type, item_id);
+
+
+--
 -- Name: polymorphic_owner_oauth_access_grants; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -2167,6 +2372,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20220126050109'),
 ('20220126050718'),
 ('20220223123857'),
-('20220223123933');
+('20220223123933'),
+('20220330115344'),
+('20220330115410');
 
 

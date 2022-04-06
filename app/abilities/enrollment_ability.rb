@@ -10,6 +10,7 @@ class EnrollmentAbility
     if @course.present?
       can :import, Enrollment if user.instructor_of?(@course)
     end
+    binding.pry
 
     can [:new, :edit], Enrollment do |enrollment|
       next true if enrollment.user == user

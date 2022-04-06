@@ -35,6 +35,14 @@ class SyncedTurboChannel < ApplicationCable::Channel
     if user.staff_of?(course)
       Enrollments::UpdateFeedJob.perform_later(enrollment: user.enrollment_in_course(course))
     end
+
+
+    SyncedTurboChannel
+      .broadcast_replace_later_to course, user,
+                                  target: "active-staff",
+                                  html: ApplicationController
+                                          .render(Courses::ActiveStaffComponent.new(course: course),
+                                                  layout: false)
   end
 
   #
@@ -45,8 +53,9 @@ class SyncedTurboChannel < ApplicationCable::Channel
     resources = gids.map { |gid| GlobalID::Locator.locate gid }.compact
 
     if resources.length == 2 && resources[0].is_a?(Course) && resources[1].is_a?(User)
+
       course, user = resources
-      handle_course_user_updates(course, user) if reconnected?(stream_name)
+      handle_course_user_updates(course, user)
     end
   end
 

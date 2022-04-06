@@ -7,6 +7,7 @@ export default class extends Controller {
   closed = !this.courseOpenValue;
 
   courseOpenHandler(e) {
+    console.log('her')
     if (this.courseIdValue === e.detail.course_id) {
       this.closed = false;
       if (this.hasFormTarget) {
@@ -16,6 +17,8 @@ export default class extends Controller {
   }
 
   courseCloseHandler(e) {
+    console.log(this.courseIdValue === e.detail.course_id)
+    console.log(this.hasFormTarget && this.newRecordValue)
     if (this.courseIdValue === e.detail.course_id) {
       this.closed = true;
       if (this.hasFormTarget && this.newRecordValue) {

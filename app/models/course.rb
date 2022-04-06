@@ -100,7 +100,7 @@ class Course < ApplicationRecord
   end
 
   def connected_staff
-    Enrollment.where(id: Cmq::ActionCable::Connections.connected_enrollments_for_room("course:#{id}:staff").members)
+    Enrollment.where(id: Cmq::ActionCable::Connections.connected_enrollments_for_room("course:#{id}:staff"))
   end
 
   def self.find_by_code(code)
@@ -181,39 +181,6 @@ class Course < ApplicationRecord
 
   def public_columns
     select(Course.column_names - ["instructor_code", "ta_code"])
-  end
-
-  after_commit do
-    RenderComponentJob.perform_later("Courses::QueueOpenStatusComponent",
-      self,
-      opts: {target: "queue-open-status"},
-      component_args: {course: self})
-
-    if open_previously_was == false && open == true
-      CourseChannel.broadcast_to self, {
-        type: "event",
-        event: "course:open",
-        payload: {
-          course_id: id
-        }
-      }
-
-    elsif open_previously_was == true && open == false
-      CourseChannel.broadcast_to self, {
-        type: "event",
-        event: "course:close",
-        payload: {
-          course_id: id
-        }
-      }
-    end
-
-    if open_previously_changed?
-      RenderComponentJob.perform_later("Courses::OpenButtonComponent",
-        self,
-        opts: {target: "open-button"},
-        component_args: {course: self})
-    end
   end
 
   after_create do

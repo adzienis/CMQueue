@@ -17,6 +17,9 @@ class Shared::Search::CardFooterComponent < ViewComponent::Base
     helpers.can?(:destroy, record) && !(actions.present? && actions.exclude?(:destroy))
   end
 
+  def audit?
+    helpers.can?(:audit, record) && !(actions.present? && actions.exclude?(:audit))
+  end
   private
 
   attr_reader :record, :course, :options

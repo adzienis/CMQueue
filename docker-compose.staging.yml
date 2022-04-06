@@ -47,7 +47,6 @@ services:
       - "host.docker.internal:host-gateway"
     environment:
       MB_DB_FILE: /metabase-data/metabase.db
-      MB_SEND_EMAIL_ON_FIRST_LOGIN_FROM_NEW_DEVICE: FALSE
     volumes:
       - $PWD/metabase-data:/metabase-data/metabase.db
   postgres:

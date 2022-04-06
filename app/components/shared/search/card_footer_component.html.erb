@@ -7,3 +7,7 @@
            class: "fw-bold",
            method: :delete,
            "data-confirm": "Are you sure?" if destroy? %>
+<%= "|" if destroy? || edit? %>
+<%= link_to "View Audit Logs",
+            polymorphic_path([course, record, :audit_logs]),
+            class: "fw-bold" if audit? %>
