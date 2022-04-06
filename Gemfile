@@ -127,5 +127,3 @@ gem "ffaker", "~> 2.20"
 gem "annotate", "~> 3.1"
 
 gem "paper_trail", "~> 12.3"
-
-gem "anycable-rails", "~> 1.3"
