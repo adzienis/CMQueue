@@ -68,6 +68,7 @@ class CourseChannelManager {
           channel: "CourseChannel",
           room: match[1],
           type: "role"
+          
         }, {
           received(data) {
             this.handle_data(data);
