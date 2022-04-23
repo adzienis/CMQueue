@@ -115,6 +115,8 @@ GEM
     annotate (3.2.0)
       activerecord (>= 3.2, < 8.0)
       rake (>= 10.4, < 14.0)
+    anyway_config (2.3.0)
+      ruby-next-core (>= 0.14.0)
     ast (2.4.2)
     bcrypt (3.1.17)
     bindex (0.8.1)
@@ -350,6 +352,7 @@ GEM
       rubocop (>= 1.7.0, < 2.0)
     ruby-graphviz (1.2.5)
       rexml
+    ruby-next-core (0.15.1)
     ruby-progressbar (1.11.0)
     ruby2_keywords (0.0.5)
     rubyzip (2.3.2)
@@ -425,6 +428,7 @@ PLATFORMS
 
 DEPENDENCIES
   annotate (~> 3.1)
+  anyway_config (~> 2.3)
   bootsnap (>= 1.4.4)
   cancancan (~> 3.2)
   capybara (>= 3.26)

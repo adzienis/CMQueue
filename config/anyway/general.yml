@@ -1,0 +1,10 @@
+default:
+  redis_url: redis://@redis:6379/1
+  redis_provider: redis://@redis:6379/1
+  database_url: postgres://postgres:postgres@postgres:5432/
+  serve_static_files: true
+  metabase_url: https://analytics.cmqueue.xyz
+  elasticsearch_url: http://elastic:okvSFg9uAf4TKw@elastic-search:9200
+
+development:
+  foop: "10"
