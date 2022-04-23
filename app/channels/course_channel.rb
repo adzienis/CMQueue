@@ -13,7 +13,7 @@ class CourseChannel < ApplicationCable::Channel
   end
 
   def room_name
-    if room.is_a?(Course)
+    @room_name ||= if room.is_a?(Course)
       "course:#{room.id}"
     else
       room
@@ -25,13 +25,15 @@ class CourseChannel < ApplicationCable::Channel
   end
 
   def role
-    current_user.enrollment_in_course(course).role.name
+    @role ||= current_user.enrollment_in_course(course).role.name
   end
 
   def room
-    return course if params[:type] == "general"
-    return "course:#{params[:room]}:staff" if params[:type] == "role" && Role.staff_role_names.include?(role)
-    return "course:#{params[:room]}:#{role}" if params[:type] == "role"
+    return @room if defined?(@room)
+    return @room = course if params[:type] == "general"
+    return @room = "course:#{params[:room]}:staff" if params[:type] == "role" && Role.staff_role_names.include?(role)
+    @room = "course:#{params[:room]}:#{role}" if params[:type] == "role"
+    @room
   end
 
   def unsubscribed

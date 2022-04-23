@@ -49,8 +49,7 @@ class CourseChannelManager {
         this.general_channel = consumer.subscriptions.create({
           channel: "CourseChannel",
           room: match[1],
-          type: "general",
-          time: Date.now().toString()
+          type: "general"
         }, {
           received(data) {
             this.handle_data(data);
@@ -68,8 +67,7 @@ class CourseChannelManager {
         this.role_channel = consumer.subscriptions.create({
           channel: "CourseChannel",
           room: match[1],
-          type: "role",
-          time: Date.now().toString()
+          type: "role"
         }, {
           received(data) {
             this.handle_data(data);
