@@ -129,3 +129,5 @@ gem "annotate", "~> 3.1"
 gem "paper_trail", "~> 12.3"
 
 gem "anyway_config", "~> 2.3"
+
+gem "marginalia", "~> 1.11"

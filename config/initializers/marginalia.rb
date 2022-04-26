@@ -1,0 +1,1 @@
+Marginalia::Comment.components = [:db_host, :line]

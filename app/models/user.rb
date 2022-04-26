@@ -33,9 +33,10 @@ class User < ApplicationRecord
                               }, through: :enrollments, source: :questions
   has_many :courses, through: :enrollments
   has_many :other_roles, class_name: "Role"
-  has_many :questions, dependent: :destroy, through: :enrollments
-  has_many :question_states, -> { order("question_states.id DESC") }, through: :enrollments, dependent: :destroy, source: :question_states
+  has_many :questions, through: :enrollments
+  has_many :question_states, -> { order("question_states.id DESC") }, through: :enrollments, source: :question_states
   has_many :settings, as: :resource, dependent: :destroy
+  has_many :user_queue_status_logs, dependent: :destroy
 
   validates :given_name, :family_name, :email, presence: true
 

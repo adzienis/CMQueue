@@ -52,6 +52,7 @@ class Course < ApplicationRecord
     source: :questions,
     class_name: "Question"
   has_many :tags, dependent: :destroy
+  has_many :queue_status_logs, dependent: :destroy
   # has_many :announcements
 
   has_many :courses_sections, class_name: "Courses::Section"

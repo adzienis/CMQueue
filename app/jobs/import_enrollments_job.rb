@@ -18,6 +18,8 @@ class ImportEnrollmentsJob < ApplicationJob
   end
 
   def perform(json:, course:, current_user: nil, import_record: nil)
+    PaperTrail.request.whodunnit = current_user&.id
+
     @json = json
     @course = course
     @current_user = current_user

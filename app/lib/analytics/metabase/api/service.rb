@@ -4,7 +4,7 @@ module Analytics
       class Service
         include Singleton
 
-        BASE_URL = Rails.configuration.general[:analytics_url]
+        BASE_URL = ENV["METABASE_URL"]
 
         URL_MAPPING = {
           session: -> { "#{BASE_URL}/api/session" },

@@ -20,7 +20,7 @@ class Enrollment < ApplicationRecord
   include Turbo::Broadcastable
   extend Pagy::Searchkick
 
-  has_paper_trail
+  has_paper_trail(limit: nil)
   searchkick index_prefix: -> {}
   kredis_hash "course_state"
   scope :search_import, -> { includes(:role) }
@@ -44,7 +44,7 @@ class Enrollment < ApplicationRecord
   has_one :course, through: :role
   has_one :question_state, -> { order("question_states.id DESC") }
   has_and_belongs_to_many :courses_sections, class_name: "Courses::Section", association_foreign_key: :courses_section_id
-  has_many :question_states, dependent: :destroy
+  has_many :question_states
   has_many :questions, inverse_of: :enrollment, dependent: :destroy
 
   validate :unique_enrollment_in_course_per_semester, on: :create

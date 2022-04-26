@@ -107,51 +107,36 @@ class QuestionState < ApplicationRecord
                          .pluck("questions.id"))
   }
 
-  after_commit do
+  after_create_commit :emit_updates
+
+  after_update_commit :emit_updates
+
+  def emit_updates
     question.reload.reindex(refresh: true)
 
     count = course.questions_on_queue.count
     TitleChannel.broadcast_to_staff course: course, message: count == 1 ? "#{count} question" : "#{count} questions"
     TitleChannel.broadcast_to question.user,
-      question.position_in_course.present? ? (question.reload.position_in_course + 1).ordinalize : "N/A"
+                              question.position_in_course.present? ? (question.reload.position_in_course + 1).ordinalize : "N/A"
 
     RenderComponentJob.perform_later("Courses::QuestionPositionComponent",
-      question.user,
-      opts: {target: "question-position"},
-      component_args: {question: question})
+                                     question.user,
+                                     opts: {target: "question-position"},
+                                     component_args: {question: question})
 
     if resolving?
       SiteNotification.with(message: "Your question is currently being resolved.").deliver_later(question.user)
     end
 
-    if false
-
-      if resolved?
-        RenderComponentJob.perform_later("Forms::Questions::QuestionCreatorComponent",
-          question.user,
-          opts: {target: "form"},
-          component_args: {course: course,
-                           question: nil,
-                           current_user: question.user})
-      else
-        RenderComponentJob.perform_later("Forms::Questions::QuestionCreatorComponent",
-          question.user,
-          opts: {target: "form"},
-          component_args: {course: course,
-                           question: question,
-                           current_user: question.user})
-      end
-    end
-
     RenderComponentJob.perform_later("Courses::QuestionsCountComponent",
-      course,
-      opts: {target: "questions-count"},
-      component_args: {course: course})
+                                     course,
+                                     opts: {target: "questions-count"},
+                                     component_args: {course: course})
 
     RenderComponentJob.perform_later("Courses::ActiveStaffComponent",
-      course,
-      opts: {target: "active-staff"},
-      component_args: {course: course})
+                                     course,
+                                     opts: {target: "active-staff"},
+                                     component_args: {course: course})
 
     Courses::UpdatePositionsJob.perform_later(course: course)
   end

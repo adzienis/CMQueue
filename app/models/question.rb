@@ -50,11 +50,10 @@ class Question < ApplicationRecord
   # this basically alias question_state
   has_one :question_state, -> { order("max(id) DESC").group("question_states.id") },
     class_name: "QuestionState",
-    dependent: :destroy,
     inverse_of: :question
 
-  has_many :question_tags
-  has_many :tags, through: :question_tags, dependent: :destroy, autosave: true, inverse_of: :questions
+  has_many :question_tags, dependent: :destroy
+  has_many :tags, through: :question_tags, autosave: true, inverse_of: :questions
 
   # has_many :notifications, as: :recipient
 

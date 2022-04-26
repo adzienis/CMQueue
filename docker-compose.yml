@@ -1,11 +1,3 @@
-# This is a set up for Ruby on Rails 6, running a worker & webpack.
-# Gems are cached within a volume, which speeds up development when adding new gems.
-#
-## Usage:
-#
-# docker-compose build
-# docker-compose run --rm web bin/setup
-# docker-compose up
 version: "3"
 
 x-app: &app
@@ -29,6 +21,16 @@ x-app: &app
     - postgres
     - redis
     - elastic-search
+  environment:
+    - REDIS_URL=redis://@redis:6379/1
+    - DATABASE_URL=postgres://postgres:postgres@postgres:5432/
+    - SERVE_STATIC_FILES=true
+    - METABASE_URL=https://analytics.cmqueue.xyz
+    - ELASTICSEARCH_URL=http://elastic:okvSFg9uAf4TKw@elastic-search:9200
+    - REDIS_PROVIDER=REDIS_URL
+    - PGPASSWORD=J2m7ME5i3ZghoZ
+    - MB_EMBEDDING_SECRET_KEY=sD0FSYu6sphAchbakTaQoG0pgfIG64eI8HRbICpDPOg=
+    - MB_ENCRYPTION_SECRET_KEY=sD0FSYu6sphAchbakTaQoG0pgfIG64eI8HRbICpDPOg=
 services:
   nginx:
     image: nginx
@@ -51,11 +53,9 @@ services:
   metabase:
     image: metabase/metabase:v0.41.3.1
     ports:
-      - 3010:3000
+      - "0.0.0.0:3010:3000"
     extra_hosts:
-      - "host.docker.internal:host-gateway"
-    env_file:
-      .env
+      - host.docker.internal:host-gateway
     environment:
       MB_DB_FILE: /metabase-data/metabase.db
     volumes:
@@ -69,6 +69,7 @@ services:
       PSQL_HISTFILE: /root/log/.psql_history
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
     volumes:
       - $PWD/init_db.sh:/docker-entrypoint-initdb.d/init_db.sh
     restart: on-failure
@@ -88,13 +89,9 @@ services:
       - "0.0.0.0:3000:3000"
     stdin_open: true
     tty: true
-    env_file:
-      .env
   worker:
     <<: *app
     command: bundle exec sidekiq -C config/sidekiq.yml
-    env_file:
-      .env
 
 volumes:
   postgresql:

@@ -1,4 +1,5 @@
 require_relative 'general_config'
+require_relative 'services_config'
 
 class AppConfig
   def self.method_missing(symbol)
