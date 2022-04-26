@@ -14,6 +14,7 @@
 class Role < ApplicationRecord
   include FindableByCourseRoles
 
+  validates :name, uniqueness: { scope: [:resource, :resource_type] }
   has_many :enrollments, dependent: :destroy
   has_one :self_ref, class_name: "Role", foreign_key: :id
   has_one :course, through: :self_ref, source: :resource, source_type: "Course"

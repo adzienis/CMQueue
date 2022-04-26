@@ -102,6 +102,7 @@ module Courses
     end
 
     def new
+      @enrollment = Enrollment.new(semester: Enrollment.default_semester)
     end
 
     def create
