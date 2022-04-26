@@ -1,4 +1,4 @@
-class CourseAbility
+class CourseAbility < BaseAbility
   include CanCan::Ability
 
   def initialize(user, context)

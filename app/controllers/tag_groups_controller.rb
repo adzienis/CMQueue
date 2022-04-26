@@ -3,6 +3,13 @@ class TagGroupsController < ApplicationController
 
   respond_to :html, :json
 
+  def current_ability
+    @current_ability ||= ::TagGroupAbility.new(current_user, {
+      params: params,
+      path_parameters: request.path_parameters
+    })
+  end
+
   def index
     @tag_groups_ransack = @tag_groups.ransack(params[:q])
 

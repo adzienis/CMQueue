@@ -1,4 +1,4 @@
-class EnrollmentAbility
+class EnrollmentAbility < BaseAbility
   include CanCan::Ability
 
   def initialize(user, context)

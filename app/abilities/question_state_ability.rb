@@ -1,4 +1,4 @@
-class QuestionStateAbility
+class QuestionStateAbility < BaseAbility
   include CanCan::Ability
 
   def initialize(user, context)

@@ -1,13 +1,9 @@
 module Courses
-  class EnrollmentAbility
+  class EnrollmentAbility < BaseAbility
     include CanCan::Ability
 
     def initialize(user, context)
       return unless user.present?
-
-      @course = Course.find(context[:params][:course_id]) if context[:params][:course_id].present?
-
-      return unless @course.present?
 
       @staff_role = Course.find_staff_roles(user).find_by(resource: @course)
       @instructor_role = Course.find_roles([:instructor], user).find_by(resource: @course)

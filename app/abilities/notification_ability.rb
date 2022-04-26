@@ -1,4 +1,4 @@
-class NotificationAbility
+class NotificationAbility < BaseAbility
   include CanCan::Ability
 
   def initialize(user, context)

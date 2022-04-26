@@ -1,4 +1,4 @@
-class CertificateAbility
+class CertificateAbility < BaseAbility
   include CanCan::Ability
 
   def initialize(user, context)

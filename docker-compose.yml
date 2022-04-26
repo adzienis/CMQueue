@@ -51,7 +51,7 @@ services:
       - ES_JAVA_OPTS=-Xms750m -Xmx750m
       - xpack.security.enabled=true
   metabase:
-    image: metabase/metabase:v0.41.3.1
+    image: metabase/metabase:v0.42.4
     ports:
       - "0.0.0.0:3010:3000"
     extra_hosts:
@@ -89,6 +89,7 @@ services:
       - "0.0.0.0:3000:3000"
     stdin_open: true
     tty: true
+    container_name: web
   worker:
     <<: *app
     command: bundle exec sidekiq -C config/sidekiq.yml

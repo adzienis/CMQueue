@@ -42,7 +42,7 @@ jobs:
       # Build the Docker image we're testing our app on.
       - name: Build Latest
         run: |
-          docker-compose -f docker-compose.ci.yml build --build-arg USER_ID="$(id -u)" --build-arg GROUP_ID="$(id -u)" test
+          docker-compose -f docker-compose.ci.yml build --build-arg USER_ID="$(id -u)" --build-arg GROUP_ID="$(id -u)"
       # Download the node_modules & gems, along with setting up a clean database.
       - name: Setup Environment
         run: |

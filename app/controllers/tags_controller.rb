@@ -5,6 +5,13 @@ class TagsController < ApplicationController
 
   respond_to :html, :json, :csv
 
+  def current_ability
+    @current_ability ||= ::TagAbility.new(current_user, {
+      params: params,
+      path_parameters: request.path_parameters
+    })
+  end
+
   def download
     @course = Course.find(params[:course_id])
   end

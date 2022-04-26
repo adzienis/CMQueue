@@ -24,6 +24,7 @@ class Question < ApplicationRecord
   extend Pagy::Searchkick
 
   searchkick
+  has_paper_trail(limit: nil)
 
   scope :search_import, -> { includes(:question_state, :user, :tags) }
 

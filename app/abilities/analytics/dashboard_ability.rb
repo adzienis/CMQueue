@@ -1,5 +1,5 @@
 module Analytics
-  class DashboardAbility
+  class DashboardAbility < BaseAbility
     include CanCan::Ability
 
     def initialize(user, context)
