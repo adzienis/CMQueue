@@ -100,7 +100,7 @@ class Course < ApplicationRecord
   end
 
   def connected_staff
-    Enrollment.where(id: Cmq::ActionCable::Connections.connected_enrollments_for_room("course:#{id}:staff"))
+    staff.joins(:user).merge(User.online)
   end
 
   def self.find_by_code(code)

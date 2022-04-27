@@ -17,6 +17,8 @@ class User < ApplicationRecord
   alias_attribute :current_state, :question_state
   attr_accessor :question_state
 
+  scope :online, -> { where("last_active_at > ?", 5.minutes.ago) }
+
   has_many :active_enrollments, -> { undiscarded }, class_name: "Enrollment", inverse_of: :user
   has_many :enrollments, dependent: :destroy, inverse_of: :user
   has_many :staff_enrollments,
@@ -183,6 +185,10 @@ class User < ApplicationRecord
         csv << attributes.map { |attr| user.send(attr) }
       end
     end
+  end
+
+  def online?
+    last_active_at > 5.minutes.ago
   end
 
   after_create_commit do

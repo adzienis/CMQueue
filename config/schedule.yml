@@ -13,3 +13,8 @@ migrate_enrollments:
   class: "Courses::MigrateAndArchivePastEnrollmentsJob"
   queue: default
   retries: 0
+ping_users:
+  cron: "*/5 * * * *"
+  class: "PingJob"
+  queue: default
+  retries: 0
