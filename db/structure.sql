@@ -996,7 +996,9 @@ CREATE TABLE public.users (
     family_name text,
     email text,
     created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL
+    updated_at timestamp with time zone NOT NULL,
+    last_active_at timestamp without time zone,
+    last_pinged_at timestamp without time zone
 );
 
 
@@ -2078,6 +2080,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20220223123857'),
 ('20220223123933'),
 ('20220330115344'),
-('20220330115410');
+('20220330115410'),
+('20220427022948');
 
 

@@ -1,10 +1,14 @@
 module Courses
   class BaseAbility < ::BaseAbility
 
+    def initialize(user, context)
+      super
+    end
+
     private
 
     def course
-      @course ||= context[:course]
+      @course ||= Course.find(context[:params][:course_id])
     end
 
     def enrollment

@@ -44,7 +44,7 @@ class Enrollment < ApplicationRecord
   has_one :course, through: :role
   has_one :question_state, -> { order("question_states.id DESC") }
   has_and_belongs_to_many :courses_sections, class_name: "Courses::Section", association_foreign_key: :courses_section_id
-  has_many :question_states
+  has_many :question_states, dependent: :destroy
   has_many :questions, inverse_of: :enrollment, dependent: :destroy
 
   validate :unique_enrollment_in_course_per_semester, on: :create
@@ -62,9 +62,9 @@ class Enrollment < ApplicationRecord
     return if user_id.nil? || role_id.nil? || semester.nil?
 
     found = Enrollment
-      .active
-      .joins(:role)
-      .where("roles.resource_id": role.resource_id, "roles.resource_type": "Course", user_id: user_id, semester: semester)
+              .active
+              .joins(:role)
+              .where("roles.resource_id": role.resource_id, "roles.resource_type": "Course", user_id: user_id, semester: semester)
 
     if found.exists?
       SpecialLogger.info("here: #{found.first.to_yaml}")
@@ -103,15 +103,23 @@ class Enrollment < ApplicationRecord
   end
 
   def student?
-    role.name == "student" && role.resource_type == "Course"
+    role.name == "student" && role.resource == course
+  end
+
+  def instructor?
+    role.name == "instructor" && role.resource == course
+  end
+
+  def ta?
+    role.name == "ta" && role.resource == course
   end
 
   def staff?
-    Role.staff_role_names.include?(role.name) && role.resource_type == "Course"
+    Role.staff_role_names.include?(role.name) && role.resource == course
   end
 
   def privileged?
-    Role.privileged_role_names.include?(role.name) && role.resource_type == "Course"
+    Role.privileged_role_names.include?(role.name) && role.resource == course
   end
 
   def student_role

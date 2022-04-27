@@ -4,6 +4,10 @@ require "sidekiq/web"
 require "sidekiq/cron/web"
 
 Rails.application.routes.draw do
+  authenticate :user, ->(u) { u.has_role? :admin } do
+    mount Sidekiq::Web => "/admin/sidekiq"
+  end
+
   namespace :courses do
     namespace :enrollments do
       get 'audit_logs/index'
@@ -24,27 +28,6 @@ Rails.application.routes.draw do
     end
   end
 
-  resource :admin do
-  end
-
-  get "accounts/index"
-  namespace :courses do
-    get "questions/edit"
-    get "questions/update"
-  end
-  namespace :courses do
-    namespace :queue do
-      get "staff_log/show"
-    end
-  end
-  namespace :users do
-    get "settings/index"
-    get "settings/update"
-  end
-  authenticate :user, ->(u) { u.has_role? :admin } do
-    mount Sidekiq::Web => "/admin/sidekiq"
-  end
-
   namespace :analytics do
     namespace :metabase do
       resources :dashboards
@@ -61,24 +44,12 @@ Rails.application.routes.draw do
     end
   end
 
-  namespace :courses do
-    get "answer/show"
-  end
   post "enroll", to: "forms/enroll_by_code#create"
-  namespace :courses do
-    get "queue/index"
-  end
   get "activity", to: "summaries#activity"
   get "answer_time", to: "summaries#answer_time"
   get "grouped_tags", to: "summaries#grouped_tags"
 
   resources :tag_groups
-
-  get "/api/swagger", to: "application#swagger", as: :swagger
-  get "/demo", to: redirect("https://cmqueue-demo.herokuapp.com/"), as: :demo
-
-  # mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
-  mount PgHero::Engine, at: "pghero"
 
   resource :user, as: :current_user, user_scope: true do
     resources :enrollments, controller: "users/enrollments"
@@ -139,13 +110,8 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :courses
-
-  resources :users, only: [], model_name: "User" do
-    resources :settings, controller: "users/settings"
-  end
-
   resources :users do
+    resources :settings, controller: "users/settings"
     member do
       get "impersonate", to: "users/impersonate#start_impersonating"
     end
@@ -155,17 +121,12 @@ Rails.application.routes.draw do
     end
   end
 
-  namespace :courses do
-    resources :registrations, only: [:new, :create, :update], controller: "registrations"
-  end
-
-  resources :courses, only: [], model_name: "Course" do
+  resources :courses do
     member do
       scope :analytics do
         get "dashboards/custom", to: "dashboards/custom#show"
       end
     end
-
     namespace :analytics do
       resources :dashboards
     end
@@ -225,8 +186,6 @@ Rails.application.routes.draw do
     end
     resources :roles
   end
-
-  resources :certificates
 
   resources :courses do
     resources :user_invitation, only: [:new, :create], controller: "forms/courses/user_invitation"

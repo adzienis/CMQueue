@@ -107,9 +107,7 @@ class QuestionState < ApplicationRecord
                          .pluck("questions.id"))
   }
 
-  after_create_commit :emit_updates
-
-  after_update_commit :emit_updates
+  after_commit :emit_updates, on: [:create, :update]
 
   def emit_updates
     question.reload.reindex(refresh: true)

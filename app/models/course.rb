@@ -35,7 +35,6 @@ class Course < ApplicationRecord
   has_many :questions, through: :enrollments
   has_many :analytics_dashboards, class_name: "Analytics::Dashboard"
   has_many :unresolved_questions, -> { undiscarded.by_state("unresolved") }, class_name: "Question"
-
   has_many :active_questions, -> {
                                 where("questions.id in (#{Question.undiscarded
                                                                      .by_state("unresolved", "frozen", "resolving")
@@ -55,7 +54,7 @@ class Course < ApplicationRecord
   has_many :queue_status_logs, dependent: :destroy
   # has_many :announcements
 
-  has_many :courses_sections, class_name: "Courses::Section"
+  has_many :courses_sections, class_name: "Courses::Section", dependent: :destroy
 
   has_one :ta_role, -> { where(name: "ta") },
     as: :resource,
@@ -221,5 +220,6 @@ class Course < ApplicationRecord
     Postgres::Views::Tag.destroy(id)
     Postgres::Views::Enrollment.destroy(id)
     Postgres::Views.destroy_user(id)
+    Postgres::Views.destroy_course_schema(id)
   end
 end
