@@ -112,10 +112,7 @@ class QuestionState < ApplicationRecord
   def emit_updates
     question.reload.reindex(refresh: true)
 
-    count = course.questions_on_queue.count
-    TitleChannel.broadcast_to_staff course: course, message: count == 1 ? "#{count} question" : "#{count} questions"
-    TitleChannel.broadcast_to question.user,
-                              question.position_in_course.present? ? (question.reload.position_in_course + 1).ordinalize : "N/A"
+    UpdateQuestionPosition.call(question: question)
 
     RenderComponentJob.perform_later("Courses::QuestionPositionComponent",
                                      question.user,

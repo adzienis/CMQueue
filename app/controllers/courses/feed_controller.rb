@@ -9,6 +9,13 @@ class Courses::FeedController < ApplicationController
     @current_enrollment.selected_tags = params[:tags]
   end
 
+  def current_ability
+    @current_ability ||= ::CourseAbility.new(current_user, {
+      params: params,
+      path_parameters: request.path_parameters
+    })
+  end
+
   def answer
     builder = Search::ClauseBuilder.new(attributes: [:tags], params: feed_params)
 

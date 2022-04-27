@@ -12,6 +12,16 @@ class TitleChannelManager {
 
     document.addEventListener("turbo:load", this.update_course_channel);
 
+
+    consumer.subscriptions.create({
+      channel: "TitleChannel"
+    }, {
+      received(data) {
+        this.handle_data(data);
+      },
+      handle_data
+    });
+
     this.update_course_channel();
   }
 

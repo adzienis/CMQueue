@@ -69,3 +69,4 @@ metabase.db
 /config/credentials/production.key
 
 /config/credentials/test.key
+backup.sql

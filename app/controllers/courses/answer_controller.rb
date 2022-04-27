@@ -1,6 +1,13 @@
 class Courses::AnswerController < ApplicationController
   before_action :authorize
 
+  def current_ability
+    @current_ability ||= ::CourseAbility.new(current_user, {
+      params: params,
+      path_parameters: request.path_parameters
+    })
+  end
+
   def authorize
     authorize! :answer, @course
   end
