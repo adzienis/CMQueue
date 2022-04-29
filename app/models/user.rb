@@ -17,7 +17,7 @@ class User < ApplicationRecord
   alias_attribute :current_state, :question_state
   attr_accessor :question_state
 
-  scope :online, -> { where("last_active_at > ?", 5.minutes.ago) }
+  scope :online, -> { where("last_active_at > ?", 10.minutes.ago) }
 
   has_many :active_enrollments, -> { undiscarded }, class_name: "Enrollment", inverse_of: :user
   has_many :enrollments, dependent: :destroy, inverse_of: :user
