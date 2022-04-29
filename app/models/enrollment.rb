@@ -47,6 +47,13 @@ class Enrollment < ApplicationRecord
   has_many :question_states, dependent: :destroy
   has_many :questions, inverse_of: :enrollment, dependent: :destroy
 
+  has_one :active_question, -> {
+    undiscarded
+      .by_state("unresolved", "frozen", "resolving")
+      .or(undiscarded.by_state("kicked")
+                     .unacknowledged)
+  }, class_name: "Question"
+
   validate :unique_enrollment_in_course_per_semester, on: :create
   validate :semester_valid
 

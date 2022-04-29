@@ -1,15 +1,13 @@
 class CourseChannel < ApplicationCable::Channel
   def subscribed
-    stream_for current_user unless params[:room]
-
     if params[:room]
-      ActiveRecord::Base.transaction do
-        Postgres::Locks.pg_advisory_xact_lock(current_user.enrollment_in_course(course).id)
-        Cmq::ActionCable::Connections.add_enrollment_to_room(room_name, current_user.enrollment_in_course(course).id)
-        SpecialLogger.info "subscribed: #{room_name}; #{current_user.email}; room: #{room_name}; entries: #{Kredis.hash(room_name, typed: :integer).entries}; time: #{params[:time]}"
-        stream_for room
+      if params[:type] == "general"
+        SyncStudentTitle.call(enrollment: current_enrollment) if current_enrollment.student?
       end
+      return stream_for(room)
     end
+
+    stream_for current_user
   end
 
   def room_name
@@ -36,14 +34,7 @@ class CourseChannel < ApplicationCable::Channel
     @room
   end
 
-  def unsubscribed
-
-    ActiveRecord::Base.transaction do
-      Postgres::Locks.pg_advisory_xact_lock(current_user.enrollment_in_course(course).id)
-      SpecialLogger.info "unsubscribed: #{room_name}; #{current_user.email}: entries: #{Kredis.hash(room_name, typed: :integer).entries}; time: #{params[:time]}"
-      if params[:room].present?
-        Cmq::ActionCable::Connections.remove_enrollment_from_room(room_name, current_user.enrollment_in_course(course).id)
-      end
-    end
+  def current_enrollment
+    @current_enrollment ||= current_user.enrollment_in_course(course)
   end
 end
