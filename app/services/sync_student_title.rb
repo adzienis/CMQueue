@@ -5,9 +5,11 @@ class SyncStudentTitle < ApplicationService
   end
 
   def call
-    msg = question.present? ? (question.position_in_course + 1).ordinalize : "N/A"
+    return TitleChannel.broadcast_to(enrollment.user, "N/A") unless question.present?
+
+    msg = (question.position_in_course + 1).ordinalize if question.position_in_course.present?
     msg = "Resolving" if question.resolving?
-    TitleChannel.broadcast_to(question.user, msg)
+    TitleChannel.broadcast_to(enrollment.user, msg)
   end
 
   private

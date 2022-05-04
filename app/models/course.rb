@@ -36,10 +36,7 @@ class Course < ApplicationRecord
   has_many :analytics_dashboards, class_name: "Analytics::Dashboard"
   has_many :unresolved_questions, -> { undiscarded.by_state("unresolved") }, class_name: "Question"
   has_many :active_questions, -> {
-                                where("questions.id in (#{Question.undiscarded
-                                                                     .by_state("unresolved", "frozen", "resolving")
-                                                                     .select("questions.id")
-                                                                     .to_sql})")
+                                Question.undiscarded.by_state("unresolved", "frozen", "resolving")
                               }, through: :enrollments, class_name: "Question", source: :questions
 
   has_many :questions_on_queue, -> { by_state("unresolved", "frozen").undiscarded },

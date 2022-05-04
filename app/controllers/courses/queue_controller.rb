@@ -2,7 +2,7 @@ class Courses::QueueController < ApplicationController
   before_action :authorize
 
   def authorize
-    authorize! :queue_show, @course
+    authorize! :queue, @course
   end
 
   def current_ability

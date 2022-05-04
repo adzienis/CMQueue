@@ -9,7 +9,6 @@ class Courses::UpdatePositionsJob < ApplicationJob
       SyncedTurboChannel.broadcast_replace_later_to question.user,
         target: "question-position",
         html: ApplicationController.render(component, layout: false)
-      TitleChannel.broadcast_to question.user, (i + 1).ordinalize
     end
   end
 end

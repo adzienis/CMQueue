@@ -9,7 +9,9 @@ class UpdateQuestionPosition < ApplicationService
 
   def call
     broadcast_to_staff
-    SyncStudentTitle.call(enrollment: question.enrollment)
+    course.active_questions.includes(:enrollment).each do |question|
+      SyncStudentTitle.call(enrollment: question.enrollment)
+    end
   end
 
   private

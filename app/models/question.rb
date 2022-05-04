@@ -259,25 +259,28 @@ class Question < ApplicationRecord
     TitleChannel.broadcast_to user, position_in_course&.ordinalize
   end
 
-  after_create_commit do
+  after_commit on: :create do
     update!(question_state: QuestionState.create!(question_id: id, enrollment_id: enrollment_id))
     if course.active_questions.count == 1
       course.staff.each do |member|
         SiteNotification.with(message: "New question on the queue").deliver_later(member.user)
       end
     end
+
+    Courses::UpdateFeedJob.perform_later(course: course)
   end
 
-  after_update_commit do
+  after_commit on: :update do
     RenderComponentJob.perform_later("Courses::Feed::QuestionCardComponent",
-      self,
-      opts: { target: self  },
-      component_args: {question: self})
+                                     self,
+                                     opts: { target: self  },
+                                     component_args: {question: self})
+
+    Courses::UpdateFeedJob.perform_later(course: course)
   end
 
   after_commit do
     reindex(refresh: true)
-    Courses::UpdateFeedJob.perform_later(course: course)
   end
 
   singleton_class.send(:alias_attribute, :current_state, :question_state)

@@ -11,8 +11,6 @@ class Courses::HandleQuestionController < ApplicationController
   def create
     authorize! :answer, @course
 
-    binding.pry
-
     question = Question.find(params[:question_id])
 
     ret = question.transition_to_state(params[:state], params[:enrollment_id])
