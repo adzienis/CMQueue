@@ -1,6 +1,5 @@
 module Courses
-  class BroadcastQuestionsOnQueue
-    include ApplicationService
+  class BroadcastQuestionsOnQueue < ApplicationService
 
     def initialize(course:, staff:)
       @course = course
