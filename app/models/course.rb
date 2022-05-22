@@ -20,7 +20,7 @@ class Course < ApplicationRecord
   extend Pagy::Searchkick
   searchkick
 
-  validates :name, presence: true, uniqueness: true
+  validates :name, presence: true, uniqueness: { scope: :semester }
   validates :ta_code, presence: true, uniqueness: true, on: :create
   validates :student_code, presence: true, uniqueness: true, on: :create
   validates :instructor_code, presence: true, uniqueness: true, on: :create
