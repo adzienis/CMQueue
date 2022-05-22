@@ -58,7 +58,7 @@ class Enrollment < ApplicationRecord
   validate :semester_valid
 
   def self.semesters
-    ["F21", "S22"]
+    ["F21", "S22", "Su22"]
   end
 
   def semester_valid
