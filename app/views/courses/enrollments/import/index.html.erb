@@ -20,16 +20,4 @@
     <%= f.submit :Upload, class: "btn btn-primary", data: { "disable-with" => "Uploading..." } %>
 
   <% end %>
-  <% if @course.enrollments_import_records.present? %>
-
-    <h3> Logs </h3>
-
-    <div style="overflow-y: auto; max-height: 200px">
-      <% @course.enrollments_import_records.order(created_at: :desc).each do |record| %>
-        <div>
-          <%= link_to record.created_at.to_formatted_s(:american_short), rails_blob_path(record.status_log, disposition: "preview") %>
-        </div>
-      <% end %>
-    </div>
-  <% end %>
 </div>
