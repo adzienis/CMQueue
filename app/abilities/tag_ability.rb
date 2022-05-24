@@ -9,7 +9,7 @@ class TagAbility < BaseAbility
 
     return unless @staff_roles.present?
 
-    can [:search, :read], Tag
+    can [:search, :read, :new], Tag
 
     return unless @privileged_roles.present?
 

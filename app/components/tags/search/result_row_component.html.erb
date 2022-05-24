@@ -28,7 +28,7 @@
           <%= link_to tag_group.name, course_tag_group_path(tag.course, tag_group), class: "badge bg-danger text-white" %>
         <% end %>
       </div>
-      <%= render(Shared::Search::CardFooterComponent.new(record: tag, course: tag.course, options: { actions: [:edit] })) %>
+      <%= render(Shared::Search::CardFooterComponent.new(record: tag, course: tag.course, options: { actions: [:edit, :destroy] })) %>
     </div>
   </td>
   <td>
