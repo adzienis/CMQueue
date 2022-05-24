@@ -14,8 +14,9 @@ class TagGroupAbility < BaseAbility
     end
 
     return unless @privileged_roles.present?
+
     can [:manage], TagGroup, TagGroup.where(course_id: @privileged_roles) do |tag_group|
-      user.privileged_staff_of?(tag_group.course)
+      tag_group.new_record? || user.privileged_staff_of?(tag_group.course)
     end
   end
 end

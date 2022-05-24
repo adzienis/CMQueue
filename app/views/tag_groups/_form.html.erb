@@ -4,7 +4,7 @@
   <%= f.input :description %>
 
   <div data-controller="react_select">
-    <%= f.association :tags, label_method: ->(tag) { tag.name }, collection: @course.tags %>
+    <%= f.association :tags, label_method: ->(tag) { tag.name }, collection: @course.tags.undiscarded %>
   </div>
 
       <%= f.submit :Submit, class: "btn btn-primary", "data-disable-with": "Loading" %>
