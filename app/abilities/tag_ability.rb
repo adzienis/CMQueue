@@ -13,7 +13,7 @@ class TagAbility < BaseAbility
 
     return unless @privileged_roles.present?
 
-    can [:read, :create, :edit, :destroy], Tag, Tag.where(course_id: @privileged_roles) do |tag|
+    can [:manage], Tag, Tag.where(course_id: @privileged_roles) do |tag|
       user.privileged_staff_of?(tag.course)
     end
   end
