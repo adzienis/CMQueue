@@ -11,8 +11,8 @@ module Courses
 
         attr_accessor :log, :index
 
-        def enrollment
-          @enrollment ||= Enrollment.find_by(id: log.whodunnit)
+        def user
+          @user ||= User.find_by(id: log.whodunnit)
         end
       end
     end

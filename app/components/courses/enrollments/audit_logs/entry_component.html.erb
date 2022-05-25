@@ -2,5 +2,5 @@
   <th scope="row"><%= index %></th>
   <td><%= log.created_at.to_formatted_s(:american_short) %></td>
   <td><%= log.event.humanize %></td>
-  <td><%= enrollment&.user&.full_name %> (<%= enrollment&.user&.email %>)</td>
+  <td><%= user&.full_name %> (<%= user&.email %>)</td>
 </tr>
