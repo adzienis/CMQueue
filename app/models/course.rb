@@ -138,7 +138,6 @@ class Course < ApplicationRecord
   def answerable_questions(tag_names: nil)
     if tag_names.present?
       active_questions
-        .includes(:question_state)
         .left_joins(:tags)
         .where("tags.name": tag_names)
         .group("questions.id")
