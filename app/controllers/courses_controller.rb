@@ -29,7 +29,6 @@ class CoursesController < ApplicationController
   end
 
   def show
-    @course = Course.accessible_by(current_ability).find(params[:course_id])
     redirect_to new_course_forms_question_path(@course) and return unless current_user.has_any_role?({name: :instructor, resource: @course})
   end
 

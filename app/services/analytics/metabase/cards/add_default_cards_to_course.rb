@@ -40,6 +40,12 @@ module Analytics
 
           create_card(card)
 
+          card = Analytics::Metabase::Questions::CreatedCurrentDayCount.new(course: course,
+                                                                              collection_id: course.base_collection.id,
+                                                                              default_semester: Enrollment.default_semester).call
+
+          create_card(card)
+
           card = Analytics::Metabase::Questions::CreatedCurrentSemesterCount.new(course: course,
                                                                               collection_id: course.base_collection.id,
                                                                               default_semester: Enrollment.default_semester).call

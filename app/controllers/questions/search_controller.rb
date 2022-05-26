@@ -31,7 +31,6 @@ class Questions::SearchController < ApplicationController
                   to: DateTime.current.end_of_day, key: "Past Week"}]
              }},
       order: order_params,
-      match: :text_start,
       where: where_params.merge({discarded_at: nil, course_id: @course.id}))
     @pagy, @results = pagy_searchkick(@question_results, items: 10)
   end

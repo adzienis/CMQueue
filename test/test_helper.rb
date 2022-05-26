@@ -41,10 +41,7 @@ module ActiveSupport
     def self.with_roles_should(msg, *roles, &block)
       roles.each do |role|
         context role do
-          it msg do
-            create(:enrollment, user: user, role: create(:role, role, resource: course))
-            instance_exec(&block)
-          end
+          instance_exec(&block)
         end
       end
     end
