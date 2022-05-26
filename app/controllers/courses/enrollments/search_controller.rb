@@ -13,10 +13,10 @@ module Courses
       def index
         authorize! :search, Enrollment
 
-        builder = ::Search::ClauseBuilder.new(attributes: [:user_full_name, :role_name, :sections, :semester], params: params)
+        builder = ::Search::ClauseBuilder.new(attributes: [:user_full_name, :role_name, :sections], params: params)
 
         where_params = builder.build_clauses(params)
-        aggs = [:user_full_name, :role_name, :sections, :semester]
+        aggs = [:user_full_name, :role_name, :sections]
         order_params = builder.build_order_clauses(request.query_parameters)
 
         @enrollment_results = Enrollment.pagy_search(params[:q].present? ? params[:q] : "*",

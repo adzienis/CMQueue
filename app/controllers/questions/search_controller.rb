@@ -11,7 +11,7 @@ class Questions::SearchController < ApplicationController
   def index
     authorize! :search, Question
 
-    builder = Search::ClauseBuilder.new(attributes: [:state, :user_name, :tags, :created_at], params: params)
+    builder = Search::ClauseBuilder.new(attributes: [:state, :user_name, :tags, :created_at, :resolved_by], params: params)
 
     where_params = builder.build_clauses(params)
     order_params = builder.build_order_clauses(params)

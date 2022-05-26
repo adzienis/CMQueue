@@ -25,23 +25,17 @@
     <div class="mb-2">
       <label class="fw-bold"> Last Question with Activity </label>
       <div>
-        <% active_question =  @enrollment.user.active_question(course: @course) %>
-        <% currently_handled_question = @enrollment.user.currently_handled_question(course: @course) %>
+        <% question = @enrollment.questions.order(created_at: :desc).first %>
 
-        <% if active_question.nil? && currently_handled_question.nil? %>
+        <% if question.nil? %>
             <span class="badge rounded-pill bg-secondary">
               None
             </span>
         <% end %>
-        <%= link_to course_question_path(@course, currently_handled_question) do %>
-          Go to #<%= currently_handled_question.id %>:
-          <%= render(Questions::QuestionStateBadgeComponent.new(question_state: currently_handled_question.question_state)) %>
-        <% end if currently_handled_question.present? %>
-
-        <%= link_to course_question_path(@course, active_question) do %>
-          Go to #<%= active_question.id %>:
-          <%= render(Questions::QuestionStateBadgeComponent.new(question_state: active_question.question_state)) %>
-        <% end if active_question.present? %>
+        <%= link_to course_question_path(@course, question) do %>
+          Go to #<%= question.id %>:
+          <%= render(Questions::QuestionStateBadgeComponent.new(question_state: question.question_state)) %>
+        <% end if question.present? %>
       </div>
     </div>
   </div>

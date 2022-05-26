@@ -33,8 +33,12 @@ class Analytics::Metabase::API::Collection
     personal_owner_id.present?
   end
 
+  def root?
+    id == "root"
+  end
+
   def archive
-    unless personal?
+    unless personal? || root?
       metabase.put_collection(collection_id: id, json: {
         archived: true
       })
