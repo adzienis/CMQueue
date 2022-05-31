@@ -78,14 +78,6 @@ Rails.application.routes.draw do
     get "enroll_by_code/new", to: "enroll_by_code#new", as: "new_enroll_by_code"
   end
 
-  resources :enrollments do
-    collection do
-      get "download", to: "enrollments#download_form"
-      post "import", to: "enrollments/import#create"
-      get "import", to: "enrollments/import#index"
-    end
-  end
-
   resources :roles
 
   resources :questions, shallow: true, only: [] do
