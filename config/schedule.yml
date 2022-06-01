@@ -14,7 +14,7 @@ migrate_enrollments:
   queue: default
   retries: 0
 ping_users:
-  cron: "*/5 * * * *"
+  cron: "*/3 * * * *"
   class: "PingJob"
   queue: default
   retries: 0
